@@ -18,19 +18,18 @@ import javax.swing.KeyStroke;
 import es.cristichi.fnac.obj.OfficeLocation;
 
 public abstract class Night extends JComponent {
-	private static final long serialVersionUID = -8562006473118553625L;
 	private static final int fps = 60;
 
 	private final int hourInterval = fps * 60;
 	private final int powerDrainInterval = fps * 5;
 
 	private final String name;
-	private BufferedImage backgroundImg;
-	private BufferedImage camMonitorImg;
+	private final BufferedImage backgroundImg;
+	private final BufferedImage camMonitorImg;
 	private int powerLevel;
 	private int time;
 	private int tick;
-	private Timer gameTicks;
+	private final Timer gameTicks;
 	private Boolean victoryScreen;
 
 	private static final int OFFICE_TRANSITION_TICKS = 30;
@@ -49,7 +48,7 @@ public abstract class Night extends JComponent {
 
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
 	private int changeCamsTransTicks;
-	private BufferedImage[] camerasImgs;
+	private final BufferedImage[] camerasImgs;
 	private int selectedCam;
 
 	public Night(String name) throws IOException {
@@ -159,7 +158,7 @@ public abstract class Night extends JComponent {
 
 	// Example method to simulate player interactions
 	protected void usePower(int amount) {
-		powerLevel -= Math.max(amount, powerLevel);
+		powerLevel -= Math.min(amount, powerLevel);
 		repaint();
 	}
 
@@ -323,8 +322,6 @@ public abstract class Night extends JComponent {
 	}
 
 	private class LeftAction extends AbstractAction {
-		private static final long serialVersionUID = 4399005171704551504L;
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (camsUpDownTransTicks == 0 && offTransTicks == 0) {
@@ -352,8 +349,6 @@ public abstract class Night extends JComponent {
 	}
 
 	private class RightAction extends AbstractAction {
-		private static final long serialVersionUID = -8464841812192761050L;
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (camsUpDownTransTicks == 0 && offTransTicks == 0) {
@@ -380,20 +375,17 @@ public abstract class Night extends JComponent {
 	}
 
 	private class CamsUpAction extends AbstractAction {
-		private static final long serialVersionUID = -8464841812192761050L;
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp) {
 				camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 				camsUp = true;
+				usePower(1);
 			}
 		}
 	}
 
 	private class CamsDownAction extends AbstractAction {
-		private static final long serialVersionUID = -8464841812192761050L;
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && camsUp) {

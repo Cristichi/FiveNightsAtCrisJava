@@ -21,7 +21,7 @@ public class Main {
 		return GAME_TITLE.concat(" - ").concat(window);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		System.out.println(System.getProperty("java.version"));
 		JFrame window = new JFrame(GAME_TITLE);
 		window.setSize(800, 600);

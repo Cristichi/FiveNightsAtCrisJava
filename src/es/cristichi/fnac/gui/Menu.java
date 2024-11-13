@@ -1,5 +1,7 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.exception.AssetNotFound;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -23,24 +25,21 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 public abstract class Menu extends JComponent {
-	private static final long serialVersionUID = 681786437995694920L;
-
-	private List<String> menuItems;
+	private final List<String> menuItems;
 	private Image backgroundImage;
 	private Font btnFont;
-	private Timer menuTicks;
-	private int fps = 10;
 
-	public Menu(String background, List<String> menuItems) {
+    public Menu(String background, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
 		loadBackgroundImage(background);
 		loadCustomFont("./assets/fonts/EraserRegular.ttf"); // Load the custom font
 		setLayout(new GroupLayout(this));
 		initializeMenuItems();
-		
-		
-		menuTicks = new Timer();
-		menuTicks.scheduleAtFixedRate(new TimerTask() {
+
+
+        Timer menuTicks = new Timer();
+        int fps = 10;
+        menuTicks.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -50,12 +49,11 @@ public abstract class Menu extends JComponent {
 	}
 
 	// Load background image from the "assets" folder
-	private void loadBackgroundImage(String path) {
+	private void loadBackgroundImage(String path) throws AssetNotFound {
 		try {
 			backgroundImage = ImageIO.read(new File(path));
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Background image not found at " + path);
+			throw new AssetNotFound("Background image not found at " + path, e);
 		}
 	}
 
@@ -148,7 +146,7 @@ public abstract class Menu extends JComponent {
 
 	// Internal class to handle menu item clicks
 	private class MenuActionListener implements ActionListener {
-		private String item;
+		private final String item;
 
 		public MenuActionListener(String item) {
 			this.item = item;
