@@ -1,21 +1,20 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.obj.Camera;
+import es.cristichi.fnac.obj.CameraMap;
+import es.cristichi.fnac.obj.OfficeLocation;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-
-import es.cristichi.fnac.obj.Camera;
-import es.cristichi.fnac.obj.CameraMap;
-import es.cristichi.fnac.obj.OfficeLocation;
 
 public abstract class Night extends JComponent {
 	private static final int fps = 60;
@@ -119,6 +118,20 @@ public abstract class Night extends JComponent {
 
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsDownAction");
 		getActionMap().put("camsDownAction", camD);
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+                for (int i = 0; i < map.size(); i++) {
+                    Camera camera = map.get(i);
+                    if (camera.getLocOnScreen().contains(e.getLocationOnScreen())) {
+						map.setSelected(i);
+						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+						break;
+					}
+                }
+			}
+		});
 	}
 
 	public String getName() {
@@ -310,17 +323,25 @@ public abstract class Night extends JComponent {
 					// Draw the transparent rectangle to highlight the current camera
 					Graphics2D g2d = (Graphics2D) g;
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-					g.setColor(Color.WHITE);
 
-					// Scale the current camera’s rectangle position
-					Rectangle rec = new Rectangle(map.getSelectedCam().getMapLoc());
-					int scaledRecX = mapX + (int) (rec.x * scaleRatioX);
-					int scaledRecY = mapY + (int) (rec.y * scaleRatioY);
-					int scaledRecWidth = (int) (rec.width * scaleRatioX);
-					int scaledRecHeight = (int) (rec.height * scaleRatioY);
+                    for (int i = 0; i < map.size(); i++) {
+                        Camera cam = map.get(i);
+						// Scale the current camera’s rectangle position
+						Rectangle rec = new Rectangle(cam.getMapLoc());
+						int scaledRecX = mapX + (int) (rec.x * scaleRatioX);
+						int scaledRecY = mapY + (int) (rec.y * scaleRatioY);
+						int scaledRecWidth = (int) (rec.width * scaleRatioX);
+						int scaledRecHeight = (int) (rec.height * scaleRatioY);
+						cam.updateLocOnScreen(new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
 
-					// Draw the scaled rectangle on the map
-					g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
+						if (i == map.getSelected()){
+							// Draw the scaled rectangle on the map
+							g.setColor(Color.WHITE);
+						} else {
+							g.setColor(Color.GRAY);
+						}
+						g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
+                    }
 
 					// Reset transparency
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -346,24 +367,25 @@ public abstract class Night extends JComponent {
 			}
 		}
 
-		// Display time and power level
-		g.setFont(new Font("Arial", Font.BOLD, 18));
-		g.setColor(Color.WHITE);
-		g.drawString("Power: " + powerLevel + "%", 10, 20);
-		g.drawString("Time: " + time + " AM", getWidth() - 100, 40);
-		g.drawString("Debug Tick: " + tick, 0, 60);
 
-		if (victoryScreen != null) {
-			g.setFont(new Font("Arial", Font.BOLD, 200));
-			if (victoryScreen) {
-				g.setColor(Color.GREEN);
-				g.drawString("06:00 AM", 100, 200);
-			} else {
-				g.setColor(Color.RED);
-				g.drawString("YOU DIED", 100, 200);
-			}
-		}
-	}
+        if (victoryScreen == null) {
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.setColor(Color.WHITE);
+            g.drawString("Power: " + powerLevel + "%", 10, 20);
+            g.drawString(String.format("%02d:?? AM", time), getWidth() - 100, 20);
+			g.setColor(Color.GREEN);
+            g.drawString("Debug Tick: " + tick, 10, 40);
+        } else {
+            g.setFont(new Font("Arial", Font.BOLD, 200));
+            if (victoryScreen) {
+                g.setColor(Color.GREEN);
+                g.drawString("06:00 AM", 100, 200);
+            } else {
+                g.setColor(Color.RED);
+                g.drawString("YOU DIED", 100, 200);
+            }
+        }
+    }
 
 	private class LeftAction extends AbstractAction {
 		@Override
@@ -383,8 +405,10 @@ public abstract class Night extends JComponent {
 				} else {
 					if (map.getSelected() > 0) {
 						map.setSelected(map.getSelected()-1);
-						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+					} else {
+						map.setSelected(map.size()-1);
 					}
+					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}
 			}
 		}
@@ -409,8 +433,10 @@ public abstract class Night extends JComponent {
 				} else {
 					if (map.getSelected() < map.size()-1) {
 						map.setSelected(map.getSelected()+1);
-						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+					} else {
+						map.setSelected(0);
 					}
+					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}
 			}
 		}
