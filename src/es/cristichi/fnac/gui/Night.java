@@ -3,15 +3,14 @@ package es.cristichi.fnac.gui;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
+import es.cristichi.fnac.util.AssetsIO;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,16 +53,16 @@ public abstract class Night extends JComponent {
 		this.name = name;
 		powerLevel = 100;
 		time = 0; // Start at 12 AM = 00:00h
-		backgroundImg = loadImage("./assets/imgs/night/background.jpg");
-		camMonitorImg = loadImage("./assets/imgs/night/cams/monitor.png");
-		camMonitorStaticImg = loadImage("./assets/imgs/night/cams/monitorStatic.png");
-		camStaticImg = loadImage("./assets/imgs/night/cams/camTrans.jpg");
+		backgroundImg = AssetsIO.loadImage("./assets/imgs/night/background.jpg");
+		camMonitorImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitor.png");
+		camMonitorStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitorStatic.png");
+		camStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/camTrans.jpg");
 
-		map = new CameraMap("test1", loadImage("./assets/imgs/night/cams/map.png"));
-		map.add(new Camera("cam1", loadImage("./assets/imgs/night/cams/cam1.jpg"), new Rectangle(113,111,378,177)));
-		map.add(new Camera("cam2", loadImage("./assets/imgs/night/cams/cam2.jpg"), new Rectangle(491,117,379,177)));
-		map.add(new Camera("cam3", loadImage("./assets/imgs/night/cams/cam3.jpg"), new Rectangle(134,287,167,571)));
-		map.add(new Camera("cam4", loadImage("./assets/imgs/night/cams/cam4.jpg"), new Rectangle(720,296,141,586)));
+		map = new CameraMap("test1", AssetsIO.loadImage("./assets/imgs/night/cams/map.png"));
+		map.add(new Camera("cam1", AssetsIO.loadImage("./assets/imgs/night/cams/cam1.jpg"), new Rectangle(113,111,378,177)));
+		map.add(new Camera("cam2", AssetsIO.loadImage("./assets/imgs/night/cams/cam2.jpg"), new Rectangle(491,117,379,177)));
+		map.add(new Camera("cam3", AssetsIO.loadImage("./assets/imgs/night/cams/cam3.jpg"), new Rectangle(134,287,167,571)));
+		map.add(new Camera("cam4", AssetsIO.loadImage("./assets/imgs/night/cams/cam4.jpg"), new Rectangle(720,296,141,586)));
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -136,14 +135,6 @@ public abstract class Night extends JComponent {
 
 	public String getName() {
 		return name;
-	}
-
-	private BufferedImage loadImage(String path) throws IOException {
-		try {
-			return ImageIO.read(new File(path));
-		} catch (IOException e) {
-			throw new IOException("Image not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
-		}
 	}
 
 	private void advanceTime() {

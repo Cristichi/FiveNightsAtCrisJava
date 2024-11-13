@@ -1,6 +1,8 @@
 package es.cristichi.fnac.exception;
 
-public class AssetNotFound extends RuntimeException {
+import java.io.IOException;
+
+public class AssetNotFound extends IOException {
 	public AssetNotFound(String message, Throwable e) {
 		super(message, e);
 	}
