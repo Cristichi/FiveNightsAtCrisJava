@@ -22,7 +22,6 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(System.getProperty("java.version"));
 		JFrame window = new JFrame(GAME_TITLE);
 		window.setSize(800, 600);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,13 +49,6 @@ public class Main {
 						}
 
 						@Override
-						protected void onPowerOutage() {
-							nightPanel.removeAll();
-							System.out.println("Moriste");
-							cards.show(cardPanel, "menu");
-						}
-
-						@Override
 						protected void onNightComplete() {
 							nightPanel.removeAll();
 							System.out.println("Wiii");
@@ -65,6 +57,7 @@ public class Main {
 					};
 					nightPanel.add(night1);
 					cards.show(cardPanel, "night");
+					window.setTitle(getTitleForWindow("Night 1"));
 					break;
 
 				case "Exit":

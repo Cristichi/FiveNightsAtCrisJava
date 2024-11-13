@@ -1,8 +1,6 @@
 package es.cristichi.fnac.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,6 +13,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import es.cristichi.fnac.obj.Camera;
+import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 
 public abstract class Night extends JComponent {
@@ -25,7 +25,8 @@ public abstract class Night extends JComponent {
 
 	private final String name;
 	private final BufferedImage backgroundImg;
-	private final BufferedImage camMonitorImg;
+	private final BufferedImage camMonitorImg, camMonitorStaticImg;
+	private final BufferedImage camStaticImg;
 	private int powerLevel;
 	private int time;
 	private int tick;
@@ -48,8 +49,7 @@ public abstract class Night extends JComponent {
 
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
 	private int changeCamsTransTicks;
-	private final BufferedImage[] camerasImgs;
-	private int selectedCam;
+	private final CameraMap map;
 
 	public Night(String name) throws IOException {
 		this.name = name;
@@ -57,13 +57,18 @@ public abstract class Night extends JComponent {
 		time = 0; // Start at 12 AM = 00:00h
 		backgroundImg = loadImage("./assets/imgs/night/background.jpg");
 		camMonitorImg = loadImage("./assets/imgs/night/cams/monitor.png");
-		camerasImgs = new BufferedImage[] { loadImage("./assets/imgs/night/cams/cam1.jpg"),
-				loadImage("./assets/imgs/night/cams/cam2.jpg") };
+		camMonitorStaticImg = loadImage("./assets/imgs/night/cams/monitorStatic.png");
+		camStaticImg = loadImage("./assets/imgs/night/cams/camTrans.jpg");
+
+		map = new CameraMap("test1", loadImage("./assets/imgs/night/cams/map.png"));
+		map.add(new Camera("cam1", loadImage("./assets/imgs/night/cams/cam1.jpg"), new Rectangle(113,111,378,177)));
+		map.add(new Camera("cam2", loadImage("./assets/imgs/night/cams/cam2.jpg"), new Rectangle(491,117,379,177)));
+		map.add(new Camera("cam3", loadImage("./assets/imgs/night/cams/cam3.jpg"), new Rectangle(134,287,167,571)));
+		map.add(new Camera("cam4", loadImage("./assets/imgs/night/cams/cam4.jpg"), new Rectangle(720,296,141,586)));
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
-		selectedCam = 0;
 		camsUp = false;
 		victoryScreen = null;
 
@@ -120,7 +125,6 @@ public abstract class Night extends JComponent {
 		return name;
 	}
 
-	// Load the background image for the night
 	private BufferedImage loadImage(String path) throws IOException {
 		try {
 			return ImageIO.read(new File(path));
@@ -129,7 +133,6 @@ public abstract class Night extends JComponent {
 		}
 	}
 
-	// Handle time progression
 	private void advanceTime() {
 		if (++time == 6) {
 			gameTicks.cancel();
@@ -145,29 +148,24 @@ public abstract class Night extends JComponent {
 		}
 	}
 
-	// Drain power over time
 	private void drainPower() {
 		if (powerLevel > 0) {
 			powerLevel--;
 		} else {
 			// powerDrainTimer.cancel();
 			gameTicks.cancel();
-			onPowerOutage(); // Trigger when power runs out
+			onJumpscare();
 		}
 	}
 
-	// Example method to simulate player interactions
 	protected void usePower(int amount) {
 		powerLevel -= Math.min(amount, powerLevel);
 		repaint();
 	}
 
-	// Abstract methods to define night-specific behaviors
 	protected abstract void onJumpscare();
 
 	protected abstract void onNightComplete();
-
-	protected abstract void onPowerOutage();
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -221,16 +219,21 @@ public abstract class Night extends JComponent {
 			offTransFrom = null;
 		}
 
-		if (camsUp || camsUpDownTransTicks > 0) {
-			int windowWidth = getWidth();
+		if (camsUp || camsUpDownTransTicks > 0) {int windowWidth = getWidth();
 			int windowHeight = getHeight();
-			int imageWidth = camMonitorImg.getWidth(null);
-			int imageHeight = camMonitorImg.getHeight(null);
-			int camImgWidth = camerasImgs[selectedCam].getWidth();
-			int camImgHeight = camerasImgs[selectedCam].getHeight();
+			int monitorWidth = camMonitorImg.getWidth(null);
+			int monitorHeight = camMonitorImg.getHeight(null);
+			int camImgWidth = map.getSelectedCam().getCamImg().getWidth();
+			int camImgHeight = map.getSelectedCam().getCamImg().getHeight();
+
+			// Monitor's inner area for the camera view, from original image
+			int innerX = 176;
+			int innerY = 195;
+			int innerWidth = 1695;
+			int innerHeight = 1082;
 
 			// Calculate aspect ratio-based dimensions to fit the monitor image without stretching
-			double monitorAspectRatio = (double) imageWidth / imageHeight;
+			double monitorAspectRatio = (double) monitorWidth / monitorHeight;
 			double windowAspectRatio = (double) windowWidth / windowHeight;
 
 			int monitorTargetWidth, monitorTargetHeight;
@@ -242,56 +245,101 @@ public abstract class Night extends JComponent {
 				monitorTargetHeight = (int) (windowWidth / monitorAspectRatio);
 			}
 
-			double camScale = Math.min((double) monitorTargetWidth / camImgWidth,
-					(double) monitorTargetHeight / camImgHeight);
+			// Calculate scaling for the monitor image and inner camera area
+			double monitorScale = (double) monitorTargetWidth / monitorWidth;
+			int scaledInnerWidth = (int) (innerWidth * monitorScale);
+			int scaledInnerHeight = (int) (innerHeight * monitorScale);
+			int scaledInnerX = (int) (innerX * monitorScale);
+			int scaledInnerY = (int) (innerY * monitorScale);
+
+			// Calculate scale for the camera image to fit within the scaled inner area
+			double camScale = Math.min((double) scaledInnerWidth / camImgWidth, (double) scaledInnerHeight / camImgHeight);
 			int camDrawWidth = (int) (camImgWidth * camScale);
 			int camDrawHeight = (int) (camImgHeight * camScale);
-			int camDrawX = (windowWidth - camDrawWidth) / 2;
-			int camDrawY = (windowHeight - camDrawHeight) / 2;
+
+			// Center the scaled inner area of the monitor on the screen
+			int monitorXOffset = (windowWidth - monitorTargetWidth) / 2;
+			int monitorYOffset = (windowHeight - monitorTargetHeight) / 2;
+			int camDrawX = monitorXOffset + scaledInnerX + (scaledInnerWidth - camDrawWidth) / 2;
+			int camDrawY = monitorYOffset + scaledInnerY + (scaledInnerHeight - camDrawHeight) / 2;
 
 			if (camsUp) {
 				if (camsUpDownTransTicks > 0) {
-					double scale = (double) (CAMS_TRANSITION_TICKS - camsUpDownTransTicks) / CAMS_TRANSITION_TICKS;
-					int scaledMonitorWidth = (int) (monitorTargetWidth * scale);
-					int scaledMonitorHeight = (int) (monitorTargetHeight * scale);
-					int monitorXOffset = (windowWidth - scaledMonitorWidth) / 2;
-					int monitorYOffset = (windowHeight - scaledMonitorHeight) / 2;
+					double transitionScale = (double) (CAMS_TRANSITION_TICKS - camsUpDownTransTicks) / CAMS_TRANSITION_TICKS;
+					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
+					int scaledMonitorHeight = (int) (monitorTargetHeight * transitionScale);
+					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
+					int transitionYOffset = (windowHeight - scaledMonitorHeight) / 2;
 
-					// Draw camera view in position first
-					g.drawImage(camerasImgs[selectedCam], camDrawX, camDrawY, camDrawX + camDrawWidth,
-							camDrawY + camDrawHeight, 0, 0, camImgWidth, camImgHeight, this);
-
-					// Draw the scaling monitor frame over the camera view
-					g.drawImage(camMonitorImg, monitorXOffset, monitorYOffset, monitorXOffset + scaledMonitorWidth,
-							monitorYOffset + scaledMonitorHeight, 0, 0, imageWidth, imageHeight, this);
+					g.drawImage(camMonitorStaticImg, transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
+							transitionYOffset + scaledMonitorHeight, 0, 0, monitorWidth, monitorHeight, this);
 
 					camsUpDownTransTicks--;
 				} else {
+					// Draw static in transition of camera change or current camera
+					if (changeCamsTransTicks>0){
+						g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+								0, 0, camImgWidth, camImgHeight, this);
+						changeCamsTransTicks--;
+					} else {
+						g.drawImage(map.getSelectedCam().getCamImg(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+								0, 0, camImgWidth, camImgHeight, this);
+					}
 
-					// Fully up state: Draw the camera view and monitor frame at full scale
-					g.drawImage(camerasImgs[selectedCam], camDrawX, camDrawY, camDrawX + camDrawWidth,
-							camDrawY + camDrawHeight, 0, 0, camImgWidth, camImgHeight, this);
-					g.drawImage(camMonitorImg, (windowWidth - monitorTargetWidth) / 2,
-							(windowHeight - monitorTargetHeight) / 2, (windowWidth + monitorTargetWidth) / 2,
-							(windowHeight + monitorTargetHeight) / 2, 0, 0, imageWidth, imageHeight, this);
+					// Draw monitor frame
+					g.drawImage(camMonitorImg, monitorXOffset, monitorYOffset,
+							monitorXOffset + monitorTargetWidth, monitorYOffset + monitorTargetHeight,
+							0, 0, monitorWidth, monitorHeight, this);
 
+					// Draw map
+					// Define target scaled map size based on monitor dimensions
+					int scaledMapWidth = (int) (monitorTargetWidth * 0.3);
+					int scaledMapHeight = (int) (monitorTargetHeight * 0.3);
+
+					// Calculate the scale ratio between the original and scaled map
+					double scaleRatioX = (double) scaledMapWidth / map.getImage().getWidth();
+					double scaleRatioY = (double) scaledMapHeight / map.getImage().getHeight();
+
+					// Calculate the position of the scaled map on the monitor
+					int mapX = monitorXOffset + monitorTargetWidth - scaledMapWidth;
+					int mapY = monitorYOffset + monitorTargetHeight - scaledMapHeight;
+
+					// Draw the scaled map
+					g.drawImage(map.getImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
+
+					// Draw the transparent rectangle to highlight the current camera
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+					g.setColor(Color.WHITE);
+
+					// Scale the current camera’s rectangle position
+					Rectangle rec = new Rectangle(map.getSelectedCam().getMapLoc());
+					int scaledRecX = mapX + (int) (rec.x * scaleRatioX);
+					int scaledRecY = mapY + (int) (rec.y * scaleRatioY);
+					int scaledRecWidth = (int) (rec.width * scaleRatioX);
+					int scaledRecHeight = (int) (rec.height * scaleRatioY);
+
+					// Draw the scaled rectangle on the map
+					g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
+
+					// Reset transparency
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+					// Cam name
 					g.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 					g.setColor(Color.WHITE);
-					g.drawString("Cam" + (selectedCam + 1), camDrawX + 30, camDrawY + 40);
+					g.drawString(map.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
 				}
 			} else {
 				if (camsUpDownTransTicks > 0) {
-					double scale = (double) camsUpDownTransTicks / CAMS_TRANSITION_TICKS;
-					int scaledMonitorWidth = (int) (monitorTargetWidth * scale);
-					int scaledMonitorHeight = (int) (monitorTargetHeight * scale);
-					int monitorXOffset = (windowWidth - scaledMonitorWidth) / 2;
-					int monitorYOffset = (windowHeight - scaledMonitorHeight) / 2;
+					double transitionScale = (double) camsUpDownTransTicks / CAMS_TRANSITION_TICKS;
+					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
+					int scaledMonitorHeight = (int) (monitorTargetHeight * transitionScale);
+					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
+					int transitionYOffset = (windowHeight - scaledMonitorHeight) / 2;
 
-					// Draw camera view behind the shrinking monitor frame
-					g.drawImage(camerasImgs[selectedCam], camDrawX, camDrawY, camDrawX + camDrawWidth,
-							camDrawY + camDrawHeight, 0, 0, camImgWidth, camImgHeight, this);
-					g.drawImage(camMonitorImg, monitorXOffset, monitorYOffset, monitorXOffset + scaledMonitorWidth,
-							monitorYOffset + scaledMonitorHeight, 0, 0, imageWidth, imageHeight, this);
+					g.drawImage(camMonitorStaticImg, transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
+							transitionYOffset + scaledMonitorHeight, 0, 0, monitorWidth, monitorHeight, this);
 
 					camsUpDownTransTicks--;
 				}
@@ -304,10 +352,6 @@ public abstract class Night extends JComponent {
 		g.drawString("Power: " + powerLevel + "%", 10, 20);
 		g.drawString("Time: " + time + " AM", getWidth() - 100, 40);
 		g.drawString("Debug Tick: " + tick, 0, 60);
-		g.drawString("Debug Loc: " + officeLoc.name(), 0, 80);
-		g.drawString("Debug trans: " + offTransTicks, 0, 100);
-		g.drawString("Debug cams up: " + camsUp, 0, 120);
-		g.drawString("Debug cams trans: " + camsUpDownTransTicks, 0, 140);
 
 		if (victoryScreen != null) {
 			g.setFont(new Font("Arial", Font.BOLD, 200));
@@ -316,7 +360,7 @@ public abstract class Night extends JComponent {
 				g.drawString("06:00 AM", 100, 200);
 			} else {
 				g.setColor(Color.RED);
-				g.drawString("OH NO", 100, 200);
+				g.drawString("YOU DIED", 100, 200);
 			}
 		}
 	}
@@ -324,22 +368,21 @@ public abstract class Night extends JComponent {
 	private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 							offTransFrom = OfficeLocation.RIGHTDOOR;
 							officeLoc = OfficeLocation.MONITOR;
-							offTransTicks = OFFICE_TRANSITION_TICKS;
-						} else {
+                        } else {
 							offTransFrom = OfficeLocation.MONITOR;
 							officeLoc = OfficeLocation.LEFTDOOR;
-							offTransTicks = OFFICE_TRANSITION_TICKS;
-						}
-					}
+                        }
+                        offTransTicks = OFFICE_TRANSITION_TICKS;
+                    }
 				} else {
-					if (selectedCam > 0) {
-						selectedCam--;
+					if (map.getSelected() > 0) {
+						map.setSelected(map.getSelected()-1);
 						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 					}
 				}
@@ -351,22 +394,21 @@ public abstract class Night extends JComponent {
 	private class RightAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 							offTransFrom = OfficeLocation.LEFTDOOR;
 							officeLoc = OfficeLocation.MONITOR;
-							offTransTicks = OFFICE_TRANSITION_TICKS;
-						} else {
+                        } else {
 							offTransFrom = OfficeLocation.MONITOR;
 							officeLoc = OfficeLocation.RIGHTDOOR;
-							offTransTicks = OFFICE_TRANSITION_TICKS;
-						}
-					}
+                        }
+                        offTransTicks = OFFICE_TRANSITION_TICKS;
+                    }
 				} else {
-					if (selectedCam < camerasImgs.length - 1) {
-						selectedCam++;
+					if (map.getSelected() < map.size()-1) {
+						map.setSelected(map.getSelected()+1);
 						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 					}
 				}
