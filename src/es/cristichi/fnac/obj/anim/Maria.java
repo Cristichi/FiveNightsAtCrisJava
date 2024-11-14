@@ -13,7 +13,7 @@ import java.util.Random;
 public class Maria extends Animatronic{
     private boolean kill = false;
     private Integer startKillTick = null;
-    private final double targetPatienceKillSec = 3.8;
+    private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
         super("María", secInterval, aiDuringNight, 20, AssetsIO.loadImage("assets/imgs/anims/maria.png"), "assets/imgs/anims/mariaAnim.gif", Color.YELLOW);
@@ -26,7 +26,7 @@ public class Maria extends Animatronic{
         }
         return super.onMovementOpportunityAttempt(rng);
     }
-    
+
     @Override
     public Camera onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<Camera> connections = currentLoc.getConnections();

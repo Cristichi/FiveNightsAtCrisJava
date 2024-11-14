@@ -125,7 +125,7 @@ public class Camera {
         }
 
         public CameraBuilder connectToOfficeRight() {
-            this.isLeftDoorOfOffice = true;
+            this.isRightDoorOfOffice = true;
             return this;
         }
 

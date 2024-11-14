@@ -10,20 +10,27 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class Menu extends JComponent {
 	private final List<String> menuItems;
+	private final List<JButton> menuButtons;
 	private final Image backgroundImage;
+	private final Image loadingImage;
+	private boolean loading;
 	private Font btnFont;
 
-    public Menu(String background, List<String> menuItems) throws IOException {
+    public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
-		backgroundImage = AssetsIO.loadImage(background);
-		loadCustomFont("./assets/fonts/EraserRegular.ttf"); // Load the custom font
+		backgroundImage = AssetsIO.loadImage(backgroundImg);
+		loadingImage = AssetsIO.loadImage(loadingImg);
+		loading = false;
+		loadCustomFont("assets/fonts/EraserRegular.ttf");
 		setLayout(new GroupLayout(this));
+		menuButtons = new ArrayList<>(menuItems.size());
 		initializeMenuItems();
 
 
@@ -66,6 +73,7 @@ public abstract class Menu extends JComponent {
 			horizontalGroup.addComponent(menuItemButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 					GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(menuItemButton);
+			menuButtons.add(menuItemButton);
 		}
 
 		verticalGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
@@ -106,9 +114,7 @@ public abstract class Menu extends JComponent {
 		super.paintComponent(g);
 
 		// Draw the background image, scaled to fit the component's dimensions
-		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-		}
+		g.drawImage(loading?loadingImage:backgroundImage, 0, 0, getWidth(), getHeight(), this);
 
 		if (errorTicks-- > 0) {
 			int yOg = 40;
@@ -125,7 +131,6 @@ public abstract class Menu extends JComponent {
 	// Abstract method for click actions
 	protected abstract void onMenuItemClick(String item) throws IOException;
 
-	// Internal class to handle menu item clicks
 	private class MenuActionListener implements ActionListener {
 		private final String item;
 
@@ -134,13 +139,25 @@ public abstract class Menu extends JComponent {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			try {
-				onMenuItemClick(item);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
-				errorTicks = 60;
-			}
+				loading = true;
+				for (Component component : Menu.this.getComponents()) {
+					component.setVisible(false);
+				}
+				repaint();
+				repaint();
+				new Thread(() -> {
+                    try {
+                        onMenuItemClick(item);
+						for (Component component : Menu.this.getComponents()) {
+							component.setVisible(true);
+						}
+						loading = false;
+					} catch (IOException e1) {
+                        e1.printStackTrace();
+                        error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
+                        errorTicks = 60;
+                    }
+                }, item).start();
 		}
 	}
 }

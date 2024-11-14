@@ -10,6 +10,7 @@ import es.cristichi.fnac.util.AssetsIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -18,24 +19,28 @@ import java.util.Timer;
 import java.util.*;
 
 public abstract class Night extends JComponent {
-	private static final int fps = 60;
-
-	private final int hourInterval = fps * 60;
-	private final int powerDrainInterval = fps * 5;
+	private static final int FPS = 60;
+	private static final int HOUR_INTERVAL = FPS * 60;
+	private static final int TOTAL_HOURS = 6;
 
 	private final Random rng;
 
 	@SuppressWarnings("unused")
 	private final String name;
 	private final BufferedImage backgroundImg;
-	private int powerLevel;
+	/**
+	 * Power in percentage, where 0 is 0%, 0.5 is 50% and 1 is 100%.
+	 */
+	private float powerLeft;
+	private final float powerPerTickPerResource;
+	private final Jumpscare powerOutage;
 	private int time;
 	private int tick;
 	private final Timer nightTicks;
 	private Boolean victoryScreen;
 
 	// Office transition
-	private static final int OFFICE_TRANSITION_TICKS = 100;
+	private static final int OFFICE_TRANSITION_TICKS = 30;
 	// Theses values are for the size used. Perhaps the background should be resized to be 1080p, but this works and it looks good without too much work on the processing part.
 	private static final int LEFTDOOR_X = 200;
 	private static final int MONITOR_X = 1000;
@@ -73,12 +78,30 @@ public abstract class Night extends JComponent {
 	// Jumpscare
 	private Jumpscare jumpscare;
 
-	public Night(String name, CameraMap mapAndAnimatronics, Random rng) throws IOException {
+	/**
+	 *
+	 * @param name Name of the Night. Barely used.
+	 * @param mapAndAnimatronics Map of the place.
+	 * @param powerOutage Jumpscare that will happen when the player runs out of power.
+	 * @param rng Random for the night. You may just use <code>new Random()</code> unless you want a specific seed.
+	 * @param powerConsumption A number from 0 to 1, where 0 makes the night impossible to lose by a power outage, and 1 makes it impossible to win even without Animatronics.
+	 * @throws IOException If Assets cannot be loaded from disk. Usually it's because they may be missing, so skill issue.
+	 */
+	public Night(String name, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float powerConsumption) throws IOException {
 		this.rng = rng;
 		this.name = name;
 		this.map = mapAndAnimatronics;
+		this.powerOutage = powerOutage;
 
-		powerLevel = 100;
+		powerLeft = 1;
+		// So this calculates depending on the fps, which determines the total number of ticks per night, which is
+		// important to calibrate that the night cannot be survived by using everything (extremely easy)
+		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance
+		int totalTicks = HOUR_INTERVAL * TOTAL_HOURS;
+		float minPowerPerTickPerResource = 1.0f / totalTicks; // Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
+		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks); // Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
+		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
+
 		time = 0; // Start at 12 AM = 00:00h
 		backgroundImg = AssetsIO.loadImage("./assets/imgs/night/background.jpg");
 		camMonitorImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitor.png");
@@ -144,17 +167,12 @@ public abstract class Night extends JComponent {
 		}
 
 		{
-			AbstractAction action = new LeftDoorAction();
+			AbstractAction action = new DoorAction();
 
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "leftDoorAction");
-			getActionMap().put("leftDoorAction", action);
-		}
-
-		{
-			AbstractAction action = new RightDoorAction();
-
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "rightDoorAction");
-			getActionMap().put("rightDoorAction", action);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "doorAction");
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "doorAction");
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "doorAction");
+			getActionMap().put("doorAction", action);
 		}
 
 		addMouseListener(new MouseAdapter() {
@@ -172,33 +190,43 @@ public abstract class Night extends JComponent {
 		});
 
 		nightTicks = new Timer("Night [" + name + "]");
-		startNight();
 	}
 
 	public void startNight(){
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				tick++;
-				if (tick % hourInterval == 0) {
-					advanceTime();
+				// Power drain
+				if (powerLeft > 0) {
+					powerLeft-=powerPerTickPerResource;
 				}
-				if (tick % powerDrainInterval == 0) {
-					drainPower();
+				if (powerLeft > 0 && camsUp) {
+					powerLeft-=powerPerTickPerResource;
+				}
+				if (powerLeft > 0 && leftDoorClosed) {
+					powerLeft-=powerPerTickPerResource;
+				}
+				if (powerLeft > 0 && rightDoorClosed) {
+					powerLeft-=powerPerTickPerResource;
 				}
 
+				if (powerLeft <= 0){
+					jumpscare = powerOutage;
+				}
+
+				// Animatronic movements and jumpscare opportunities
 				if (jumpscare == null){
 					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
 					for(Camera cam : map){
 						for (Animatronic anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(time);
-							if (tick % (int) Math.round(anim.getSecInterval() * fps) == 0){
+							if (tick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(rng)){
 									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, anim.onMovementOppSuccess(map, cam, rng)));
 								}
 							}
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
-							if (anim.onJumpscareAttempt(tick, openDoor, camsUp, cam, rng, fps)){
+							if (anim.onJumpscareAttempt(tick, openDoor, camsUp, cam, rng, FPS)){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future.
 								jumpscare.reset();
@@ -210,13 +238,20 @@ public abstract class Night extends JComponent {
 					}
 				}
 
+				// We repaint da thing
 				repaint();
+
+				// Time never stops. Well sometimes it does, when dying for instance.
+				tick++;
+				if (tick % HOUR_INTERVAL == 0) {
+					advanceTime();
+				}
 			}
-		}, 100, 1000 / fps);
+		}, 100, 1000 / FPS);
 	}
 
 	private void advanceTime() {
-		if (++time == 6) {
+		if (++time == TOTAL_HOURS) {
 			nightTicks.cancel();
 			jumpscare = null;
 			victoryScreen = true;
@@ -229,25 +264,6 @@ public abstract class Night extends JComponent {
 				}
 			}, 5000);
 		}
-	}
-
-	private void drainPower() {
-		if (powerLevel > 0) {
-			powerLevel--;
-		}
-		if (powerLevel > 0 && camsUp) {
-			powerLevel--;
-		}
-
-		if (powerLevel == 0){
-			nightTicks.cancel();
-			onJumpscare();
-		}
-	}
-
-	protected void usePower(int amount) {
-		powerLevel -= Math.min(amount, powerLevel);
-		repaint();
 	}
 
 	protected abstract void onJumpscare();
@@ -269,7 +285,7 @@ public abstract class Night extends JComponent {
 
 					@Override
 					public void run() {
-						onNightPassed();
+						onJumpscare();
 					}
 				}, 5000);
 			}
@@ -277,7 +293,7 @@ public abstract class Night extends JComponent {
 			return;
 		}
 
-		// Draw background and doors
+		// Draw background and doors. Oh boy.
 		BufferedImage leftDoor;
 		if (leftDoorTransTicks > 0) {
 			leftDoorTransTicks--;
@@ -292,7 +308,7 @@ public abstract class Night extends JComponent {
 		} else {
 			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
 		}
-		int leftDoorWidth = MONITOR_X-LEFTDOOR_X;
+		int leftDoorWidth = (MONITOR_X-LEFTDOOR_X);
 		int rightDoorWidth = RIGHTDOOR_X-MONITOR_X;
 
 		switch (officeLoc) {
@@ -302,6 +318,7 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door
+				// TODO: Fix for non-1920 width
 				g.drawImage(leftDoor,
 						0, 0,
 						leftDoorWidth, getHeight(),
@@ -313,12 +330,12 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door
+				// TODO: Fix for non-1920 width
 				g.drawImage(leftDoor,
                         LEFTDOOR_X-xPosition, 0,
 						leftDoorWidth+LEFTDOOR_X-xPosition, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
 						this);
-				System.out.println(xPosition);
 			}
 			break;
 
@@ -329,10 +346,11 @@ public abstract class Night extends JComponent {
 
 				// Right door
 				g.drawImage(rightDoor,
-						0, 0,
+						getWidth()-rightDoorWidth, 0,
 						getWidth(), getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
+
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X + ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
@@ -340,17 +358,18 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door shows also at the start of this transition
+				// TODO: Fix for non-1920 width
 				g.drawImage(leftDoor,
 						LEFTDOOR_X-xPosition, 0,
 						leftDoorWidth - xPosition, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
 						this);
 
-				// Right door
-				//TODO: Fix this animation being just entirely wrong
+				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
+				// TODO: Fix for non-1920 width
 				g.drawImage(rightDoor,
-						RIGHTDOOR_X, 0,
-						getWidth()/2 + RIGHTDOOR_X, getHeight(),
+						getWidth()-xPosition+1000, 0,
+						getWidth()+rightDoorWidth-xPosition+1000, getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
 			}
@@ -376,6 +395,14 @@ public abstract class Night extends JComponent {
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
+				// TODO: Fix for non-1920 width
+				g.drawImage(rightDoor,
+						getWidth()-xPosition+1000, 0,
+						getWidth()+rightDoorWidth-xPosition+1000, getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						this);
 			}
 			break;
 		}
@@ -385,7 +412,8 @@ public abstract class Night extends JComponent {
 			offTransFrom = null;
 		}
 
-		if (camsUp || camsUpDownTransTicks > 0) {int windowWidth = getWidth();
+		if (camsUp || camsUpDownTransTicks > 0) {
+			int windowWidth = getWidth();
 			int windowHeight = getHeight();
 			int monitorWidth = camMonitorImg.getWidth(null);
 			int monitorHeight = camMonitorImg.getHeight(null);
@@ -538,15 +566,47 @@ public abstract class Night extends JComponent {
         if (victoryScreen == null) {
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.setColor(Color.WHITE);
-            g.drawString("Power: " + powerLevel + "%", 10, 20);
-            g.drawString(String.format("%02d:?? AM", time), getWidth() - 100, 20);
-			g.setColor(Color.GREEN);
-            g.drawString("Debug Tick: " + tick, 10, 40);
-            g.drawString("Left door: " + (leftDoorClosed?"Closed":"Open"), 10, 60);
-            g.drawString("Left door trans ticks: " + leftDoorTransTicks, 10, 80);
-            g.drawString("Right door: " + (rightDoorClosed?"Closed":"Open"), 10, 100);
-			g.drawString("Right door trans ticks: " + leftDoorTransTicks, 10, 120);
-			g.drawString("Jumpscare: " + (jumpscare==null?"null":jumpscare.getCurrentIndex()+""), 10, 140);
+			g.drawString(String.format("%02d:?? AM", time), getWidth() - 100, 20);
+
+			{
+				int powerUsage = 0;
+				String powerUsageStr = "█";
+				if (camsUp) {
+					powerUsage++;
+					powerUsageStr = powerUsageStr.concat("█");
+				}
+				if (leftDoorClosed) {
+					powerUsage++;
+					powerUsageStr = powerUsageStr.concat("█");
+				}
+				if (rightDoorClosed) {
+					powerUsage++;
+					powerUsageStr = powerUsageStr.concat("█");
+				}
+				switch (powerUsage) {
+					case 0:
+						g.setColor(Color.GREEN);
+						break;
+					case 1:
+						g.setColor(Color.ORANGE);
+						break;
+					case 2:
+						g.setColor(Color.RED);
+						break;
+					case 3:
+						g.setColor(Color.RED.darker());
+						break;
+				}
+				g.drawString(String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr), 10, 20);
+			}
+
+//			g.setColor(Color.GREEN);
+//          g.drawString("Debug Tick: " + tick, 10, 40);
+//          g.drawString("Left door: " + (leftDoorClosed?"Closed":"Open"), 10, 60);
+//          g.drawString("Left door trans ticks: " + leftDoorTransTicks, 10, 80);
+//          g.drawString("Right door: " + (rightDoorClosed?"Closed":"Open"), 10, 100);
+//			g.drawString("Right door trans ticks: " + leftDoorTransTicks, 10, 120);
+//			g.drawString("Jumpscare: " + (jumpscare==null?"null":jumpscare.getCurrentIndex()+""), 10, 140);
         } else {
             g.setFont(new Font("Arial", Font.BOLD, 200));
             if (victoryScreen) {
@@ -620,7 +680,6 @@ public abstract class Night extends JComponent {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp) {
 				camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 				camsUp = true;
-				usePower(1);
 			}
 		}
 	}
@@ -635,23 +694,17 @@ public abstract class Night extends JComponent {
 		}
 	}
 
-	private class LeftDoorAction extends AbstractAction {
+	private class DoorAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && leftDoorTransTicks==0 && officeLoc.equals(OfficeLocation.LEFTDOOR)) {
-				leftDoorClosed = !leftDoorClosed;
-				leftDoorTransTicks = DOOR_TRANSITION_TICKS;
-			}
-		}
-	}
-
-
-	private class RightDoorAction extends AbstractAction {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
-				rightDoorClosed = !rightDoorClosed;
-				rightDoorTransTicks = DOOR_TRANSITION_TICKS;
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp){
+				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
+					rightDoorClosed = !rightDoorClosed;
+					rightDoorTransTicks = DOOR_TRANSITION_TICKS;
+				} else if (leftDoorTransTicks==0 && officeLoc.equals(OfficeLocation.LEFTDOOR)) {
+					leftDoorClosed = !leftDoorClosed;
+					leftDoorTransTicks = DOOR_TRANSITION_TICKS;
+				}
 			}
 		}
 	}

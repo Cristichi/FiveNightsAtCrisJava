@@ -13,7 +13,7 @@ import java.util.Random;
 public class Bob extends Animatronic{
     private boolean kill = false;
     private Integer startKillTick = null;
-    private final double targetPatienceKillSec = 4.3;
+    private final double targetPatienceKillSec = 4.9;
 
     public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
         super("Bob", secInterval, aiDuringNight, 20, AssetsIO.loadImage("assets/imgs/anims/bob.png"), "assets/imgs/anims/bobAnim.gif", Color.RED);
@@ -43,7 +43,6 @@ public class Bob extends Animatronic{
                 if (Math.round(targetPatienceKillSec*fps) <= tick-startKillTick){
                     kill = true;
                 }
-
                 return !camsUp && kill;
             }
         } else {

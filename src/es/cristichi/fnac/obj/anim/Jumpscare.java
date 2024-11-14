@@ -14,12 +14,12 @@ import java.util.List;
 
 public class Jumpscare {
     private List<BufferedImage> frames;
-    private int repsMax;
+    private final int repsMax;
     private int currentReps;
     private int currentFrame;
 
     public Jumpscare(String filepath, int reps) throws AssetNotFound {
-        this.repsMax = reps;
+        this.repsMax = Math.max(1, reps);
         this.currentFrame = 0;
         loadFrames(filepath);
     }

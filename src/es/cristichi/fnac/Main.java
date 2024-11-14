@@ -6,6 +6,7 @@ import es.cristichi.fnac.gui.Night;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.Bob;
+import es.cristichi.fnac.obj.anim.Jumpscare;
 import es.cristichi.fnac.obj.anim.Maria;
 import es.cristichi.fnac.util.AssetsIO;
 
@@ -34,45 +35,45 @@ public class Main {
 		CardLayout cards = new CardLayout();
 		cardPanel = new JPanel(cards);
 		window.add(cardPanel);
-		
+
 		nightPanel = new JPanel(new BorderLayout());
 		cardPanel.add(nightPanel, "night");
 
 		List<String> mmItems = List.of("New Game", "Exit");
-		Menu mainMenu = new Menu("./assets/imgs/mainmenu_background.jpg", mmItems) {
+		Menu mainMenu = new Menu("assets/imgs/menu/background.jpg", "assets/imgs/menu/loading.jpg", mmItems) {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
 				switch (item) {
 				case "New Game":
 					HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-					//aiNightBob.put(0, 10);
+					aiNightBob.put(0, 10);
 					aiNightBob.put(5, 15);
 					HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-					//aiNightMaria.put(2, 10);
+					aiNightMaria.put(2, 10);
 					aiNightMaria.put(5, 15);
 
-					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImage("./assets/imgs/night/cams/map.png"));
+					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImage("assets/imgs/night/cams/map.png"));
 					Camera cam1 = new Camera.CameraBuilder()
 							.setName("cam1")
-							.setCamBackground("./assets/imgs/night/cams/cam1.jpg")
+							.setCamBackground("assets/imgs/night/cams/cam1.jpg")
 							.setLoc(113, 111, 378, 177)
 							.addAnimatronics(new Bob(5, aiNightBob))
 							.build();
 					Camera cam2 = new Camera.CameraBuilder()
 							.setName("cam2")
-							.setCamBackground("./assets/imgs/night/cams/cam2.jpg")
+							.setCamBackground("assets/imgs/night/cams/cam2.jpg")
 							.setLoc(491, 117, 379, 177)
 							.addAnimatronics(new Maria(5, aiNightMaria))
 							.build();
 					Camera cam3 = new Camera.CameraBuilder()
 							.setName("cam3")
-							.setCamBackground("./assets/imgs/night/cams/cam3.jpg")
+							.setCamBackground("assets/imgs/night/cams/cam3.jpg")
 							.setLoc(134, 287, 167, 571)
 							.connectToOfficeLeft()
 							.build();
 					Camera cam4 = new Camera.CameraBuilder()
 							.setName("cam4")
-							.setCamBackground("./assets/imgs/night/cams/cam4.jpg")
+							.setCamBackground("assets/imgs/night/cams/cam4.jpg")
 							.setLoc(720, 296, 141, 586)
 							.connectToOfficeRight()
 							.build();
@@ -83,7 +84,8 @@ public class Main {
 					night1Map.add(cam2);
 					night1Map.add(cam3);
 					night1Map.add(cam4);
-					Night night1 = new Night("Night 1", night1Map, new Random()) {
+					long seed = new Random().nextLong();
+					Night night1 = new Night("Night 1", night1Map, new Jumpscare("assets/imgs/night/powerOutage.gif", 1), new Random(seed), 0.45f) {
 						@Override
 						protected void onJumpscare() {
 							nightPanel.removeAll();
@@ -101,10 +103,13 @@ public class Main {
 					nightPanel.add(night1);
 					cards.show(cardPanel, "night");
 					window.setTitle(getTitleForWindow("Night 1"));
+					System.out.printf("Today's Night 1 is using the seed %d.%n", seed);
+					night1.startNight();
 					break;
 
 				case "Exit":
 					window.dispose();
+					System.exit(0);
 					break;
 
 				default:
