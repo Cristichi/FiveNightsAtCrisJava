@@ -10,14 +10,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class Menu extends JComponent {
 	private final List<String> menuItems;
-	private final List<JButton> menuButtons;
 	private final Image backgroundImage;
 	private final Image loadingImage;
 	private boolean loading;
@@ -30,7 +28,6 @@ public abstract class Menu extends JComponent {
 		loading = false;
 		loadCustomFont("assets/fonts/EraserRegular.ttf");
 		setLayout(new GroupLayout(this));
-		menuButtons = new ArrayList<>(menuItems.size());
 		initializeMenuItems();
 
 
@@ -73,7 +70,6 @@ public abstract class Menu extends JComponent {
 			horizontalGroup.addComponent(menuItemButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 					GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(menuItemButton);
-			menuButtons.add(menuItemButton);
 		}
 
 		verticalGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);

@@ -17,8 +17,8 @@ public class Camera {
     private Rectangle locOnScreen;
     private final LinkedList<Camera> connections;
     private final LinkedList<Animatronic> animatronicsHere;
-    private boolean isLeftDoorOfOffice;
-    private boolean isRightDoorOfOffice;
+    private final boolean isLeftDoorOfOffice;
+    private final boolean isRightDoorOfOffice;
 
     private Camera(String name, BufferedImage camBackground, Rectangle loc, LinkedList<Camera> connections, LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice) {
         this.name = name;
@@ -65,10 +65,6 @@ public class Camera {
 
     public void addMutualConnection(Camera cam) {
         cam.connections.add(this);
-        connections.add(cam);
-    }
-
-    public void addOnWayConnection(Camera cam) {
         connections.add(cam);
     }
 

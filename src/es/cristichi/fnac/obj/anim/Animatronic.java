@@ -17,7 +17,7 @@ public abstract class Animatronic {
     private int aiLevel;
     private final HashMap<Integer, Integer> iaDuringNight;
     private final BufferedImage img;
-    private double secInterval;
+    private final double secInterval;
     private final Color debugColor;
 
     public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif, Color debugColor) throws AssetNotFound {
@@ -33,22 +33,6 @@ public abstract class Animatronic {
 
     public String getName() {
         return name;
-    }
-
-    public BufferedImage getImg() {
-        return img;
-    }
-
-    public int getAiLevel() {
-        return aiLevel;
-    }
-
-    public void setAiLevel(int aiLevel) {
-        this.aiLevel = aiLevel;
-    }
-
-    public void setSecInterval(double secInterval) {
-        this.secInterval = secInterval;
     }
 
     public double getSecInterval() {

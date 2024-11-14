@@ -53,10 +53,6 @@ public class Jumpscare {
         this.currentReps = 0;
     }
 
-    public int getCurrentIndex() {
-        return currentFrame;
-    }
-
     public BufferedImage getCurrentFrame() {
         return frames.get(currentFrame);
     }
