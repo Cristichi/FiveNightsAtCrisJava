@@ -45,10 +45,10 @@ public class Main {
 				switch (item) {
 				case "New Game":
 					HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-					aiNightBob.put(0, 10);
+					//aiNightBob.put(0, 10);
 					aiNightBob.put(5, 15);
 					HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-					aiNightMaria.put(2, 10);
+					//aiNightMaria.put(2, 10);
 					aiNightMaria.put(5, 15);
 
 					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImage("./assets/imgs/night/cams/map.png"));

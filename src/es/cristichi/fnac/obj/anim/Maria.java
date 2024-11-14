@@ -20,6 +20,14 @@ public class Maria extends Animatronic{
     }
 
     @Override
+    public boolean onMovementOpportunityAttempt(Random rng) {
+        if (kill){
+            return false;
+        }
+        return super.onMovementOpportunityAttempt(rng);
+    }
+    
+    @Override
     public Camera onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<Camera> connections = currentLoc.getConnections();
         connections.removeIf(camera -> camera.getName().contains("3"));
