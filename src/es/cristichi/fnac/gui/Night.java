@@ -281,30 +281,45 @@ public abstract class Night extends JComponent {
 			return;
 		}
 
-		// Draw background
+		// Draw background and doors
+		BufferedImage leftDoor;
+		if (leftDoorTransTicks > 0) {
+			leftDoorTransTicks--;
+			leftDoor = leftDoorTransImg;
+		} else {
+			leftDoor = leftDoorClosed?leftDoorClosedImg:leftDoorOpenImg;
+		}
+
+		BufferedImage rightDoor;
+		if (rightDoorTransTicks > 0) {
+			rightDoorTransTicks--;
+			rightDoor = rightDoorTransImg;
+		} else {
+			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
+		}
+
 		switch (officeLoc) {
 		case LEFTDOOR:
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				BufferedImage leftDoor;
-				if (leftDoorTransTicks > 0) {
-					leftDoorTransTicks--;
-					leftDoor = leftDoorTransImg;
-				} else {
-					leftDoor = leftDoorClosed?leftDoorClosedImg:leftDoorOpenImg;
-				}
-				g.drawImage(leftDoor,
-						0, 0,
-						getWidth()/2, getHeight(),
-						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
-						this);
+				// Left door
+				//TODO: When the window size is smaller than 1080p it shows too much to the left
+				g.drawImage(leftDoor, 0, 0, getWidth()/2, getHeight(), 0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X - ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Left door
+				//TODO: When the window size is smaller than 1080p it shows too much to the left
+				g.drawImage(leftDoor,
+                        LEFTDOOR_X-xPosition, 0,
+						getWidth()/2 + LEFTDOOR_X-xPosition, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
+						this);
 			}
 			break;
 
@@ -313,40 +328,77 @@ public abstract class Night extends JComponent {
 				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				BufferedImage rightDoor;
-				if (rightDoorTransTicks > 0) {
-					rightDoorTransTicks--;
-					rightDoor = rightDoorTransImg;
-				} else {
-					rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
-				}
+				// Right door
 				g.drawImage(rightDoor,
 						getWidth() / 2, 0,
 						getWidth(), getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
-
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X + ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Left door shows also at the start of this transition
+				//TODO: When the window size is smaller than 1080p it shows too much to the left
+				g.drawImage(leftDoor, LEFTDOOR_X-xPosition, 0, getWidth()/2 + LEFTDOOR_X-xPosition, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+
+				// Right door
+				//TODO: Fix this animation being just entirely wrong
+				g.drawImage(rightDoor,
+						RIGHTDOOR_X, 0,
+						getWidth()/2 + RIGHTDOOR_X, getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						this);
 			}
 			break;
 		default:
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(MONITOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Left door
+				g.drawImage(leftDoor,
+						LEFTDOOR_X-MONITOR_X, 0,
+						getWidth()/2 + LEFTDOOR_X-MONITOR_X, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
+						this);
+
+				// Right door
+				//TODO: When the window size is smaller than 1080p it shows too much to the right
+				g.drawImage(rightDoor,
+						RIGHTDOOR_X, 0,
+						getWidth()/2 + RIGHTDOOR_X, getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						this);
 			} else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
 				int xPosition = LEFTDOOR_X + ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Left door
+				g.drawImage(leftDoor, LEFTDOOR_X-xPosition, 0, getWidth()/2 + LEFTDOOR_X-xPosition, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+
+				// Right door also shows at the end of this animation
+				//TODO: For whatever reason it becomes stuck to the screen in this transition
+				g.drawImage(rightDoor,
+						RIGHTDOOR_X, 0,
+						getWidth()/2 + RIGHTDOOR_X, getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						this);
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
 				int xPosition = RIGHTDOOR_X - ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Left door shows also at the end of this transition
+				g.drawImage(leftDoor, LEFTDOOR_X-xPosition, 0, getWidth()/2 + LEFTDOOR_X-xPosition, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 			}
 			break;
 		}
