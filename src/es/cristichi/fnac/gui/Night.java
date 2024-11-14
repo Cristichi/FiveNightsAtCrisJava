@@ -3,6 +3,8 @@ package es.cristichi.fnac.gui;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
+import es.cristichi.fnac.obj.anim.Animatronic;
+import es.cristichi.fnac.obj.anim.Jumpscare;
 import es.cristichi.fnac.util.AssetsIO;
 
 import javax.swing.*;
@@ -13,7 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public abstract class Night extends JComponent {
 	private static final int fps = 60;
@@ -21,102 +23,139 @@ public abstract class Night extends JComponent {
 	private final int hourInterval = fps * 60;
 	private final int powerDrainInterval = fps * 5;
 
+	private final Random rng;
+
+	@SuppressWarnings("unused")
 	private final String name;
 	private final BufferedImage backgroundImg;
-	private final BufferedImage camMonitorImg, camMonitorStaticImg;
-	private final BufferedImage camStaticImg;
 	private int powerLevel;
 	private int time;
 	private int tick;
-	private final Timer gameTicks;
+	private final Timer nightTicks;
 	private Boolean victoryScreen;
 
+	// Office transition
 	private static final int OFFICE_TRANSITION_TICKS = 30;
 	// Theses values are for the size used. Perhaps the background should be resized to be 1080p, but this works and it looks good without too much work on the processing part.
-	private static final int LEFTDOOR_X = 500;
+	private static final int LEFTDOOR_X = 200;
 	private static final int MONITOR_X = 1000;
-	private static final int RIGHTDOOR_X = 1500;
-	private static final int OFFICEWIDTH = 2000;
+	private static final int RIGHTDOOR_X = 1800;
+	private static final int OFFICEWIDTH = 2000; // Important not to change this xD it has to be 2k
 	private OfficeLocation officeLoc;
 	private int offTransTicks;
 	private OfficeLocation offTransFrom;
+	private final BufferedImage camMonitorImg, camMonitorStaticImg;
+	private final BufferedImage camStaticImg;
 
+	// Cam up/down
 	private static final int CAMS_TRANSITION_TICKS = 30;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
 
+	// Change cams
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
 	private int changeCamsTransTicks;
 	private final CameraMap map;
 
-	public Night(String name) throws IOException {
+	// Doors
+	private static final int DOOR_TRANSITION_TICKS = 10;
+	private boolean leftDoorClosed;
+	private int leftDoorTransTicks;
+	private final BufferedImage leftDoorClosedImg;
+	private final BufferedImage leftDoorTransImg;
+	private final BufferedImage leftDoorOpenImg;
+	private boolean rightDoorClosed;
+	private int rightDoorTransTicks;
+	private final BufferedImage rightDoorClosedImg;
+	private final BufferedImage rightDoorTransImg;
+	private final BufferedImage rightDoorOpenImg;
+
+	// Jumpscare
+	private Jumpscare jumpscare;
+
+	public Night(String name, CameraMap mapAndAnimatronics, Random rng) throws IOException {
+		this.rng = rng;
 		this.name = name;
+		this.map = mapAndAnimatronics;
+
 		powerLevel = 100;
 		time = 0; // Start at 12 AM = 00:00h
 		backgroundImg = AssetsIO.loadImage("./assets/imgs/night/background.jpg");
 		camMonitorImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitor.png");
 		camMonitorStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitorStatic.png");
 		camStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/camTrans.jpg");
-
-		map = new CameraMap("test1", AssetsIO.loadImage("./assets/imgs/night/cams/map.png"));
-		map.add(new Camera("cam1", AssetsIO.loadImage("./assets/imgs/night/cams/cam1.jpg"), new Rectangle(113,111,378,177)));
-		map.add(new Camera("cam2", AssetsIO.loadImage("./assets/imgs/night/cams/cam2.jpg"), new Rectangle(491,117,379,177)));
-		map.add(new Camera("cam3", AssetsIO.loadImage("./assets/imgs/night/cams/cam3.jpg"), new Rectangle(134,287,167,571)));
-		map.add(new Camera("cam4", AssetsIO.loadImage("./assets/imgs/night/cams/cam4.jpg"), new Rectangle(720,296,141,586)));
+		leftDoorOpenImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorOpen.jpg");
+		leftDoorTransImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorTrans.jpg");
+		leftDoorClosedImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorClosed.jpg");
+		rightDoorOpenImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorOpen.jpg");
+		rightDoorTransImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorTrans.jpg");
+		rightDoorClosedImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorClosed.jpg");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
+		leftDoorClosed = false;
+		rightDoorClosed = false;
 		victoryScreen = null;
+		jumpscare = null;
 
-		gameTicks = new Timer("Night [" + name + "]");
-		gameTicks.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				tick++;
-				if (tick % hourInterval == 0) {
-					advanceTime();
-				}
-				if (tick % powerDrainInterval == 0) {
-					drainPower();
-				}
-				repaint();
-			}
-		}, 100, 1000 / fps);
 		officeLoc = OfficeLocation.MONITOR;
 
-		LeftAction left = new LeftAction();
+		{
+			AbstractAction action = new LeftAction();
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "leftAction");
-		getActionMap().put("leftAction", left);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "leftAction");
+			getActionMap().put("leftAction", action);
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("A"), "leftAction");
-		getActionMap().put("leftAction", left);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("A"), "leftAction");
+			getActionMap().put("leftAction", action);
+		}
 
-		RightAction right = new RightAction();
+		{
+			AbstractAction action = new RightAction();
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "rightAction");
-		getActionMap().put("rightAction", right);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "rightAction");
+			getActionMap().put("rightAction", action);
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("D"), "rightAction");
-		getActionMap().put("rightAction", right);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("D"), "rightAction");
+			getActionMap().put("rightAction", action);
+		}
 
-		CamsUpAction camU = new CamsUpAction();
+		{
+			AbstractAction action = new CamsUpAction();
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "camsUpAction");
-		getActionMap().put("camsUpAction", camU);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "camsUpAction");
+			getActionMap().put("camsUpAction", action);
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"), "camsUpAction");
-		getActionMap().put("camsUpAction", camU);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"), "camsUpAction");
+			getActionMap().put("camsUpAction", action);
 
-		CamsDownAction camD = new CamsDownAction();
+		}
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "camsDownAction");
-		getActionMap().put("camsDownAction", camD);
+		{
+			AbstractAction action = new CamsDownAction();
 
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsDownAction");
-		getActionMap().put("camsDownAction", camD);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "camsDownAction");
+			getActionMap().put("camsDownAction", action);
+
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsDownAction");
+			getActionMap().put("camsDownAction", action);
+		}
+
+		{
+			AbstractAction action = new LeftDoorAction();
+
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "leftDoorAction");
+			getActionMap().put("leftDoorAction", action);
+		}
+
+		{
+			AbstractAction action = new RightDoorAction();
+
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "rightDoorAction");
+			getActionMap().put("rightDoorAction", action);
+		}
 
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -131,22 +170,66 @@ public abstract class Night extends JComponent {
                 }
 			}
 		});
+
+		nightTicks = new Timer("Night [" + name + "]");
+		startNight();
 	}
 
-	public String getName() {
-		return name;
+	public void startNight(){
+		nightTicks.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				tick++;
+				if (tick % hourInterval == 0) {
+					advanceTime();
+				}
+				if (tick % powerDrainInterval == 0) {
+					drainPower();
+				}
+
+				if (jumpscare == null){
+					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
+					for(Camera cam : map){
+						for (Animatronic anim : cam.getAnimatronicsHere()){
+							anim.updateIADuringNight(time);
+							if (tick % (int) Math.round(anim.getSecInterval() * fps) == 0){
+								System.out.printf("At tick %d, %s tried to move with AI %d.", tick, anim.getName(), anim.getAiLevel());
+								if (anim.onMovementOpportunityAttempt(rng)){
+									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, anim.onMovementOppSuccess(map, cam, rng)));
+									System.out.println(" And succeeded.");
+								} else {
+									System.out.println(" But did not succeed.");
+								}
+							}
+							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
+							if (anim.onJumpscareAttempt(tick, openDoor, camsUp, cam, rng, fps)){
+								jumpscare = anim.getJumpscare();
+								// In case I want phantom jumpscares in the future.
+								jumpscare.reset();
+							}
+						}
+					}
+					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
+						move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
+					}
+				}
+
+				repaint();
+			}
+		}, 100, 1000 / fps);
 	}
 
 	private void advanceTime() {
 		if (++time == 6) {
-			gameTicks.cancel();
+			nightTicks.cancel();
+			jumpscare = null;
 			victoryScreen = true;
 			Timer end = new Timer("End Thread");
 			end.schedule(new TimerTask() {
 
 				@Override
 				public void run() {
-					onNightComplete();
+					onNightPassed();
 				}
 			}, 5000);
 		}
@@ -155,9 +238,13 @@ public abstract class Night extends JComponent {
 	private void drainPower() {
 		if (powerLevel > 0) {
 			powerLevel--;
-		} else {
-			// powerDrainTimer.cancel();
-			gameTicks.cancel();
+		}
+		if (powerLevel > 0 && camsUp) {
+			powerLevel--;
+		}
+
+		if (powerLevel == 0){
+			nightTicks.cancel();
 			onJumpscare();
 		}
 	}
@@ -169,11 +256,30 @@ public abstract class Night extends JComponent {
 
 	protected abstract void onJumpscare();
 
-	protected abstract void onNightComplete();
+	protected abstract void onNightPassed();
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+        if (jumpscare != null && camsUpDownTransTicks == 0) {
+			g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
+			jumpscare.update();
+			if (jumpscare.isFinished()) {
+				nightTicks.cancel();
+				victoryScreen = true;
+				Timer end = new Timer("End Thread");
+				end.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						onNightPassed();
+					}
+				}, 5000);
+			}
+
+			return;
+		}
 
 		// Draw background
 		switch (officeLoc) {
@@ -181,6 +287,19 @@ public abstract class Night extends JComponent {
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				BufferedImage leftDoor;
+				if (leftDoorTransTicks > 0) {
+					leftDoorTransTicks--;
+					leftDoor = leftDoorTransImg;
+				} else {
+					leftDoor = leftDoorClosed?leftDoorClosedImg:leftDoorOpenImg;
+				}
+				g.drawImage(leftDoor,
+						0, 0,
+						getWidth()/2, getHeight(),
+						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
+						this);
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X - ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
@@ -193,6 +312,20 @@ public abstract class Night extends JComponent {
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				BufferedImage rightDoor;
+				if (rightDoorTransTicks > 0) {
+					rightDoorTransTicks--;
+					rightDoor = rightDoorTransImg;
+				} else {
+					rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
+				}
+				g.drawImage(rightDoor,
+						getWidth() / 2, 0,
+						getWidth(), getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						this);
+
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X + ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
@@ -227,8 +360,8 @@ public abstract class Night extends JComponent {
 			int windowHeight = getHeight();
 			int monitorWidth = camMonitorImg.getWidth(null);
 			int monitorHeight = camMonitorImg.getHeight(null);
-			int camImgWidth = map.getSelectedCam().getCamImg().getWidth();
-			int camImgHeight = map.getSelectedCam().getCamImg().getHeight();
+			int camImgWidth = map.getSelectedCam().getCamBackground().getWidth();
+			int camImgHeight = map.getSelectedCam().getCamBackground().getHeight();
 
 			// Monitor's inner area for the camera view, from original image
 			int innerX = 176;
@@ -268,6 +401,7 @@ public abstract class Night extends JComponent {
 			int camDrawY = monitorYOffset + scaledInnerY + (scaledInnerHeight - camDrawHeight) / 2;
 
 			if (camsUp) {
+				// Transition cams up
 				if (camsUpDownTransTicks > 0) {
 					double transitionScale = (double) (CAMS_TRANSITION_TICKS - camsUpDownTransTicks) / CAMS_TRANSITION_TICKS;
 					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
@@ -279,6 +413,8 @@ public abstract class Night extends JComponent {
 							transitionYOffset + scaledMonitorHeight, 0, 0, monitorWidth, monitorHeight, this);
 
 					camsUpDownTransTicks--;
+
+				// Watching cams
 				} else {
 					// Draw static in transition of camera change or current camera
 					if (changeCamsTransTicks>0){
@@ -286,7 +422,7 @@ public abstract class Night extends JComponent {
 								0, 0, camImgWidth, camImgHeight, this);
 						changeCamsTransTicks--;
 					} else {
-						g.drawImage(map.getSelectedCam().getCamImg(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+						g.drawImage(map.getSelectedCam().getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 								0, 0, camImgWidth, camImgHeight, this);
 					}
 
@@ -332,6 +468,16 @@ public abstract class Night extends JComponent {
 							g.setColor(Color.GRAY);
 						}
 						g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
+
+						int debugRecDim = Math.min(scaledRecWidth, scaledRecHeight)/3;
+						int debugRecX = scaledRecX;
+						int debugRecY = scaledRecY;
+						for (Animatronic anim : cam.getAnimatronicsHere()){
+							g.setColor(anim.getDebugColor());
+							g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
+							debugRecX+=debugRecDim;
+							debugRecY+=debugRecDim;
+						}
                     }
 
 					// Reset transparency
@@ -343,6 +489,7 @@ public abstract class Night extends JComponent {
 					g.drawString(map.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
 				}
 			} else {
+				// Transition cams down
 				if (camsUpDownTransTicks > 0) {
 					double transitionScale = (double) camsUpDownTransTicks / CAMS_TRANSITION_TICKS;
 					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
@@ -366,6 +513,11 @@ public abstract class Night extends JComponent {
             g.drawString(String.format("%02d:?? AM", time), getWidth() - 100, 20);
 			g.setColor(Color.GREEN);
             g.drawString("Debug Tick: " + tick, 10, 40);
+            g.drawString("Left door: " + (leftDoorClosed?"Closed":"Open"), 10, 60);
+            g.drawString("Left door trans ticks: " + leftDoorTransTicks, 10, 80);
+            g.drawString("Right door: " + (rightDoorClosed?"Closed":"Open"), 10, 100);
+			g.drawString("Right door trans ticks: " + leftDoorTransTicks, 10, 120);
+			g.drawString("Jumpscare: " + (jumpscare==null?"null":jumpscare.getCurrentIndex()+""), 10, 140);
         } else {
             g.setFont(new Font("Arial", Font.BOLD, 200));
             if (victoryScreen) {
@@ -450,6 +602,27 @@ public abstract class Night extends JComponent {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && camsUp) {
 				camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 				camsUp = false;
+			}
+		}
+	}
+
+	private class LeftDoorAction extends AbstractAction {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && leftDoorTransTicks==0 && officeLoc.equals(OfficeLocation.LEFTDOOR)) {
+				leftDoorClosed = !leftDoorClosed;
+				leftDoorTransTicks = DOOR_TRANSITION_TICKS;
+			}
+		}
+	}
+
+
+	private class RightDoorAction extends AbstractAction {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
+				rightDoorClosed = !rightDoorClosed;
+				rightDoorTransTicks = DOOR_TRANSITION_TICKS;
 			}
 		}
 	}

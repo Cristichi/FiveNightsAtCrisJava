@@ -1,16 +1,20 @@
 package es.cristichi.fnac;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import es.cristichi.fnac.exception.MenuItemNotFound;
 import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.Night;
+import es.cristichi.fnac.obj.Camera;
+import es.cristichi.fnac.obj.CameraMap;
+import es.cristichi.fnac.obj.anim.Bob;
+import es.cristichi.fnac.obj.anim.Maria;
+import es.cristichi.fnac.util.AssetsIO;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class Main {
 	public static final String GAME_TITLE = "Five Nights at Crist's";
@@ -40,7 +44,46 @@ public class Main {
 			protected void onMenuItemClick(String item) throws IOException {
 				switch (item) {
 				case "New Game":
-					Night night1 = new Night("Night 1") {
+					HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
+					aiNightBob.put(0, 10);
+					aiNightBob.put(5, 15);
+					HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
+					aiNightMaria.put(2, 10);
+					aiNightMaria.put(5, 15);
+
+					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImage("./assets/imgs/night/cams/map.png"));
+					Camera cam1 = new Camera.CameraBuilder()
+							.setName("cam1")
+							.setCamBackground("./assets/imgs/night/cams/cam1.jpg")
+							.setLoc(113, 111, 378, 177)
+							.addAnimatronics(new Bob(5, aiNightBob))
+							.build();
+					Camera cam2 = new Camera.CameraBuilder()
+							.setName("cam2")
+							.setCamBackground("./assets/imgs/night/cams/cam2.jpg")
+							.setLoc(491, 117, 379, 177)
+							.addAnimatronics(new Maria(5, aiNightMaria))
+							.build();
+					Camera cam3 = new Camera.CameraBuilder()
+							.setName("cam3")
+							.setCamBackground("./assets/imgs/night/cams/cam3.jpg")
+							.setLoc(134, 287, 167, 571)
+							.connectToOfficeLeft()
+							.build();
+					Camera cam4 = new Camera.CameraBuilder()
+							.setName("cam4")
+							.setCamBackground("./assets/imgs/night/cams/cam4.jpg")
+							.setLoc(720, 296, 141, 586)
+							.connectToOfficeRight()
+							.build();
+					cam1.addMutualConnection(cam2);
+					cam1.addMutualConnection(cam3);
+					cam2.addMutualConnection(cam4);
+					night1Map.add(cam1);
+					night1Map.add(cam2);
+					night1Map.add(cam3);
+					night1Map.add(cam4);
+					Night night1 = new Night("Night 1", night1Map, new Random()) {
 						@Override
 						protected void onJumpscare() {
 							nightPanel.removeAll();
@@ -49,7 +92,7 @@ public class Main {
 						}
 
 						@Override
-						protected void onNightComplete() {
+						protected void onNightPassed() {
 							nightPanel.removeAll();
 							System.out.println("Wiii");
 							cards.show(cardPanel, "menu");
