@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
@@ -61,6 +62,11 @@ public abstract class Night extends JComponent {
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
 	private int changeCamsTransTicks;
 	private final CameraMap map;
+
+	// Animatronics moving around cams makes static
+	private static final int CAMS_STATIC_MOVE_TICKS = 20;
+	private static int camsHidingMovementTicks;
+	private static List<String> camsHidingMovement;
 
 	// Doors
 	private static final int DOOR_TRANSITION_TICKS = 10;
@@ -118,6 +124,7 @@ public abstract class Night extends JComponent {
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
+		camsHidingMovement = new ArrayList<>();
 		leftDoorClosed = false;
 		rightDoorClosed = false;
 		victoryScreen = null;
@@ -129,8 +136,6 @@ public abstract class Night extends JComponent {
 			AbstractAction action = new LeftAction();
 
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "leftAction");
-			getActionMap().put("leftAction", action);
-
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("A"), "leftAction");
 			getActionMap().put("leftAction", action);
 		}
@@ -139,31 +144,19 @@ public abstract class Night extends JComponent {
 			AbstractAction action = new RightAction();
 
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "rightAction");
-			getActionMap().put("rightAction", action);
-
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("D"), "rightAction");
 			getActionMap().put("rightAction", action);
 		}
 
 		{
-			AbstractAction action = new CamsUpAction();
+			AbstractAction action = new CamsAction();
 
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "camsUpAction");
-			getActionMap().put("camsUpAction", action);
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "camsAction");
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"), "camsAction");
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "camsAction");
+			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsAction");
+			getActionMap().put("camsAction", action);
 
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"), "camsUpAction");
-			getActionMap().put("camsUpAction", action);
-
-		}
-
-		{
-			AbstractAction action = new CamsDownAction();
-
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "camsDownAction");
-			getActionMap().put("camsDownAction", action);
-
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsDownAction");
-			getActionMap().put("camsDownAction", action);
 		}
 
 		{
@@ -196,6 +189,12 @@ public abstract class Night extends JComponent {
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
+				// Time never stops. Well sometimes it does, when dying for instance.
+				tick++;
+				if (tick % HOUR_INTERVAL == 0) {
+					advanceTime();
+				}
+
 				// Power drain
 				if (powerLeft > 0) {
 					powerLeft-=powerPerTickPerResource;
@@ -235,17 +234,14 @@ public abstract class Night extends JComponent {
 					}
 					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
 						move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
+						camsHidingMovement.add(move.getValue().getKey().getName());
+						camsHidingMovement.add(move.getValue().getValue().getName());
+						camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
 					}
 				}
 
 				// We repaint da thing
 				repaint();
-
-				// Time never stops. Well sometimes it does, when dying for instance.
-				tick++;
-				if (tick % HOUR_INTERVAL == 0) {
-					advanceTime();
-				}
 			}
 		}, 100, 1000 / FPS);
 	}
@@ -479,8 +475,15 @@ public abstract class Night extends JComponent {
 								0, 0, camImgWidth, camImgHeight, this);
 						changeCamsTransTicks--;
 					} else {
-						g.drawImage(map.getSelectedCam().getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
-								0, 0, camImgWidth, camImgHeight, this);
+						Camera current = map.getSelectedCam();
+						// On current camera, if an Animatronic moved from or to this camera recently, we show static as well
+						if (camsHidingMovementTicks-->0 && camsHidingMovement.contains(current.getName())){
+							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+									0, 0, camImgWidth, camImgHeight, this);
+						} else {
+							g.drawImage(current.getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+									0, 0, camImgWidth, camImgHeight, this);
+						}
 					}
 
 					// Draw monitor frame
@@ -674,22 +677,17 @@ public abstract class Night extends JComponent {
 		}
 	}
 
-	private class CamsUpAction extends AbstractAction {
+	private class CamsAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp) {
-				camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
-				camsUp = true;
-			}
-		}
-	}
-
-	private class CamsDownAction extends AbstractAction {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && camsUp) {
-				camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
-				camsUp = false;
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0){
+				if (camsUp) {
+					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
+					camsUp = false;
+				} else {
+					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
+					camsUp = true;
+				}
 			}
 		}
 	}
