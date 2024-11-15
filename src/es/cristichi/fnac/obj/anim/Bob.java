@@ -5,7 +5,6 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.util.AssetsIO;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -16,7 +15,7 @@ public class Bob extends Animatronic{
     private final double targetPatienceKillSec = 4.9;
 
     public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
-        super("Bob", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif", Color.RED);
+        super("Bob", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif");
     }
 
     @Override

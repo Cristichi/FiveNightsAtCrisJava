@@ -5,7 +5,6 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.util.AssetsIO;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -16,7 +15,7 @@ public class Maria extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
-        super("María", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif", Color.YELLOW);
+        super("María", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif");
     }
 
     @Override

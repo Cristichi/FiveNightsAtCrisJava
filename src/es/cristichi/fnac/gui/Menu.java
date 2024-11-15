@@ -18,7 +18,7 @@ public abstract class Menu extends JComponent {
 	private final Image backgroundImage;
 	private final Image loadingImage;
 	private boolean loading;
-	private Font btnFont;
+	private final Font btnFont;
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;

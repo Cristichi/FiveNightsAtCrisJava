@@ -4,7 +4,6 @@ import es.cristichi.fnac.exception.AssetNotFound;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Objects;
@@ -18,16 +17,14 @@ public abstract class Animatronic {
     private final HashMap<Integer, Integer> iaDuringNight;
     private final BufferedImage camImg;
     private final double secInterval;
-    private final Color debugColor;
 
-    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif, Color debugColor) throws AssetNotFound {
+    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif) throws AssetNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.camImg = img;
-        this.debugColor = debugColor;
         jumpscare = new Jumpscare(jumpscareGif, 20);
     }
 
@@ -37,10 +34,6 @@ public abstract class Animatronic {
 
     public double getSecInterval() {
         return secInterval;
-    }
-
-    public Color getDebugColor() {
-        return debugColor;
     }
 
     public void updateIADuringNight(int time){
