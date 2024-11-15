@@ -57,6 +57,7 @@ public abstract class Night extends JComponent {
 	private static final int CAMS_TRANSITION_TICKS = 30;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
+	private final HashMap<Integer, Rectangle> camsLocOnScreen;
 
 	// Change cams
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
@@ -65,8 +66,9 @@ public abstract class Night extends JComponent {
 
 	// Animatronics moving around cams makes static
 	private static final int CAMS_STATIC_MOVE_TICKS = 20;
-	private static int camsHidingMovementTicks;
-	private static List<String> camsHidingMovement;
+	private int camsHidingMovementTicks;
+	private final List<String> camsHidingMovement;
+	private final HashMap<String, Point> animPosInCam;
 
 	// Doors
 	private static final int DOOR_TRANSITION_TICKS = 10;
@@ -109,22 +111,24 @@ public abstract class Night extends JComponent {
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
 
 		time = 0; // Start at 12 AM = 00:00h
-		backgroundImg = AssetsIO.loadImage("./assets/imgs/night/background.jpg");
-		camMonitorImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitor.png");
-		camMonitorStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/monitorStatic.png");
-		camStaticImg = AssetsIO.loadImage("./assets/imgs/night/cams/camTrans.jpg");
-		leftDoorOpenImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorOpen.png");
-		leftDoorTransImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorTrans.png");
-		leftDoorClosedImg = AssetsIO.loadImage("./assets/imgs/night/leftDoorClosed.png");
-		rightDoorOpenImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorOpen.png");
-		rightDoorTransImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorTrans.png");
-		rightDoorClosedImg = AssetsIO.loadImage("./assets/imgs/night/rightDoorClosed.png");
+		backgroundImg = AssetsIO.loadImageResource("imgs/night/background.jpg");
+		camMonitorImg = AssetsIO.loadImageResource("imgs/night/cams/monitor.png");
+		camMonitorStaticImg = AssetsIO.loadImageResource("imgs/night/cams/monitorStatic.png");
+		camStaticImg = AssetsIO.loadImageResource("imgs/night/cams/camTrans.jpg");
+		leftDoorOpenImg = AssetsIO.loadImageResource("imgs/night/leftDoorOpen.png");
+		leftDoorTransImg = AssetsIO.loadImageResource("imgs/night/leftDoorTrans.png");
+		leftDoorClosedImg = AssetsIO.loadImageResource("imgs/night/leftDoorClosed.png");
+		rightDoorOpenImg = AssetsIO.loadImageResource("imgs/night/rightDoorOpen.png");
+		rightDoorTransImg = AssetsIO.loadImageResource("imgs/night/rightDoorTrans.png");
+		rightDoorClosedImg = AssetsIO.loadImageResource("imgs/night/rightDoorClosed.png");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
+		camsLocOnScreen = new HashMap<>(map.size());
 		camsHidingMovement = new ArrayList<>();
+		animPosInCam = new HashMap<>(5);
 		leftDoorClosed = false;
 		rightDoorClosed = false;
 		victoryScreen = null;
@@ -172,11 +176,13 @@ public abstract class Night extends JComponent {
 			@Override
 			public void mouseReleased(MouseEvent e) {
                 for (int i = 0; i < map.size(); i++) {
-                    Camera camera = map.get(i);
-                    if (camera.getLocOnScreen().contains(e.getLocationOnScreen())) {
-						map.setSelected(i);
-						changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
-						break;
+                    if (camsLocOnScreen.containsKey(i)) {
+						Rectangle camLocScreen = camsLocOnScreen.get(i);
+						if (camLocScreen.contains(e.getPoint())){
+							map.setSelected(i);
+							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+							break;
+						}
 					}
                 }
 			}
@@ -237,6 +243,7 @@ public abstract class Night extends JComponent {
 						camsHidingMovement.add(move.getValue().getKey().getName());
 						camsHidingMovement.add(move.getValue().getValue().getName());
 						camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
+						animPosInCam.remove(move.getKey().getName());
 					}
 				}
 
@@ -481,8 +488,39 @@ public abstract class Night extends JComponent {
 							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
 						} else {
+							// Here we draw the camera and the animatronics in there
 							g.drawImage(current.getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
+							for (Animatronic an : current.getAnimatronicsHere()){
+								BufferedImage img = an.getCamImg();
+
+								// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
+								double scaleX = camDrawWidth / (double) img.getWidth();
+								double scaleY = camDrawHeight / (double) img.getHeight();
+								double scale = Math.min(scaleX, scaleY)*0.3; // Ensure the image fits within both dimensions
+
+								// Calculate the scaled width and height
+								int scaledWidth = (int) (img.getWidth() * scale);
+								int scaledHeight = (int) (img.getHeight() * scale);
+
+								// Calculate a random position within the bounds, ensuring it doesn't overflow
+								int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
+								int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
+								Point p = new Point(anRandomX, anRandomY);
+								p = animPosInCam.getOrDefault(an.getName(), p);
+								if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth || p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
+									p = new Point(anRandomX, anRandomY);
+								}
+								animPosInCam.put(an.getName(), p);
+
+								// Draw the scaled image
+								g.drawImage(img,
+										p.x, p.y,
+										p.x + scaledWidth, p.y + scaledHeight,
+										0, 0, img.getWidth(), img.getHeight(),
+										this
+								);
+							}
 						}
 					}
 
@@ -519,7 +557,6 @@ public abstract class Night extends JComponent {
 						int scaledRecY = mapY + (int) (rec.y * scaleRatioY);
 						int scaledRecWidth = (int) (rec.width * scaleRatioX);
 						int scaledRecHeight = (int) (rec.height * scaleRatioY);
-						cam.updateLocOnScreen(new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
 
 						if (i == map.getSelected()){
 							// Draw the scaled rectangle on the map
@@ -528,16 +565,17 @@ public abstract class Night extends JComponent {
 							g.setColor(Color.GRAY);
 						}
 						g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
+						camsLocOnScreen.put(i, new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
 
-						int debugRecDim = Math.min(scaledRecWidth, scaledRecHeight)/3;
-						int debugRecX = scaledRecX;
-						int debugRecY = scaledRecY;
-						for (Animatronic anim : cam.getAnimatronicsHere()){
-							g.setColor(anim.getDebugColor());
-							g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
-							debugRecX+=debugRecDim;
-							debugRecY+=debugRecDim;
-						}
+//						int debugRecDim = Math.min(scaledRecWidth, scaledRecHeight)/3;
+//						int debugRecX = scaledRecX;
+//						int debugRecY = scaledRecY;
+//						for (Animatronic anim : cam.getAnimatronicsHere()){
+//							g.setColor(anim.getDebugColor());
+//							g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
+//							debugRecX+=debugRecDim;
+//							debugRecY+=debugRecDim;
+//						}
                     }
 
 					// Reset transparency

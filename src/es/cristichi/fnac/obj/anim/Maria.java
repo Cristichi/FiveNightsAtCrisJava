@@ -16,7 +16,7 @@ public class Maria extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
-        super("María", secInterval, aiDuringNight, 20, AssetsIO.loadImage("assets/imgs/anims/maria.png"), "assets/imgs/anims/mariaAnim.gif", Color.YELLOW);
+        super("María", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif", Color.YELLOW);
     }
 
     @Override

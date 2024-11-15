@@ -16,7 +16,7 @@ public abstract class Animatronic {
     private final int maxIaLevel;
     private int aiLevel;
     private final HashMap<Integer, Integer> iaDuringNight;
-    private final BufferedImage img;
+    private final BufferedImage camImg;
     private final double secInterval;
     private final Color debugColor;
 
@@ -26,7 +26,7 @@ public abstract class Animatronic {
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
-        this.img = img;
+        this.camImg = img;
         this.debugColor = debugColor;
         jumpscare = new Jumpscare(jumpscareGif, 20);
     }
@@ -83,16 +83,20 @@ public abstract class Animatronic {
         return jumpscare;
     }
 
+    public BufferedImage getCamImg() {
+        return camImg;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animatronic that = (Animatronic) o;
-        return aiLevel == that.aiLevel && Objects.equals(name, that.name) && Objects.equals(img, that.img);
+        return aiLevel == that.aiLevel && Objects.equals(name, that.name) && Objects.equals(camImg, that.camImg);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, aiLevel, img);
+        return Objects.hash(name, aiLevel, camImg);
     }
 }

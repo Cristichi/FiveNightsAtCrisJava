@@ -14,7 +14,6 @@ public class Camera {
     private final String name;
     private final BufferedImage camBackground;
     private final Rectangle loc;
-    private Rectangle locOnScreen;
     private final LinkedList<Camera> connections;
     private final LinkedList<Animatronic> animatronicsHere;
     private final boolean isLeftDoorOfOffice;
@@ -24,7 +23,6 @@ public class Camera {
         this.name = name;
         this.camBackground = camBackground;
         this.loc = loc;
-        this.locOnScreen = new Rectangle(loc);
         this.connections = connections;
         this.animatronicsHere = animatronicsHere;
         this.isLeftDoorOfOffice = isLeftDoorOfOffice;
@@ -41,14 +39,6 @@ public class Camera {
 
     public Rectangle getMapLoc() {
         return loc;
-    }
-
-    public void updateLocOnScreen(Rectangle locOnScreen) {
-        this.locOnScreen = locOnScreen;
-    }
-
-    public Rectangle getLocOnScreen() {
-        return locOnScreen;
     }
 
     public LinkedList<Camera> getConnections() {
@@ -101,7 +91,7 @@ public class Camera {
         }
 
         public CameraBuilder setCamBackground(String camBackground) throws AssetNotFound {
-            this.camBackground = AssetsIO.loadImage(camBackground);
+            this.camBackground = AssetsIO.loadImageResource(camBackground);
             return this;
         }
 

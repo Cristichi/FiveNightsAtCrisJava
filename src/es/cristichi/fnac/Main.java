@@ -40,7 +40,7 @@ public class Main {
 		cardPanel.add(nightPanel, "night");
 
 		List<String> mmItems = List.of("New Game", "Exit");
-		Menu mainMenu = new Menu("assets/imgs/menu/background.jpg", "assets/imgs/menu/loading.jpg", mmItems) {
+		Menu mainMenu = new Menu("imgs/menu/background.jpg", "imgs/menu/loading.jpg", mmItems) {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
 				switch (item) {
@@ -52,28 +52,28 @@ public class Main {
 					aiNightMaria.put(2, 10);
 					aiNightMaria.put(5, 15);
 
-					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImage("assets/imgs/night/cams/map.png"));
+					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImageResource("imgs/night/cams/map.png"));
 					Camera cam1 = new Camera.CameraBuilder()
 							.setName("cam1")
-							.setCamBackground("assets/imgs/night/cams/cam1.jpg")
+							.setCamBackground("imgs/night/cams/cam1.jpg")
 							.setLoc(113, 111, 378, 177)
 							.addAnimatronics(new Bob(5, aiNightBob))
 							.build();
 					Camera cam2 = new Camera.CameraBuilder()
 							.setName("cam2")
-							.setCamBackground("assets/imgs/night/cams/cam2.jpg")
+							.setCamBackground("imgs/night/cams/cam2.jpg")
 							.setLoc(491, 117, 379, 177)
 							.addAnimatronics(new Maria(5, aiNightMaria))
 							.build();
 					Camera cam3 = new Camera.CameraBuilder()
 							.setName("cam3")
-							.setCamBackground("assets/imgs/night/cams/cam3.jpg")
+							.setCamBackground("imgs/night/cams/cam3.jpg")
 							.setLoc(134, 287, 167, 571)
 							.connectToOfficeLeft()
 							.build();
 					Camera cam4 = new Camera.CameraBuilder()
 							.setName("cam4")
-							.setCamBackground("assets/imgs/night/cams/cam4.jpg")
+							.setCamBackground("imgs/night/cams/cam4.jpg")
 							.setLoc(720, 296, 141, 586)
 							.connectToOfficeRight()
 							.build();
@@ -85,7 +85,7 @@ public class Main {
 					night1Map.add(cam3);
 					night1Map.add(cam4);
 					long seed = new Random().nextLong();
-					Night night1 = new Night("Night 1", night1Map, new Jumpscare("assets/imgs/night/powerOutage.gif", 1), new Random(seed), 0.45f) {
+					Night night1 = new Night("Night 1", night1Map, new Jumpscare("imgs/night/powerOutage.gif", 1), new Random(seed), 0.45f) {
 						@Override
 						protected void onJumpscare() {
 							nightPanel.removeAll();

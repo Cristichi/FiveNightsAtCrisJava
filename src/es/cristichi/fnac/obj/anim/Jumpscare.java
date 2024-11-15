@@ -1,12 +1,12 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.AssetNotFound;
+import es.cristichi.fnac.util.AssetsIO;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,14 +24,14 @@ public class Jumpscare {
         loadFrames(filepath);
     }
 
-    private void loadFrames(String filePath) throws AssetNotFound {
-        try (ImageInputStream stream = ImageIO.createImageInputStream(new FileInputStream(filePath))) {
+    private void loadFrames(String resourcePath) throws AssetNotFound {
+        try (ImageInputStream stream = ImageIO.createImageInputStream(AssetsIO.loadInputStream(resourcePath))) {
             if (stream == null){
-                throw new AssetNotFound("No suitable reader found for "+filePath+".");
+                throw new AssetNotFound("No suitable reader found for "+resourcePath+".");
             }
             Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
             if (!readers.hasNext()) {
-                throw new IOException("No reader for: " + filePath);
+                throw new IOException("No reader for: " + resourcePath);
             }
 
             ImageReader reader = readers.next();
@@ -43,8 +43,8 @@ public class Jumpscare {
                 frames.add(reader.read(i)); // Read each frame as a BufferedImage
             }
             reader.dispose();
-        } catch (IOException e) {
-            throw new AssetNotFound("Error when reading \""+filePath+"\".", e);
+        } catch (IOException | NullPointerException e) {
+            throw new AssetNotFound("Error when reading \""+resourcePath+"\".", e);
         }
     }
 

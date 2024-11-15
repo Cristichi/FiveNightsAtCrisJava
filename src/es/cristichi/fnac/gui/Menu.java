@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -23,16 +22,16 @@ public abstract class Menu extends JComponent {
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
-		backgroundImage = AssetsIO.loadImage(backgroundImg);
-		loadingImage = AssetsIO.loadImage(loadingImg);
+		backgroundImage = AssetsIO.loadImageResource(backgroundImg);
+		loadingImage = AssetsIO.loadImageResource(loadingImg);
 		loading = false;
-		loadCustomFont("assets/fonts/EraserRegular.ttf");
+		btnFont = AssetsIO.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 		setLayout(new GroupLayout(this));
 		initializeMenuItems();
 
 
         Timer menuTicks = new Timer();
-        int fps = 10;
+        int fps = 5;
         menuTicks.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
@@ -40,19 +39,6 @@ public abstract class Menu extends JComponent {
 				repaint();
 			}
 		}, 100, 1000 / fps);
-	}
-
-	// Load custom font from file
-	private void loadCustomFont(String path) {
-		try {
-			btnFont = Font.createFont(Font.TRUETYPE_FONT, new File(path)).deriveFont(100f);
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(btnFont);
-		} catch (IOException | FontFormatException e) {
-			e.printStackTrace();
-			System.out.println("Font not found at " + path);
-			btnFont = new Font("Serif", Font.PLAIN, 24); // Fallback font
-		}
 	}
 
 	// Initialize and position the menu items
@@ -66,10 +52,28 @@ public abstract class Menu extends JComponent {
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
 		for (String item : menuItems) {
-			JButton menuItemButton = createStyledButton(item);
-			horizontalGroup.addComponent(menuItemButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+            JButton button = new JButton(item);
+            button.setFont(btnFont); // Set custom font
+            button.setForeground(Color.WHITE); // Set text color to white
+            button.setContentAreaFilled(false); // Make background transparent
+            button.setBorderPainted(false); // Remove button border
+            button.setFocusPainted(false); // Remove focus indicator
+            button.setAlignmentX(Component.LEFT_ALIGNMENT);
+            button.addActionListener(new MenuActionListener(item));
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    button.setText("<html><u>" + item + "</u></html>");
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    button.setText(item);
+                }
+            });
+            horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 					GroupLayout.PREFERRED_SIZE);
-			verticalGroup.addComponent(menuItemButton);
+			verticalGroup.addComponent(button);
 		}
 
 		verticalGroup.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
@@ -78,31 +82,9 @@ public abstract class Menu extends JComponent {
 		layout.setVerticalGroup(verticalGroup);
 	}
 
-	// Create a styled button with transparent background, white text, and custom font
-	private JButton createStyledButton(String text) {
-		JButton button = new JButton(text);
-		button.setFont(btnFont); // Set custom font
-		button.setForeground(Color.WHITE); // Set text color to white
-		button.setContentAreaFilled(false); // Make background transparent
-		button.setBorderPainted(false); // Remove button border
-		button.setFocusPainted(false); // Remove focus indicator
-		button.setAlignmentX(Component.LEFT_ALIGNMENT);
-		button.addActionListener(new MenuActionListener(text));
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				button.setText("<html><u>" + text + "</u></html>");
-			}
+    // Create a styled button with transparent background, white text, and custom font
 
-			@Override
-			public void mouseExited(MouseEvent e) {
-				button.setText(text);
-			}
-		});
-		return button;
-	}
-
-	int errorTicks = 0;
+    int errorTicks = 0;
 	String[] error = null;
 
 	@Override
@@ -124,8 +106,12 @@ public abstract class Menu extends JComponent {
 		}
 	}
 
-	// Abstract method for click actions
-	protected abstract void onMenuItemClick(String item) throws IOException;
+	/**
+	 * This is performed after an item is closed, alongside a loading screen in case you need time to load assets.
+	 * @param item String identifying the item clicked.
+	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
+	 */
+	protected abstract void onMenuItemClick(String item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final String item;
@@ -148,7 +134,7 @@ public abstract class Menu extends JComponent {
 							component.setVisible(true);
 						}
 						loading = false;
-					} catch (IOException e1) {
+					} catch (Exception e1) {
                         e1.printStackTrace();
                         error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
                         errorTicks = 60;
