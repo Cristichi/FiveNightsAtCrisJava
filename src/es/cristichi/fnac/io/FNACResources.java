@@ -1,4 +1,4 @@
-package es.cristichi.fnac.util;
+package es.cristichi.fnac.io;
 
 import es.cristichi.fnac.exception.AssetNotFound;
 
@@ -8,10 +8,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AssetsIO {
+public class FNACResources {
 
     public static InputStream loadInputStream(String path) throws AssetNotFound {
-        InputStream in = AssetsIO.class.getClassLoader().getResourceAsStream(path);
+        InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path);
         if (in == null) {
             throw new AssetNotFound("Resource not found at \"" + path + "\". Probably Cristichi forgot to add it.");
         }
@@ -20,7 +20,7 @@ public class AssetsIO {
 
     public static BufferedImage loadImageResource(String path) throws AssetNotFound {
         try {
-            try (InputStream in = AssetsIO.class.getClassLoader().getResourceAsStream(path)) {
+            try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
                     throw new NullPointerException("Resource not found.");
                 }
@@ -33,7 +33,7 @@ public class AssetsIO {
 
     public static Font loadCustomFont(String path) throws AssetNotFound {
         try {
-            try (InputStream in = AssetsIO.class.getClassLoader().getResourceAsStream(path)) {
+            try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
                     throw new NullPointerException("Resource not found.");
                 }

@@ -1,11 +1,11 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.Animatronic;
 import es.cristichi.fnac.obj.anim.Jumpscare;
-import es.cristichi.fnac.util.AssetsIO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -111,16 +111,16 @@ public abstract class Night extends JComponent {
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
 
 		time = 0; // Start at 12 AM = 00:00h
-		backgroundImg = AssetsIO.loadImageResource("imgs/night/background.jpg");
-		camMonitorImg = AssetsIO.loadImageResource("imgs/night/cams/monitor.png");
-		camMonitorStaticImg = AssetsIO.loadImageResource("imgs/night/cams/monitorStatic.png");
-		camStaticImg = AssetsIO.loadImageResource("imgs/night/cams/camTrans.jpg");
-		leftDoorOpenImg = AssetsIO.loadImageResource("imgs/night/leftDoorOpen.png");
-		leftDoorTransImg = AssetsIO.loadImageResource("imgs/night/leftDoorTrans.png");
-		leftDoorClosedImg = AssetsIO.loadImageResource("imgs/night/leftDoorClosed.png");
-		rightDoorOpenImg = AssetsIO.loadImageResource("imgs/night/rightDoorOpen.png");
-		rightDoorTransImg = AssetsIO.loadImageResource("imgs/night/rightDoorTrans.png");
-		rightDoorClosedImg = AssetsIO.loadImageResource("imgs/night/rightDoorClosed.png");
+		backgroundImg = FNACResources.loadImageResource("imgs/office/background.jpg");
+		camMonitorImg = FNACResources.loadImageResource("imgs/office/monitor.png");
+		camMonitorStaticImg = FNACResources.loadImageResource("imgs/office/monitorStatic.png");
+		camStaticImg = FNACResources.loadImageResource("imgs/office/camTrans.jpg");
+		leftDoorOpenImg = FNACResources.loadImageResource("imgs/office/leftDoorOpen.png");
+		leftDoorTransImg = FNACResources.loadImageResource("imgs/office/leftDoorTrans.png");
+		leftDoorClosedImg = FNACResources.loadImageResource("imgs/office/leftDoorClosed.png");
+		rightDoorOpenImg = FNACResources.loadImageResource("imgs/office/rightDoorOpen.png");
+		rightDoorTransImg = FNACResources.loadImageResource("imgs/office/rightDoorTrans.png");
+		rightDoorClosedImg = FNACResources.loadImageResource("imgs/office/rightDoorClosed.png");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;

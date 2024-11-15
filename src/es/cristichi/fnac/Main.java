@@ -3,12 +3,12 @@ package es.cristichi.fnac;
 import es.cristichi.fnac.exception.MenuItemNotFound;
 import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.Night;
+import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.Bob;
 import es.cristichi.fnac.obj.anim.Jumpscare;
 import es.cristichi.fnac.obj.anim.Maria;
-import es.cristichi.fnac.util.AssetsIO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,19 +44,17 @@ public class Main {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
 				switch (item) {
-				case "New Game":
+				case "Night 1":
 					HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-					aiNightBob.put(0, 5);
-					aiNightBob.put(3, 6);
-					aiNightBob.put(4, 7);
-					aiNightBob.put(5, 8);
+					aiNightBob.put(1, 5);
+					aiNightBob.put(5, 6);
 
 					HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-					aiNightMaria.put(2, 7);
-					aiNightMaria.put(4, 8);
-					aiNightMaria.put(5, 9);
+					aiNightMaria.put(1, 1);
+					aiNightMaria.put(4, 5);
+					aiNightMaria.put(5, 6);
 
-					CameraMap night1Map = new CameraMap("test1", AssetsIO.loadImageResource("imgs/night/cams/map.png"));
+					CameraMap night1Map = new CameraMap("test1", FNACResources.loadImageResource("imgs/night/cams/map.png"));
 					Camera cam1 = new Camera.CameraBuilder()
 							.setName("cam1")
 							.setCamBackground("imgs/night/cams/cam1.jpg")

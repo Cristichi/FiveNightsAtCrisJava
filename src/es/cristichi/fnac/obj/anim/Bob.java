@@ -1,9 +1,9 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.AssetNotFound;
+import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import es.cristichi.fnac.util.AssetsIO;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,7 +15,7 @@ public class Bob extends Animatronic{
     private final double targetPatienceKillSec = 4.9;
 
     public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight) throws AssetNotFound {
-        super("Bob", secInterval, aiDuringNight, 20, AssetsIO.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif");
+        super("Bob", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif");
     }
 
     @Override
