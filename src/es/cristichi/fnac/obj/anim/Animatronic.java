@@ -72,6 +72,8 @@ public abstract class Animatronic {
      */
     public abstract boolean onJumpscareAttempt(int tick, boolean openDoor, boolean camsUp, Camera cam, Random rng, int fps);
 
+    public abstract boolean hideFromCam(int tick, boolean openDoor, Camera cam, Random rng, int fps);
+
     public Jumpscare getJumpscare() {
         return jumpscare;
     }

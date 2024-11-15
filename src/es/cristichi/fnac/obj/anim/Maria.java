@@ -29,7 +29,7 @@ public class Maria extends Animatronic{
     @Override
     public Camera onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<Camera> connections = currentLoc.getConnections();
-        connections.removeIf(camera -> camera.getName().contains("3"));
+        connections.removeIf(camera -> camera.getName().contains("3")||camera.getName().contains("1"));
         return connections.get(rng.nextInt(connections.size()));
     }
 
@@ -41,14 +41,18 @@ public class Maria extends Animatronic{
             } else {
                 if (Math.round(targetPatienceKillSec*fps) <= tick-startKillTick){
                     kill = true;
+                    return true;
                 }
-
-                return !camsUp && kill;
             }
         } else {
             kill = false;
             startKillTick = null;
         }
         return false;
+    }
+
+    @Override
+    public boolean hideFromCam(int tick, boolean openDoor, Camera cam, Random rng, int fps) {
+        return kill;
     }
 }

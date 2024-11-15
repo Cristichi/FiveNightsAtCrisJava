@@ -277,25 +277,6 @@ public abstract class Night extends JComponent {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-        if (jumpscare != null && camsUpDownTransTicks == 0) {
-			g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
-			jumpscare.update();
-			if (jumpscare.isFinished()) {
-				nightTicks.cancel();
-				victoryScreen = true;
-				Timer end = new Timer("End Thread");
-				end.schedule(new TimerTask() {
-
-					@Override
-					public void run() {
-						onJumpscare();
-					}
-				}, 5000);
-			}
-
-			return;
-		}
-
 		// Draw background and doors. Oh boy.
 		BufferedImage leftDoor;
 		if (leftDoorTransTicks > 0) {
@@ -491,35 +472,39 @@ public abstract class Night extends JComponent {
 							// Here we draw the camera and the animatronics in there
 							g.drawImage(current.getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
+
 							for (Animatronic an : current.getAnimatronicsHere()){
-								BufferedImage img = an.getCamImg();
+								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed || current.isRightDoorOfOffice()&&!rightDoorClosed;
+								if (!an.hideFromCam(tick, openDoor, current, rng, FPS)){
+									BufferedImage img = an.getCamImg();
 
-								// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
-								double scaleX = camDrawWidth / (double) img.getWidth();
-								double scaleY = camDrawHeight / (double) img.getHeight();
-								double scale = Math.min(scaleX, scaleY)*0.3; // Ensure the image fits within both dimensions
+									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
+									double scaleX = camDrawWidth / (double) img.getWidth();
+									double scaleY = camDrawHeight / (double) img.getHeight();
+									double scale = Math.min(scaleX, scaleY)*0.3; // Ensure the image fits within both dimensions
 
-								// Calculate the scaled width and height
-								int scaledWidth = (int) (img.getWidth() * scale);
-								int scaledHeight = (int) (img.getHeight() * scale);
+									// Calculate the scaled width and height
+									int scaledWidth = (int) (img.getWidth() * scale);
+									int scaledHeight = (int) (img.getHeight() * scale);
 
-								// Calculate a random position within the bounds, ensuring it doesn't overflow
-								int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
-								int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
-								Point p = new Point(anRandomX, anRandomY);
-								p = animPosInCam.getOrDefault(an.getName(), p);
-								if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth || p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
-									p = new Point(anRandomX, anRandomY);
+									// Calculate a random position within the bounds, ensuring it doesn't overflow
+									int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
+									int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
+									Point p = new Point(anRandomX, anRandomY);
+									p = animPosInCam.getOrDefault(an.getName(), p);
+									if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth || p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
+										p = new Point(anRandomX, anRandomY);
+									}
+									animPosInCam.put(an.getName(), p);
+
+									// Draw the scaled image
+									g.drawImage(img,
+											p.x, p.y,
+											p.x + scaledWidth, p.y + scaledHeight,
+											0, 0, img.getWidth(), img.getHeight(),
+											this
+									);
 								}
-								animPosInCam.put(an.getName(), p);
-
-								// Draw the scaled image
-								g.drawImage(img,
-										p.x, p.y,
-										p.x + scaledWidth, p.y + scaledHeight,
-										0, 0, img.getWidth(), img.getHeight(),
-										this
-								);
 							}
 						}
 					}
@@ -566,16 +551,6 @@ public abstract class Night extends JComponent {
 						}
 						g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
 						camsLocOnScreen.put(i, new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
-
-//						int debugRecDim = Math.min(scaledRecWidth, scaledRecHeight)/3;
-//						int debugRecX = scaledRecX;
-//						int debugRecY = scaledRecY;
-//						for (Animatronic anim : cam.getAnimatronicsHere()){
-//							g.setColor(anim.getDebugColor());
-//							g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
-//							debugRecX+=debugRecDim;
-//							debugRecY+=debugRecDim;
-//						}
                     }
 
 					// Reset transparency
@@ -602,7 +577,6 @@ public abstract class Night extends JComponent {
 				}
 			}
 		}
-
 
         if (victoryScreen == null) {
             g.setFont(new Font("Arial", Font.BOLD, 18));
@@ -640,14 +614,6 @@ public abstract class Night extends JComponent {
 				}
 				g.drawString(String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr), 10, 20);
 			}
-
-//			g.setColor(Color.GREEN);
-//          g.drawString("Debug Tick: " + tick, 10, 40);
-//          g.drawString("Left door: " + (leftDoorClosed?"Closed":"Open"), 10, 60);
-//          g.drawString("Left door trans ticks: " + leftDoorTransTicks, 10, 80);
-//          g.drawString("Right door: " + (rightDoorClosed?"Closed":"Open"), 10, 100);
-//			g.drawString("Right door trans ticks: " + leftDoorTransTicks, 10, 120);
-//			g.drawString("Jumpscare: " + (jumpscare==null?"null":jumpscare.getCurrentIndex()+""), 10, 140);
         } else {
             g.setFont(new Font("Arial", Font.BOLD, 200));
             if (victoryScreen) {
@@ -658,6 +624,30 @@ public abstract class Night extends JComponent {
                 g.drawString("YOU DIED", 100, 200);
             }
         }
+
+		if (jumpscare != null && camsUpDownTransTicks == 0) {
+			if (camsUp){
+				Action closeCamsAction = getActionMap().get("camsAction");
+				if (closeCamsAction != null) {
+					closeCamsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+				}
+			} else {
+				g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
+				jumpscare.update();
+				if (jumpscare.isFinished()) {
+					nightTicks.cancel();
+					victoryScreen = false;
+					Timer end = new Timer("End Thread");
+					end.schedule(new TimerTask() {
+
+						@Override
+						public void run() {
+							onJumpscare();
+						}
+					}, 5000);
+				}
+			}
+		}
     }
 
 	private class LeftAction extends AbstractAction {
