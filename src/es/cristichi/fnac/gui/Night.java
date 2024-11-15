@@ -26,8 +26,7 @@ public abstract class Night extends JComponent {
 
 	private final Random rng;
 
-	@SuppressWarnings("unused")
-	private final String name;
+	private final String nightName;
 	private final BufferedImage backgroundImg;
 	/**
 	 * Power in percentage, where 0 is 0%, 0.5 is 50% and 1 is 100%.
@@ -88,16 +87,16 @@ public abstract class Night extends JComponent {
 
 	/**
 	 *
-	 * @param name Name of the Night. Barely used.
+	 * @param nightName Name of the Night. Barely used.
 	 * @param mapAndAnimatronics Map of the place.
 	 * @param powerOutage Jumpscare that will happen when the player runs out of power.
 	 * @param rng Random for the night. You may just use <code>new Random()</code> unless you want a specific seed.
 	 * @param powerConsumption A number from 0 to 1, where 0 makes the night impossible to lose by a power outage, and 1 makes it impossible to win even without Animatronics.
 	 * @throws IOException If Assets cannot be loaded from disk. Usually it's because they may be missing, so skill issue.
 	 */
-	public Night(String name, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float powerConsumption) throws IOException {
+	public Night(String nightName, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float powerConsumption) throws IOException {
 		this.rng = rng;
-		this.name = name;
+		this.nightName = nightName;
 		this.map = mapAndAnimatronics;
 		this.powerOutage = powerOutage;
 
@@ -188,7 +187,11 @@ public abstract class Night extends JComponent {
 			}
 		});
 
-		nightTicks = new Timer("Night [" + name + "]");
+		nightTicks = new Timer("Night [" + nightName + "]");
+	}
+
+	public String getNightName() {
+		return nightName;
 	}
 
 	public void startNight(){
@@ -263,15 +266,19 @@ public abstract class Night extends JComponent {
 
 				@Override
 				public void run() {
-					onNightPassed();
-				}
+                    try {
+                        onNightPassed();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 			}, 5000);
 		}
 	}
 
 	protected abstract void onJumpscare();
 
-	protected abstract void onNightPassed();
+	protected abstract void onNightPassed() throws IOException;
 
 	@Override
 	protected void paintComponent(Graphics g) {

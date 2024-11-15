@@ -5,26 +5,27 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
+@SuppressWarnings("unused")
 public abstract class Animatronic {
-    private final Jumpscare jumpscare;
     private final String name;
-    private final int maxIaLevel;
-    private int aiLevel;
     private final HashMap<Integer, Integer> iaDuringNight;
-    private final BufferedImage camImg;
+    private int aiLevel;
+    private final int maxIaLevel;
     private final double secInterval;
+    private final Jumpscare jumpscare;
+    private final BufferedImage camImg;
+    private final List<String> forbiddenCameras;
 
-    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif) throws AssetNotFound {
+    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif, List<String> forbiddenCameras) throws AssetNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.camImg = img;
+        this.forbiddenCameras = forbiddenCameras;
         jumpscare = new Jumpscare(jumpscareGif, 20);
     }
 
@@ -48,7 +49,9 @@ public abstract class Animatronic {
      * @return The Camera it has to move to.
      */
     public Camera onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng){
-        return currentLoc.getConnections().get(rng.nextInt(currentLoc.getConnections().size()));
+        LinkedList<Camera> connections = currentLoc.getConnections();
+        connections.removeIf(camera -> forbiddenCameras.contains(camera.getName()));
+        return connections.get(rng.nextInt(connections.size()));
     }
 
     /**

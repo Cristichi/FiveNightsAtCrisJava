@@ -53,6 +53,8 @@ public class Camera {
         return isRightDoorOfOffice;
     }
 
+    // TODO: I think this might be overkill. I should instead save only the names
+    //  and the night will work it out by looping throughout the map.
     public void addMutualConnection(Camera cam) {
         cam.connections.add(this);
         connections.add(cam);

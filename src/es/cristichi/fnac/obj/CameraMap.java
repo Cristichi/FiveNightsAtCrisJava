@@ -2,24 +2,15 @@ package es.cristichi.fnac.obj;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class CameraMap extends ArrayList<Camera> {
-    private final String name;
     private final BufferedImage image;
     private int selected;
 
-    public CameraMap(String name, BufferedImage image) {
+    public CameraMap(BufferedImage image) {
         super();
-        this.name = name;
         this.image = image;
         selected = 0;
-    }
-
-    public CameraMap(Collection<? extends Camera> c, String name, BufferedImage image) {
-        super(c);
-        this.name = name;
-        this.image = image;
     }
 
     public BufferedImage getImage() {
@@ -36,5 +27,11 @@ public class CameraMap extends ArrayList<Camera> {
 
     public Camera getSelectedCam() {
         return super.get(selected);
+    }
+
+    public void addAll(Camera... cams) {
+        for (Camera cam : cams) {
+            add(cam);
+        }
     }
 }

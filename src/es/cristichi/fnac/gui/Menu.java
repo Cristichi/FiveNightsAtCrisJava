@@ -20,6 +20,9 @@ public abstract class Menu extends JComponent {
 	private boolean loading;
 	private final Font btnFont;
 
+	private int errorTicks = 0;
+	private String[] error = null;
+
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
 		backgroundImage = FNACResources.loadImageResource(backgroundImg);
@@ -28,7 +31,6 @@ public abstract class Menu extends JComponent {
 		btnFont = FNACResources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 		setLayout(new GroupLayout(this));
 		initializeMenuItems();
-
 
         Timer menuTicks = new Timer();
         int fps = 5;
@@ -81,11 +83,6 @@ public abstract class Menu extends JComponent {
 		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
 	}
-
-    // Create a styled button with transparent background, white text, and custom font
-
-    int errorTicks = 0;
-	String[] error = null;
 
 	@Override
 	protected void paintComponent(Graphics g) {
