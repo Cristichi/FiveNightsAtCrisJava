@@ -285,6 +285,9 @@ public abstract class Night extends JComponent {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		// Most important thing, to fix things being weird depending on the size of this component.
+		double scaleX = getWidth() / (double) OFFICEWIDTH;
+
 		// Draw background and doors. Oh boy.
 		BufferedImage leftDoor;
 		if (leftDoorTransTicks > 0) {
@@ -300,8 +303,8 @@ public abstract class Night extends JComponent {
 		} else {
 			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
 		}
-		int leftDoorWidth = (MONITOR_X-LEFTDOOR_X);
-		int rightDoorWidth = RIGHTDOOR_X-MONITOR_X;
+		int leftDoorWidth = (int) ((MONITOR_X-LEFTDOOR_X)*scaleX);
+		int rightDoorWidth = (int)((RIGHTDOOR_X-MONITOR_X)*scaleX);
 
 		switch (officeLoc) {
 		case LEFTDOOR:
@@ -310,7 +313,6 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door
-				// TODO: Fix for non-1920 width
 				g.drawImage(leftDoor,
 						0, 0,
 						leftDoorWidth, getHeight(),
@@ -487,13 +489,13 @@ public abstract class Night extends JComponent {
 									BufferedImage img = an.getCamImg();
 
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
-									double scaleX = camDrawWidth / (double) img.getWidth();
-									double scaleY = camDrawHeight / (double) img.getHeight();
-									double scale = Math.min(scaleX, scaleY)*0.3; // Ensure the image fits within both dimensions
+									double anScaleX = camDrawWidth / (double) img.getWidth();
+									double anScaleY = camDrawHeight / (double) img.getHeight();
+									double anScale = Math.min(anScaleX, anScaleY)*0.3; // Ensure the image fits within both dimensions
 
 									// Calculate the scaled width and height
-									int scaledWidth = (int) (img.getWidth() * scale);
-									int scaledHeight = (int) (img.getHeight() * scale);
+									int scaledWidth = (int) (img.getWidth() * anScale);
+									int scaledHeight = (int) (img.getHeight() * anScale);
 
 									// Calculate a random position within the bounds, ensuring it doesn't overflow
 									int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
