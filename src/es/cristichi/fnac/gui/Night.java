@@ -23,7 +23,7 @@ import java.util.*;
 //  (store flipped on load pls, less cpu more ram usage).
 public abstract class Night extends JComponent {
 	private static final int FPS = 60;
-	private static final int HOUR_INTERVAL = FPS * 60;
+	private static final int HOUR_INTERVAL = FPS * 90;
 	private static final int TOTAL_HOURS = 6;
 
 	private final Random rng;
@@ -303,7 +303,7 @@ public abstract class Night extends JComponent {
 		} else {
 			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
 		}
-		int leftDoorWidth = (int) ((MONITOR_X-LEFTDOOR_X)*scaleX);
+		int leftDoorWidthScaled = (int) ((MONITOR_X-LEFTDOOR_X)*scaleX);
 		int rightDoorWidth = (int)((RIGHTDOOR_X-MONITOR_X)*scaleX);
 
 		switch (officeLoc) {
@@ -312,23 +312,27 @@ public abstract class Night extends JComponent {
 				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				// Left door
+				// Left door when watching left door and no transition
 				g.drawImage(leftDoor,
 						0, 0,
-						leftDoorWidth, getHeight(),
+						leftDoorWidthScaled, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X - ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				// Left door
-				// TODO: Fix for non-1920 width
+				// Left door when watching left door while transition from MONITOR to LEFTDOOR (center to left)
+				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+				int visibleDoorWidthScaled = (int) (leftDoorWidthScaled * transitionProgress);
+				int doorImageStartX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
 				g.drawImage(leftDoor,
-                        LEFTDOOR_X-xPosition, 0,
-						leftDoorWidth+LEFTDOOR_X-xPosition, getHeight(),
-						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
+						0, 0,                                     // Screen position (always starts at the left of the screen)
+						visibleDoorWidthScaled, getHeight(),      // Draw width matches the visible scaled portion
+						doorImageStartX, 0,                       // Source image: start from the right side of the door image
+						leftDoor.getWidth(), leftDoor.getHeight(), // Source image: end at the full width
 						this);
 			}
 			break;
@@ -351,19 +355,11 @@ public abstract class Night extends JComponent {
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				// Left door shows also at the start of this transition
-				// TODO: Fix for non-1920 width
-				g.drawImage(leftDoor,
-						LEFTDOOR_X-xPosition, 0,
-						leftDoorWidth - xPosition, getHeight(),
-						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
-						this);
-
 				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
-				// TODO: Fix for non-1920 width
+				// TODO: Transition is weird
 				g.drawImage(rightDoor,
-						getWidth()-xPosition+1000, 0,
-						getWidth()+rightDoorWidth-xPosition+1000, getHeight(),
+						getWidth()-rightDoorWidth+xPosition, 0,
+						getWidth()+xPosition, getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
 			}
@@ -372,6 +368,7 @@ public abstract class Night extends JComponent {
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(MONITOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
 			} else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
 				int xPosition = LEFTDOOR_X + ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
@@ -379,11 +376,15 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door
+				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+				int offsetX = (int) (leftDoorWidthScaled * transitionProgress);
 				g.drawImage(leftDoor,
-						LEFTDOOR_X-xPosition, 0,
-						leftDoorWidth + LEFTDOOR_X - xPosition, getHeight(),
-						0,0, leftDoor.getWidth(), leftDoor.getHeight(),
+						-offsetX, 0,
+						leftDoorWidthScaled - offsetX, getHeight(),
+						0, 0,
+						leftDoor.getWidth(), leftDoor.getHeight(),
 						this);
+
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
 				int xPosition = RIGHTDOOR_X - ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
