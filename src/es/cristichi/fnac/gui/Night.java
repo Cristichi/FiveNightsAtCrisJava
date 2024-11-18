@@ -19,11 +19,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
-// TODO: Animatronics should have a cut image of how they show when showing at the door, autoflipped for right door
-//  (store flipped on load pls, less cpu more ram usage).
 public abstract class Night extends JComponent {
 	private static final int FPS = 60;
-	private static final int HOUR_INTERVAL = FPS * 90;
+	private static final int HOUR_INTERVAL = FPS * 4;
 	private static final int TOTAL_HOURS = 6;
 
 	private final Random rng;
@@ -590,10 +588,11 @@ public abstract class Night extends JComponent {
 		}
 
         if (victoryScreen == null) {
-            g.setFont(new Font("Arial", Font.BOLD, 18));
-            g.setColor(Color.WHITE);
-			int nightHourMinutes = (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60);
-			g.drawString(String.format("%02d:%02d AM", nightHour, nightHourMinutes), getWidth() - 100, 20);
+            g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
+            String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60));
+			FontMetrics fm = g.getFontMetrics();
+			g.setColor(Color.WHITE);
+			g.drawString(strTime, getWidth() - fm.stringWidth(strTime), fm.getHeight());
 
 			{
 				int powerUsage = 0;
@@ -624,10 +623,11 @@ public abstract class Night extends JComponent {
 						g.setColor(Color.RED.darker());
 						break;
 				}
-				g.drawString(String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr), 10, 20);
+				String strPower = String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr);
+				g.drawString(strPower, 10, fm.getHeight());
 			}
         } else {
-            g.setFont(new Font("Arial", Font.BOLD, 200));
+            g.setFont(new Font("Arial", Font.BOLD, Math.min(getWidth(), getHeight())/5));
 			FontMetrics fm = g.getFontMetrics();
 			String text = victoryScreen ? "06:00 AM" : "YOU DIED";
 			Color color = victoryScreen ? Color.GREEN : Color.RED;
@@ -669,7 +669,7 @@ public abstract class Night extends JComponent {
 	private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
@@ -697,7 +697,7 @@ public abstract class Night extends JComponent {
 	private class RightAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.LEFTDOOR)) {
@@ -724,7 +724,7 @@ public abstract class Night extends JComponent {
 	private class CamsAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null){
 				if (camsUp) {
 					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 					camsUp = false;
@@ -739,7 +739,7 @@ public abstract class Night extends JComponent {
 	private class DoorAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && victoryScreen==null){
 				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 					rightDoorClosed = !rightDoorClosed;
 					rightDoorTransTicks = DOOR_TRANSITION_TICKS;
