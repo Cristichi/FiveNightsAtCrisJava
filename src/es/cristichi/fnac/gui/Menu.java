@@ -35,7 +35,6 @@ public abstract class Menu extends JComponent {
         Timer menuTicks = new Timer();
         int fps = 5;
         menuTicks.scheduleAtFixedRate(new TimerTask() {
-
 			@Override
 			public void run() {
 				repaint();
@@ -54,7 +53,7 @@ public abstract class Menu extends JComponent {
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
 		for (String item : menuItems) {
-            JButton button = new JButton(item);
+            JButton button = new JButton("<html>"+item+"</html>");
             button.setFont(btnFont); // Set custom font
             button.setForeground(Color.WHITE); // Set text color to white
             button.setContentAreaFilled(false); // Make background transparent
@@ -70,7 +69,7 @@ public abstract class Menu extends JComponent {
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    button.setText(item);
+                    button.setText("<html>"+item+"</html>");
                 }
             });
             horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
