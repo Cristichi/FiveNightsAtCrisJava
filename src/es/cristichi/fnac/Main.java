@@ -57,13 +57,13 @@ public class Main {
                 switch (item) {
                     case "Night 1" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-                        aiNightBob.put(1, 5);
-                        aiNightBob.put(5, 6);
+                        aiNightBob.put(0, 10);
+                        aiNightBob.put(4, 13);
 
                         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-                        aiNightMaria.put(1, 1);
-                        aiNightMaria.put(4, 5);
-                        aiNightMaria.put(5, 6);
+                        aiNightMaria.put(1, 10);
+                        aiNightMaria.put(4, 13);
+                        aiNightMaria.put(5, 15);
 
                         CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("imgs/night/tutorial/map.png"));
                         Camera cam1 = new Camera.CameraBuilder()

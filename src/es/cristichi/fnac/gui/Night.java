@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
+// TODO: Animatronics should have a cut image of how they show when showing at the door, autoflipped for right door
+//  (store flipped on load pls, less cpu more ram usage).
 public abstract class Night extends JComponent {
 	private static final int FPS = 60;
 	private static final int HOUR_INTERVAL = FPS * 60;
@@ -34,8 +36,8 @@ public abstract class Night extends JComponent {
 	private float powerLeft;
 	private final float powerPerTickPerResource;
 	private final Jumpscare powerOutage;
-	private int time;
-	private int tick;
+	private int currentTick;
+	private int nightHour;
 	private final Timer nightTicks;
 	private Boolean victoryScreen;
 
@@ -109,7 +111,7 @@ public abstract class Night extends JComponent {
 		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks); // Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
 
-		time = 0; // Start at 12 AM = 00:00h
+		nightHour = 0; // Start at 12 AM = 00:00h
 		backgroundImg = FNACResources.loadImageResource("imgs/office/background.jpg");
 		camMonitorImg = FNACResources.loadImageResource("imgs/office/monitor.png");
 		camMonitorStaticImg = FNACResources.loadImageResource("imgs/office/monitorStatic.png");
@@ -199,8 +201,8 @@ public abstract class Night extends JComponent {
 			@Override
 			public void run() {
 				// Time never stops. Well sometimes it does, when dying for instance.
-				tick++;
-				if (tick % HOUR_INTERVAL == 0) {
+				currentTick++;
+				if (currentTick % HOUR_INTERVAL == 0) {
 					advanceTime();
 				}
 
@@ -227,14 +229,14 @@ public abstract class Night extends JComponent {
 					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
 					for(Camera cam : map){
 						for (Animatronic anim : cam.getAnimatronicsHere()){
-							anim.updateIADuringNight(time);
-							if (tick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
+							anim.updateIADuringNight(nightHour);
+							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(rng)){
 									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, anim.onMovementOppSuccess(map, cam, rng)));
 								}
 							}
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
-							if (anim.onJumpscareAttempt(tick, openDoor, camsUp, cam, rng, FPS)){
+							if (anim.onJumpscareAttempt(currentTick, openDoor, camsUp, cam, rng, FPS)){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future.
 								jumpscare.reset();
@@ -257,13 +259,12 @@ public abstract class Night extends JComponent {
 	}
 
 	private void advanceTime() {
-		if (++time == TOTAL_HOURS) {
+		if (++nightHour == TOTAL_HOURS) {
 			nightTicks.cancel();
 			jumpscare = null;
 			victoryScreen = true;
 			Timer end = new Timer("End Thread");
 			end.schedule(new TimerTask() {
-
 				@Override
 				public void run() {
                     try {
@@ -482,7 +483,7 @@ public abstract class Night extends JComponent {
 
 							for (Animatronic an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed || current.isRightDoorOfOffice()&&!rightDoorClosed;
-								if (!an.hideFromCam(tick, openDoor, current, rng, FPS)){
+								if (!an.hideFromCam(currentTick, openDoor, current, rng, FPS)){
 									BufferedImage img = an.getCamImg();
 
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
@@ -588,7 +589,8 @@ public abstract class Night extends JComponent {
         if (victoryScreen == null) {
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.setColor(Color.WHITE);
-			g.drawString(String.format("%02d:?? AM", time), getWidth() - 100, 20);
+			int nightHourMinutes = (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60);
+			g.drawString(String.format("%02d:%02d AM", nightHour, nightHourMinutes), getWidth() - 100, 20);
 
 			{
 				int powerUsage = 0;
@@ -623,13 +625,17 @@ public abstract class Night extends JComponent {
 			}
         } else {
             g.setFont(new Font("Arial", Font.BOLD, 200));
-            if (victoryScreen) {
-                g.setColor(Color.GREEN);
-                g.drawString("06:00 AM", 100, 200);
-            } else {
-                g.setColor(Color.RED);
-                g.drawString("YOU DIED", 100, 200);
-            }
+			FontMetrics fm = g.getFontMetrics();
+			String text = victoryScreen ? "06:00 AM" : "YOU DIED";
+			Color color = victoryScreen ? Color.GREEN : Color.RED;
+
+			int textWidth = fm.stringWidth(text);
+			int textHeight = fm.getAscent();
+			int centerX = (getWidth() - textWidth) / 2;
+			int centerY = (getHeight() + textHeight) / 2;
+
+			g.setColor(color);
+			g.drawString(text, centerX, centerY);
         }
 
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
