@@ -1,5 +1,6 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
@@ -21,16 +22,12 @@ import java.util.*;
 
 public abstract class Night extends JComponent {
 	private static final int FPS = 60;
-	private static final int HOUR_INTERVAL = FPS * 4;
+	private static final int HOUR_INTERVAL = FPS * 90;
 	private static final int TOTAL_HOURS = 6;
 
-	private final Random rng;
-
 	private final String nightName;
+	private final Random rng;
 	private final BufferedImage backgroundImg;
-	/**
-	 * Power in percentage, where 0 is 0%, 0.5 is 50% and 1 is 100%.
-	 */
 	private float powerLeft;
 	private final float powerPerTickPerResource;
 	private final Jumpscare powerOutage;
@@ -41,7 +38,6 @@ public abstract class Night extends JComponent {
 
 	// Office transition
 	private static final int OFFICE_TRANSITION_TICKS = 30;
-	// Theses values are for the size used. Perhaps the background should be resized to be 1080p, but this works and it looks good without too much work on the processing part.
 	private static final int LEFTDOOR_X = 200;
 	private static final int MONITOR_X = 1000;
 	private static final int RIGHTDOOR_X = 1800;
@@ -242,11 +238,16 @@ public abstract class Night extends JComponent {
 						}
 					}
 					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
-						move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
-						camsHidingMovement.add(move.getValue().getKey().getName());
-						camsHidingMovement.add(move.getValue().getValue().getName());
-						camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
-						animPosInCam.remove(move.getKey().getName());
+						try {
+							move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
+							camsHidingMovement.add(move.getValue().getKey().getName());
+							camsHidingMovement.add(move.getValue().getValue().getName());
+							camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
+							animPosInCam.remove(move.getKey().getName());
+						} catch (AnimatronicException e){
+							System.err.println("Prevented crash by cancelling move. Perhaps there is a design flaw in the Animatronic.");
+							e.printStackTrace();
+						}
 					}
 				}
 
@@ -302,7 +303,7 @@ public abstract class Night extends JComponent {
 			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
 		}
 		int leftDoorWidthScaled = (int) ((MONITOR_X-LEFTDOOR_X)*scaleX);
-		int rightDoorWidth = (int)((RIGHTDOOR_X-MONITOR_X)*scaleX);
+		int rightDoorWidthScaled = (int)((RIGHTDOOR_X-MONITOR_X)*scaleX);
 
 		switch (officeLoc) {
 		case LEFTDOOR:
@@ -340,9 +341,9 @@ public abstract class Night extends JComponent {
 				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				// Right door
+				// Right door when no transition at RIGHTDOOR
 				g.drawImage(rightDoor,
-						getWidth()-rightDoorWidth, 0,
+						getWidth()-rightDoorWidthScaled, 0,
 						getWidth(), getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
@@ -353,12 +354,14 @@ public abstract class Night extends JComponent {
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
-				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
-				// TODO: Transition is weird
+				// Right door while moving from MONITOR to RIGHTDOOR
+				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+				int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
 				g.drawImage(rightDoor,
-						getWidth()-rightDoorWidth+xPosition, 0,
-						getWidth()+xPosition, getHeight(),
-						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						getWidth() - offsetX, 0,
+						getWidth() - offsetX + rightDoorWidthScaled, getHeight(),
+						0, 0,
+						rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
 			}
 			break;
@@ -393,7 +396,7 @@ public abstract class Night extends JComponent {
 				// TODO: Fix for non-1920 width
 				g.drawImage(rightDoor,
 						getWidth()-xPosition+1000, 0,
-						getWidth()+rightDoorWidth-xPosition+1000, getHeight(),
+						getWidth()+rightDoorWidthScaled-xPosition+1000, getHeight(),
 						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
 			}
@@ -587,13 +590,12 @@ public abstract class Night extends JComponent {
 			}
 		}
 
+		int txtMarginX = getWidth()/100;
+		int txtMarginY = getHeight()/1000;
         if (victoryScreen == null) {
             g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
             String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60));
 			FontMetrics fm = g.getFontMetrics();
-			g.setColor(Color.WHITE);
-			g.drawString(strTime, getWidth() - fm.stringWidth(strTime), fm.getHeight());
-
 			{
 				int powerUsage = 0;
 				String powerUsageStr = "█";
@@ -624,8 +626,13 @@ public abstract class Night extends JComponent {
 						break;
 				}
 				String strPower = String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr);
-				g.drawString(strPower, 10, fm.getHeight());
+				g.drawString(strPower, txtMarginX, getHeight() - fm.getLeading() - fm.getDescent() - txtMarginY);
 			}
+			{
+				g.setColor(Color.WHITE);
+				g.drawString(strTime, getWidth() - fm.stringWidth(strTime) - txtMarginX, fm.getHeight() + txtMarginY);
+			}
+
         } else {
             g.setFont(new Font("Arial", Font.BOLD, Math.min(getWidth(), getHeight())/5));
 			FontMetrics fm = g.getFontMetrics();
