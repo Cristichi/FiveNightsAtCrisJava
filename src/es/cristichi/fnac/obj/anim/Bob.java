@@ -14,7 +14,7 @@ public class Bob extends Animatronic{
     private final double targetPatienceKillSec = 4.9;
 
     public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("Bob", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif", forbiddenCams);
+        super("Bob", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/bob/camImg.png"), "imgs/anims/bob/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override

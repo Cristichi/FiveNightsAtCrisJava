@@ -20,7 +20,7 @@ public class Paco extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("Paco", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/paco/camImg.png"), "imgs/anims/paco/jumpscare.gif", forbiddenCams);
+        super("Paco", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/paco/camImg.png"), "imgs/anims/paco/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override

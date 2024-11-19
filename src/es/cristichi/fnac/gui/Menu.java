@@ -126,15 +126,17 @@ public abstract class Menu extends JComponent {
 				new Thread(() -> {
                     try {
                         onMenuItemClick(item);
-						for (Component component : Menu.this.getComponents()) {
-							component.setVisible(true);
-						}
-						loading = false;
+						error = null;
+						errorTicks = 0;
 					} catch (Exception e1) {
                         e1.printStackTrace();
                         error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
                         errorTicks = 60;
                     }
+					for (Component component : Menu.this.getComponents()) {
+						component.setVisible(true);
+					}
+					loading = false;
                 }, item).start();
 		}
 	}

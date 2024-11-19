@@ -14,7 +14,7 @@ public class Maria extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("María", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif", forbiddenCams);
+        super("María", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override

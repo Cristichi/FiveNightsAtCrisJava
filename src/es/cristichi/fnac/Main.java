@@ -41,16 +41,24 @@ public class Main {
 
 		FNACSave.SaveFile saveFile = FNACSave.loadFromFile(FNACSave.SAVE_FILE);
 
-		ArrayList<String> mmItems = new java.util.ArrayList<>(List.of("Night 1", "Night 2", "Exit"));
-		mmItems.removeAll(saveFile.completedNights());
+		ArrayList<String> mmItems = new ArrayList<>(2);
+        List<String> completed = saveFile.completedNights();
+        int numCompleted = completed.size();
 		String background;
-		if (saveFile.completedNights().size() == 1) {
+		if (numCompleted == 1) {
 			background = "imgs/menu/background1.jpg";
-		} else if (saveFile.completedNights().size() == 2) {
+            mmItems.add("Night 2 is not finished");
+            mmItems.add("Night 1");
+		} else if (numCompleted == 2) {
 			background = "imgs/menu/background2.jpg";
+            mmItems.add("You are done? Yes I don't have much more, let me add all nights");
+            mmItems.add("Night 1");
+            mmItems.add("Night 2");
 		} else {
             background = "imgs/menu/background.jpg";
+            mmItems.add("Night 1");
         }
+        mmItems.add("Exit");
 		Menu mainMenu = new Menu(background, "imgs/menu/loading.jpg", mmItems) {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
@@ -119,7 +127,7 @@ public class Main {
                         night1.startNight();
 
                     }
-                    case "Night 2" -> {
+                    case "Night 2 is not finished" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
 						aiNightBob.put(0, 5);
 						aiNightBob.put(2, 6);
