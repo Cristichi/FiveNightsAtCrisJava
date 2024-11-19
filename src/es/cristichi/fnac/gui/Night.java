@@ -52,7 +52,7 @@ public abstract class Night extends JComponent {
 	private static final int CAMS_TRANSITION_TICKS = 30;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
-	private final HashMap<Integer, Rectangle> camsLocOnScreen;
+	private final HashMap<String, Rectangle> camsLocOnScreen;
 
 	// Change cams
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
@@ -170,11 +170,12 @@ public abstract class Night extends JComponent {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                for (int i = 0; i < camerasMap.size(); i++) {
-                    if (camsLocOnScreen.containsKey(i)) {
-						Rectangle camLocScreen = camsLocOnScreen.get(i);
-						if (camLocScreen.contains(e.getPoint())){
-							camerasMap.setSelected(i);
+				Point click = e.getPoint();
+                for (Camera cam : camerasMap.values()) {
+                    if (camsLocOnScreen.containsKey(cam.getName())) {
+						Rectangle camLocScreen = camsLocOnScreen.get(cam.getName());
+						if (camLocScreen.contains(click)){
+							camerasMap.setSelected(cam.getName());
 							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 							break;
 						}
@@ -534,22 +535,22 @@ public abstract class Night extends JComponent {
 					int scaledMapHeight = (int) (monitorTargetHeight * 0.3);
 
 					// Calculate the scale ratio between the original and scaled map
-					double scaleRatioX = (double) scaledMapWidth / camerasMap.getImage().getWidth();
-					double scaleRatioY = (double) scaledMapHeight / camerasMap.getImage().getHeight();
+					double scaleRatioX = (double) scaledMapWidth / camerasMap.getMapImage().getWidth();
+					double scaleRatioY = (double) scaledMapHeight / camerasMap.getMapImage().getHeight();
 
 					// Calculate the position of the scaled map on the monitor
 					int mapX = monitorXOffset + monitorTargetWidth - scaledMapWidth;
 					int mapY = monitorYOffset + monitorTargetHeight - scaledMapHeight;
 
 					// Draw the scaled map
-					g.drawImage(camerasMap.getImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
+					g.drawImage(camerasMap.getMapImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
 
 					// Draw the transparent rectangle to highlight the current camera
 					Graphics2D g2d = (Graphics2D) g;
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 
-                    for (int i = 0; i < camerasMap.size(); i++) {
-                        Camera cam = camerasMap.get(i);
+                    //for (int i = 0; i < camerasMap.size(); i++) {
+                    for (Camera cam : camerasMap.values()) {
 						// Scale the current camera’s rectangle position
 						Rectangle rec = new Rectangle(cam.getMapLoc());
 						int scaledRecX = mapX + (int) (rec.x * scaleRatioX);
@@ -557,14 +558,15 @@ public abstract class Night extends JComponent {
 						int scaledRecWidth = (int) (rec.width * scaleRatioX);
 						int scaledRecHeight = (int) (rec.height * scaleRatioY);
 
-						if (i == camerasMap.getSelected()){
-							// Draw the scaled rectangle on the map
+						if (cam.getName().equals(camerasMap.getSelectedName())){
 							g.setColor(Color.WHITE);
 						} else {
 							g.setColor(Color.GRAY);
 						}
-						g.fillRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight);
-						camsLocOnScreen.put(i, new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
+						g.fillRoundRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight, 5, 5);
+						g.setColor(Color.DARK_GRAY);
+						g.drawRoundRect(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight, 5, 5);
+						camsLocOnScreen.put(cam.getName(), new Rectangle(scaledRecX, scaledRecY, scaledRecWidth, scaledRecHeight));
                     }
 
 					// Reset transparency
@@ -690,14 +692,16 @@ public abstract class Night extends JComponent {
                         }
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
-				} else {
-					if (camerasMap.getSelected() > 0) {
-						camerasMap.setSelected(camerasMap.getSelected()-1);
-					} else {
-						camerasMap.setSelected(camerasMap.size()-1);
-					}
-					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}
+				// After moving from an "ordered" list towards selecting by name, it may be best to remove cam switch with keys.
+//				else {
+//					if (camerasMap.getSelected() > 0) {
+//						camerasMap.setSelected(camerasMap.getSelected()-1);
+//					} else {
+//						camerasMap.setSelected(camerasMap.size()-1);
+//					}
+//					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+//				}
 			}
 		}
 
@@ -718,14 +722,16 @@ public abstract class Night extends JComponent {
                         }
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
-				} else {
-					if (camerasMap.getSelected() < camerasMap.size()-1) {
-						camerasMap.setSelected(camerasMap.getSelected()+1);
-					} else {
-						camerasMap.setSelected(0);
-					}
-					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}
+				// After moving from an "ordered" list towards selecting by name, it may be best to remove cam switch with keys.
+//				else {
+//					if (camerasMap.getSelected() < camerasMap.size()-1) {
+//						camerasMap.setSelected(camerasMap.getSelected()+1);
+//					} else {
+//						camerasMap.setSelected(0);
+//					}
+//					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+//				}
 			}
 		}
 	}

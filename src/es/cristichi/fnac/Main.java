@@ -75,7 +75,7 @@ public class Main {
                         aiNightMaria.put(4, 2);
                         aiNightMaria.put(5, 3);
 
-                        CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"));
+                        CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"), "cam3");
                         Camera cam1 = new Camera.CameraBuilder()
                                 .setName("cam1")
                                 .setCamBackground("night/tutorial/cam1.jpg")
@@ -151,7 +151,7 @@ public class Main {
                         aiNightPaco.put(5, 8);
                         Animatronic paco = new Paco(3, aiNightPaco, List.of());
 
-                        CameraMap night2Map = new CameraMap(FNACResources.loadImageResource("night/n2/map.png"));
+                        CameraMap night2Map = new CameraMap(FNACResources.loadImageResource("night/n2/map.png"), "cam3");
                         Camera kitchen = new Camera.CameraBuilder()
                                 .setName("kitchen")
                                 .setCamBackground("night/n2/kitchen.jpg")
