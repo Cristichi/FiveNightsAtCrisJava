@@ -393,11 +393,13 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
-				// TODO: Fix for non-1920 width
+				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+				int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
 				g.drawImage(rightDoor,
-						getWidth()-xPosition+1000, 0,
-						getWidth()+rightDoorWidthScaled-xPosition+1000, getHeight(),
-						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
+						getWidth() - rightDoorWidthScaled + offsetX, 0,
+						getWidth() + offsetX, getHeight(),
+						0, 0,
+						rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
 			}
 			break;
