@@ -66,12 +66,14 @@ public class Main {
                     case "Night 1", "Repeat Night 1" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
                         aiNightBob.put(0, 0);
-                        aiNightBob.put(6, 13);
+                        aiNightBob.put(1, 1);
+                        aiNightBob.put(4, 2);
 
                         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
                         aiNightMaria.put(0, 0);
-                        aiNightMaria.put(6, 13);
-                        aiNightMaria.put(7, 15);
+                        aiNightMaria.put(3, 1);
+                        aiNightMaria.put(4, 2);
+                        aiNightMaria.put(5, 3);
 
                         CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"));
                         Camera cam1 = new Camera.CameraBuilder()

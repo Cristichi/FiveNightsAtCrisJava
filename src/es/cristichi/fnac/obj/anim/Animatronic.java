@@ -20,7 +20,9 @@ public abstract class Animatronic {
     private final BufferedImage camImg;
     private final List<String> forbiddenCameras;
 
-    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight, int maxIaLevel, BufferedImage img, String jumpscareGif, int jumpscareRepFrames, List<String> forbiddenCameras) throws AssetNotFound {
+    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
+                       int maxIaLevel, BufferedImage img, String jumpscareGif, int jumpscareRepFrames,
+                       List<String> forbiddenCameras) throws AssetNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;

@@ -57,7 +57,7 @@ public abstract class Night extends JComponent {
 	// Change cams
 	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
 	private int changeCamsTransTicks;
-	private final CameraMap map;
+	private final CameraMap camerasMap;
 
 	// Animatronics moving around cams makes static
 	private static final int CAMS_STATIC_MOVE_TICKS = 20;
@@ -93,7 +93,7 @@ public abstract class Night extends JComponent {
 	public Night(String nightName, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float powerConsumption) throws IOException {
 		this.rng = rng;
 		this.nightName = nightName;
-		this.map = mapAndAnimatronics;
+		this.camerasMap = mapAndAnimatronics;
 		this.powerOutage = powerOutage;
 
 		powerLeft = 1;
@@ -121,7 +121,7 @@ public abstract class Night extends JComponent {
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
-		camsLocOnScreen = new HashMap<>(map.size());
+		camsLocOnScreen = new HashMap<>(camerasMap.size());
 		camsHidingMovement = new ArrayList<>();
 		animPosInCam = new HashMap<>(5);
 		leftDoorClosed = false;
@@ -170,11 +170,11 @@ public abstract class Night extends JComponent {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                for (int i = 0; i < map.size(); i++) {
+                for (int i = 0; i < camerasMap.size(); i++) {
                     if (camsLocOnScreen.containsKey(i)) {
 						Rectangle camLocScreen = camsLocOnScreen.get(i);
 						if (camLocScreen.contains(e.getPoint())){
-							map.setSelected(i);
+							camerasMap.setSelected(i);
 							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 							break;
 						}
@@ -221,18 +221,12 @@ public abstract class Night extends JComponent {
 				// Animatronic movements and jumpscare opportunities
 				if (jumpscare == null){
 					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
-					for(Camera cam : map){
+					for(Camera cam : camerasMap.values()){
 						for (Animatronic anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(nightHour);
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(rng)){
-									String camToName = anim.onMovementOppSuccess(map, cam, rng);
-									for (Camera camTo : map){
-										if (camTo.getName().equals(camToName)){
-											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camTo));
-											break;
-										}
-									}
+									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(anim.onMovementOppSuccess(camerasMap, cam, rng))));
 								}
 							}
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
@@ -421,8 +415,8 @@ public abstract class Night extends JComponent {
 			int windowHeight = getHeight();
 			int monitorWidth = camMonitorImg.getWidth(null);
 			int monitorHeight = camMonitorImg.getHeight(null);
-			int camImgWidth = map.getSelectedCam().getCamBackground().getWidth();
-			int camImgHeight = map.getSelectedCam().getCamBackground().getHeight();
+			int camImgWidth = camerasMap.getSelectedCam().getCamBackground().getWidth();
+			int camImgHeight = camerasMap.getSelectedCam().getCamBackground().getHeight();
 
 			// Monitor's inner area for the camera view, from original image
 			int innerX = 176;
@@ -483,7 +477,7 @@ public abstract class Night extends JComponent {
 								0, 0, camImgWidth, camImgHeight, this);
 						changeCamsTransTicks--;
 					} else {
-						Camera current = map.getSelectedCam();
+						Camera current = camerasMap.getSelectedCam();
 						// On current camera, if an Animatronic moved from or to this camera recently, we show static as well
 						if (camsHidingMovementTicks-->0 && camsHidingMovement.contains(current.getName())){
 							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
@@ -540,22 +534,22 @@ public abstract class Night extends JComponent {
 					int scaledMapHeight = (int) (monitorTargetHeight * 0.3);
 
 					// Calculate the scale ratio between the original and scaled map
-					double scaleRatioX = (double) scaledMapWidth / map.getImage().getWidth();
-					double scaleRatioY = (double) scaledMapHeight / map.getImage().getHeight();
+					double scaleRatioX = (double) scaledMapWidth / camerasMap.getImage().getWidth();
+					double scaleRatioY = (double) scaledMapHeight / camerasMap.getImage().getHeight();
 
 					// Calculate the position of the scaled map on the monitor
 					int mapX = monitorXOffset + monitorTargetWidth - scaledMapWidth;
 					int mapY = monitorYOffset + monitorTargetHeight - scaledMapHeight;
 
 					// Draw the scaled map
-					g.drawImage(map.getImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
+					g.drawImage(camerasMap.getImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
 
 					// Draw the transparent rectangle to highlight the current camera
 					Graphics2D g2d = (Graphics2D) g;
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 
-                    for (int i = 0; i < map.size(); i++) {
-                        Camera cam = map.get(i);
+                    for (int i = 0; i < camerasMap.size(); i++) {
+                        Camera cam = camerasMap.get(i);
 						// Scale the current camera’s rectangle position
 						Rectangle rec = new Rectangle(cam.getMapLoc());
 						int scaledRecX = mapX + (int) (rec.x * scaleRatioX);
@@ -563,7 +557,7 @@ public abstract class Night extends JComponent {
 						int scaledRecWidth = (int) (rec.width * scaleRatioX);
 						int scaledRecHeight = (int) (rec.height * scaleRatioY);
 
-						if (i == map.getSelected()){
+						if (i == camerasMap.getSelected()){
 							// Draw the scaled rectangle on the map
 							g.setColor(Color.WHITE);
 						} else {
@@ -579,7 +573,7 @@ public abstract class Night extends JComponent {
 					// Cam name
 					g.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 					g.setColor(Color.WHITE);
-					g.drawString(map.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
+					g.drawString(camerasMap.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
 				}
 			} else {
 				// Transition cams down
@@ -697,10 +691,10 @@ public abstract class Night extends JComponent {
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
 				} else {
-					if (map.getSelected() > 0) {
-						map.setSelected(map.getSelected()-1);
+					if (camerasMap.getSelected() > 0) {
+						camerasMap.setSelected(camerasMap.getSelected()-1);
 					} else {
-						map.setSelected(map.size()-1);
+						camerasMap.setSelected(camerasMap.size()-1);
 					}
 					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}
@@ -725,10 +719,10 @@ public abstract class Night extends JComponent {
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
 				} else {
-					if (map.getSelected() < map.size()-1) {
-						map.setSelected(map.getSelected()+1);
+					if (camerasMap.getSelected() < camerasMap.size()-1) {
+						camerasMap.setSelected(camerasMap.getSelected()+1);
 					} else {
-						map.setSelected(0);
+						camerasMap.setSelected(0);
 					}
 					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 				}

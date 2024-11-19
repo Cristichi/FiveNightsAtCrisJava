@@ -109,6 +109,7 @@ public class Camera {
             return this;
         }
 
+        @SuppressWarnings("unused")
         public CameraBuilder addConnection(String camName) {
             connections.add(camName);
             return this;

@@ -1,11 +1,9 @@
 package es.cristichi.fnac.obj;
 
-import es.cristichi.fnac.exception.CameraException;
-
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.HashMap;
 
-public class CameraMap extends ArrayList<Camera> {
+public class CameraMap extends HashMap<String, Camera> {
     private final BufferedImage image;
     private int selected;
 
@@ -33,10 +31,7 @@ public class CameraMap extends ArrayList<Camera> {
 
     public void addAll(Camera... cams) {
         for (Camera cam : cams) {
-            if (contains(cam)){
-                throw new CameraException("Camera "+cam.getName()+" already exists in this CameraMap.");
-            }
-            add(cam);
+            put(cam.getName(), cam);
         }
     }
 }
