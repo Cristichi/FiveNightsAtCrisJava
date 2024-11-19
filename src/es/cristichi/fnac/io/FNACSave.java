@@ -18,7 +18,7 @@ public class FNACSave {
     public static void saveToFile(String path, SaveFile saveFile) throws IOException {
         try (DataOutputStream out = new DataOutputStream(new FileOutputStream(path))) {
             // Write the magic number
-            out.writeUTF(MAGIC_NUMBER);
+            out.writeBytes(MAGIC_NUMBER);
 
             // Write the number of completed nights
             List<String> completedNights = saveFile.completedNights();
@@ -42,7 +42,7 @@ public class FNACSave {
     public static SaveFile loadFromFile(String path) throws IOException {
         try (DataInputStream in = new DataInputStream(new FileInputStream(path))) {
             // Verify the magic number
-            String magic = in.readUTF();
+            String magic = new String(in.readNBytes(MAGIC_NUMBER.getBytes().length));
             if (!MAGIC_NUMBER.equals(magic)) {
                 throw new IllegalArgumentException("Invalid save file format.");
             }

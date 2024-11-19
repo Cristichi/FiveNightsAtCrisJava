@@ -14,7 +14,7 @@ public class Maria extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("María", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/maria/camImg.png"), "imgs/anims/maria/jumpscare.gif", 1, forbiddenCams);
+        super("María", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("anims/maria/camImg.png"), "anims/maria/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Maria extends Animatronic{
     }
 
     @Override
-    public boolean onJumpscareAttempt(int tick, boolean doorOpen, boolean camsUp, Camera cam, Random rng, int fps) {
+    public boolean onJumpscareAttempt(int tick, boolean camsUp, Camera cam, boolean doorOpen, Random rng, int fps) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;

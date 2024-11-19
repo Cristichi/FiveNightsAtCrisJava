@@ -121,8 +121,6 @@ public abstract class Menu extends JComponent {
 				for (Component component : Menu.this.getComponents()) {
 					component.setVisible(false);
 				}
-				repaint();
-				repaint();
 				new Thread(() -> {
                     try {
                         onMenuItemClick(item);

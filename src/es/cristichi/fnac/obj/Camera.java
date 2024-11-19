@@ -14,12 +14,12 @@ public class Camera {
     private final String name;
     private final BufferedImage camBackground;
     private final Rectangle loc;
-    private final LinkedList<Camera> connections;
+    private final LinkedList<String> connections;
     private final LinkedList<Animatronic> animatronicsHere;
     private final boolean isLeftDoorOfOffice;
     private final boolean isRightDoorOfOffice;
 
-    private Camera(String name, BufferedImage camBackground, Rectangle loc, LinkedList<Camera> connections, LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice) {
+    private Camera(String name, BufferedImage camBackground, Rectangle loc, LinkedList<String> connections, LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice) {
         this.name = name;
         this.camBackground = camBackground;
         this.loc = loc;
@@ -41,7 +41,7 @@ public class Camera {
         return loc;
     }
 
-    public LinkedList<Camera> getConnections() {
+    public LinkedList<String> getConnections() {
         return connections;
     }
 
@@ -53,11 +53,13 @@ public class Camera {
         return isRightDoorOfOffice;
     }
 
-    // TODO: I think this might be overkill. I should instead save only the names
-    //  and the night will work it out by looping throughout the map.
     public void addMutualConnection(Camera cam) {
-        cam.connections.add(this);
-        connections.add(cam);
+        addConnection(cam.getName());
+        cam.addConnection(name);
+    }
+
+    public void addConnection(String camName) {
+        connections.add(camName);
     }
 
     public LinkedList<Animatronic> getAnimatronicsHere() {
@@ -65,7 +67,7 @@ public class Camera {
     }
 
     public void move(Animatronic animatronic, Camera dest){
-        if (connections.contains(dest)){
+        if (connections.contains(dest.getName())){
             if (animatronicsHere.remove(animatronic)){
                 dest.animatronicsHere.add(animatronic);
             } else {
@@ -80,7 +82,7 @@ public class Camera {
         private String name = null;
         private BufferedImage camBackground = null;
         private Rectangle loc = null;
-        private final LinkedList<Camera> connections = new LinkedList<>();
+        private final LinkedList<String> connections = new LinkedList<>();
         private final LinkedList<Animatronic> animatronicsHere = new LinkedList<>();
         private boolean isLeftDoorOfOffice = false;
         private boolean isRightDoorOfOffice = false;
@@ -104,6 +106,11 @@ public class Camera {
 
         public CameraBuilder addAnimatronics(Animatronic animatronic) {
             this.animatronicsHere.add(animatronic);
+            return this;
+        }
+
+        public CameraBuilder addConnection(String camName) {
+            connections.add(camName);
             return this;
         }
 

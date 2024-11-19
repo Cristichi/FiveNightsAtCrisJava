@@ -46,55 +46,55 @@ public class Main {
         int numCompleted = completed.size();
 		String background;
 		if (numCompleted == 1) {
-			background = "imgs/menu/background1.jpg";
-            mmItems.add("Night 2 is not finished");
-            mmItems.add("Night 1");
+			background = "menu/background1.jpg";
+            mmItems.add("Night 2 is unplayable WIP");
+            mmItems.add("Repeat Night 1");
 		} else if (numCompleted == 2) {
-			background = "imgs/menu/background2.jpg";
+			background = "menu/background2.jpg";
             mmItems.add("You are done? Yes I don't have much more, let me add all nights");
-            mmItems.add("Night 1");
-            mmItems.add("Night 2");
+            mmItems.add("Repeat Night 1");
+            mmItems.add("Repeat Night 2");
 		} else {
-            background = "imgs/menu/background.jpg";
+            background = "menu/background.jpg";
             mmItems.add("Night 1");
         }
         mmItems.add("Exit");
-		Menu mainMenu = new Menu(background, "imgs/menu/loading.jpg", mmItems) {
+		Menu mainMenu = new Menu(background, "menu/loading.jpg", mmItems) {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
                 switch (item) {
-                    case "Night 1" -> {
+                    case "Night 1", "Repeat Night 1" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-                        aiNightBob.put(0, 10);
-                        aiNightBob.put(4, 13);
+                        aiNightBob.put(0, 0);
+                        aiNightBob.put(6, 13);
 
                         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-                        aiNightMaria.put(1, 10);
-                        aiNightMaria.put(4, 13);
-                        aiNightMaria.put(5, 15);
+                        aiNightMaria.put(0, 0);
+                        aiNightMaria.put(6, 13);
+                        aiNightMaria.put(7, 15);
 
-                        CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("imgs/night/tutorial/map.png"));
+                        CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"));
                         Camera cam1 = new Camera.CameraBuilder()
                                 .setName("cam1")
-                                .setCamBackground("imgs/night/tutorial/cam1.jpg")
+                                .setCamBackground("night/tutorial/cam1.jpg")
                                 .setLoc(113, 111, 378, 177)
                                 .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4")))
                                 .build();
                         Camera cam2 = new Camera.CameraBuilder()
                                 .setName("cam2")
-                                .setCamBackground("imgs/night/tutorial/cam2.jpg")
+                                .setCamBackground("night/tutorial/cam2.jpg")
                                 .setLoc(491, 117, 379, 177)
                                 .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3")))
                                 .build();
                         Camera cam3 = new Camera.CameraBuilder()
                                 .setName("cam3")
-                                .setCamBackground("imgs/night/tutorial/cam3.jpg")
+                                .setCamBackground("night/tutorial/cam3.jpg")
                                 .setLoc(134, 287, 167, 571)
                                 .connectToOfficeLeft()
                                 .build();
                         Camera cam4 = new Camera.CameraBuilder()
                                 .setName("cam4")
-                                .setCamBackground("imgs/night/tutorial/cam4.jpg")
+                                .setCamBackground("night/tutorial/cam4.jpg")
                                 .setLoc(720, 296, 141, 586)
                                 .connectToOfficeRight()
                                 .build();
@@ -103,7 +103,7 @@ public class Main {
                         cam2.addMutualConnection(cam4);
                         night1Map.addAll(cam1, cam2, cam3, cam4);
                         long seed = new Random().nextLong();
-                        Night night1 = new Night("Night 1", night1Map, new Jumpscare("imgs/office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+                        Night night1 = new Night("Night 1", night1Map, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
                             @Override
                             protected void onJumpscare() {
                                 nightPanel.removeAll();
@@ -127,7 +127,7 @@ public class Main {
                         night1.startNight();
 
                     }
-                    case "Night 2 is not finished" -> {
+                    case "Night 2", "Repeat Night 2" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
 						aiNightBob.put(0, 5);
 						aiNightBob.put(2, 6);
@@ -149,29 +149,29 @@ public class Main {
                         aiNightPaco.put(5, 8);
                         Animatronic paco = new Paco(3, aiNightPaco, List.of());
 
-                        CameraMap night2Map = new CameraMap(FNACResources.loadImageResource("imgs/night/n2/map.png"));
+                        CameraMap night2Map = new CameraMap(FNACResources.loadImageResource("night/n2/map.png"));
                         Camera kitchen = new Camera.CameraBuilder()
                                 .setName("kitchen")
-                                .setCamBackground("imgs/night/n2/kitchen.jpg")
+                                .setCamBackground("night/n2/kitchen.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(paco)
                                 .build();
                         Camera storage = new Camera.CameraBuilder()
                                 .setName("storage")
-                                .setCamBackground("imgs/night/n2/storage.jpg")
+                                .setCamBackground("night/n2/storage.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(bob)
                                 .build();
                         Camera mainStages = new Camera.CameraBuilder()
                                 .setName("main stages")
-                                .setCamBackground("imgs/night/n2/mainStages.jpg")
+                                .setCamBackground("night/n2/mainStages.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(maria)
                                 .build();
 
                         night2Map.addAll(kitchen, storage, mainStages);
                         long seed = new Random().nextLong();
-                        Night night2 = new Night("Night 2", night2Map, new Jumpscare("imgs/office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+                        Night night2 = new Night("Night 2", night2Map, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
                             @Override
                             protected void onJumpscare() {
                                 nightPanel.removeAll();

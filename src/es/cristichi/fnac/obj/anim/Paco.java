@@ -20,7 +20,7 @@ public class Paco extends Animatronic{
     private final double targetPatienceKillSec = 5.1;
 
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("Paco", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("imgs/anims/paco/camImg.png"), "imgs/anims/paco/jumpscare.gif", 1, forbiddenCams);
+        super("Paco", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("anims/paco/camImg.png"), "anims/paco/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Paco extends Animatronic{
     }
 
     @Override
-    public boolean onJumpscareAttempt(int tick, boolean doorOpen, boolean camsUp, Camera cam, Random rng, int fps) {
+    public boolean onJumpscareAttempt(int tick, boolean camsUp, Camera cam, boolean doorOpen, Random rng, int fps) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;

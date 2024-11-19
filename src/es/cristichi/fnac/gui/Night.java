@@ -106,16 +106,16 @@ public abstract class Night extends JComponent {
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
 
 		nightHour = 0; // Start at 12 AM = 00:00h
-		backgroundImg = FNACResources.loadImageResource("imgs/office/background.jpg");
-		camMonitorImg = FNACResources.loadImageResource("imgs/office/monitor.png");
-		camMonitorStaticImg = FNACResources.loadImageResource("imgs/office/monitorStatic.png");
-		camStaticImg = FNACResources.loadImageResource("imgs/office/camTrans.jpg");
-		leftDoorOpenImg = FNACResources.loadImageResource("imgs/office/leftDoorOpen.png");
-		leftDoorTransImg = FNACResources.loadImageResource("imgs/office/leftDoorTrans.png");
-		leftDoorClosedImg = FNACResources.loadImageResource("imgs/office/leftDoorClosed.png");
-		rightDoorOpenImg = FNACResources.loadImageResource("imgs/office/rightDoorOpen.png");
-		rightDoorTransImg = FNACResources.loadImageResource("imgs/office/rightDoorTrans.png");
-		rightDoorClosedImg = FNACResources.loadImageResource("imgs/office/rightDoorClosed.png");
+		backgroundImg = FNACResources.loadImageResource("office/background.jpg");
+		camMonitorImg = FNACResources.loadImageResource("office/monitor.png");
+		camMonitorStaticImg = FNACResources.loadImageResource("office/monitorStatic.png");
+		camStaticImg = FNACResources.loadImageResource("office/camTrans.jpg");
+		leftDoorOpenImg = FNACResources.loadImageResource("office/leftDoorOpen.png");
+		leftDoorTransImg = FNACResources.loadImageResource("office/leftDoorTrans.png");
+		leftDoorClosedImg = FNACResources.loadImageResource("office/leftDoorClosed.png");
+		rightDoorOpenImg = FNACResources.loadImageResource("office/rightDoorOpen.png");
+		rightDoorTransImg = FNACResources.loadImageResource("office/rightDoorTrans.png");
+		rightDoorClosedImg = FNACResources.loadImageResource("office/rightDoorClosed.png");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -226,11 +226,17 @@ public abstract class Night extends JComponent {
 							anim.updateIADuringNight(nightHour);
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(rng)){
-									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, anim.onMovementOppSuccess(map, cam, rng)));
+									String camToName = anim.onMovementOppSuccess(map, cam, rng);
+									for (Camera camTo : map){
+										if (camTo.getName().equals(camToName)){
+											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camTo));
+											break;
+										}
+									}
 								}
 							}
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
-							if (anim.onJumpscareAttempt(currentTick, openDoor, camsUp, cam, rng, FPS)){
+							if (anim.onJumpscareAttempt(currentTick, camsUp, cam, openDoor, rng, FPS)){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future.
 								jumpscare.reset();
