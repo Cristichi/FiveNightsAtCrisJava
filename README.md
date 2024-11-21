@@ -1,5 +1,5 @@
 ### Five Nights at Cris'
-Just another Five Night at Freddy's fangame, FNAC, except that I decided to do it in the worst possible way by using only vanilla Java with its Swing components and draing everything frame by frame. It also posseses my unique drawing style.
+Just another Five Night at Freddy's fangame, FNAC, except that I decided to do it in the worst possible way by using only vanilla Java with its Swing components and doing everything frame by frame. It also posseses my unique drawing style.
 
 ## Work in Progress
 This is still a work in progress, in early stages of development. The Tutorial night is playable, but it is not finished as not all the mechanics are implemented and it offers no explanation of said mechanics at the moment. Also, the simple map present in the Tutorial night will not be used for the rest of the game.
