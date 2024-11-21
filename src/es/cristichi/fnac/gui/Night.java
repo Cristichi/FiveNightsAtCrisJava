@@ -10,10 +10,7 @@ import es.cristichi.fnac.obj.anim.Jumpscare;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -47,6 +44,7 @@ public abstract class Night extends JComponent {
 	private OfficeLocation offTransFrom;
 	private final BufferedImage camMonitorImg, camMonitorStaticImg;
 	private final BufferedImage camStaticImg;
+	private final float MOUSE_MOVE_THRESHOLD = 0.05f;
 
 	// Cam up/down
 	private static final int CAMS_TRANSITION_TICKS = 30;
@@ -167,20 +165,33 @@ public abstract class Night extends JComponent {
 			getActionMap().put("doorAction", action);
 		}
 
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+				if (p.x < getWidth() * MOUSE_MOVE_THRESHOLD) {
+					Action leftAction = getActionMap().get("leftAction");
+					leftAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "leftAction"));
+				} else if (p.x > getWidth() * (1 - MOUSE_MOVE_THRESHOLD)) {
+					Action rightAction = getActionMap().get("rightAction");
+					rightAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rightAction"));
+				}
+			}
+		});
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				Point click = e.getPoint();
-                for (Camera cam : camerasMap.values()) {
-                    if (camsLocOnScreen.containsKey(cam.getName())) {
+				for (Camera cam : camerasMap.values()) {
+					if (camsLocOnScreen.containsKey(cam.getName())) {
 						Rectangle camLocScreen = camsLocOnScreen.get(cam.getName());
-						if (camLocScreen.contains(click)){
+						if (camLocScreen.contains(click)) {
 							camerasMap.setSelected(cam.getName());
 							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 							break;
 						}
 					}
-                }
+				}
 			}
 		});
 
