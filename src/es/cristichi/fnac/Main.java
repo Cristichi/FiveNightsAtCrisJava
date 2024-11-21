@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
-	public static final String GAME_TITLE = "Five Nights at Crist's";
+	public static final String GAME_TITLE = "Five Nights at Cris's";
 	private static JPanel cardPanel;
 	private static JPanel nightPanel;
 
