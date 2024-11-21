@@ -47,23 +47,23 @@ public class Main {
 		String background;
 		if (numCompleted == 1) {
 			background = "menu/background1.jpg";
-            mmItems.add("Night 2 is unplayable WIP");
-            mmItems.add("Repeat Night 1");
+            mmItems.add("Night 1 is unplayable WIP");
+            mmItems.add("Repeat Tutorial");
 		} else if (numCompleted == 2) {
 			background = "menu/background2.jpg";
-            mmItems.add("You are done? Yes I don't have much more, let me add all nights");
+            mmItems.add("The other nights are not available yet! :3");
+            mmItems.add("Repeat Tutorial");
             mmItems.add("Repeat Night 1");
-            mmItems.add("Repeat Night 2");
 		} else {
             background = "menu/background.jpg";
-            mmItems.add("Night 1");
+            mmItems.add("Tutorial Night");
         }
         mmItems.add("Exit");
 		Menu mainMenu = new Menu(background, "menu/loading.jpg", mmItems) {
 			@Override
 			protected void onMenuItemClick(String item) throws IOException {
                 switch (item) {
-                    case "Night 1", "Repeat Night 1" -> {
+                    case "Tutorial Night", "Repeat Tutorial" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
                         aiNightBob.put(0, 0);
                         aiNightBob.put(1, 1);
@@ -75,7 +75,7 @@ public class Main {
                         aiNightMaria.put(4, 2);
                         aiNightMaria.put(5, 3);
 
-                        CameraMap night1Map = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"), "cam3");
+                        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"), "cam3");
                         Camera cam1 = new Camera.CameraBuilder()
                                 .setName("cam1")
                                 .setCamBackground("night/tutorial/cam1.jpg")
@@ -103,9 +103,9 @@ public class Main {
                         cam1.addMutualConnection(cam2);
                         cam1.addMutualConnection(cam3);
                         cam2.addMutualConnection(cam4);
-                        night1Map.addAll(cam1, cam2, cam3, cam4);
+                        nightMap.addAll(cam1, cam2, cam3, cam4);
                         long seed = new Random().nextLong();
-                        Night night1 = new Night("Night 1", night1Map, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+                        Night night = new Night("Tutorial", nightMap, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
                             @Override
                             protected void onJumpscare() {
                                 nightPanel.removeAll();
@@ -119,17 +119,17 @@ public class Main {
                                 FNACSave.saveToFile(FNACSave.SAVE_FILE, saveFile);
                                 nightPanel.removeAll();
                                 cards.show(cardPanel, "menu");
-                                System.out.println("You just won night 1! Congratulations, but it was only the beggining.");
+                                System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
                             }
                         };
-                        nightPanel.add(night1);
-						window.setTitle(getTitleForWindow(night1.getNightName()));
+                        nightPanel.add(night);
+						window.setTitle(getTitleForWindow(night.getNightName()));
 						cards.show(cardPanel, "night");
-                        System.out.printf("Today's Night 1 is using the seed \"%d\". Have fun!%n", seed);
-                        night1.startNight();
+                        System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
+                        night.startNight();
 
                     }
-                    case "Night 2", "Repeat Night 2" -> {
+                    case "Night 1", "Repeat Night 1" -> {
                         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
 						aiNightBob.put(0, 5);
 						aiNightBob.put(2, 6);
@@ -151,29 +151,29 @@ public class Main {
                         aiNightPaco.put(5, 8);
                         Animatronic paco = new Paco(3, aiNightPaco, List.of());
 
-                        CameraMap night2Map = new CameraMap(FNACResources.loadImageResource("night/n2/map.png"), "cam3");
+                        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/n1/map.png"), "cam3");
                         Camera kitchen = new Camera.CameraBuilder()
                                 .setName("kitchen")
-                                .setCamBackground("night/n2/kitchen.jpg")
+                                .setCamBackground("night/n1/kitchen.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(paco)
                                 .build();
                         Camera storage = new Camera.CameraBuilder()
                                 .setName("storage")
-                                .setCamBackground("night/n2/storage.jpg")
+                                .setCamBackground("night/n1/storage.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(bob)
                                 .build();
                         Camera mainStages = new Camera.CameraBuilder()
                                 .setName("main stages")
-                                .setCamBackground("night/n2/mainStages.jpg")
+                                .setCamBackground("night/n1/mainStages.jpg")
                                 .setLoc(176, 33, 283, 149)
                                 .addAnimatronics(maria)
                                 .build();
 
-                        night2Map.addAll(kitchen, storage, mainStages);
+                        nightMap.addAll(kitchen, storage, mainStages);
                         long seed = new Random().nextLong();
-                        Night night2 = new Night("Night 2", night2Map, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+                        Night night = new Night("Night 1", nightMap, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
                             @Override
                             protected void onJumpscare() {
                                 nightPanel.removeAll();
@@ -190,11 +190,11 @@ public class Main {
                                 System.out.println("Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
                             }
                         };
-                        nightPanel.add(night2);
-						window.setTitle(getTitleForWindow(night2.getNightName()));
+                        nightPanel.add(night);
+						window.setTitle(getTitleForWindow(night.getNightName()));
 						cards.show(cardPanel, "night");
-                        System.out.printf("Today's Night 2 is using the seed \"%d\". Good luck.%n", seed);
-                        night2.startNight();
+                        System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+                        night.startNight();
                     }
                     case "Exit" -> {
                         window.dispose();
