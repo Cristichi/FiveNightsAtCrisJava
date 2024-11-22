@@ -212,6 +212,7 @@ public class Main {
         aiNightMaria.put(5, 8);
         Animatronic maria = new Maria(5, aiNightMaria, List.of());
 
+// TODO: Paco will be work on after I complete this map. I also didn't decode on how he will move or behave to be honest.
 //        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
 //        aiNightPaco.put(1, 5);
 //        aiNightPaco.put(3, 6);
