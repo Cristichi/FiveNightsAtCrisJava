@@ -430,7 +430,7 @@ public abstract class Night extends JComponent {
 			int camImgWidth = camerasMap.getSelectedCam().getCamBackground().getWidth();
 			int camImgHeight = camerasMap.getSelectedCam().getCamBackground().getHeight();
 
-			// Monitor's inner area for the camera view, from original image
+			// Monitor's inner area for the camera view, from source
 			int innerX = 176;
 			int innerY = 195;
 			int innerWidth = 1695;
