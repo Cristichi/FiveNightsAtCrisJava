@@ -92,6 +92,7 @@ public class Main {
         cards.show(cardPanel, "menu");
 
         window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        window.setMinimumSize(new Dimension(600, 400));
         window.setVisible(true);
     }
 
