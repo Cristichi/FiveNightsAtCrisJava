@@ -327,9 +327,7 @@ public abstract class Night extends JComponent {
 						getWidth(), getHeight(), this);
 
 				// Left door when watching left door and no transition
-				g.drawImage(leftDoor,
-						0, 0,
-						leftDoorWidthScaled, getHeight(),
+				g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
@@ -342,12 +340,8 @@ public abstract class Night extends JComponent {
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
 				int visibleDoorWidthScaled = (int) (leftDoorWidthScaled * transitionProgress);
 				int doorImageStartX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
-				g.drawImage(leftDoor,
-						0, 0,                                     // Screen position (always starts at the left of the screen)
-						visibleDoorWidthScaled, getHeight(),      // Draw width matches the visible scaled portion
-						doorImageStartX, 0,                       // Source image: start from the right side of the door image
-						leftDoor.getWidth(), leftDoor.getHeight(), // Source image: end at the full width
-						this);
+				g.drawImage(leftDoor, 0, 0, visibleDoorWidthScaled, getHeight(),
+						doorImageStartX, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 			}
 			break;
 
@@ -724,15 +718,6 @@ public abstract class Night extends JComponent {
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
 				}
-				// After moving from an "ordered" list towards selecting by name, it may be best to remove cam switch with keys.
-//				else {
-//					if (camerasMap.getSelected() > 0) {
-//						camerasMap.setSelected(camerasMap.getSelected()-1);
-//					} else {
-//						camerasMap.setSelected(camerasMap.size()-1);
-//					}
-//					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
-//				}
 			}
 		}
 
@@ -754,15 +739,6 @@ public abstract class Night extends JComponent {
                         offTransTicks = OFFICE_TRANSITION_TICKS;
                     }
 				}
-				// After moving from an "ordered" list towards selecting by name, it may be best to remove cam switch with keys.
-//				else {
-//					if (camerasMap.getSelected() < camerasMap.size()-1) {
-//						camerasMap.setSelected(camerasMap.getSelected()+1);
-//					} else {
-//						camerasMap.setSelected(0);
-//					}
-//					changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
-//				}
 			}
 		}
 	}
