@@ -1,7 +1,6 @@
 package es.cristichi.fnac;
 
 import es.cristichi.fnac.exception.MenuItemNotFound;
-import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.Night;
 import es.cristichi.fnac.io.FNACResources;
@@ -95,17 +94,10 @@ public class Main {
 
     private static Timer getMouseRestrictTimer(JFrame window) throws AWTException {
         Robot robot = new Robot();
-        return new Timer(100, e -> {
+        return new Timer(10, e -> {
             if (window.isFocused()) {
                 Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
                 Rectangle bounds = window.getBounds();
-
-                // Convert bounds to screen coordinates
-                Insets insets = window.getInsets();
-                bounds.x += insets.left;
-                bounds.y += insets.top;
-                bounds.width -= insets.left + insets.right;
-                bounds.height -= insets.top + insets.bottom;
 
                 // Check if the cursor is outside the bounds
                 if (!bounds.contains(cursorLocation)) {
@@ -120,7 +112,7 @@ public class Main {
     private static Menu createMenu(FNACSave.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
         return new Menu(background, "menu/loading.jpg", mmItems) {
             @Override
-            protected void onMenuItemClick(String item) throws IOException, NightException {
+            protected void onMenuItemClick(String item) throws IOException {
                 switch (item) {
                     case "Tutorial Night", "Repeat Tutorial" -> startTutorialNight(saveFile, cards, window);
                     case "Night 1", "Repeat Night 1" -> startNight1(saveFile, cards, window);
@@ -134,7 +126,7 @@ public class Main {
         };
     }
 
-    private static void startTutorialNight(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException, NightException {
+    private static void startTutorialNight(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 0);
         aiNightBob.put(1, 1);
@@ -200,8 +192,7 @@ public class Main {
         night.startNight();
     }
 
-    private static void startNight1(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException, NightException {
-
+    private static void startNight1(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 5);
         aiNightBob.put(2, 6);
