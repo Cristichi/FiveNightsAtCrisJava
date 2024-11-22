@@ -55,6 +55,7 @@ public class Main {
         JFrame window = new JFrame(GAME_TITLE);
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setIconImage(FNACResources.loadImageResource("icon.jpg"));
         window.setLayout(new BorderLayout());
 
         CardLayout cards = new CardLayout();
