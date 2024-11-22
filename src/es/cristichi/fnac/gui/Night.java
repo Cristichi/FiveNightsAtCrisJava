@@ -296,6 +296,8 @@ public abstract class Night extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 		// Most important thing, to fix things being weird depending on the size of this component.
 		double scaleX = getWidth() / (double) OFFICEWIDTH;
@@ -559,9 +561,6 @@ public abstract class Night extends JComponent {
 					// Draw the scaled map
 					g.drawImage(camerasMap.getMapImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
 
-					// Draw the transparent rectangle to highlight the current camera
-					Graphics2D g2d = (Graphics2D) g;
-
                     //for (int i = 0; i < camerasMap.size(); i++) {
                     for (Camera cam : camerasMap.values()) {
 						// Scale the current camera’s rectangle position
@@ -579,25 +578,14 @@ public abstract class Night extends JComponent {
 						}
 						g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
 
-						// Border, for easier camera distinction.
-						if (cam.getName().equals(camerasMap.getSelectedName())){
-							g.setColor(Color.WHITE);
-						} else {
-							g.setColor(Color.BLACK);
-						}
-						Stroke basicStroke = g2d.getStroke();
-						g2d.setStroke(new BasicStroke(3));
-						g2d.drawRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
-						g2d.setStroke(basicStroke);
-
 						// Name of cam in map
 						{
 							String camName = cam.getName().toUpperCase();
 							g.setColor(Color.BLACK);
-							int marginX = scaledCamMapRecX/200;
-							int marginY = scaledCamMapRecY/200;
+							int marginX = scaledCamMapRecX/500;
+							int marginY = scaledCamMapRecY/500;
 							float fontSize = 25;
-							Font font = new Font("Arial Black", Font.BOLD, (int) fontSize);
+							Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
 							FontMetrics metrics = g2d.getFontMetrics(font);
 							Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
 							while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
@@ -608,7 +596,7 @@ public abstract class Night extends JComponent {
 							g.setFont(font);
 							int camNameX = (int) (scaledCamMapRecX + lineBounds.getX() + marginX);
 							int camNameY = (int) (scaledCamMapRecY + (scaledCamMapRecHeight - lineBounds.getHeight()) / 2 + metrics.getAscent());
-							g.drawString(camName, camNameX, camNameY);
+							g2d.drawString(camName, camNameX, camNameY);
 						}
 
 						// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
@@ -618,7 +606,7 @@ public abstract class Night extends JComponent {
 					// Cam name in top-left of monitor
 					g.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 					g.setColor(Color.WHITE);
-					g.drawString(camerasMap.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
+					g2d.drawString(camerasMap.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
 				}
 			} else {
 				// Transition cams down
@@ -637,9 +625,9 @@ public abstract class Night extends JComponent {
 			}
 		}
 
-		int txtMarginX = getWidth()/100;
-		int txtMarginY = getHeight()/1000;
         if (victoryScreen == null) {
+			int txtMarginX = getWidth()/100;
+			int txtMarginY = getHeight()/1000;
             g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
             String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60));
 			FontMetrics fm = g.getFontMetrics();
@@ -673,11 +661,11 @@ public abstract class Night extends JComponent {
 						break;
 				}
 				String strPower = String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr);
-				g.drawString(strPower, txtMarginX, getHeight() - fm.getLeading() - fm.getDescent() - txtMarginY);
+				g2d.drawString(strPower, txtMarginX, getHeight() - fm.getLeading() - fm.getDescent() - txtMarginY);
 			}
 			{
 				g.setColor(Color.WHITE);
-				g.drawString(strTime, getWidth() - fm.stringWidth(strTime) - txtMarginX, fm.getHeight() + txtMarginY);
+				g2d.drawString(strTime, getWidth() - fm.stringWidth(strTime) - txtMarginX, fm.getHeight() + txtMarginY);
 			}
 
         } else {
@@ -692,7 +680,7 @@ public abstract class Night extends JComponent {
 			int centerY = (getHeight() + textHeight) / 2;
 
 			g.setColor(color);
-			g.drawString(text, centerX, centerY);
+			g2d.drawString(text, centerX, centerY);
         }
 
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
