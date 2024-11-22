@@ -7,7 +7,10 @@ import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.io.FNACSave;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import es.cristichi.fnac.obj.anim.*;
+import es.cristichi.fnac.obj.anim.Animatronic;
+import es.cristichi.fnac.obj.anim.Bob;
+import es.cristichi.fnac.obj.anim.Jumpscare;
+import es.cristichi.fnac.obj.anim.Maria;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,7 +74,7 @@ public class Main {
 
         if (numCompleted == 1) {
             background = "menu/background1.jpg";
-            mmItems.add("Night 1 is unplayable WIP");
+            mmItems.add("Night 1");
             mmItems.add("Repeat Tutorial");
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
@@ -144,28 +147,29 @@ public class Main {
                 .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
                 .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4")))
+                .addConnection("cam2", "cam3")
                 .build();
         Camera cam2 = new Camera.CameraBuilder()
                 .setName("cam2")
                 .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
                 .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3")))
+                .addConnection("cam1", "cam4")
                 .build();
         Camera cam3 = new Camera.CameraBuilder()
                 .setName("cam3")
                 .setCamBackground("night/tutorial/cam3.jpg")
                 .setLoc(134, 287, 167, 571)
+                .addConnection("cam1")
                 .connectToOfficeLeft()
                 .build();
         Camera cam4 = new Camera.CameraBuilder()
                 .setName("cam4")
                 .setCamBackground("night/tutorial/cam4.jpg")
                 .setLoc(720, 296, 141, 586)
+                .addConnection("cam2")
                 .connectToOfficeRight()
                 .build();
-        cam1.addMutualConnection(cam2);
-        cam1.addMutualConnection(cam3);
-        cam2.addMutualConnection(cam4);
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Tutorial", nightMap, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
@@ -207,34 +211,30 @@ public class Main {
         aiNightMaria.put(5, 8);
         Animatronic maria = new Maria(5, aiNightMaria, List.of());
 
-        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(1, 5);
-        aiNightPaco.put(3, 6);
-        aiNightPaco.put(4, 7);
-        aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(3, aiNightPaco, List.of());
+//        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
+//        aiNightPaco.put(1, 5);
+//        aiNightPaco.put(3, 6);
+//        aiNightPaco.put(4, 7);
+//        aiNightPaco.put(5, 8);
+//        Animatronic paco = new Paco(3, aiNightPaco, List.of());
 
-        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/n1/map.png"), "cam3");
+        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/n1/map.png"), "storage");
         Camera kitchen = new Camera.CameraBuilder()
                 .setName("kitchen")
                 .setCamBackground("night/n1/kitchen.jpg")
-                .setLoc(176, 33, 283, 149)
-                .addAnimatronics(paco)
+                .setLoc(187, 45, 140, 70)
+                //.addAnimatronics(paco)
+                .addConnection("storage")
                 .build();
         Camera storage = new Camera.CameraBuilder()
                 .setName("storage")
                 .setCamBackground("night/n1/storage.jpg")
-                .setLoc(176, 33, 283, 149)
-                .addAnimatronics(bob)
-                .build();
-        Camera mainStages = new Camera.CameraBuilder()
-                .setName("main stages")
-                .setCamBackground("night/n1/mainStages.jpg")
-                .setLoc(176, 33, 283, 149)
-                .addAnimatronics(maria)
+                .setLoc(542, 111, 140, 70)
+                .addAnimatronics(bob, maria)
+                .addConnection("kitchen")
                 .build();
 
-        nightMap.addAll(kitchen, storage, mainStages);
+        nightMap.addAll(kitchen, storage);
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
             @Override

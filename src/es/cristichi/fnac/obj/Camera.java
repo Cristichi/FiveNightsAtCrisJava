@@ -8,6 +8,7 @@ import es.cristichi.fnac.obj.anim.Animatronic;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class Camera {
@@ -104,14 +105,14 @@ public class Camera {
             return this;
         }
 
-        public CameraBuilder addAnimatronics(Animatronic animatronic) {
-            this.animatronicsHere.add(animatronic);
+        public CameraBuilder addAnimatronics(Animatronic... animatronics) {
+            Collections.addAll(animatronicsHere, animatronics);
             return this;
         }
 
         @SuppressWarnings("unused")
-        public CameraBuilder addConnection(String camName) {
-            connections.add(camName);
+        public CameraBuilder addConnection(String... camNames) {
+            Collections.addAll(connections, camNames);
             return this;
         }
 
