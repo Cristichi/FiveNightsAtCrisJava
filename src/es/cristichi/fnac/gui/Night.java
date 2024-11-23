@@ -83,13 +83,16 @@ public abstract class Night extends JComponent {
 	/**
 	 *
 	 * @param nightName Name of the Night. Barely used.
-	 * @param mapAndAnimatronics Map of the place.
+	 * @param mapAndAnimatronics Map of the place. Animatronics present in the Night must start inside
+	 *                              their starting Cameras, they are only stored there.
 	 * @param powerOutage Jumpscare that will happen when the player runs out of power.
-	 * @param rng Random for the night. You may just use <code>new Random()</code> unless you want a specific seed.
-	 * @param powerConsumption A number from 0 to 1, where 0 makes the night impossible to lose by a power outage, and 1 makes it impossible to win even without Animatronics.
-	 * @throws IOException If Assets cannot be loaded from disk. Usually it's because they may be missing, so skill issue.
+	 * @param rng Random for the night. Use <code>new Random()</code> unless you want a specific seed.
+	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
+	 *                             a power outage (even if you use everything all the time),
+	 *                             and 1 makes it impossible to win even without Animatronics.
+	 * @throws IOException If any of the images required for Nights cannot be loaded from the assets.
 	 */
-	public Night(String nightName, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float powerConsumption) throws IOException {
+	public Night(String nightName, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float passivePowerUsage) throws IOException {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = mapAndAnimatronics;
@@ -102,9 +105,9 @@ public abstract class Night extends JComponent {
 		int totalTicks = HOUR_INTERVAL * TOTAL_HOURS;
 		float minPowerPerTickPerResource = 1.0f / totalTicks; // Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
 		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks); // Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
-		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * powerConsumption;
+		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
 
-		nightHour = 0; // Start at 12 AM = 00:00h
+		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		backgroundImg = FNACResources.loadImageResource("office/background.jpg");
 		camMonitorImg = FNACResources.loadImageResource("office/monitor.png");
 		camMonitorStaticImg = FNACResources.loadImageResource("office/monitorStatic.png");

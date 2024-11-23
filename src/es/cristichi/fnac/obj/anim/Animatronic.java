@@ -7,8 +7,8 @@ import es.cristichi.fnac.obj.CameraMap;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-// Supressing unused warnings since some parts of this are for future Animatronics to use, even if the currently
-// existing ones do not make use of it.
+// Supressing unused warnings since some parts of this are for future Animatronics to use,
+// even if the currently existing ones do not make use of it.
 @SuppressWarnings("unused")
 public abstract class Animatronic {
     private final String name;
@@ -95,8 +95,7 @@ public abstract class Animatronic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Animatronic that = (Animatronic) o;
-        return aiLevel == that.aiLevel && Objects.equals(name, that.name) && Objects.equals(camImg, that.camImg);
+        return name.equals(((Animatronic) o).name);
     }
 
     @Override
