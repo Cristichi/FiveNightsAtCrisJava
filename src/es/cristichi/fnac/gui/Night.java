@@ -22,6 +22,7 @@ public abstract class Night extends JComponent {
 	private static final int FPS = 60;
 	private static final int HOUR_INTERVAL = FPS * 90;
 	private static final int TOTAL_HOURS = 6;
+	private static final String POWER_USAGE_CHAR = "█";
 
 	private final String nightName;
 	private final Random rng;
@@ -630,18 +631,18 @@ public abstract class Night extends JComponent {
 			FontMetrics fm = g.getFontMetrics();
 			{
 				int powerUsage = 0;
-				String powerUsageStr = "█";
+				String powerUsageStr = POWER_USAGE_CHAR;
 				if (camsUp) {
 					powerUsage++;
-					powerUsageStr = powerUsageStr.concat("█");
+					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
 				}
 				if (leftDoorClosed) {
 					powerUsage++;
-					powerUsageStr = powerUsageStr.concat("█");
+					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
 				}
 				if (rightDoorClosed) {
 					powerUsage++;
-					powerUsageStr = powerUsageStr.concat("█");
+					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
 				}
 				switch (powerUsage) {
 					case 0:
