@@ -327,7 +327,6 @@ public abstract class Night extends JComponent {
 		// Most important thing, to fix things being weird depending on the size of this component.
 		double scaleX = getWidth() / (double) OFFICEWIDTH_OF_SOURCE;
 		double scaleY = getHeight() / (double) backgroundImg.getHeight();
-		double backgroundScaleY = getHeight() / (double) backgroundImg.getHeight();
 
 		// Draw background and doors. Oh boy.
 		BufferedImage leftDoor;
@@ -684,9 +683,9 @@ public abstract class Night extends JComponent {
         if (victoryScreen == null) {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
-            g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
+            g.setFont(new Font("Arial", Font.BOLD, getWidth()/40));
             String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
-			FontMetrics fm = g.getFontMetrics();
+			FontMetrics fontMetrics = g.getFontMetrics();
 			{
 				int powerUsage = 0;
 				String powerUsageStr = POWER_USAGE_CHAR;
@@ -716,12 +715,14 @@ public abstract class Night extends JComponent {
 						g.setColor(Color.RED.darker());
 						break;
 				}
-				String strPower = String.format("Power: %.0f%% (Usage: %s)", (powerLeft*100), powerUsageStr);
-				g2d.drawString(strPower, txtMarginX, getHeight() - fm.getLeading() - fm.getDescent() - txtMarginY);
+				String strPower1 = String.format("Power Usage: %s",  powerUsageStr);
+				String strPower2 = String.format("Left: %.0f%%", (powerLeft*100));
+				g2d.drawString(strPower1, txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
+				g2d.drawString(strPower2, txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
 			}
 			{
 				g.setColor(Color.WHITE);
-				g2d.drawString(strTime, getWidth() - fm.stringWidth(strTime) - txtMarginX, fm.getHeight() + txtMarginY);
+				g2d.drawString(strTime, getWidth() - fontMetrics.stringWidth(strTime) - txtMarginX, fontMetrics.getHeight() + txtMarginY);
 			}
 
         } else {
