@@ -683,7 +683,7 @@ public abstract class Night extends JComponent {
         if (victoryScreen == null) {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
-            g.setFont(new Font("Arial", Font.BOLD, getWidth()/40));
+            g.setFont(new Font("Arial", Font.BOLD, getWidth()/50));
             String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
 			FontMetrics fontMetrics = g.getFontMetrics();
 			{
