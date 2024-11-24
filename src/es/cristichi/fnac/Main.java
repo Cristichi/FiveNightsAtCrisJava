@@ -174,7 +174,7 @@ public class Main {
                 .build();
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
-        Night night = new Night("Tutorial", nightMap, 60, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+        Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png", new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
@@ -239,7 +239,7 @@ public class Main {
 
         nightMap.addAll(kitchen, storage);
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", nightMap, 90, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 0.45f) {
+        Night night = new Night("Night 1", nightMap, null, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();

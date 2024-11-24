@@ -7,6 +7,7 @@ import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.Animatronic;
 import es.cristichi.fnac.obj.anim.Jumpscare;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,19 +29,28 @@ public abstract class Night extends JComponent {
 	private final int hourTicksInterval;
 	private float powerLeft;
 	private final float powerPerTickPerResource;
-	private final Jumpscare powerOutage;
+	private final Jumpscare powerOutageJumpscare;
+
 	private int currentTick;
 	private int nightHour;
 	private final Timer nightTicks;
+
 	private Boolean victoryScreen;
 	private final BufferedImage backgroundImg;
+	/**
+	 * This image contains a "paper" describing new things to the player, from the previous guy.
+	 */
+	private final BufferedImage paperImg;
 
 	// Office transition
 	private static final int OFFICE_TRANSITION_TICKS = 30;
-	private static final int LEFTDOOR_X = 200;
-	private static final int MONITOR_X = 1000;
-	private static final int RIGHTDOOR_X = 1800;
-	private static final int OFFICEWIDTH = 2000; // Important not to change this xD it has to be 2k
+	private static final int LEFTDOOR_X_IN_SOURCE = 200;
+	private static final int MONITOR_X_IN_SOURCE = 1000;
+	private static final int RIGHTDOOR_X_IN_SOURCE = 1800;
+	private static final int OFFICEWIDTH_OF_SOURCE = 2000; // Important not to change this xD it has to be 2k
+	private static final int PAPER_X_IN_SOURCE_BACKGROUND = 2405;
+	private static final int PAPER_Y_IN_SOURCE_BACKGROUND = 595;
+	private static final int PAPER_WIDTH = 246;
 	private OfficeLocation officeLoc;
 	private int offTransTicks;
 	private OfficeLocation offTransFrom;
@@ -50,7 +60,6 @@ public abstract class Night extends JComponent {
 
 	// Cam up/down
 	private static final int CAMS_TRANSITION_TICKS = 30;
-	private final BufferedImage camsButtonImg;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
 	private final HashMap<String, Rectangle> camsLocOnScreen;
@@ -91,18 +100,19 @@ public abstract class Night extends JComponent {
 	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
 	 *                    the human aspect of the difficulty like keeping concentration.
 	 *                    The recommended baseline value is 90 seconds per hour.
-	 * @param powerOutage Jumpscare that will happen when the player runs out of power.
 	 * @param rng Random for the night. Use <code>new Random()</code> unless you want a specific seed.
+	 * @param powerOutageJumpscare Jumpscare that will happen when the player runs out of power.
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you use everything all the time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 * @throws IOException If any of the images required for Nights cannot be loaded from the assets.
 	 */
-	public Night(String nightName, CameraMap mapAndAnimatronics, double secsPerHour, Jumpscare powerOutage, Random rng, float passivePowerUsage) throws IOException {
+	public Night(String nightName, CameraMap mapAndAnimatronics, @Nullable String paperResource,
+				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour, float passivePowerUsage) throws IOException {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = mapAndAnimatronics;
-		this.powerOutage = powerOutage;
+		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (FPS * secsPerHour);
 
 		powerLeft = 1;
@@ -116,8 +126,12 @@ public abstract class Night extends JComponent {
 
 		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		backgroundImg = FNACResources.loadImageResource("office/background.jpg");
+		if (paperResource == null){
+			paperImg = null;
+		} else {
+			paperImg = FNACResources.loadImageResource(paperResource);
+		}
 		camMonitorImg = FNACResources.loadImageResource("office/monitor.png");
-		camsButtonImg = FNACResources.loadImageResource("office/camsButton.png");
 		camMonitorStaticImg = FNACResources.loadImageResource("office/monitorStatic.png");
 		camStaticImg = FNACResources.loadImageResource("office/camTrans.jpg");
 		leftDoorOpenImg = FNACResources.loadImageResource("office/leftDoorOpen.png");
@@ -239,7 +253,7 @@ public abstract class Night extends JComponent {
 				}
 
 				if (powerLeft <= 0){
-					jumpscare = powerOutage;
+					jumpscare = powerOutageJumpscare;
 				}
 
 				// Animatronic movements and jumpscare opportunities
@@ -311,7 +325,9 @@ public abstract class Night extends JComponent {
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 		// Most important thing, to fix things being weird depending on the size of this component.
-		double scaleX = getWidth() / (double) OFFICEWIDTH;
+		double scaleX = getWidth() / (double) OFFICEWIDTH_OF_SOURCE;
+		double scaleY = getHeight() / (double) backgroundImg.getHeight();
+		double backgroundScaleY = getHeight() / (double) backgroundImg.getHeight();
 
 		// Draw background and doors. Oh boy.
 		BufferedImage leftDoor;
@@ -328,13 +344,13 @@ public abstract class Night extends JComponent {
 		} else {
 			rightDoor = rightDoorClosed ? rightDoorClosedImg : rightDoorOpenImg;
 		}
-		int leftDoorWidthScaled = (int) ((MONITOR_X-LEFTDOOR_X)*scaleX);
-		int rightDoorWidthScaled = (int)((RIGHTDOOR_X-MONITOR_X)*scaleX);
+		int leftDoorWidthScaled = (int) ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE)*scaleX);
+		int rightDoorWidthScaled = (int)((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE)*scaleX);
 
 		switch (officeLoc) {
 		case LEFTDOOR:
 			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
 				// Left door when watching left door and no transition
@@ -342,10 +358,16 @@ public abstract class Night extends JComponent {
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
-				int xPosition = MONITOR_X - ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = MONITOR_X_IN_SOURCE - ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 
 				// Left door when watching left door while transition from MONITOR to LEFTDOOR (center to left)
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
@@ -358,8 +380,14 @@ public abstract class Night extends JComponent {
 
 		case RIGHTDOOR:
 			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 
 				// Right door when no transition at RIGHTDOOR
 				g.drawImage(rightDoor,
@@ -369,10 +397,16 @@ public abstract class Night extends JComponent {
 						this);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
-				int xPosition = MONITOR_X + ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = MONITOR_X_IN_SOURCE + ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 
 				// Right door while moving from MONITOR to RIGHTDOOR
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
@@ -387,14 +421,25 @@ public abstract class Night extends JComponent {
 			break;
 		default:
 			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(MONITOR_X, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 			} else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
-				int xPosition = LEFTDOOR_X + ((MONITOR_X - LEFTDOOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = LEFTDOOR_X_IN_SOURCE + ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 
 				// Left door
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
@@ -407,10 +452,16 @@ public abstract class Night extends JComponent {
 						this);
 
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
-				int xPosition = RIGHTDOOR_X - ((RIGHTDOOR_X - MONITOR_X) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = RIGHTDOOR_X_IN_SOURCE - ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH, backgroundImg.getHeight()), 0, 0,
+				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
+
+				// Paper
+				if (paperImg != null){
+					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+				}
 
 				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
