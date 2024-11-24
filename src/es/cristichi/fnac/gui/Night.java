@@ -20,13 +20,12 @@ import java.util.*;
 
 public abstract class Night extends JComponent {
 	private static final int FPS = 60;
-	private static final int HOUR_INTERVAL = FPS * 90;
 	private static final int TOTAL_HOURS = 6;
 	private static final String POWER_USAGE_CHAR = "█";
 
 	private final String nightName;
 	private final Random rng;
-	private final BufferedImage backgroundImg;
+	private final int hourTicksInterval;
 	private float powerLeft;
 	private final float powerPerTickPerResource;
 	private final Jumpscare powerOutage;
@@ -34,6 +33,7 @@ public abstract class Night extends JComponent {
 	private int nightHour;
 	private final Timer nightTicks;
 	private Boolean victoryScreen;
+	private final BufferedImage backgroundImg;
 
 	// Office transition
 	private static final int OFFICE_TRANSITION_TICKS = 30;
@@ -50,6 +50,7 @@ public abstract class Night extends JComponent {
 
 	// Cam up/down
 	private static final int CAMS_TRANSITION_TICKS = 30;
+	private final BufferedImage camsButtonImg;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
 	private final HashMap<String, Rectangle> camsLocOnScreen;
@@ -86,6 +87,10 @@ public abstract class Night extends JComponent {
 	 * @param nightName Name of the Night. Barely used.
 	 * @param mapAndAnimatronics Map of the place. Animatronics present in the Night must start inside
 	 *                              their starting Cameras, they are only stored there.
+	 * @param secsPerHour Number of seconds per in-game hour. It significantly affects difficulty, as
+	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
+	 *                    the human aspect of the difficulty like keeping concentration.
+	 *                    The recommended baseline value is 90 seconds per hour.
 	 * @param powerOutage Jumpscare that will happen when the player runs out of power.
 	 * @param rng Random for the night. Use <code>new Random()</code> unless you want a specific seed.
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
@@ -93,17 +98,18 @@ public abstract class Night extends JComponent {
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 * @throws IOException If any of the images required for Nights cannot be loaded from the assets.
 	 */
-	public Night(String nightName, CameraMap mapAndAnimatronics, Jumpscare powerOutage, Random rng, float passivePowerUsage) throws IOException {
+	public Night(String nightName, CameraMap mapAndAnimatronics, double secsPerHour, Jumpscare powerOutage, Random rng, float passivePowerUsage) throws IOException {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = mapAndAnimatronics;
 		this.powerOutage = powerOutage;
+		this.hourTicksInterval = (int) (FPS * secsPerHour);
 
 		powerLeft = 1;
 		// So this calculates depending on the fps, which determines the total number of ticks per night, which is
 		// important to calibrate that the night cannot be survived by using everything (extremely easy)
 		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance
-		int totalTicks = HOUR_INTERVAL * TOTAL_HOURS;
+		int totalTicks = hourTicksInterval * TOTAL_HOURS;
 		float minPowerPerTickPerResource = 1.0f / totalTicks; // Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
 		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks); // Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
@@ -111,6 +117,7 @@ public abstract class Night extends JComponent {
 		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		backgroundImg = FNACResources.loadImageResource("office/background.jpg");
 		camMonitorImg = FNACResources.loadImageResource("office/monitor.png");
+		camsButtonImg = FNACResources.loadImageResource("office/camsButton.png");
 		camMonitorStaticImg = FNACResources.loadImageResource("office/monitorStatic.png");
 		camStaticImg = FNACResources.loadImageResource("office/camTrans.jpg");
 		leftDoorOpenImg = FNACResources.loadImageResource("office/leftDoorOpen.png");
@@ -213,7 +220,7 @@ public abstract class Night extends JComponent {
 			public void run() {
 				// Time never stops. Well sometimes it does, when dying for instance.
 				currentTick++;
-				if (currentTick % HOUR_INTERVAL == 0) {
+				if (currentTick % hourTicksInterval == 0) {
 					advanceTime();
 				}
 
@@ -627,7 +634,7 @@ public abstract class Night extends JComponent {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
             g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
-            String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % HOUR_INTERVAL / (double) HOUR_INTERVAL * 60));
+            String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
 			FontMetrics fm = g.getFontMetrics();
 			{
 				int powerUsage = 0;
