@@ -2,7 +2,7 @@ package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
@@ -129,21 +129,21 @@ public abstract class Night extends JComponent {
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
 
 		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
-		backgroundImg = FNACResources.loadImageResource("office/background.jpg");
+		backgroundImg = Resources.loadImageResource("office/background.jpg");
 		if (paperResource == null){
 			paperImg = null;
 		} else {
-			paperImg = FNACResources.loadImageResource(paperResource);
+			paperImg = Resources.loadImageResource(paperResource);
 		}
-		camMonitorImg = FNACResources.loadImageResource("office/monitor.png");
-		camMonitorStaticImg = FNACResources.loadImageResource("office/monitorStatic.png");
-		camStaticImg = FNACResources.loadImageResource("office/camTrans.jpg");
-		leftDoorOpenImg = FNACResources.loadImageResource("office/leftDoorOpen.png");
-		leftDoorTransImg = FNACResources.loadImageResource("office/leftDoorTrans.png");
-		leftDoorClosedImg = FNACResources.loadImageResource("office/leftDoorClosed.png");
-		rightDoorOpenImg = FNACResources.loadImageResource("office/rightDoorOpen.png");
-		rightDoorTransImg = FNACResources.loadImageResource("office/rightDoorTrans.png");
-		rightDoorClosedImg = FNACResources.loadImageResource("office/rightDoorClosed.png");
+		camMonitorImg = Resources.loadImageResource("office/monitor.png");
+		camMonitorStaticImg = Resources.loadImageResource("office/monitorStatic.png");
+		camStaticImg = Resources.loadImageResource("office/camTrans.jpg");
+		leftDoorOpenImg = Resources.loadImageResource("office/leftDoorOpen.png");
+		leftDoorTransImg = Resources.loadImageResource("office/leftDoorTrans.png");
+		leftDoorClosedImg = Resources.loadImageResource("office/leftDoorClosed.png");
+		rightDoorOpenImg = Resources.loadImageResource("office/rightDoorOpen.png");
+		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
+		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -266,12 +266,12 @@ public abstract class Night extends JComponent {
 					for(Camera cam : camerasMap.values()){
 						for (Animatronic anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(nightHour);
+							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
-								if (anim.onMovementOpportunityAttempt(cam, rng)){
+								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
 									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(anim.onMovementOppSuccess(camerasMap, cam, rng))));
 								}
 							}
-							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (anim.onJumpscareAttempt(currentTick, FPS, camsUp, openDoor, cam, rng)){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future

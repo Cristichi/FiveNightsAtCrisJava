@@ -8,10 +8,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FNACResources {
+public class Resources {
 
     public static InputStream loadInputStream(String path) throws ResourceNotFound {
-        InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path);
+        InputStream in = Resources.class.getClassLoader().getResourceAsStream(path);
         if (in == null) {
             throw new ResourceNotFound("Resource not found at \"" + path + "\". Probably Cristichi forgot to add it.");
         }
@@ -20,7 +20,7 @@ public class FNACResources {
 
     public static BufferedImage loadImageResource(String path) throws ResourceNotFound {
         try {
-            try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
+            try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
                     throw new NullPointerException("Resource not found.");
                 }
@@ -33,7 +33,7 @@ public class FNACResources {
 
     public static Font loadCustomFont(String path) throws ResourceNotFound {
         try {
-            try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
+            try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
                     throw new NullPointerException("Resource not found.");
                 }

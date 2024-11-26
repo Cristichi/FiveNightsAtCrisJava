@@ -1,6 +1,6 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.io.Resources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,10 +25,10 @@ public abstract class Menu extends JComponent {
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
-		backgroundImage = FNACResources.loadImageResource(backgroundImg);
-		loadingImage = FNACResources.loadImageResource(loadingImg);
+		backgroundImage = Resources.loadImageResource(backgroundImg);
+		loadingImage = Resources.loadImageResource(loadingImg);
 		loading = false;
-		btnFont = FNACResources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
+		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 		setLayout(new GroupLayout(this));
 		initializeMenuItems();
 

@@ -3,8 +3,8 @@ package es.cristichi.fnac;
 import es.cristichi.fnac.exception.MenuItemNotFound;
 import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.Night;
-import es.cristichi.fnac.io.FNACResources;
-import es.cristichi.fnac.io.FNACSave;
+import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.Animatronic;
@@ -30,9 +30,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        FNACSave.SaveFile saveFile;
+        SaveFileIO.SaveFile saveFile;
         try {
-            saveFile = FNACSave.loadFromFile(FNACSave.SAVE_FILE);
+            saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
         } catch (IOException e) {
             System.err.println("Failed to load save file: " + e.getMessage());
             e.printStackTrace();
@@ -51,11 +51,11 @@ public class Main {
         });
     }
 
-    private static void initializeGUI(FNACSave.SaveFile saveFile) throws IOException, AWTException {
+    private static void initializeGUI(SaveFileIO.SaveFile saveFile) throws IOException, AWTException {
         JFrame window = new JFrame(GAME_TITLE);
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setIconImage(FNACResources.loadImageResource("icon.jpg"));
+        window.setIconImage(Resources.loadImageResource("icon.jpg"));
         window.setLayout(new BorderLayout());
 
         CardLayout cards = new CardLayout();
@@ -114,7 +114,7 @@ public class Main {
         });
     }
 
-    private static Menu createMenu(FNACSave.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
+    private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
         return new Menu(background, "menu/loading.jpg", mmItems) {
             @Override
             protected void onMenuItemClick(String item) throws IOException {
@@ -131,7 +131,7 @@ public class Main {
         };
     }
 
-    private static void startTutorialNight(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+    private static void startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 0);
         aiNightBob.put(1, 1);
@@ -143,7 +143,7 @@ public class Main {
         aiNightMaria.put(4, 2);
         aiNightMaria.put(5, 3);
 
-        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/tutorial/map.png"), "cam3");
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.CameraBuilder()
                 .setName("cam1")
                 .setCamBackground("night/tutorial/cam1.jpg")
@@ -185,7 +185,7 @@ public class Main {
             @Override
             protected void onNightPassed() throws IOException {
                 saveFile.addCompletedNight(getNightName());
-                FNACSave.saveToFile(FNACSave.SAVE_FILE, saveFile);
+                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
                 System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
@@ -198,7 +198,7 @@ public class Main {
         night.startNight();
     }
 
-    private static void startNight1(FNACSave.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+    private static void startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 5);
         aiNightBob.put(2, 6);
@@ -221,7 +221,7 @@ public class Main {
 //        aiNightPaco.put(5, 8);
 //        Animatronic paco = new Paco(3, aiNightPaco, List.of());
 
-        CameraMap nightMap = new CameraMap(FNACResources.loadImageResource("night/n1/map.png"), "storage");
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
         Camera kitchen = new Camera.CameraBuilder()
                 .setName("kitchen")
                 .setCamBackground("night/n1/kitchen.jpg")
@@ -250,7 +250,7 @@ public class Main {
             @Override
             protected void onNightPassed() throws IOException {
                 saveFile.addCompletedNight(getNightName());
-                FNACSave.saveToFile(FNACSave.SAVE_FILE, saveFile);
+                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
                 System.out.println("Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");

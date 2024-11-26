@@ -25,11 +25,11 @@ public class Paco extends Animatronic{
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Camera cam, Random rng) {
+    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng) {
         if (kill || cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice()){
             return false;
         }
-        return super.onMovementOpportunityAttempt(cam, rng);
+        return super.onMovementOpportunityAttempt(cam, isOpenDoor, rng);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.ResourceNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import org.jetbrains.annotations.Nullable;
@@ -13,14 +13,14 @@ import java.util.*;
 // even if the currently existing ones do not make use of it.
 @SuppressWarnings("unused")
 public abstract class Animatronic {
-    private final String name;
-    private final HashMap<Integer, Integer> iaDuringNight;
-    private int aiLevel;
-    private final int maxIaLevel;
-    private final double secInterval;
-    private final Jumpscare jumpscare;
-    private final BufferedImage camImg;
-    private final List<String> forbiddenCameras;
+    protected final String name;
+    protected final HashMap<Integer, Integer> iaDuringNight;
+    protected int aiLevel;
+    protected final int maxIaLevel;
+    protected final double secInterval;
+    protected final Jumpscare jumpscare;
+    protected final BufferedImage camImg;
+    protected final List<String> forbiddenCameras;
 
     /**
      * Creating an Animatronic.
@@ -49,7 +49,7 @@ public abstract class Animatronic {
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
-        this.camImg = FNACResources.loadImageResource(camImgPath);
+        this.camImg = Resources.loadImageResource(camImgPath);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
         jumpscare = new Jumpscare(jumpscareGifPath, jumpscareRepFrames);
     }
@@ -85,11 +85,13 @@ public abstract class Animatronic {
     /**
      * This is only called at the moment of the defined internal during any given Night.
      * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
-     * @param cam Current camera from which the Animatronic is trying to move.
-     * @param rng Random in charge of today's night.
+     *
+     * @param cam        Current camera from which the Animatronic is trying to move.
+     * @param isOpenDoor If there is a door to the Office from the current Camera and it is open.
+     * @param rng        Random in charge of today's night.
      * @return True if Animatronic should move at the end of this tick.
      */
-    public boolean onMovementOpportunityAttempt(Camera cam, Random rng){
+    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
         return rng.nextInt(maxIaLevel) < aiLevel;
     }
 

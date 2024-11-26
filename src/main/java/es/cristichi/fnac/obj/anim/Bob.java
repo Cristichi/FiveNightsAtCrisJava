@@ -19,11 +19,14 @@ public class Bob extends Animatronic{
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Camera cam, Random rng) {
+    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng) {
         if (kill){
             return false;
         }
-        return super.onMovementOpportunityAttempt(cam, rng);
+        if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice()) && !isOpenDoor){
+            return rng.nextInt(maxIaLevel) < aiLevel + 5;
+        }
+        return super.onMovementOpportunityAttempt(cam, isOpenDoor, rng);
     }
 
     @Override

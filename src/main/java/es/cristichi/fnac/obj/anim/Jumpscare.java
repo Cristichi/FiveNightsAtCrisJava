@@ -1,7 +1,7 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.ResourceNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.io.Resources;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -26,7 +26,7 @@ public class Jumpscare {
     }
 
     private void loadFrames(String resourcePath) throws ResourceNotFound {
-        try (ImageInputStream stream = ImageIO.createImageInputStream(FNACResources.loadInputStream(resourcePath))) {
+        try (ImageInputStream stream = ImageIO.createImageInputStream(Resources.loadInputStream(resourcePath))) {
             if (stream == null) {
                 throw new ResourceNotFound("No suitable reader found for " + resourcePath + ".");
             }

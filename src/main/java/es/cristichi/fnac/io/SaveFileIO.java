@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FNACSave {
+public class SaveFileIO {
     public static final String SAVE_FILE = "save.fnac"; // Usual save file
     private static final String MAGIC_NUMBER = "FNACSV1"; // Unique magic number for FNAC save files. Version 1.
 

@@ -3,7 +3,7 @@ package es.cristichi.fnac.obj;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.CameraException;
 import es.cristichi.fnac.exception.ResourceNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.anim.Animatronic;
 
 import java.awt.*;
@@ -96,7 +96,7 @@ public class Camera {
         }
 
         public CameraBuilder setCamBackground(String camBackground) throws ResourceNotFound {
-            this.camBackground = FNACResources.loadImageResource(camBackground);
+            this.camBackground = Resources.loadImageResource(camBackground);
             return this;
         }
 
