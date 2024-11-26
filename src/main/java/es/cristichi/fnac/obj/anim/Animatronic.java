@@ -1,8 +1,10 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.AssetNotFound;
+import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -20,17 +22,36 @@ public abstract class Animatronic {
     private final BufferedImage camImg;
     private final List<String> forbiddenCameras;
 
-    public Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                       int maxIaLevel, BufferedImage img, String jumpscareGif, int jumpscareRepFrames,
-                       List<String> forbiddenCameras) throws AssetNotFound {
+    /**
+     * Creating an Animatronic.
+     * @param name Name of the Animatronic. This is used as an identifier.
+     * @param secInterval Seconds between each movement opportunity.
+     * @param iaDuringNight Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
+     *                      For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
+     *                      and has an AI of 1 during the last hour.
+     * @param maxIaLevel Maximum AI level. This should usually be 20 for consistency, but can be changed on
+     *                   weird Animatronics. By default, this is only used to determine the chances of 
+     *                   movement opportunities.
+     * @param camImgPath Path to the image used when the Animatronic is shown on a Camera.
+     * @param jumpscareGifPath Path in resources to the gif containing the jumpscare of this Animatronic.
+     * @param jumpscareRepFrames Number of times each frame of the jumpscare is kept on screen before 
+     *                           showing the next one.
+     * @param forbiddenCameras Only used by the default {@link #onMovementOppSuccess(CameraMap, Camera, Random)}
+     *                         so that it avoids those cameras. Useful for most Animatronics, but feel free to
+     *                         set it to null if you will not use it.
+     * @throws ResourceNotFound If a resource is not found in the given paths.
+     */
+    Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
+                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
+                       @Nullable List<String> forbiddenCameras) throws ResourceNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
-        this.camImg = img;
-        this.forbiddenCameras = forbiddenCameras;
-        jumpscare = new Jumpscare(jumpscareGif, jumpscareRepFrames);
+        this.camImg = FNACResources.loadImageResource(camImgPath);
+        this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
+        jumpscare = new Jumpscare(jumpscareGifPath, jumpscareRepFrames);
     }
 
     public String getName() {
@@ -52,7 +73,8 @@ public abstract class Animatronic {
      * @param map Entire map, with all Cams.
      * @param currentLoc, Cam where this Animatronic is.
      * @param rng Random in charge of today's night.
-     * @return The name of the Camera it has to move to. The Night will be in charge of trying to move the Animatronic.
+     * @return The name of the Camera it has to move to. The Night will be in charge of
+     * trying to move the Animatronic to the indicated Camera, connected or not.
      */
     public String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng){
         LinkedList<String> connections = currentLoc.getConnections();
@@ -61,27 +83,47 @@ public abstract class Animatronic {
     }
 
     /**
-     * This is only called at the moment of the defined internal during any given Night. AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
+     * This is only called at the moment of the defined internal during any given Night.
+     * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
+     * @param cam Current camera from which the Animatronic is trying to move.
      * @param rng Random in charge of today's night.
      * @return True if Animatronic should move at the end of this tick.
      */
-    public boolean onMovementOpportunityAttempt(Random rng){
+    public boolean onMovementOpportunityAttempt(Camera cam, Random rng){
         return rng.nextInt(maxIaLevel) < aiLevel;
     }
 
     /**
-     * This method should be implemented per animatronic. This is called on every single tick, even if Animatronic is not at a door. For an example implementation see {@link Bob} where he waits some time at the door and if it is open after some time it kills on next cams down.
-     * @param tick Current tick.
-     * @param camsUp If cams are up on this tick (this changes as soon as the Player clicks, on the first frame of the transition)
-     * @param cam Current Camera where the Animatronic is
-     * @param openDoor If there is a door to the Office from the current Camera and it is open
-     * @param rng Random in charge of today's night.
-     * @param fps FPS for the current night. They are a constant throught the night.
+     * This method should be implemented per animatronic. This is called on every single tick,
+     * even if Animatronic is not at a door. For an example implementation see
+     * {@link Bob#onJumpscareAttempt(int, int, boolean, boolean, Camera, Random)} where
+     * he waits some time at the door and if it is open after some time it kills on next cams down.
+     *
+     * @param tick     Current tick.
+     * @param fps      FPS for the current night. They are a constant throught the night.
+     * @param camsUp   If cams are up on this tick (this changes as soon as the Player clicks,
+     *                on the first frame of the transition)
+     * @param openDoor If there is a door to the Office from the current Camera and it is open.
+     * @param cam      Current Camera where the Animatronic is.
+     * @param rng      Random in charge of today's night.
      * @return true if Animatronic will kill Player on this tick. false otherwise.
      */
-    public abstract boolean onJumpscareAttempt(int tick, boolean camsUp, Camera cam, boolean openDoor, Random rng, int fps);
+    public abstract boolean onJumpscareAttempt(int tick, int fps, boolean camsUp,
+                                               boolean openDoor, Camera cam, Random rng);
 
-    public abstract boolean hideFromCam(int tick, boolean openDoor, Camera cam, Random rng, int fps);
+    /**
+     * This determines whether the Animatronic should appear on a camera or not. Just some flavor.
+     * This is called per tick, but there is a counter that is unique to each instance of cams, which
+     * increases each time the player changes cams an each time they open cams.
+     *
+     * @param tick     Current tick, for accuraetly counting seconds.
+     * @param fps      Current ticks per second, to convert from ticks to seconds for consistency with real time.
+     * @param openDoor If there is a door to the Office from the current Camera and it is open.
+     * @param cam      Current Camera where the Animatronic is and the player is watching.
+     * @param rng      Random in charge of today's night.
+     * @return True if this Animatronic should not be drawn in the Camera. False otherwise
+     */
+    public abstract boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng);
 
     public Jumpscare getJumpscare() {
         return jumpscare;

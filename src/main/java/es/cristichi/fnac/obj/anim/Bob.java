@@ -1,7 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.AssetNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.obj.Camera;
 
 import java.util.HashMap;
@@ -13,20 +12,22 @@ public class Bob extends Animatronic{
     private Integer startKillTick = null;
     private final double targetPatienceKillSec = 4.9;
 
-    public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("Bob", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("anims/bob/camImg.png"), "anims/bob/jumpscare.gif", 1, forbiddenCams);
+    public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight,
+               List<String> forbiddenCams) throws ResourceNotFound {
+        super("Bob", secInterval, aiDuringNight, 20, "anims/bob/camImg.png",
+                "anims/bob/jumpscare.gif", 1, forbiddenCams);
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Random rng) {
+    public boolean onMovementOpportunityAttempt(Camera cam, Random rng) {
         if (kill){
             return false;
         }
-        return super.onMovementOpportunityAttempt(rng);
+        return super.onMovementOpportunityAttempt(cam, rng);
     }
 
     @Override
-    public boolean onJumpscareAttempt(int tick, boolean camsUp, Camera cam, boolean doorOpen, Random rng, int fps) {
+    public boolean onJumpscareAttempt(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
@@ -44,7 +45,7 @@ public class Bob extends Animatronic{
     }
 
     @Override
-    public boolean hideFromCam(int tick, boolean openDoor, Camera cam, Random rng, int fps) {
-        return kill;
+    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        return !kill;
     }
 }

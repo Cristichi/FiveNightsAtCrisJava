@@ -1,6 +1,7 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
+import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.io.FNACResources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
@@ -105,10 +106,11 @@ public abstract class Night extends JComponent {
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you use everything all the time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
-	 * @throws IOException If any of the images required for Nights cannot be loaded from the assets.
+	 * @throws ResourceNotFound If any of the images required for Nights cannot be loaded from the resources.
 	 */
 	public Night(String nightName, CameraMap mapAndAnimatronics, @Nullable String paperResource,
-				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour, float passivePowerUsage) throws IOException {
+				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
+				 float passivePowerUsage) throws ResourceNotFound {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = mapAndAnimatronics;
@@ -120,8 +122,10 @@ public abstract class Night extends JComponent {
 		// important to calibrate that the night cannot be survived by using everything (extremely easy)
 		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance
 		int totalTicks = hourTicksInterval * TOTAL_HOURS;
-		float minPowerPerTickPerResource = 1.0f / totalTicks; // Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
-		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks); // Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
+		// Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
+		float minPowerPerTickPerResource = 1.0f / totalTicks;
+		// Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
+		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks);
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
 
 		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
@@ -263,14 +267,15 @@ public abstract class Night extends JComponent {
 						for (Animatronic anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(nightHour);
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
-								if (anim.onMovementOpportunityAttempt(rng)){
+								if (anim.onMovementOpportunityAttempt(cam, rng)){
 									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(anim.onMovementOppSuccess(camerasMap, cam, rng))));
 								}
 							}
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
-							if (anim.onJumpscareAttempt(currentTick, camsUp, cam, openDoor, rng, FPS)){
+							if (anim.onJumpscareAttempt(currentTick, FPS, camsUp, openDoor, cam, rng)){
 								jumpscare = anim.getJumpscare();
-								// In case I want phantom jumpscares in the future.
+								// In case I want phantom jumpscares in the future
+								// and the same phantom happens twice.
 								jumpscare.reset();
 							}
 						}
@@ -559,7 +564,7 @@ public abstract class Night extends JComponent {
 
 							for (Animatronic an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed || current.isRightDoorOfOffice()&&!rightDoorClosed;
-								if (!an.hideFromCam(currentTick, openDoor, current, rng, FPS)){
+								if (!an.showOnCam(currentTick, FPS, openDoor, current, rng)){
 									BufferedImage img = an.getCamImg();
 
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight

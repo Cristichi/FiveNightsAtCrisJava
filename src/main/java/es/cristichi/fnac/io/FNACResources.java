@@ -1,6 +1,6 @@
 package es.cristichi.fnac.io;
 
-import es.cristichi.fnac.exception.AssetNotFound;
+import es.cristichi.fnac.exception.ResourceNotFound;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,15 +10,15 @@ import java.io.InputStream;
 
 public class FNACResources {
 
-    public static InputStream loadInputStream(String path) throws AssetNotFound {
+    public static InputStream loadInputStream(String path) throws ResourceNotFound {
         InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path);
         if (in == null) {
-            throw new AssetNotFound("Resource not found at \"" + path + "\". Probably Cristichi forgot to add it.");
+            throw new ResourceNotFound("Resource not found at \"" + path + "\". Probably Cristichi forgot to add it.");
         }
         return in;
     }
 
-    public static BufferedImage loadImageResource(String path) throws AssetNotFound {
+    public static BufferedImage loadImageResource(String path) throws ResourceNotFound {
         try {
             try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
@@ -27,11 +27,11 @@ public class FNACResources {
                 return ImageIO.read(in);
             }
         } catch (IOException | NullPointerException e) {
-            throw new AssetNotFound("Image not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
+            throw new ResourceNotFound("Image not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
         }
     }
 
-    public static Font loadCustomFont(String path) throws AssetNotFound {
+    public static Font loadCustomFont(String path) throws ResourceNotFound {
         try {
             try (InputStream in = FNACResources.class.getClassLoader().getResourceAsStream(path)) {
                 if (in == null){
@@ -43,7 +43,7 @@ public class FNACResources {
                 return font;
             }
         } catch (IOException | FontFormatException | NullPointerException e) {
-            throw new AssetNotFound("Error when trying to load Font "+path, e);
+            throw new ResourceNotFound("Error when trying to load Font "+path, e);
         }
     }
 }

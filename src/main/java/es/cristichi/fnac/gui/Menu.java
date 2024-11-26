@@ -103,7 +103,7 @@ public abstract class Menu extends JComponent {
 	}
 
 	/**
-	 * This is performed after an item is closed, alongside a loading screen in case you need time to load assets.
+	 * This is performed after an item is closed, alongside a loading screen in case you need time to load resources.
 	 * @param item String identifying the item clicked.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */

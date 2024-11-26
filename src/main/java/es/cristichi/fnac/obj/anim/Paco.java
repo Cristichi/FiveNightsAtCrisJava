@@ -1,38 +1,52 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.AssetNotFound;
-import es.cristichi.fnac.io.FNACResources;
+import es.cristichi.fnac.exception.AnimatronicException;
+import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.obj.Camera;
+import es.cristichi.fnac.obj.CameraMap;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class Paco extends Animatronic{
-    //TODO: So Paco right now is just basic af. Perhaps he can punish for not using cams much,
-    // I need to allow this by either adding the tick info on move opportunity attempts or just
-    // allow animatronics to do something each and every tick. Or maybe nights can keep track
-    // of the total time spent in cams. I think it might be best to think of all the options
-    // and implement whatever is more adapted to how nights work now, which may also give it
-    // some more distinction from other FNAC games.
     private boolean kill = false;
     private Integer startKillTick = null;
-    private final double targetPatienceKillSec = 5.1;
+    private final double targetPatienceKillSec = 12;
+    private final List<String> orderedCamPath;
 
-    public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> forbiddenCams) throws AssetNotFound {
-        super("Paco", secInterval, aiDuringNight, 20, FNACResources.loadImageResource("anims/paco/camImg.png"), "anims/paco/jumpscare.gif", 1, forbiddenCams);
+    public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, String retreatCam,
+                List<String> orderedCamPath) throws ResourceNotFound {
+        super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
+                "anims/paco/jumpscare.gif", 1, null);
+
+        this.orderedCamPath = orderedCamPath;
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Random rng) {
-        if (kill){
+    public boolean onMovementOpportunityAttempt(Camera cam, Random rng) {
+        if (kill || cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice()){
             return false;
         }
-        return super.onMovementOpportunityAttempt(rng);
+        return super.onMovementOpportunityAttempt(cam, rng);
     }
 
     @Override
-    public boolean onJumpscareAttempt(int tick, boolean camsUp, Camera cam, boolean doorOpen, Random rng, int fps) {
+    public String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+        LinkedList<String> connections = currentLoc.getConnections();
+        for (String cam : orderedCamPath){
+            for (String connection : connections){
+                if (cam.equals(connection)){
+                    return cam;
+                }
+            }
+        }
+        throw new AnimatronicException("Paco has no suitable path to follow.");
+    }
+
+    @Override
+    public boolean onJumpscareAttempt(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
@@ -50,7 +64,7 @@ public class Paco extends Animatronic{
     }
 
     @Override
-    public boolean hideFromCam(int tick, boolean openDoor, Camera cam, Random rng, int fps) {
-        return kill;
+    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        return !kill;
     }
 }
