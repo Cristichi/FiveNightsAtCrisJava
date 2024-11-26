@@ -201,21 +201,21 @@ public class Main {
         aiNightBob.put(2, 6);
         aiNightBob.put(4, 7);
         aiNightBob.put(5, 8);
-        Animatronic bob = new Bob(5, aiNightBob, List.of("corridor 4"), 5);
+        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2"), 5);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
         aiNightMaria.put(1, 5);
         aiNightMaria.put(3, 6);
         aiNightMaria.put(4, 7);
         aiNightMaria.put(5, 8);
-        Animatronic maria = new Maria(5, aiNightMaria, List.of("corridor 3"), 5);
+        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1"), 5);
 
         HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
         aiNightPaco.put(0, 4);
         aiNightPaco.put(3, 6);
         aiNightPaco.put(4, 7);
         aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(4, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
+        Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
                 "kitchen", 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
@@ -231,7 +231,7 @@ public class Main {
                         .setName("storage")
                         .setCamBackground("night/n1/storage.jpg")
                         .setLoc(542, 111, 140, 70)
-                        .addAnimatronics(bob, maria)
+                        .addAnimatronics(bob)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
@@ -275,6 +275,7 @@ public class Main {
                         .setCamBackground("night/n1/offices.jpg")
                         .setLoc(825, 840, 140, 70)
                         .addConnection("corridor 4")
+                        .addAnimatronics(maria)
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")
@@ -287,7 +288,7 @@ public class Main {
                         .setName("corridor 4")
                         .setCamBackground("night/n1/corridor 4.jpg")
                         .setLoc(662, 568, 140, 70)
-                        .addConnection("corridor 3")
+                        .addConnection("corridor 3") //Offices go to corridor 4, but not vice-versa
                         .connectToOfficeRight()
                         .build()
         );
