@@ -68,14 +68,10 @@ public class Camera {
     }
 
     public void move(Animatronic animatronic, Camera dest){
-        if (connections.contains(dest.getName())){
-            if (animatronicsHere.remove(animatronic)){
-                dest.animatronicsHere.add(animatronic);
-            } else {
-                throw new AnimatronicException("Animatronic "+animatronic.getName()+" not found in camera "+name+".");
-            }
+        if (animatronicsHere.remove(animatronic)){
+            dest.animatronicsHere.add(animatronic);
         } else {
-            throw new AnimatronicException("Animatronic "+animatronic.getName()+" cannot move from "+name+" to "+dest.name+".");
+            throw new AnimatronicException("Animatronic "+animatronic.getName()+" not found in camera "+name+".");
         }
     }
 
