@@ -20,7 +20,7 @@ public class Paco extends PathedMoveAnimatronic{
 
     @Override
     public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng) {
-        if (kill || cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice()){
+        if (kill){
             return false;
         }
         return super.onMovementOpportunityAttempt(cam, isOpenDoor, rng);
