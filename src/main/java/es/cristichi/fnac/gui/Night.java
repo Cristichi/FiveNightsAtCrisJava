@@ -183,7 +183,6 @@ public abstract class Night extends JComponent {
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "camsAction");
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "camsAction");
 			getActionMap().put("camsAction", action);
-
 		}
 
 		{
@@ -764,8 +763,8 @@ public abstract class Night extends JComponent {
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
 			if (camsUp){
 				Action closeCamsAction = getActionMap().get("camsAction");
-				if (closeCamsAction != null) {
-					closeCamsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+				if (closeCamsAction instanceof CamsAction camsAction) {
+					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			} else {
 				g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
@@ -829,7 +828,7 @@ public abstract class Night extends JComponent {
 	private class CamsAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null && jumpscare == null){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null){
 				if (camsUp) {
 					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 					camsUp = false;
