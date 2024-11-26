@@ -7,13 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class Maria extends AvoidCamsMovementAnimatronic{
-    private final double targetPatienceKillSec = 5.1;
+public class Maria extends AvoidCamsAnimatronic {
+    private final double secsToKill;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight,
-                 List<String> forbiddenCams) throws ResourceNotFound {
+                 List<String> forbiddenCams, double secsToKill) throws ResourceNotFound {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 "anims/maria/jumpscare.gif", 1, forbiddenCams);
+        this.secsToKill = secsToKill;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class Maria extends AvoidCamsMovementAnimatronic{
             if (startKillTick == null){
                 startKillTick = tick;
             } else {
-                if (Math.round(targetPatienceKillSec*fps) <= tick-startKillTick){
+                if (Math.round(secsToKill *fps) <= tick-startKillTick){
                     kill = true;
                     return new TickReturn(true);
                 }

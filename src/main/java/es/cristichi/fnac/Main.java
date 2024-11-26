@@ -148,14 +148,14 @@ public class Main {
                 .setName("cam1")
                 .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4")))
+                .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
                 .addConnection("cam2", "cam3")
                 .build();
         Camera cam2 = new Camera.CameraBuilder()
                 .setName("cam2")
                 .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
-                .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3")))
+                .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
                 .addConnection("cam1", "cam4")
                 .build();
         Camera cam3 = new Camera.CameraBuilder()
@@ -204,16 +204,16 @@ public class Main {
         aiNightBob.put(2, 6);
         aiNightBob.put(4, 7);
         aiNightBob.put(5, 8);
-        Animatronic bob = new Bob(5, aiNightBob, List.of());
+        Animatronic bob = new Bob(5, aiNightBob, List.of("corridor 4"), 5);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
         aiNightMaria.put(1, 5);
         aiNightMaria.put(3, 6);
         aiNightMaria.put(4, 7);
         aiNightMaria.put(5, 8);
-        Animatronic maria = new Maria(5, aiNightMaria, List.of());
+        Animatronic maria = new Maria(5, aiNightMaria, List.of("corridor 3"), 5);
 
-// TODO: Paco will be work on after I complete this map. I also didn't decode on how he will move or behave to be honest.
+// TODO: Paco will be work on after I complete this map. I also didn't decide on how he will move or behave to be honest.
 //        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
 //        aiNightPaco.put(1, 5);
 //        aiNightPaco.put(3, 6);
