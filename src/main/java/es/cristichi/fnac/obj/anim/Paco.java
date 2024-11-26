@@ -46,21 +46,21 @@ public class Paco extends Animatronic{
     }
 
     @Override
-    public boolean onJumpscareAttempt(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
+    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
             } else {
                 if (Math.round(targetPatienceKillSec*fps) <= tick-startKillTick){
                     kill = true;
-                    return true;
+                    return new TickReturn(true);
                 }
             }
         } else {
             kill = false;
             startKillTick = null;
         }
-        return false;
+        return new TickReturn(false);
     }
 
     @Override

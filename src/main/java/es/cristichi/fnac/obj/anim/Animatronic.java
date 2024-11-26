@@ -96,9 +96,11 @@ public abstract class Animatronic {
     }
 
     /**
-     * This method should be implemented per animatronic. This is called on every single tick,
-     * even if Animatronic is not at a door. For an example implementation see
-     * {@link Bob#onJumpscareAttempt(int, int, boolean, boolean, Camera, Random)} where
+     * This method should be implemented per animatronic. This is called on every single tick.
+     * This is used to allow the Animatronic to decide what to do based on each tick.
+     * At the moment, it only serves to define how and when Jumpscares occur.
+     * For an example implementation see
+     * {@link Bob#onTick(int, int, boolean, boolean, Camera, Random)} where
      * he waits some time at the door and if it is open after some time it kills on next cams down.
      *
      * @param tick     Current tick.
@@ -108,10 +110,11 @@ public abstract class Animatronic {
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
      * @param cam      Current Camera where the Animatronic is.
      * @param rng      Random in charge of today's night.
-     * @return true if Animatronic will kill Player on this tick. false otherwise.
+     * @return An instance of {@link TickReturn} that defines if there is a Jumpscare,
+     * along other potential data that is calculated each tick on each Animatronic.
      */
-    public abstract boolean onJumpscareAttempt(int tick, int fps, boolean camsUp,
-                                               boolean openDoor, Camera cam, Random rng);
+    public abstract TickReturn onTick(int tick, int fps, boolean camsUp,
+                                   boolean openDoor, Camera cam, Random rng);
 
     /**
      * This determines whether the Animatronic should appear on a camera or not. Just some flavor.
@@ -145,5 +148,9 @@ public abstract class Animatronic {
     @Override
     public int hashCode() {
         return Objects.hash(name, aiLevel, camImg);
+    }
+
+    public record TickReturn(boolean jumpscare){
+
     }
 }

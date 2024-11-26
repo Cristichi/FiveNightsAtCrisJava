@@ -272,7 +272,8 @@ public abstract class Night extends JComponent {
 									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(anim.onMovementOppSuccess(camerasMap, cam, rng))));
 								}
 							}
-							if (anim.onJumpscareAttempt(currentTick, FPS, camsUp, openDoor, cam, rng)){
+							Animatronic.TickReturn tickReturn = anim.onTick(currentTick, FPS, camsUp, openDoor, cam, rng);
+							if (tickReturn.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future
 								// and the same phantom happens twice.
