@@ -27,8 +27,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/.idea/
+/.idea/*
 
 ### Testings and such ###
 !/save.fnac
-!/.idea/
+/target/*
