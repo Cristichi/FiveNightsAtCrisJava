@@ -79,7 +79,7 @@ public class Camera {
         }
     }
 
-    public static class CameraBuilder{
+    public static class Builder {
         private String name = null;
         private BufferedImage camBackground = null;
         private Rectangle loc = null;
@@ -88,40 +88,40 @@ public class Camera {
         private boolean isLeftDoorOfOffice = false;
         private boolean isRightDoorOfOffice = false;
 
-        public CameraBuilder(){}
+        public Builder(){}
 
-        public CameraBuilder setName(String name) {
+        public Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        public CameraBuilder setCamBackground(String camBackground) throws ResourceNotFound {
+        public Builder setCamBackground(String camBackground) throws ResourceNotFound {
             this.camBackground = Resources.loadImageResource(camBackground);
             return this;
         }
 
-        public CameraBuilder setLoc(int x, int y, int width, int height) {
+        public Builder setLoc(int x, int y, int width, int height) {
             this.loc = new Rectangle(x,y,width,height);
             return this;
         }
 
-        public CameraBuilder addAnimatronics(Animatronic... animatronics) {
+        public Builder addAnimatronics(Animatronic... animatronics) {
             Collections.addAll(animatronicsHere, animatronics);
             return this;
         }
 
         @SuppressWarnings("unused")
-        public CameraBuilder addConnection(String... camNames) {
+        public Builder addConnection(String... camNames) {
             Collections.addAll(connections, camNames);
             return this;
         }
 
-        public CameraBuilder connectToOfficeLeft() {
+        public Builder connectToOfficeLeft() {
             this.isLeftDoorOfOffice = true;
             return this;
         }
 
-        public CameraBuilder connectToOfficeRight() {
+        public Builder connectToOfficeRight() {
             this.isRightDoorOfOffice = true;
             return this;
         }

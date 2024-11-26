@@ -7,10 +7,7 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import es.cristichi.fnac.obj.anim.Animatronic;
-import es.cristichi.fnac.obj.anim.Bob;
-import es.cristichi.fnac.obj.anim.Jumpscare;
-import es.cristichi.fnac.obj.anim.Maria;
+import es.cristichi.fnac.obj.anim.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -144,28 +141,28 @@ public class Main {
         aiNightMaria.put(5, 3);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
-        Camera cam1 = new Camera.CameraBuilder()
+        Camera cam1 = new Camera.Builder()
                 .setName("cam1")
                 .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
                 .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
                 .addConnection("cam2", "cam3")
                 .build();
-        Camera cam2 = new Camera.CameraBuilder()
+        Camera cam2 = new Camera.Builder()
                 .setName("cam2")
                 .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
                 .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
                 .addConnection("cam1", "cam4")
                 .build();
-        Camera cam3 = new Camera.CameraBuilder()
+        Camera cam3 = new Camera.Builder()
                 .setName("cam3")
                 .setCamBackground("night/tutorial/cam3.jpg")
                 .setLoc(134, 287, 167, 571)
                 .addConnection("cam1")
                 .connectToOfficeLeft()
                 .build();
-        Camera cam4 = new Camera.CameraBuilder()
+        Camera cam4 = new Camera.Builder()
                 .setName("cam4")
                 .setCamBackground("night/tutorial/cam4.jpg")
                 .setLoc(720, 296, 141, 586)
@@ -213,33 +210,74 @@ public class Main {
         aiNightMaria.put(5, 8);
         Animatronic maria = new Maria(5, aiNightMaria, List.of("corridor 3"), 5);
 
-// TODO: Paco will be work on after I complete this map. I also didn't decide on how he will move or behave to be honest.
-//        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-//        aiNightPaco.put(1, 5);
-//        aiNightPaco.put(3, 6);
-//        aiNightPaco.put(4, 7);
-//        aiNightPaco.put(5, 8);
-//        Animatronic paco = new Paco(3, aiNightPaco, List.of());
+        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
+        aiNightPaco.put(1, 20);
+        aiNightPaco.put(3, 6);
+        aiNightPaco.put(4, 7);
+        aiNightPaco.put(5, 8);
+        Animatronic paco = new Paco(1, aiNightPaco, "kitchen",
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
+                12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
-        Camera kitchen = new Camera.CameraBuilder()
-                .setName("kitchen")
-                .setCamBackground("night/n1/kitchen.jpg")
-                .setLoc(187, 45, 140, 70)
-                //.addAnimatronics(paco)
-                .addConnection("storage")
-                .build();
-        Camera storage = new Camera.CameraBuilder()
-                .setName("storage")
-                .setCamBackground("night/n1/storage.jpg")
-                .setLoc(542, 111, 140, 70)
-                .addAnimatronics(bob, maria)
-                .addConnection("kitchen")
-                .build();
+        nightMap.addAll(
+                new Camera.Builder()
+                    .setName("kitchen")
+                    .setCamBackground("night/n1/kitchen.jpg")
+                    .setLoc(187, 45, 140, 70)
+                    .addAnimatronics(paco)
+                    .addConnection("dining area")
+                    .build(),
+                new Camera.Builder()
+                    .setName("storage")
+                    .setCamBackground("night/n1/storage.jpg")
+                    .setLoc(542, 111, 140, 70)
+                    .addAnimatronics(bob, maria)
+                    .addConnection("dining area")
+                    .build(),
+                new Camera.Builder()
+                    .setName("dining area")
+                    .setCamBackground("night/n1/dining area.jpg")
+                    .setLoc(168, 182, 140, 70)
+                    .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
+                    .build(),
+                new Camera.Builder()
+                    .setName("main stage")
+                    .setCamBackground("night/n1/main stage.jpg")
+                    .setLoc(540, 182, 140, 70)
+                    .addConnection("kitchen", "main stage", "corridor 1", "corridor 2")
+                    .build(),
+                new Camera.Builder()
+                    .setName("corridor 1")
+                    .setCamBackground("night/n1/corridor 1.jpg")
+                    .setLoc(171, 469, 140, 70)
+                    .addConnection("dining area", "corridor 3")
+                    .build(),
+                new Camera.Builder()
+                    .setName("corridor 2")
+                    .setCamBackground("night/n1/corridor 2.jpg")
+                    .setLoc(456, 469, 140, 70)
+                    .addConnection("dining area", "corridor 4")
+                    .build(),
+                new Camera.Builder()
+                    .setName("corridor 3")
+                    .setCamBackground("night/n1/corridor 3.jpg")
+                    .setLoc(225, 561, 140, 70)
+                    .addConnection("corridor 1")
+                    .connectToOfficeLeft()
+                    .build(),
+                new Camera.Builder()
+                    .setName("corridor 4")
+                    .setCamBackground("night/n1/corridor 4.jpg")
+                    .setLoc(662, 568, 140, 70)
+                    .addConnection("corridor 3")
+                    .connectToOfficeRight()
+                    .build()
+        );
 
-        nightMap.addAll(kitchen, storage);
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", nightMap, null, new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
+        Night night = new Night("Night 1", nightMap, null,
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
@@ -253,7 +291,8 @@ public class Main {
                 SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
-                System.out.println("Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
+                System.out.println(
+                        "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
             }
         };
         nightPanel.add(night);

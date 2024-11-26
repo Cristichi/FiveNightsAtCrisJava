@@ -3,6 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.obj.Camera;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +14,7 @@ public class Paco extends PathedMoveAnimatronic{
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, String retreatCam,
                 List<String> orderedCamPath, double secsToKill) throws ResourceNotFound {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
-                "anims/paco/jumpscare.gif", 1, orderedCamPath);
+                "anims/paco/jumpscare.gif", 1, orderedCamPath, Color.BLUE);
 
         this.secsToKill = secsToKill;
     }

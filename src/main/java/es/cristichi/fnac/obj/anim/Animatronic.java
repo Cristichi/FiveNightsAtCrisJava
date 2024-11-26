@@ -5,6 +5,7 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public abstract class Animatronic {
     protected final String name;
+    protected final Color debugColor;
     protected final HashMap<Integer, Integer> iaDuringNight;
     protected int aiLevel;
     protected final int maxIaLevel;
@@ -30,7 +32,8 @@ public abstract class Animatronic {
      * @param secInterval Seconds between each movement opportunity.
      * @param iaDuringNight Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
      *                      For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
-     *                      and has an AI of 1 during the last hour.
+     *                      and has an AI of 1 during the last hour. If 0 is not specified, its value is
+     *                      defaulted to 0 at the start of the night.
      * @param maxIaLevel Maximum AI level. This should usually be 20 for consistency, but can be changed on
      *                   weird Animatronics. By default, this is only used to determine the chances of 
      *                   movement opportunities.
@@ -41,7 +44,8 @@ public abstract class Animatronic {
      * @throws ResourceNotFound If a resource is not found in the given paths.
      */
     Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames) throws ResourceNotFound {
+                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
+                Color debugColor) throws ResourceNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
@@ -49,6 +53,7 @@ public abstract class Animatronic {
         this.maxIaLevel = maxIaLevel;
         this.camImg = Resources.loadImageResource(camImgPath);
         jumpscare = new Jumpscare(jumpscareGifPath, jumpscareRepFrames);
+        this.debugColor = debugColor;
     }
 
     public String getName() {
@@ -131,6 +136,10 @@ public abstract class Animatronic {
 
     public BufferedImage getCamImg() {
         return camImg;
+    }
+
+    public Color getDebugColor(){
+        return debugColor;
     }
 
     @Override

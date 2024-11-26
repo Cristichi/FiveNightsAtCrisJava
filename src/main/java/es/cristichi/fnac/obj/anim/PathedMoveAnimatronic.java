@@ -5,6 +5,7 @@ import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,8 @@ public abstract class PathedMoveAnimatronic extends Animatronic{
 
     public PathedMoveAnimatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
                                  int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
-                                 List<String> orderedCamPath) throws ResourceNotFound {
-        super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscareGifPath, jumpscareRepFrames);
+                                 List<String> orderedCamPath, Color debugColor) throws ResourceNotFound {
+        super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscareGifPath, jumpscareRepFrames, debugColor);
         this.orderedCamPath = orderedCamPath;
     }
 
