@@ -754,7 +754,6 @@ public abstract class Night extends JComponent {
 					victoryScreen = false;
 					Timer end = new Timer("End Thread");
 					end.schedule(new TimerTask() {
-
 						@Override
 						public void run() {
 							onJumpscare();
@@ -768,7 +767,7 @@ public abstract class Night extends JComponent {
 	private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
@@ -789,7 +788,7 @@ public abstract class Night extends JComponent {
 	private class RightAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.LEFTDOOR)) {
@@ -809,7 +808,7 @@ public abstract class Night extends JComponent {
 	private class CamsAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null && jumpscare == null){
 				if (camsUp) {
 					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
 					camsUp = false;
@@ -824,7 +823,7 @@ public abstract class Night extends JComponent {
 	private class DoorAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && victoryScreen==null){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && victoryScreen==null && jumpscare == null){
 				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 					rightDoorClosed = !rightDoorClosed;
 					rightDoorTransTicks = DOOR_TRANSITION_TICKS;
