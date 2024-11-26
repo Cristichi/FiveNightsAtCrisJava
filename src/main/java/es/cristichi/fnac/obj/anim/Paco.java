@@ -1,25 +1,21 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.obj.Camera;
-import es.cristichi.fnac.obj.CameraMap;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Paco extends Animatronic{
-    private final double targetPatienceKillSec = 12;
-    private final List<String> orderedCamPath;
+public class Paco extends PathedMoveAnimatronic{
+    private final double secsToKill;
 
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, String retreatCam,
-                List<String> orderedCamPath) throws ResourceNotFound {
+                List<String> orderedCamPath, double secsToKill) throws ResourceNotFound {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
-                "anims/paco/jumpscare.gif", 1);
+                "anims/paco/jumpscare.gif", 1, orderedCamPath);
 
-        this.orderedCamPath = orderedCamPath;
+        this.secsToKill = secsToKill;
     }
 
     @Override
@@ -31,25 +27,12 @@ public class Paco extends Animatronic{
     }
 
     @Override
-    public String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
-        LinkedList<String> connections = currentLoc.getConnections();
-        for (String cam : orderedCamPath){
-            for (String connection : connections){
-                if (cam.equals(connection)){
-                    return cam;
-                }
-            }
-        }
-        throw new AnimatronicException("Paco has no suitable path to follow.");
-    }
-
-    @Override
     public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
             } else {
-                if (Math.round(targetPatienceKillSec*fps) <= tick-startKillTick){
+                if (Math.round(secsToKill *fps) <= tick-startKillTick){
                     kill = true;
                     return new TickReturn(true);
                 }
