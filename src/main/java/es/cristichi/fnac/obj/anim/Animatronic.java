@@ -4,10 +4,11 @@ import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Random;
 
 // Supressing unused warnings since some parts of this are for future Animatronics to use,
 // even if the currently existing ones do not make use of it.
@@ -20,7 +21,6 @@ public abstract class Animatronic {
     protected final double secInterval;
     protected final Jumpscare jumpscare;
     protected final BufferedImage camImg;
-    protected final List<String> forbiddenCameras;
 
     /**
      * Creating an Animatronic.
@@ -36,21 +36,16 @@ public abstract class Animatronic {
      * @param jumpscareGifPath Path in resources to the gif containing the jumpscare of this Animatronic.
      * @param jumpscareRepFrames Number of times each frame of the jumpscare is kept on screen before 
      *                           showing the next one.
-     * @param forbiddenCameras Only used by the default {@link #onMovementOppSuccess(CameraMap, Camera, Random)}
-     *                         so that it avoids those cameras. Useful for most Animatronics, but feel free to
-     *                         set it to null if you will not use it.
      * @throws ResourceNotFound If a resource is not found in the given paths.
      */
     Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
-                       @Nullable List<String> forbiddenCameras) throws ResourceNotFound {
+                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames) throws ResourceNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.camImg = Resources.loadImageResource(camImgPath);
-        this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
         jumpscare = new Jumpscare(jumpscareGifPath, jumpscareRepFrames);
     }
 
@@ -76,11 +71,7 @@ public abstract class Animatronic {
      * @return The name of the Camera it has to move to. The Night will be in charge of
      * trying to move the Animatronic to the indicated Camera, connected or not.
      */
-    public String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng){
-        LinkedList<String> connections = currentLoc.getConnections();
-        connections.removeIf(forbiddenCameras::contains);
-        return connections.get(rng.nextInt(connections.size()));
-    }
+    public abstract String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
      * This is only called at the moment of the defined internal during any given Night.

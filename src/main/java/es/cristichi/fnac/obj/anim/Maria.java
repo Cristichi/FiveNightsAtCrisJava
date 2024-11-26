@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class Maria extends Animatronic{
+public class Maria extends AvoidCamsMovementAnimatronic{
     private boolean kill = false;
     private Integer startKillTick = null;
     private final double targetPatienceKillSec = 5.1;

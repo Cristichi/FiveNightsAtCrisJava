@@ -19,7 +19,7 @@ public class Paco extends Animatronic{
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, String retreatCam,
                 List<String> orderedCamPath) throws ResourceNotFound {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
-                "anims/paco/jumpscare.gif", 1, null);
+                "anims/paco/jumpscare.gif", 1);
 
         this.orderedCamPath = orderedCamPath;
     }
