@@ -282,15 +282,17 @@ public abstract class Night extends JComponent {
 						}
 					}
 					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
-						try {
-							move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
-							camsHidingMovement.add(move.getValue().getKey().getName());
-							camsHidingMovement.add(move.getValue().getValue().getName());
-							camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
-							animPosInCam.remove(move.getKey().getName());
-						} catch (AnimatronicException e){
-							System.err.println("Prevented crash by cancelling move. Perhaps there is a design flaw in the Animatronic.");
-							e.printStackTrace();
+						if (!move.getValue().getKey().equals(move.getValue().getValue())){
+							try {
+								move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
+								camsHidingMovement.add(move.getValue().getKey().getName());
+								camsHidingMovement.add(move.getValue().getValue().getName());
+								camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
+								animPosInCam.remove(move.getKey().getName());
+							} catch (AnimatronicException e){
+								System.err.println("Prevented crash by cancelling move. Perhaps there is a design flaw in the Animatronic.");
+								e.printStackTrace();
+							}
 						}
 					}
 				}

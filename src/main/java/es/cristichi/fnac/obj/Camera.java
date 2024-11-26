@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Camera {
     private final String name;
@@ -73,6 +74,17 @@ public class Camera {
         } else {
             throw new AnimatronicException("Animatronic "+animatronic.getName()+" not found in camera "+name+".");
         }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Camera camera)) return false;
+        return Objects.equals(name, camera.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 
     public static class Builder {
