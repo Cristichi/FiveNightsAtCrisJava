@@ -269,7 +269,10 @@ public abstract class Night extends JComponent {
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
-									moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(anim.onMovementOppSuccess(camerasMap, cam, rng))));
+									String moveToCamName = anim.onMovementOppSuccess(camerasMap, cam, rng);
+									if (moveToCamName != null){
+										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(moveToCamName)));
+									}
 								}
 							}
 							Animatronic.TickReturn tickReturn = anim.onTick(currentTick, FPS, camsUp, openDoor, cam, rng);

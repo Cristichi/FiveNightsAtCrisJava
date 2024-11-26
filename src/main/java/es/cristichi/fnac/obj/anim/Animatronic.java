@@ -4,6 +4,7 @@ import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -76,8 +77,10 @@ public abstract class Animatronic {
      * @param currentLoc, Cam where this Animatronic is.
      * @param rng Random in charge of today's night.
      * @return The name of the Camera it has to move to. The Night will be in charge of
-     * trying to move the Animatronic to the indicated Camera, connected or not.
+     * trying to move the Animatronic to the indicated Camera, connected or not. If movement
+     * must be cancelled at this step, just return null.
      */
+    @Nullable
     public abstract String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
