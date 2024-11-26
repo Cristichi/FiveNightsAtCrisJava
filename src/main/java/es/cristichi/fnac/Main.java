@@ -249,14 +249,20 @@ public class Main {
                 new Camera.Builder()
                     .setName("corridor 1")
                     .setCamBackground("night/n1/corridor 1.jpg")
-                    .setLoc(171, 469, 140, 70)
-                    .addConnection("dining area", "corridor 3")
+                    .setLoc(314, 469, 140, 70)
+                    .addConnection("dining area", "corridor 3", "staff lounge")
                     .build(),
                 new Camera.Builder()
                     .setName("corridor 2")
                     .setCamBackground("night/n1/corridor 2.jpg")
                     .setLoc(456, 469, 140, 70)
-                    .addConnection("dining area", "corridor 4")
+                    .addConnection("dining area", "corridor 4", "bathrooms")
+                    .build(),
+                new Camera.Builder()
+                    .setName("bathrooms")
+                    .setCamBackground("night/n1/bathrooms.jpg")
+                    .setLoc(560, 734, 140, 51)
+                    .addConnection("corridor 2")
                     .build(),
                 new Camera.Builder()
                     .setName("corridor 3")
