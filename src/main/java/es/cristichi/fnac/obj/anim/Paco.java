@@ -11,10 +11,10 @@ import java.util.Random;
 public class Paco extends PathedMoveAnimatronic{
     private final double secsToKill;
 
-    public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, String retreatCam,
-                List<String> orderedCamPath, double secsToKill) throws ResourceNotFound {
+    public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> orderedCamPath, String retreatCam,
+                double secsToKill) throws ResourceNotFound {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
-                "anims/paco/jumpscare.gif", 1, orderedCamPath, Color.BLUE);
+                "anims/paco/jumpscare.gif", 1, orderedCamPath, retreatCam, Color.BLUE);
 
         this.secsToKill = secsToKill;
     }

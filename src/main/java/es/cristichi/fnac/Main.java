@@ -211,13 +211,12 @@ public class Main {
         Animatronic maria = new Maria(5, aiNightMaria, List.of("corridor 3"), 5);
 
         HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(1, 20);
+        aiNightPaco.put(0, 20);
         aiNightPaco.put(3, 6);
         aiNightPaco.put(4, 7);
         aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(1, aiNightPaco, "kitchen",
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
-                12);
+        Animatronic paco = new Paco(1, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
+                "kitchen", 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
         nightMap.addAll(
