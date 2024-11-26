@@ -564,7 +564,7 @@ public abstract class Night extends JComponent {
 
 							for (Animatronic an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed || current.isRightDoorOfOffice()&&!rightDoorClosed;
-								if (!an.showOnCam(currentTick, FPS, openDoor, current, rng)){
+								if (an.showOnCam(currentTick, FPS, openDoor, current, rng)){
 									BufferedImage img = an.getCamImg();
 
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
