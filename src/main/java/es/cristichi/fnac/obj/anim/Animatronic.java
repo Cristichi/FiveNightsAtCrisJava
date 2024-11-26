@@ -121,7 +121,7 @@ public abstract class Animatronic {
      * This is called per tick, but there is a counter that is unique to each instance of cams, which
      * increases each time the player changes cams an each time they open cams.
      *
-     * @param tick     Current tick, for accuraetly counting seconds.
+     * @param tick     Current tick, for accurately counting seconds.
      * @param fps      Current ticks per second, to convert from ticks to seconds for consistency with real time.
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
      * @param cam      Current Camera where the Animatronic is and the player is watching.
