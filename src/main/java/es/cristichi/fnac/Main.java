@@ -215,7 +215,7 @@ public class Main {
         aiNightPaco.put(3, 6);
         aiNightPaco.put(4, 7);
         aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(1, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
+        Animatronic paco = new Paco(4, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
                 "kitchen", 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
