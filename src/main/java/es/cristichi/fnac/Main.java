@@ -294,7 +294,7 @@ public class Main {
         );
 
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", nightMap, null,
+        Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
                 new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
             @Override
             protected void onJumpscare() {
