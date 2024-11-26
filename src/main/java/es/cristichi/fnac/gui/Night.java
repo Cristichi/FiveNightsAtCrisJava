@@ -21,6 +21,8 @@ import java.util.Timer;
 import java.util.*;
 
 public abstract class Night extends JComponent {
+	private static final boolean DEBUG_MODE = false;
+
 	private static final int FPS = 60;
 	private static final int TOTAL_HOURS = 6;
 	private static final String POWER_USAGE_CHAR = "█";
@@ -664,14 +666,16 @@ public abstract class Night extends JComponent {
 							g2d.drawString(camName, camNameX, camNameY);
 						}
 
-						int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight)/3;
-						int debugRecX = scaledCamMapRecX;
-						int debugRecY = scaledCamMapRecY;
-						for (Animatronic anim : cam.getAnimatronicsHere()){
-							g.setColor(anim.getDebugColor());
-							g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
-							debugRecX+=debugRecDim;
-							debugRecY+=debugRecDim;
+						if (DEBUG_MODE){
+							int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight) / 3;
+							int debugRecX = scaledCamMapRecX;
+							int debugRecY = scaledCamMapRecY;
+							for (Animatronic anim : cam.getAnimatronicsHere()) {
+								g.setColor(anim.getDebugColor());
+								g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
+								debugRecX += debugRecDim;
+								debugRecY += debugRecDim;
+							}
 						}
 
 						// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
