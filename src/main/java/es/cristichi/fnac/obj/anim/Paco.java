@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Paco extends Animatronic{
-    private boolean kill = false;
-    private Integer startKillTick = null;
     private final double targetPatienceKillSec = 12;
     private final List<String> orderedCamPath;
 
@@ -61,10 +59,5 @@ public class Paco extends Animatronic{
             startKillTick = null;
         }
         return new TickReturn(false);
-    }
-
-    @Override
-    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return !kill;
     }
 }

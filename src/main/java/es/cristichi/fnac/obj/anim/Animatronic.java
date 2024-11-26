@@ -21,6 +21,8 @@ public abstract class Animatronic {
     protected final double secInterval;
     protected final Jumpscare jumpscare;
     protected final BufferedImage camImg;
+    protected boolean kill = false;
+    protected Integer startKillTick = null;
 
     /**
      * Creating an Animatronic.
@@ -119,7 +121,9 @@ public abstract class Animatronic {
      * @param rng      Random in charge of today's night.
      * @return True if this Animatronic should not be drawn in the Camera. False otherwise
      */
-    public abstract boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng);
+    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng){
+        return !kill;
+    }
 
     public Jumpscare getJumpscare() {
         return jumpscare;

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Maria extends AvoidCamsMovementAnimatronic{
-    private boolean kill = false;
-    private Integer startKillTick = null;
     private final double targetPatienceKillSec = 5.1;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight,
@@ -45,10 +43,5 @@ public class Maria extends AvoidCamsMovementAnimatronic{
             startKillTick = null;
         }
         return new TickReturn(false);
-    }
-
-    @Override
-    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return !kill;
     }
 }
