@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+//TODO CREO QUE NO VA EL ÚLTIMO FRAME XD
 public class Jumpscare {
     private List<BufferedImage> frames;
     private final int repsMax;

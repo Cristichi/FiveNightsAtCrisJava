@@ -19,17 +19,6 @@ public class Bob extends AvoidCamsAnimatronic {
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng) {
-        if (kill){
-            return false;
-        }
-        if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice()) && !isOpenDoor){
-            return rng.nextInt(maxIaLevel) < aiLevel + 5;
-        }
-        return super.onMovementOpportunityAttempt(cam, isOpenDoor, rng);
-    }
-
-    @Override
     public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){

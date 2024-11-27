@@ -20,14 +20,6 @@ public class Paco extends PathedMoveAnimatronic{
     }
 
     @Override
-    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng) {
-        if (kill || isOpenDoor){
-            return false;
-        }
-        return super.onMovementOpportunityAttempt(cam, false, rng);
-    }
-
-    @Override
     public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){

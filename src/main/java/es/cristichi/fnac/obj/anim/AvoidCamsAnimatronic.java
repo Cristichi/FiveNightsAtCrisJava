@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+// TODO: It looks like movement overwrites trying to kill, make movement completely different when next to the office.
 /**
  * This class implements {@link Animatronic} with a default movement that simply avoids a list of Camera names.
  */
