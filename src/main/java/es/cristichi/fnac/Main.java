@@ -288,7 +288,7 @@ public class Main {
                         .setName("corridor 4")
                         .setCamBackground("night/n1/corridor 4.jpg")
                         .setLoc(662, 568, 140, 70)
-                        .addConnection("corridor 3") //Offices go to corridor 4, but not vice-versa
+                        .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
                         .connectToOfficeRight()
                         .build()
         );
