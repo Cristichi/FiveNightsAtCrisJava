@@ -244,7 +244,7 @@ public class Main {
                         .setName("main stage")
                         .setCamBackground("night/n1/main stage.jpg")
                         .setLoc(537, 399, 140, 70)
-                        .addConnection("kitchen", "main stage", "corridor 1", "corridor 2")
+                        .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 1")
