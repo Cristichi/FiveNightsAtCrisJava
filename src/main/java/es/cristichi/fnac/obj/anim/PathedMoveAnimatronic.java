@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-// TODO same doesn't attack because moves sometimes first
 public abstract class PathedMoveAnimatronic extends Animatronic{
     protected final List<String> orderedCamPath;
     protected final String returnToCamera;
