@@ -271,7 +271,7 @@ public abstract class Night extends JComponent {
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
 									String moveToCamName = anim.onMovementOppSuccess(camerasMap, cam, rng);
-									if (moveToCamName != null){
+									if (moveToCamName != null && !moveToCamName.equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(moveToCamName)));
 									}
 								}

@@ -93,7 +93,7 @@ public abstract class Animatronic {
      * @return True if Animatronic should move at the end of this tick.
      */
     public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
-        if (kill || isOpenDoor){
+        if (kill || startKillTick!=null || isOpenDoor){
             return false;
         }
         if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice())){
