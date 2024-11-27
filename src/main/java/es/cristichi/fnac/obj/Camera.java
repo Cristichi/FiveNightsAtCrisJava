@@ -87,6 +87,11 @@ public class Camera {
         return Objects.hashCode(name);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static class Builder {
         private String name = null;
         private BufferedImage camBackground = null;
