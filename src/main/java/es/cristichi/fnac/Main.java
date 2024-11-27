@@ -201,14 +201,14 @@ public class Main {
         aiNightBob.put(2, 6);
         aiNightBob.put(4, 7);
         aiNightBob.put(5, 8);
-        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2"), 5);
+        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
         aiNightMaria.put(1, 5);
         aiNightMaria.put(3, 6);
         aiNightMaria.put(4, 7);
         aiNightMaria.put(5, 8);
-        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1"), 5);
+        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
         aiNightPaco.put(0, 4);
