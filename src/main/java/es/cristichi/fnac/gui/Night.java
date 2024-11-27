@@ -294,7 +294,11 @@ public abstract class Night extends JComponent {
 								camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
 								animPosInCam.remove(move.getKey().getName());
 							} catch (AnimatronicException e){
-								System.err.println("Prevented crash by cancelling move. Perhaps there is a design flaw in the Animatronic.");
+								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
+										" Perhaps there is a design flaw in the Animatronic.%n",
+										move.getKey().getName(),
+										move.getValue().getKey(),
+										move.getValue().getValue());
 								e.printStackTrace();
 							}
 						}
@@ -361,23 +365,27 @@ public abstract class Night extends JComponent {
 		switch (officeLoc) {
 		case LEFTDOOR:
 			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
+				g.drawImage(
+						backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+						0, 0, getWidth(), getHeight(), this);
 
 				// Left door when watching left door and no transition
 				g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
-				int xPosition = MONITOR_X_IN_SOURCE - ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
-						/ OFFICE_TRANSITION_TICKS;
+				int xPosition = MONITOR_X_IN_SOURCE -
+						((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+								/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+					g.drawImage(paperImg,
+							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight() * ((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
+							this);
 				}
 
 				// Left door when watching left door while transition from MONITOR to LEFTDOOR (center to left)
@@ -396,8 +404,10 @@ public abstract class Night extends JComponent {
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+					g.drawImage(paperImg,
+							(int)((PAPER_X_IN_SOURCE_BACKGROUND-RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
+							this);
 				}
 
 				// Right door when no transition at RIGHTDOOR
@@ -408,7 +418,8 @@ public abstract class Night extends JComponent {
 						this);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
-				int xPosition = MONITOR_X_IN_SOURCE + ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = MONITOR_X_IN_SOURCE +
+						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
@@ -432,13 +443,15 @@ public abstract class Night extends JComponent {
 			break;
 		default:
 			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
+				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+						0, 0, getWidth(), getHeight(), this);
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+					g.drawImage(paperImg,
+							(int)((PAPER_X_IN_SOURCE_BACKGROUND-MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
+							this);
 				}
 			} else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
 				int xPosition = LEFTDOOR_X_IN_SOURCE + ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
@@ -448,8 +461,10 @@ public abstract class Night extends JComponent {
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+					g.drawImage(paperImg,
+							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
+							this);
 				}
 
 				// Left door
@@ -463,15 +478,18 @@ public abstract class Night extends JComponent {
 						this);
 
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
-				int xPosition = RIGHTDOOR_X_IN_SOURCE - ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
+				int xPosition = RIGHTDOOR_X_IN_SOURCE -
+						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
 				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
+					g.drawImage(paperImg,
+							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
+							this);
 				}
 
 				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
@@ -566,11 +584,13 @@ public abstract class Night extends JComponent {
 									0, 0, camImgWidth, camImgHeight, this);
 						} else {
 							// Here we draw the camera and the animatronics in there
-							g.drawImage(current.getCamBackground(), camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+							g.drawImage(current.getCamBackground(),
+									camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
 
 							for (Animatronic an : current.getAnimatronicsHere()){
-								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed || current.isRightDoorOfOffice()&&!rightDoorClosed;
+								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed
+										|| current.isRightDoorOfOffice()&&!rightDoorClosed;
 								if (an.showOnCam(currentTick, FPS, openDoor, current, rng)){
 									BufferedImage img = an.getCamImg();
 
@@ -590,18 +610,17 @@ public abstract class Night extends JComponent {
 									int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
 									Point p = new Point(anRandomX, anRandomY);
 									p = animPosInCam.getOrDefault(an.getName(), p);
-									if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth || p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
+									if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth
+											|| p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
 										p = new Point(anRandomX, anRandomY);
 									}
 									animPosInCam.put(an.getName(), p);
 
 									// Draw the scaled image
-									g.drawImage(img,
-											p.x, p.y,
+									g.drawImage(img, p.x, p.y,
 											p.x + scaledWidth, p.y + scaledHeight,
 											0, 0, img.getWidth(), img.getHeight(),
-											this
-									);
+											this);
 								}
 							}
 						}
@@ -679,7 +698,8 @@ public abstract class Night extends JComponent {
 						}
 
 						// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
-						camsLocOnScreen.put(cam.getName(), new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
+						camsLocOnScreen.put(cam.getName(),
+								new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
                     }
 
 					// Cam name in top-left of monitor
@@ -708,7 +728,8 @@ public abstract class Night extends JComponent {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
             g.setFont(new Font("Arial", Font.BOLD, getWidth()/50));
-            String strTime = String.format("%02d:%02d AM", nightHour, (int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
+            String strTime = String.format("%02d:%02d AM", nightHour,
+					(int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
 			FontMetrics fontMetrics = g.getFontMetrics();
 			{
 				int powerUsage = 0;
@@ -741,8 +762,10 @@ public abstract class Night extends JComponent {
 				}
 				String strPower1 = String.format("Power Usage: %s",  powerUsageStr);
 				String strPower2 = String.format("Left: %.0f%%", (powerLeft*100));
-				g2d.drawString(strPower1, txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
-				g2d.drawString(strPower2, txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
+				g2d.drawString(strPower1,
+						txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
+				g2d.drawString(strPower2,
+						txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
 			}
 			{
 				g.setColor(Color.WHITE);
@@ -791,7 +814,8 @@ public abstract class Night extends JComponent {
 	private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0
+					&& changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
@@ -812,7 +836,8 @@ public abstract class Night extends JComponent {
 	private class RightAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (camsUpDownTransTicks == 0 && offTransTicks == 0 && changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
+			if (camsUpDownTransTicks == 0 && offTransTicks == 0
+					&& changeCamsTransTicks==0 && victoryScreen==null && jumpscare == null) {
 				if (!camsUp) {
 					if (!officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.LEFTDOOR)) {
@@ -847,7 +872,8 @@ public abstract class Night extends JComponent {
 	private class DoorAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && !camsUp && victoryScreen==null && jumpscare == null){
+			if (offTransTicks == 0 && camsUpDownTransTicks == 0
+					&& !camsUp && victoryScreen==null && jumpscare == null){
 				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 					rightDoorClosed = !rightDoorClosed;
 					rightDoorTransTicks = DOOR_TRANSITION_TICKS;

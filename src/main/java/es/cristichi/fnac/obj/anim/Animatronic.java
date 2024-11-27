@@ -45,8 +45,8 @@ public abstract class Animatronic {
      * @throws ResourceNotFound If a resource is not found in the given paths.
      */
     Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                       int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
-                Color debugColor) throws ResourceNotFound {
+                int maxIaLevel, String camImgPath, String jumpscareGifPath,
+                int jumpscareRepFrames, Color debugColor) throws ResourceNotFound {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
@@ -93,7 +93,7 @@ public abstract class Animatronic {
      * @return True if Animatronic should move at the end of this tick.
      */
     public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
-        if (kill || startKillTick!=null || isOpenDoor){
+        if (kill || startKillTick != null || isOpenDoor){
             return false;
         }
         if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice())){
