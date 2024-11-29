@@ -172,7 +172,7 @@ public class Main {
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 6, 0.45f) {
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
