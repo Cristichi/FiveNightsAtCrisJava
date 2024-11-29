@@ -77,8 +77,8 @@ public class Main {
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
             mmItems.add("The other nights are not available yet! :3");
-            mmItems.add("Repeat Tutorial");
             mmItems.add("Repeat Night 1");
+            mmItems.add("Repeat Tutorial");
         } else {
             background = "menu/background.jpg";
             mmItems.add("Tutorial Night");
@@ -172,7 +172,7 @@ public class Main {
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 6, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();

@@ -1,5 +1,6 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.exception.ResourceNotFound;
 import es.cristichi.fnac.io.Resources;
 
 import javax.swing.*;
@@ -8,7 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,8 +25,13 @@ public abstract class Menu extends JComponent {
 	private boolean loading;
 	private final Font btnFont;
 
+	private final File tempMusicFile;
+
 	private int errorTicks = 0;
 	private String[] error = null;
+
+//	private int openedMusicTicks = 0;
+//	private String[] openedMusicMsg = null;
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
@@ -29,18 +39,33 @@ public abstract class Menu extends JComponent {
 		loadingImage = Resources.loadImageResource(loadingImg);
 		loading = false;
 		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
-		setLayout(new GroupLayout(this));
+
+		try {
+			tempMusicFile = Files.createTempFile("menu_main", ".mp3").toFile();
+			tempMusicFile.deleteOnExit();
+			try (InputStream in = Resources.class.getClassLoader().getResourceAsStream("menu/main.mp3")) {
+				if (in == null) {
+					throw new NullPointerException("Resource not found.");
+				}
+				Files.copy(in, tempMusicFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (IOException | NullPointerException e) {
+			throw new ResourceNotFound("Image not found at \"" + "menu/main.mp3" + "\". Probably Cristichi forgot to add it.", e);
+		}
+
+        setLayout(new GroupLayout(this));
 		initializeMenuItems();
 
-        Timer menuTicks = new Timer();
-        int fps = 5;
-        menuTicks.scheduleAtFixedRate(new TimerTask() {
+		Timer menuTicks = new Timer();
+		int fps = 5;
+		menuTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 				repaint();
 			}
 		}, 100, 1000 / fps);
-	}
+
+    }
 
 	// Initialize and position the menu items
 	private void initializeMenuItems() {
@@ -54,11 +79,11 @@ public abstract class Menu extends JComponent {
 
 		for (String item : menuItems) {
             JButton button = new JButton("<html>"+item+"</html>");
-            button.setFont(btnFont); // Set custom font
-            button.setForeground(Color.WHITE); // Set text color to white
-            button.setContentAreaFilled(false); // Make background transparent
-            button.setBorderPainted(false); // Remove button border
-            button.setFocusPainted(false); // Remove focus indicator
+            button.setFont(btnFont);
+            button.setForeground(Color.WHITE);
+            button.setContentAreaFilled(false);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
             button.addActionListener(new MenuActionListener(item));
             button.addMouseListener(new MouseAdapter() {
@@ -100,6 +125,19 @@ public abstract class Menu extends JComponent {
 				y+=yOg;
 			}
 		}
+
+//		if (openedMusicTicks-- > 0) {
+//			int yOg = 40;
+//			g.setFont(new Font("Arial", Font.BOLD, yOg));
+//			g.setColor(Color.WHITE);
+//			int y = yOg;
+//			for (String line : openedMusicMsg) {
+//				FontMetrics fm = g.getFontMetrics();
+//				LineMetrics lm = fm.getLineMetrics(line, g);
+//				g.drawString(line, (int)(getWidth()*0.99)-fm.stringWidth(line), getHeight()-y);
+//				y+=yOg;
+//			}
+//		}
 	}
 
 	/**
@@ -131,7 +169,7 @@ public abstract class Menu extends JComponent {
                         error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
                         errorTicks = 60;
                     }
-					for (Component component : Menu.this.getComponents()) {
+                    for (Component component : Menu.this.getComponents()) {
 						component.setVisible(true);
 					}
 					loading = false;
