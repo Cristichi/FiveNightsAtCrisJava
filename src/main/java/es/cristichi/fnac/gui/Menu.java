@@ -1,6 +1,5 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 
 import javax.sound.sampled.Clip;
@@ -11,11 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.LineMetrics;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,8 +21,6 @@ public abstract class Menu extends JComponent {
 	private final Image loadingImage;
 	private boolean loading;
 	private final Font btnFont;
-
-	private final File tempMusicFile;
 
 	private int errorTicks = 0;
 	private String[] error = null;
@@ -43,18 +36,6 @@ public abstract class Menu extends JComponent {
 		loading = false;
 		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 
-		try {
-			tempMusicFile = Files.createTempFile("menu_main", ".mp3").toFile();
-			tempMusicFile.deleteOnExit();
-			try (InputStream in = Resources.class.getClassLoader().getResourceAsStream("menu/main.mp3")) {
-				if (in == null) {
-					throw new NullPointerException("Resource not found.");
-				}
-				Files.copy(in, tempMusicFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-		} catch (IOException | NullPointerException e) {
-			throw new ResourceException("Image not found at \"" + "menu/main.mp3" + "\". Probably Cristichi forgot to add it.", e);
-		}
 		music = Resources.loadAudioClip("menu/main.wav", "menuBack.wav");
 		music.loop(Clip.LOOP_CONTINUOUSLY);
 
