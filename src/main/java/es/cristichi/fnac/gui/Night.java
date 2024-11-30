@@ -1,7 +1,7 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
-import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.*;
@@ -33,6 +32,8 @@ public abstract class Night extends JComponent {
 	private float powerLeft;
 	private final float powerPerTickPerResource;
 	private final Jumpscare powerOutageJumpscare;
+
+	private final LinkedList<Runnable> onCompletedListeners;
 
 	private int currentTick;
 	private int nightHour;
@@ -108,16 +109,18 @@ public abstract class Night extends JComponent {
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you use everything all the time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
-	 * @throws ResourceNotFound If any of the images required for Nights cannot be loaded from the resources.
+	 * @throws ResourceException If any of the images required for Nights cannot be loaded from the resources.
 	 */
 	public Night(String nightName, CameraMap mapAndAnimatronics, @Nullable String paperResource,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				 float passivePowerUsage) throws ResourceNotFound {
+				 float passivePowerUsage) throws ResourceException {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = mapAndAnimatronics;
 		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (FPS * secsPerHour);
+
+		onCompletedListeners = new LinkedList<>();
 
 		powerLeft = 1;
 		// So this calculates depending on the fps, which determines the total number of ticks per night, which is
@@ -320,10 +323,8 @@ public abstract class Night extends JComponent {
 			end.schedule(new TimerTask() {
 				@Override
 				public void run() {
-                    try {
-                        onNightPassed();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    for(Runnable onCompleted : onCompletedListeners){
+                        onCompleted.run();
                     }
                 }
 			}, 5000);
@@ -332,7 +333,9 @@ public abstract class Night extends JComponent {
 
 	protected abstract void onJumpscare();
 
-	protected abstract void onNightPassed() throws IOException;
+	public void addOnNightCompleted(Runnable runnable) {
+		onCompletedListeners.add(runnable);
+	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -811,7 +814,7 @@ public abstract class Night extends JComponent {
 		}
     }
 
-	private class LeftAction extends AbstractAction {
+    private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (camsUpDownTransTicks == 0 && offTransTicks == 0

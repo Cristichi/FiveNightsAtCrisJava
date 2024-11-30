@@ -1,6 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
@@ -42,11 +42,11 @@ public abstract class Animatronic {
      * @param jumpscareGifPath Path in resources to the gif containing the jumpscare of this Animatronic.
      * @param jumpscareRepFrames Number of times each frame of the jumpscare is kept on screen before 
      *                           showing the next one.
-     * @throws ResourceNotFound If a resource is not found in the given paths.
+     * @throws ResourceException If a resource is not found in the given paths.
      */
     Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
                 int maxIaLevel, String camImgPath, String jumpscareGifPath,
-                int jumpscareRepFrames, Color debugColor) throws ResourceNotFound {
+                int jumpscareRepFrames, Color debugColor) throws ResourceException {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;

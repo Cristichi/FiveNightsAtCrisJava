@@ -1,6 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.obj.Camera;
 
 import java.awt.*;
@@ -12,7 +12,7 @@ public class Maria extends AvoidCamsAnimatronic {
     private final double secsToKill;
 
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight,
-                 List<String> forbiddenCams, double secsToKill) throws ResourceNotFound {
+                 List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 "anims/maria/jumpscare.gif", 1, forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;

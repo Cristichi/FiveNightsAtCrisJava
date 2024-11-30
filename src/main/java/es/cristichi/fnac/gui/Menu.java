@@ -1,14 +1,16 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.LineMetrics;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +32,9 @@ public abstract class Menu extends JComponent {
 	private int errorTicks = 0;
 	private String[] error = null;
 
-//	private int openedMusicTicks = 0;
-//	private String[] openedMusicMsg = null;
+	private final Clip music;
+	private int openedMusicTicks;
+	private final String[] openedMusicMsg;
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
@@ -50,8 +53,10 @@ public abstract class Menu extends JComponent {
 				Files.copy(in, tempMusicFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (IOException | NullPointerException e) {
-			throw new ResourceNotFound("Image not found at \"" + "menu/main.mp3" + "\". Probably Cristichi forgot to add it.", e);
+			throw new ResourceException("Image not found at \"" + "menu/main.mp3" + "\". Probably Cristichi forgot to add it.", e);
 		}
+		music = Resources.loadAudioClip("menu/main2.wav", "menuBack.wav");
+		music.loop(Clip.LOOP_CONTINUOUSLY);
 
         setLayout(new GroupLayout(this));
 		initializeMenuItems();
@@ -65,6 +70,9 @@ public abstract class Menu extends JComponent {
 			}
 		}, 100, 1000 / fps);
 
+		music.start();
+		openedMusicTicks = 160;
+		openedMusicMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
 
 	// Initialize and position the menu items
@@ -126,26 +134,26 @@ public abstract class Menu extends JComponent {
 			}
 		}
 
-//		if (openedMusicTicks-- > 0) {
-//			int yOg = 40;
-//			g.setFont(new Font("Arial", Font.BOLD, yOg));
-//			g.setColor(Color.WHITE);
-//			int y = yOg;
-//			for (String line : openedMusicMsg) {
-//				FontMetrics fm = g.getFontMetrics();
-//				LineMetrics lm = fm.getLineMetrics(line, g);
-//				g.drawString(line, (int)(getWidth()*0.99)-fm.stringWidth(line), getHeight()-y);
-//				y+=yOg;
-//			}
-//		}
+		if (openedMusicTicks-- > 0) {
+			int yOg = 40;
+			g.setFont(new Font("Arial", Font.BOLD, yOg));
+			g.setColor(Color.WHITE);
+			int y = yOg;
+			for (String line : openedMusicMsg) {
+				FontMetrics fm = g.getFontMetrics();
+				LineMetrics lm = fm.getLineMetrics(line, g);
+				g.drawString(line, (int)(getWidth()*0.99)-fm.stringWidth(line), getHeight()-y);
+				y+=yOg;
+			}
+		}
 	}
 
 	/**
-	 * This is performed after an item is closed, alongside a loading screen in case you need time to load resources.
+	 * This is performed after an item is clicked. It also loads a loading screen in case you need time to load resources.
 	 * @param item String identifying the item clicked.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract void onMenuItemClick(String item) throws Exception;
+	protected abstract Night onMenuItemClick(String item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final String item;
@@ -155,25 +163,30 @@ public abstract class Menu extends JComponent {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-				loading = true;
-				for (Component component : Menu.this.getComponents()) {
-					component.setVisible(false);
-				}
-				new Thread(() -> {
-                    try {
-                        onMenuItemClick(item);
-						error = null;
-						errorTicks = 0;
-					} catch (Exception e1) {
-                        e1.printStackTrace();
-                        error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
-                        errorTicks = 60;
-                    }
-                    for (Component component : Menu.this.getComponents()) {
-						component.setVisible(true);
+			loading = true;
+			for (Component component : Menu.this.getComponents()) {
+				component.setVisible(false);
+			}
+			new Thread(() -> {
+				try {
+					music.stop();
+					error = null;
+					errorTicks = 0;
+					Night night = onMenuItemClick(item);
+					if (night != null){
+						night.addOnNightCompleted(music::start);
 					}
-					loading = false;
-                }, item).start();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
+					errorTicks = 60;
+					music.start();
+				}
+				for (Component component : Menu.this.getComponents()) {
+					component.setVisible(true);
+				}
+				loading = false;
+			}, item).start();
 		}
 	}
 }

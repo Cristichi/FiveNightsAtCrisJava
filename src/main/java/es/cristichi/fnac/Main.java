@@ -9,13 +9,12 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
@@ -114,13 +113,18 @@ public class Main {
     private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
         return new Menu(background, "menu/loading.jpg", mmItems) {
             @Override
-            protected void onMenuItemClick(String item) throws IOException {
+            protected Night onMenuItemClick(String item) throws IOException {
                 switch (item) {
-                    case "Tutorial Night", "Repeat Tutorial" -> startTutorialNight(saveFile, cards, window);
-                    case "Night 1", "Repeat Night 1" -> startNight1(saveFile, cards, window);
+                    case "Tutorial Night", "Repeat Tutorial" -> {
+                        return startTutorialNight(saveFile, cards, window);
+                    }
+                    case "Night 1", "Repeat Night 1" -> {
+                        return startNight1(saveFile, cards, window);
+                    }
                     case "Exit" -> {
                         window.dispose();
                         System.exit(0);
+                        return null;
                     }
                     default -> throw new MenuItemNotFound("Menu item \"" + item + "\" not found in this menu.");
                 }
@@ -128,7 +132,7 @@ public class Main {
         };
     }
 
-    private static void startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+    private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 0);
         aiNightBob.put(1, 1);
@@ -179,24 +183,27 @@ public class Main {
                 cards.show(cardPanel, "menu");
                 System.out.println("Player died.");
             }
-
-            @Override
-            protected void onNightPassed() throws IOException {
-                saveFile.addCompletedNight(getNightName());
-                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-                System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
-            }
         };
+        night.addOnNightCompleted(() -> {
+            saveFile.addCompletedNight(night.getNightName());
+            try {
+                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+            } catch (IOException e) {
+                throw new RuntimeException("Progress could not be saved.", e);
+            }
+            nightPanel.removeAll();
+            cards.show(cardPanel, "menu");
+            System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
+        });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));
         cards.show(cardPanel, "night");
         System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
         night.startNight();
+        return night;
     }
 
-    private static void startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+    private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
         aiNightBob.put(0, 5);
         aiNightBob.put(2, 6);
@@ -303,22 +310,29 @@ public class Main {
                 cards.show(cardPanel, "menu");
                 System.out.println("Player died.");
             }
-
+        };
+        night.addOnNightCompleted(new TimerTask() {
             @Override
-            protected void onNightPassed() throws IOException {
-                saveFile.addCompletedNight(getNightName());
-                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+            public void run() {
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not save victory to save file.", e);
+                }
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
                 System.out.println(
                         "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
             }
-        };
+        });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));
         cards.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         night.startNight();
+
+        return night;
     }
 }
 

@@ -1,6 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.exception.ResourceNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 
 import javax.imageio.ImageIO;
@@ -19,16 +19,16 @@ public class Jumpscare {
     private int currentReps;
     private int currentFrame;
 
-    public Jumpscare(String filepath, int reps) throws ResourceNotFound {
+    public Jumpscare(String filepath, int reps) throws ResourceException {
         this.repsMax = Math.max(1, reps);
         this.currentFrame = 0;
         loadFrames(filepath);
     }
 
-    private void loadFrames(String resourcePath) throws ResourceNotFound {
+    private void loadFrames(String resourcePath) throws ResourceException {
         try (ImageInputStream stream = ImageIO.createImageInputStream(Resources.loadInputStream(resourcePath))) {
             if (stream == null) {
-                throw new ResourceNotFound("No suitable reader found for " + resourcePath + ".");
+                throw new ResourceException("No suitable reader found for " + resourcePath + ".");
             }
             Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
             if (!readers.hasNext()) {
@@ -60,7 +60,7 @@ public class Jumpscare {
             }
             reader.dispose();
         } catch (IOException | NullPointerException e) {
-            throw new ResourceNotFound("Error when reading \"" + resourcePath + "\".", e);
+            throw new ResourceException("Error when reading \"" + resourcePath + "\".", e);
         }
     }
 
