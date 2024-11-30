@@ -8,21 +8,45 @@ import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
 public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
+    private static final String GAME_VERSION;
     private static JPanel cardPanel;
     private static JPanel nightPanel;
 
+    static {
+        try {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            Model model = reader.read(new FileReader("pom.xml"));
+            GAME_VERSION = model.getVersion();
+        } catch (IOException | XmlPullParserException e) {
+            throw new RuntimeException("Error trying to read pom.xml for version. It was unimportant.", e);
+        }
+    }
+
     public static String getTitleForWindow(String window) {
-        return GAME_TITLE.concat(" - ").concat(window);
+        if (GAME_VERSION==null){
+            if (window == null){
+                return String.format("%s", GAME_TITLE);
+            }
+            return String.format("%s - %s", GAME_TITLE, window);
+        }
+        if (window == null){
+            return String.format("%s v%s", GAME_TITLE, GAME_VERSION);
+        }
+        return String.format("%s v%s - %s", GAME_TITLE, GAME_VERSION, window);
     }
 
     public static void main(String[] args) {
@@ -52,6 +76,7 @@ public class Main {
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setIconImage(Resources.loadImageResource("icon.jpg"));
+        window.setTitle(getTitleForWindow(null));
         window.setLayout(new BorderLayout());
 
         CardLayout cards = new CardLayout();
