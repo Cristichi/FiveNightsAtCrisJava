@@ -26,8 +26,8 @@ public abstract class Menu extends JComponent {
 	private String[] error = null;
 
 	private final Clip music;
-	private int openedMusicTicks;
-	private final String[] openedMusicMsg;
+	private int musicCreditsTicks;
+	private final String[] musicCreditsMsg;
 
     public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
 		this.menuItems = menuItems;
@@ -52,8 +52,8 @@ public abstract class Menu extends JComponent {
 		}, 100, 1000 / fps);
 
 		music.start();
-		openedMusicTicks = 160;
-		openedMusicMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
+		musicCreditsTicks = 160;
+		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
 
 	// Initialize and position the menu items
@@ -115,13 +115,13 @@ public abstract class Menu extends JComponent {
 			}
 		}
 
-		if (openedMusicTicks-- > 0) {
+		if (musicCreditsTicks-- > 0) {
 			int yOg = 40;
 			g.setFont(new Font("Arial", Font.BOLD, yOg));
 			g.setColor(Color.WHITE);
-			int y = yOg*openedMusicMsg.length;
+			int y = yOg* musicCreditsMsg.length;
 			int x = (int)(getWidth()*0.99);
-			for (String line : openedMusicMsg) {
+			for (String line : musicCreditsMsg) {
 				FontMetrics fm = g.getFontMetrics();
 				LineMetrics lm = fm.getLineMetrics(line, g);
 				g.drawString(line, x-fm.stringWidth(line), getHeight()-y);
@@ -156,12 +156,16 @@ public abstract class Menu extends JComponent {
 					errorTicks = 0;
 					Night night = onMenuItemClick(item);
 					if (night != null){
-						night.addOnNightCompleted(music::start);
+						night.addOnNightCompleted(() -> {
+                            music.start();
+							musicCreditsTicks = 160;
+                        });
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
+					musicCreditsTicks = 160;
 					music.start();
 				}
 				for (Component component : Menu.this.getComponents()) {
