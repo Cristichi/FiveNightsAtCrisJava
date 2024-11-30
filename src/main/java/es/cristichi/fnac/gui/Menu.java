@@ -119,12 +119,13 @@ public abstract class Menu extends JComponent {
 			int yOg = 40;
 			g.setFont(new Font("Arial", Font.BOLD, yOg));
 			g.setColor(Color.WHITE);
-			int y = yOg;
+			int y = yOg*openedMusicMsg.length;
+			int x = (int)(getWidth()*0.99);
 			for (String line : openedMusicMsg) {
 				FontMetrics fm = g.getFontMetrics();
 				LineMetrics lm = fm.getLineMetrics(line, g);
-				g.drawString(line, (int)(getWidth()*0.99)-fm.stringWidth(line), getHeight()-y);
-				y+=yOg;
+				g.drawString(line, x-fm.stringWidth(line), getHeight()-y);
+				y-=yOg;
 			}
 		}
 	}
