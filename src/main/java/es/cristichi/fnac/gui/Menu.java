@@ -55,7 +55,7 @@ public abstract class Menu extends JComponent {
 		} catch (IOException | NullPointerException e) {
 			throw new ResourceException("Image not found at \"" + "menu/main.mp3" + "\". Probably Cristichi forgot to add it.", e);
 		}
-		music = Resources.loadAudioClip("menu/main2.wav", "menuBack.wav");
+		music = Resources.loadAudioClip("menu/main.wav", "menuBack.wav");
 		music.loop(Clip.LOOP_CONTINUOUSLY);
 
         setLayout(new GroupLayout(this));

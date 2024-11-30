@@ -40,6 +40,7 @@ public class Resources {
             }
             String[] tempSplit = tmpFile.split("\\.");
             Path tempFile = Files.createTempFile(tempSplit[0], ".".concat(tempSplit[1]));
+            tempFile.toFile().deleteOnExit();
             Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(tempFile.toFile());
