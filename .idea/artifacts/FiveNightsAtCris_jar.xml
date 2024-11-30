@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="FiveNightsAtCris:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/FiveNightsAtCris_jar</output-path>
-    <root id="archive" name="FiveNightsAtCris.jar">
-      <element id="module-output" name="FiveNightsAtCris" />
-    </root>
-  </artifact>
-</component>
