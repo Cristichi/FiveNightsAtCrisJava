@@ -6,7 +6,6 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
 
-import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public abstract class Animatronic {
     protected final BufferedImage camImg;
     protected boolean kill = false;
     protected Integer startKillTick = null;
-    protected final HashMap<String, Clip> sounds;
+    protected final HashMap<String, Sound> sounds;
 
     /**
      * Creating an Animatronic.

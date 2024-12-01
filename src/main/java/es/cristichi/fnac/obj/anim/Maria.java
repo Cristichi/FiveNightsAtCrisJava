@@ -17,6 +17,7 @@ public class Maria extends AvoidCamsAnimatronic {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 1, Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0), forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;
+        //TODO add this sound to files this.sounds.put("knock", Resources.loadSound("anims/maria/sounds/knock.wav", "mariaKnock.wav"));
     }
 
     @Override
@@ -33,6 +34,11 @@ public class Maria extends AvoidCamsAnimatronic {
         } else {
             kill = false;
             startKillTick = null;
+            if (cam.isLeftDoorOfOffice()){
+                return new TickReturn(false, sounds.getOrDefault("knock", null), 1, -1);
+            } else if (cam.isRightDoorOfOffice()){
+                return new TickReturn(false, sounds.getOrDefault("knock", null), 1, 1);
+            }
         }
         return new TickReturn(false, null, 0, 0);
     }
