@@ -3,7 +3,6 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
@@ -17,7 +16,7 @@ public abstract class AvoidCamsAnimatronic extends Animatronic {
 
     public AvoidCamsAnimatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
                                 int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
-                                @Nullable List<String> forbiddenCameras, Color debugColor) throws ResourceException {
+                                List<String> forbiddenCameras, Color debugColor) throws ResourceException {
         super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscareGifPath, jumpscareRepFrames, debugColor);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }

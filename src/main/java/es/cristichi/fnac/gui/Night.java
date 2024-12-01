@@ -8,7 +8,6 @@ import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.Animatronic;
 import es.cristichi.fnac.obj.anim.Jumpscare;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -111,7 +110,7 @@ public abstract class Night extends JComponent {
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 * @throws ResourceException If any of the images required for Nights cannot be loaded from the resources.
 	 */
-	public Night(String nightName, CameraMap mapAndAnimatronics, @Nullable String paperResource,
+	public Night(String nightName, CameraMap mapAndAnimatronics, String paperResource,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
 				 float passivePowerUsage) throws ResourceException {
 		this.rng = rng;

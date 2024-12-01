@@ -4,7 +4,6 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -80,7 +79,6 @@ public abstract class Animatronic {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    @Nullable
     public abstract String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
