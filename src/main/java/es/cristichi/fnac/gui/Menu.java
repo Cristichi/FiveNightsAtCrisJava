@@ -1,8 +1,8 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.io.Resources;
+import kuusisto.tinysound.Music;
 
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,7 @@ public abstract class Menu extends JComponent {
 	private int errorTicks = 0;
 	private String[] error = null;
 
-	private final Clip music;
+	private final Music music;
 	private int musicCreditsTicks;
 	private final String[] musicCreditsMsg;
 
@@ -36,8 +36,7 @@ public abstract class Menu extends JComponent {
 		loading = false;
 		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 
-		music = Resources.loadAudioClip("menu/main.wav", "menuBack.wav");
-		music.loop(Clip.LOOP_CONTINUOUSLY);
+		music = Resources.loadMusic("menu/main.wav", "menuBack.wav");
 
         setLayout(new GroupLayout(this));
 		initializeMenuItems();
@@ -51,7 +50,7 @@ public abstract class Menu extends JComponent {
 			}
 		}, 100, 1000 / fps);
 
-		music.start();
+		music.play(true);
 		musicCreditsTicks = 160;
 		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
@@ -157,7 +156,7 @@ public abstract class Menu extends JComponent {
 					Night night = onMenuItemClick(item);
 					if (night != null){
 						night.addOnNightCompleted(() -> {
-                            music.start();
+                            music.play(true);
 							musicCreditsTicks = 160;
                         });
 					}
@@ -166,7 +165,7 @@ public abstract class Menu extends JComponent {
 					error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
 					musicCreditsTicks = 160;
-					music.start();
+					music.play(true);
 				}
 				for (Component component : Menu.this.getComponents()) {
 					component.setVisible(true);

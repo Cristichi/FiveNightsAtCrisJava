@@ -1,6 +1,7 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 
 import java.awt.*;
@@ -14,7 +15,7 @@ public class Maria extends AvoidCamsAnimatronic {
     public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight,
                  List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
-                "anims/maria/jumpscare.gif", 1, forbiddenCams, Color.YELLOW);
+                new Jumpscare("anims/maria/jumpscare.gif", 1, Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0), forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;
     }
 
@@ -26,13 +27,13 @@ public class Maria extends AvoidCamsAnimatronic {
             } else {
                 if (Math.round(secsToKill *fps) <= tick-startKillTick){
                     kill = true;
-                    return new TickReturn(true);
+                    return new TickReturn(true, null, 0, 0);
                 }
             }
         } else {
             kill = false;
             startKillTick = null;
         }
-        return new TickReturn(false);
+        return new TickReturn(false, null, 0, 0);
     }
 }

@@ -4,7 +4,9 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
+import kuusisto.tinysound.Sound;
 
+import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ public abstract class Animatronic {
     protected final BufferedImage camImg;
     protected boolean kill = false;
     protected Integer startKillTick = null;
+    protected final HashMap<String, Clip> sounds;
 
     /**
      * Creating an Animatronic.
@@ -38,21 +41,19 @@ public abstract class Animatronic {
      *                   weird Animatronics. By default, this is only used to determine the chances of 
      *                   movement opportunities.
      * @param camImgPath Path to the image used when the Animatronic is shown on a Camera.
-     * @param jumpscareGifPath Path in resources to the gif containing the jumpscare of this Animatronic.
-     * @param jumpscareRepFrames Number of times each frame of the jumpscare is kept on screen before 
-     *                           showing the next one.
+     * @param jumpscare Jumpscare to play when this Animatronic kills the player.
      * @throws ResourceException If a resource is not found in the given paths.
      */
     Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                int maxIaLevel, String camImgPath, String jumpscareGifPath,
-                int jumpscareRepFrames, Color debugColor) throws ResourceException {
+                int maxIaLevel, String camImgPath, Jumpscare jumpscare, Color debugColor) throws ResourceException {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.camImg = Resources.loadImageResource(camImgPath);
-        jumpscare = new Jumpscare(jumpscareGifPath, jumpscareRepFrames);
+        this.sounds = new HashMap<>(4);
+        this.jumpscare = jumpscare;
         this.debugColor = debugColor;
     }
 
@@ -161,7 +162,6 @@ public abstract class Animatronic {
         return Objects.hash(name, aiLevel, camImg);
     }
 
-    public record TickReturn(boolean jumpscare){
-
+    public record TickReturn(boolean jumpscare, Sound sound, double soundVol, double soundPan){
     }
 }

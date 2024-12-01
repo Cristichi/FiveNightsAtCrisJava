@@ -14,7 +14,7 @@ public class Paco extends PathedMoveAnimatronic{
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> orderedCamPath,
                 String retreatCam, double secsToKill) throws ResourceException {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
-                "anims/paco/jumpscare.gif", 1, orderedCamPath, retreatCam, Color.BLUE);
+                new Jumpscare("anims/paco/jumpscare.gif", 1), orderedCamPath, retreatCam, Color.BLUE);
 
         this.secsToKill = secsToKill;
     }
@@ -27,13 +27,13 @@ public class Paco extends PathedMoveAnimatronic{
             } else {
                 if (Math.round(secsToKill *fps) <= tick-startKillTick){
                     kill = true;
-                    return new TickReturn(true);
+                    return new TickReturn(true, null, 0, 0);
                 }
             }
         } else {
             kill = false;
             startKillTick = null;
         }
-        return new TickReturn(false);
+        return new TickReturn(false, null, 0, 0);
     }
 }

@@ -1,9 +1,11 @@
 package es.cristichi.fnac.io;
 
 import es.cristichi.fnac.exception.ResourceException;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class Resources {
         }
     }
 
-    public static Clip loadAudioClip(String path, String tmpFile) throws ResourceException {
+    public static Music loadMusic(String path, String tmpFile) throws ResourceException {
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
             if (in == null){
                 throw new NullPointerException("Resource not found.");
@@ -43,18 +45,29 @@ public class Resources {
             tempFile.toFile().deleteOnExit();
             Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(tempFile.toFile());
-            AudioFormat format = audioInputStream.getFormat();
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
-            Clip clip = (Clip) AudioSystem.getLine(info);
-            clip.open(audioInputStream);
-            return clip;
-        } catch (IOException | NullPointerException e) {
-            throw new ResourceException("Audio resource not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
-        } catch (UnsupportedAudioFileException e) {
-            throw new ResourceException("Audio resource "+path+" is not in a supported format.", e);
-        } catch (LineUnavailableException e) {
-            throw new ResourceException("Audio resource "+path+" already in use by another application.", e);
+            return TinySound.loadMusic(tempFile.toFile(), false);
+        } catch (IOException | NullPointerException notFoundE) {
+            throw new ResourceException("Audio resource not found at \"" + path + "\". Probably Cristichi forgot to add it.", notFoundE);
+        } catch (Exception e){
+            throw new ResourceException("Error when trying to load audio at \"" + path + "\".", e);
+        }
+    }
+
+    public static Sound loadSound(String path, String tmpFile) throws ResourceException {
+        try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
+            if (in == null){
+                throw new NullPointerException("Resource not found.");
+            }
+            String[] tempSplit = tmpFile.split("\\.");
+            Path tempFile = Files.createTempFile(tempSplit[0], ".".concat(tempSplit[1]));
+            tempFile.toFile().deleteOnExit();
+            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+            return TinySound.loadSound(tempFile.toFile());
+        } catch (IOException | NullPointerException notFoundE) {
+            throw new ResourceException("Audio resource not found at \"" + path + "\". Probably Cristichi forgot to add it.", notFoundE);
+        } catch (Exception e){
+            throw new ResourceException("Error when trying to load audio at \"" + path + "\".", e);
         }
     }
 

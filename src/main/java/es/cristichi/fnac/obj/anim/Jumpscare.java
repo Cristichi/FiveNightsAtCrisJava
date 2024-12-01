@@ -2,6 +2,7 @@ package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import kuusisto.tinysound.Sound;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -14,15 +15,35 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Jumpscare {
+    private final Sound sound;
+    private final int soundStartFrame;
     private List<BufferedImage> frames;
     private final int repsMax;
     private int currentReps;
     private int currentFrame;
 
     public Jumpscare(String filepath, int reps) throws ResourceException {
+        this(filepath, reps, null, -1);
+    }
+
+    public Jumpscare(String filepath, int reps, Sound sound, int soundStartFrame) throws ResourceException {
         this.repsMax = Math.max(1, reps);
         this.currentFrame = 0;
+        this.sound = sound;
+        this.soundStartFrame = soundStartFrame;
         loadFrames(filepath);
+    }
+
+    public BufferedImage getCurrentFrame() {
+        return frames.get(currentFrame);
+    }
+
+    public Sound getSound() {
+        return sound;
+    }
+
+    public boolean isFrameToPlaySound(){
+        return currentFrame==soundStartFrame;
     }
 
     private void loadFrames(String resourcePath) throws ResourceException {
@@ -69,12 +90,8 @@ public class Jumpscare {
         this.currentReps = 0;
     }
 
-    public BufferedImage getCurrentFrame() {
-        return frames.get(currentFrame);
-    }
-
     public void update() {
-        if (currentFrame < frames.size()-1){
+        if (currentFrame < frames.size()){
             if (currentReps == repsMax) {
                 currentFrame++;
             }

@@ -9,6 +9,7 @@ import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
+import kuusisto.tinysound.TinySound;
 
 import javax.swing.Timer;
 import javax.swing.*;
@@ -30,6 +31,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        TinySound.init();
+
         SaveFileIO.SaveFile saveFile;
         try {
             saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
@@ -147,29 +150,29 @@ public class Main {
 
     private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 0);
-        aiNightBob.put(1, 1);
-        aiNightBob.put(4, 2);
+        aiNightBob.put(0, 20);
+        aiNightBob.put(21, 1);
+        aiNightBob.put(24, 2);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(0, 0);
-        aiNightMaria.put(3, 1);
-        aiNightMaria.put(4, 2);
-        aiNightMaria.put(5, 3);
+        aiNightMaria.put(0, 20);
+        aiNightMaria.put(23, 1);
+        aiNightMaria.put(24, 2);
+        aiNightMaria.put(25, 3);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.Builder()
                 .setName("cam1")
                 .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
+                .addAnimatronics(new Bob(1, aiNightBob, List.of("cam4"), 8))
                 .addConnection("cam2", "cam3")
                 .build();
         Camera cam2 = new Camera.Builder()
                 .setName("cam2")
                 .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
-                .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
+                .addAnimatronics(new Maria(1, aiNightMaria, List.of("cam3"), 8))
                 .addConnection("cam1", "cam4")
                 .build();
         Camera cam3 = new Camera.Builder()

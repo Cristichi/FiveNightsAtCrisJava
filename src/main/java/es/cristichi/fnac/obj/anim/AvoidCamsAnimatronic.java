@@ -15,9 +15,9 @@ public abstract class AvoidCamsAnimatronic extends Animatronic {
     protected final List<String> forbiddenCameras;
 
     public AvoidCamsAnimatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
-                                int maxIaLevel, String camImgPath, String jumpscareGifPath, int jumpscareRepFrames,
+                                int maxIaLevel, String camImgPath, Jumpscare jumpscare,
                                 List<String> forbiddenCameras, Color debugColor) throws ResourceException {
-        super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscareGifPath, jumpscareRepFrames, debugColor);
+        super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscare, debugColor);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }
 

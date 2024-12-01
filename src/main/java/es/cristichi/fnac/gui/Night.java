@@ -285,6 +285,9 @@ public abstract class Night extends JComponent {
 								// and the same phantom happens twice.
 								jumpscare.reset();
 							}
+							if (tickReturn.sound() != null){
+								tickReturn.sound().play(tickReturn.soundVol(), tickReturn.soundPan());
+							}
 						}
 					}
 					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
@@ -796,6 +799,9 @@ public abstract class Night extends JComponent {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			} else {
+				if (jumpscare.isFrameToPlaySound()){
+					jumpscare.getSound().play();
+				}
 				g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
 				jumpscare.update();
 				if (jumpscare.isFinished()) {
