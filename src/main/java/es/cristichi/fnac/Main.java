@@ -9,8 +9,6 @@ import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import javax.swing.Timer;
 import javax.swing.*;
@@ -21,31 +19,14 @@ import java.util.*;
 
 public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
-    private static String GAME_VERSION = null;
     private static JPanel cardPanel;
     private static JPanel nightPanel;
 
-    static {
-        try {
-            MavenXpp3Reader reader = new MavenXpp3Reader();
-            Model model = reader.read(new FileReader("pom.xml"));
-            GAME_VERSION = model.getVersion();
-        } catch (Exception e) {
-            new ExceptionViewer(new RuntimeException("Error trying to read pom.xml for version. It was unimportant.", e));
-        }
-    }
-
     public static String getTitleForWindow(String window) {
-        if (GAME_VERSION==null){
-            if (window == null){
-                return String.format("%s", GAME_TITLE);
-            }
-            return String.format("%s - %s", GAME_TITLE, window);
-        }
         if (window == null){
-            return String.format("%s v%s", GAME_TITLE, GAME_VERSION);
+            return String.format("%s", GAME_TITLE);
         }
-        return String.format("%s v%s - %s", GAME_TITLE, GAME_VERSION, window);
+        return String.format("%s - %s", GAME_TITLE, window);
     }
 
     public static void main(String[] args) {
