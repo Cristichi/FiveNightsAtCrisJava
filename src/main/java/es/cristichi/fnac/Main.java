@@ -157,39 +157,39 @@ public class Main {
         aiNightMaria.put(4, 2);
         aiNightMaria.put(5, 3);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("/night/tutorial/map.png"), "cam3");
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.Builder()
                 .setName("cam1")
-                .setCamBackground("/night/tutorial/cam1.jpg")
+                .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
                 .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
                 .addConnection("cam2", "cam3")
                 .build();
         Camera cam2 = new Camera.Builder()
                 .setName("cam2")
-                .setCamBackground("/night/tutorial/cam2.jpg")
+                .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
                 .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
                 .addConnection("cam1", "cam4")
                 .build();
         Camera cam3 = new Camera.Builder()
                 .setName("cam3")
-                .setCamBackground("/night/tutorial/cam3.jpg")
+                .setCamBackground("night/tutorial/cam3.jpg")
                 .setLoc(134, 287, 167, 571)
                 .addConnection("cam1")
                 .connectToOfficeLeft()
                 .build();
         Camera cam4 = new Camera.Builder()
                 .setName("cam4")
-                .setCamBackground("/night/tutorial/cam4.jpg")
+                .setCamBackground("night/tutorial/cam4.jpg")
                 .setLoc(720, 296, 141, 586)
                 .addConnection("cam2")
                 .connectToOfficeRight()
                 .build();
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
-        Night night = new Night("Tutorial", nightMap, "/night/tutorial/paper.png",
-                new Jumpscare("/office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
+        Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png",
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
@@ -239,75 +239,75 @@ public class Main {
         Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
                 "kitchen", 12);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("/night/n1/map.png"), "storage");
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
         nightMap.addAll(
                 new Camera.Builder()
                         .setName("kitchen")
-                        .setCamBackground("/night/n1/kitchen.jpg")
+                        .setCamBackground("night/n1/kitchen.jpg")
                         .setLoc(187, 45, 140, 70)
                         .addAnimatronics(paco)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
                         .setName("storage")
-                        .setCamBackground("/night/n1/storage.jpg")
+                        .setCamBackground("night/n1/storage.jpg")
                         .setLoc(542, 111, 140, 70)
                         .addAnimatronics(bob)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
                         .setName("dining area")
-                        .setCamBackground("/night/n1/dining area.jpg")
+                        .setCamBackground("night/n1/dining area.jpg")
                         .setLoc(168, 182, 140, 70)
                         .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
                         .build(),
                 new Camera.Builder()
                         .setName("main stage")
-                        .setCamBackground("/night/n1/main stage.jpg")
+                        .setCamBackground("night/n1/main stage.jpg")
                         .setLoc(537, 399, 140, 70)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 1")
-                        .setCamBackground("/night/n1/corridor 1.jpg")
+                        .setCamBackground("night/n1/corridor 1.jpg")
                         .setLoc(314, 469, 140, 70)
                         .addConnection("dining area", "corridor 3", "staff lounge")
                         .build(),
                 new Camera.Builder()
                         .setName("staff lounge")
-                        .setCamBackground("/night/n1/staff lounge.jpg")
+                        .setCamBackground("night/n1/staff lounge.jpg")
                         .setLoc(30, 821, 140, 70)
                         .addConnection("corridor 1")
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 2")
-                        .setCamBackground("/night/n1/corridor 2.jpg")
+                        .setCamBackground("night/n1/corridor 2.jpg")
                         .setLoc(456, 469, 140, 70)
                         .addConnection("dining area", "corridor 4", "bathrooms")
                         .build(),
                 new Camera.Builder()
                         .setName("bathrooms")
-                        .setCamBackground("/night/n1/bathrooms.jpg")
+                        .setCamBackground("night/n1/bathrooms.jpg")
                         .setLoc(560, 734, 140, 51)
                         .addConnection("corridor 2")
                         .build(),
                 new Camera.Builder()
                         .setName("offices")
-                        .setCamBackground("/night/n1/offices.jpg")
+                        .setCamBackground("night/n1/offices.jpg")
                         .setLoc(825, 840, 140, 70)
                         .addConnection("corridor 4")
                         .addAnimatronics(maria)
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")
-                        .setCamBackground("/night/n1/corridor 3.jpg")
+                        .setCamBackground("night/n1/corridor 3.jpg")
                         .setLoc(225, 561, 140, 70)
                         .addConnection("corridor 1")
                         .connectToOfficeLeft()
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 4")
-                        .setCamBackground("/night/n1/corridor 4.jpg")
+                        .setCamBackground("night/n1/corridor 4.jpg")
                         .setLoc(662, 568, 140, 70)
                         .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
                         .connectToOfficeRight()
@@ -315,8 +315,8 @@ public class Main {
         );
 
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", nightMap, "/night/n1/paper.png",
-                new Jumpscare("/office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
+        Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
