@@ -13,23 +13,24 @@ import java.util.Random;
 
 public class Paco extends PathedMoveAnimatronic{
     private final Sound moveSound;
+    private final float moveSoundChance;
     private final double secsToKill;
 
     public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> orderedCamPath,
-                String retreatCam, double secsToKill) throws ResourceException {
+                String retreatCam, float moveSoundChance, double secsToKill) throws ResourceException {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 1, Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0),
                 orderedCamPath, retreatCam, Color.BLUE);
 
         this.secsToKill = secsToKill;
         this.moveSound = Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav");
+        this.moveSoundChance = moveSoundChance;
     }
 
     @Override
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveOppReturn(ret.moveToCam(), moveSound);
-        //return new MoveOppReturn(ret.moveToCam(), rng.nextBoolean()? moveSound :null);
+        return new MoveOppReturn(ret.moveToCam(), rng.nextFloat()<moveSoundChance?moveSound:null);
     }
 
     @Override

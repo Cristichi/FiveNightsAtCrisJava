@@ -190,7 +190,7 @@ public class Main {
                 .setSoundPan(-1)
                 .addAnimatronics(new Bob(5, aiNightBob, List.of(), 2),
                         new Maria(5, aiNightMaria, List.of(), 2),
-                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 2)
+                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 2)
                 )
                 .addConnection("cam2", "cam3")
                 .build();
@@ -351,7 +351,7 @@ public class Main {
         aiNightPaco.put(4, 7);
         aiNightPaco.put(5, 8);
         Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
-                "kitchen", 12);
+                "kitchen", 1f, 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
         nightMap.addAll(
