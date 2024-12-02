@@ -14,9 +14,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-// Supressing unused warnings since some parts of this are for future Animatronics to use,
-// even if the currently existing ones do not make use of it.
-@SuppressWarnings("unused")
 public abstract class Animatronic {
     protected final String name;
     protected final Color debugColor;
@@ -53,7 +50,7 @@ public abstract class Animatronic {
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.camImg = Resources.loadImageResource(camImgPath);
-        this.sounds = new HashMap<>(4);
+        this.sounds = new HashMap<>(1);
         this.jumpscare = jumpscare;
         this.debugColor = debugColor;
     }
@@ -71,9 +68,8 @@ public abstract class Animatronic {
     }
 
     /**
-     * By default, Animatronics will only move to cameras connected with the current one,
-     * and to a randomly decided one between them with equal probability.
-     * Animatronics must override this method if they move differently.
+     * By default, Animatronics should only move to cameras connected with the current one.
+     * Animatronics must override this method.
      * @param map Entire map, with all Cams.
      * @param currentLoc, Cam where this Animatronic is.
      * @param rng Random in charge of today's night.
@@ -90,7 +86,8 @@ public abstract class Animatronic {
      * @param cam        Current camera from which the Animatronic is trying to move.
      * @param isOpenDoor If there is a door to the Office from the current Camera and it is open.
      * @param rng        Random in charge of today's night.
-     * @return True if Animatronic should move at the end of this tick.
+     * @return True if Animatronic should move on this tick. In that case,
+     * {@link Animatronic#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
     public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
         if (kill || startKillTick != null || isOpenDoor){
