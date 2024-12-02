@@ -117,7 +117,10 @@ public class Main {
         List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
 
-        if (numCompleted == 1) {
+        if (numCompleted == 0) {
+            background = "menu/background0.jpg";
+            mmItems.add("Tutorial Night");
+        } else if (numCompleted == 1) {
             background = "menu/background1.jpg";
             mmItems.add("Night 1");
             mmItems.add("Repeat Tutorial");
@@ -127,8 +130,13 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         } else {
-            background = "menu/background.jpg";
-            mmItems.add("Tutorial Night");
+            RuntimeException error = new RuntimeException("Menu is not prepared for "+numCompleted+
+                    " nights completed. Cristichi forgot to add it.");
+            new ExceptionViewer(error);
+            background = "menu/background2.jpg";
+            mmItems.add("More Nights don't exist (yet)");
+            mmItems.add("Repeat Night 1");
+            mmItems.add("Repeat Tutorial");
         }
         //mmItems.add("Testing Night");
         mmItems.add("Exit");
