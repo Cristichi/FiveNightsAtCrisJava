@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
@@ -77,8 +76,11 @@ public abstract class Night extends JComponent {
 
 	// Animatronics moving around cams makes static
 	private static final int CAMS_STATIC_MOVE_TICKS = 20;
-	private int camsHidingMovementTicks;
-	private final List<String> camsHidingMovement;
+	/**
+	 * Cameras (their names) and the ticks left of hiding from view. This is used so that Animatronics don't simply
+	 * "pop" from and to existence, instead the view is hidden for {@link Night#CAMS_STATIC_MOVE_TICKS} ticks..
+	 */
+	private final HashMap<String, Integer> camsHidingMovementTicks;
 	private final HashMap<String, Point> animPosInCam;
 
 	// Doors
@@ -162,7 +164,7 @@ public abstract class Night extends JComponent {
 		changeCamsTransTicks = 0;
 		camsUp = false;
 		camsLocOnScreen = new HashMap<>(camerasMap.size());
-		camsHidingMovement = new ArrayList<>();
+		camsHidingMovementTicks = new HashMap<>(camerasMap.size());
 		animPosInCam = new HashMap<>(5);
 		leftDoorClosed = false;
 		rightDoorClosed = false;
@@ -321,9 +323,8 @@ public abstract class Night extends JComponent {
 									toCam.playSoundHere(move.getValue().sound());
 								}
 								animPosInCam.remove(fromCam.getName());
-								camsHidingMovement.add(fromCam.getName());
-								camsHidingMovement.add(toCam.getName());
-								camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
+								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);
+								camsHidingMovementTicks.put(toCam.getName(), CAMS_STATIC_MOVE_TICKS);
 							} catch (AnimatronicException e){
 								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
 										" Perhaps there is a design flaw in the Animatronic.%n",
@@ -605,12 +606,14 @@ public abstract class Night extends JComponent {
 						changeCamsTransTicks--;
 					} else {
 						Camera current = camerasMap.getSelectedCam();
-						// On current camera, if an Animatronic moved from or to this camera recently, we show static as well
-						if (camsHidingMovementTicks-->0 && camsHidingMovement.contains(current.getName())){
+						// On current camera, if an Animatronic moved from or to this camera recently, we show static instead
+						int currentCamHidingTicks = camsHidingMovementTicks.getOrDefault(current.getName(), 0);
+						if (currentCamHidingTicks>0){
 							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
+							camsHidingMovementTicks.put(current.getName(), currentCamHidingTicks-1);
 						} else {
-							// Here we draw the camera and the animatronics in there
+							// Here we draw the camera and the animatronics in there if no static is drawn
 							g.drawImage(current.getCamBackground(),
 									camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
