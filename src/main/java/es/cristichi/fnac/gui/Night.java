@@ -64,7 +64,7 @@ public abstract class Night extends JComponent {
 	private final float MOUSE_MOVE_THRESHOLD = 0.05f;
 
 	// Cam up/down
-	private static final int CAMS_TRANSITION_TICKS = 30;
+	private static final int CAMS_TRANSITION_TICKS = 10;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
 	private final HashMap<String, Rectangle> camsLocOnScreen;
