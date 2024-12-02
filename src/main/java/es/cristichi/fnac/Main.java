@@ -94,6 +94,23 @@ public class Main {
         window.setVisible(true);
     }
 
+    private static Timer getMouseRestrictTimer(JFrame window) throws AWTException {
+        Robot robot = new Robot();
+        return new Timer(10, e -> {
+            if (window.isFocused()) {
+                Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
+                Rectangle bounds = window.getBounds();
+
+                // Check if the cursor is outside the bounds
+                if (!bounds.contains(cursorLocation)) {
+                    int closestX = Math.max(bounds.x, Math.min(cursorLocation.x, bounds.x + bounds.width - 1));
+                    int closestY = Math.max(bounds.y, Math.min(cursorLocation.y, bounds.y + bounds.height - 1));
+                    robot.mouseMove(closestX, closestY);
+                }
+            }
+        });
+    }
+
     private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) {
         ArrayList<String> mmItems = new ArrayList<>(2);
         String background;
@@ -113,29 +130,12 @@ public class Main {
             background = "menu/background.jpg";
             mmItems.add("Tutorial Night");
         }
-        //mmItems.add("Testing Night");
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
 
     private record MenuData(ArrayList<String> mmItems, String background) {
-    }
-
-    private static Timer getMouseRestrictTimer(JFrame window) throws AWTException {
-        Robot robot = new Robot();
-        return new Timer(10, e -> {
-            if (window.isFocused()) {
-                Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
-                Rectangle bounds = window.getBounds();
-
-                // Check if the cursor is outside the bounds
-                if (!bounds.contains(cursorLocation)) {
-                    int closestX = Math.max(bounds.x, Math.min(cursorLocation.x, bounds.x + bounds.width - 1));
-                    int closestY = Math.max(bounds.y, Math.min(cursorLocation.y, bounds.y + bounds.height - 1));
-                    robot.mouseMove(closestX, closestY);
-                }
-            }
-        });
     }
 
     private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
@@ -180,9 +180,9 @@ public class Main {
                 .setOnMapLoc(113, 111, 378, 177)
                 .setSoundVolume(0.5)
                 .setSoundPan(-1)
-                .addAnimatronics(new Bob(1, aiNightBob, List.of(), 2),
-                        new Maria(1, aiNightMaria, List.of(), 2),
-                        new Paco(1, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 2)
+                .addAnimatronics(new Bob(5, aiNightBob, List.of(), 2),
+                        new Maria(5, aiNightMaria, List.of(), 2),
+                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 2)
                 )
                 .addConnection("cam2", "cam3")
                 .build();
@@ -215,7 +215,7 @@ public class Main {
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 1, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -308,8 +308,10 @@ public class Main {
             } catch (IOException e) {
                 throw new RuntimeException("Progress could not be saved.", e);
             }
-            nightPanel.removeAll();
             cards.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
             System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
         });
         nightPanel.add(night);
@@ -461,8 +463,10 @@ public class Main {
             } catch (IOException e) {
                 throw new RuntimeException("Could not save victory to save file.", e);
             }
-            nightPanel.removeAll();
             cards.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
             System.out.println(
                     "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
         });
