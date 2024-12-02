@@ -130,7 +130,7 @@ public class Main {
             background = "menu/background.jpg";
             mmItems.add("Tutorial Night");
         }
-        mmItems.add("Testing Night");
+        //mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -324,17 +324,17 @@ public class Main {
 
     private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 5);
-        aiNightBob.put(2, 6);
-        aiNightBob.put(4, 7);
-        aiNightBob.put(5, 8);
+        aiNightBob.put(0, 3);
+        aiNightBob.put(2, 4);
+        aiNightBob.put(4, 5);
+        aiNightBob.put(5, 6);
         Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(1, 5);
-        aiNightMaria.put(3, 6);
-        aiNightMaria.put(4, 7);
-        aiNightMaria.put(5, 8);
+        aiNightMaria.put(1, 3);
+        aiNightMaria.put(3, 4);
+        aiNightMaria.put(4, 5);
+        aiNightMaria.put(5, 6);
         Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
