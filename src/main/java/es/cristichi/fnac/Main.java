@@ -127,6 +127,13 @@ public class Main {
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
             mmItems.add("More Nights don't exist (yet)");
+            mmItems.add("Night 2");
+            mmItems.add("Repeat Night 1");
+            mmItems.add("Repeat Tutorial");
+        } else if (numCompleted == 3) {
+            background = "menu/background3.jpg";
+            mmItems.add("More Nights don't exist (yet)");
+            mmItems.add("Repeat Night 2");
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         } else {
@@ -159,6 +166,9 @@ public class Main {
                     }
                     case "Night 1", "Repeat Night 1" -> {
                         return startNight1(saveFile, cards, window);
+                    }
+                    case "Night 2", "Repeat Night 2" -> {
+                        return startNight2(saveFile, cards, window);
                     }
                     case "Exit" -> {
                         window.dispose();
@@ -357,11 +367,11 @@ public class Main {
         Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
                 "kitchen", 1f, 12);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/n1/map.png"), "storage");
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
         nightMap.addAll(
                 new Camera.Builder()
                         .setName("kitchen")
-                        .setCamBackground("night/n1/kitchen.jpg")
+                        .setCamBackground("night/general/kitchen.jpg")
                         .setOnMapLoc(187, 45, 140, 70)
                         .setSoundVolume(0.2)
                         .setSoundPan(-1)
@@ -370,7 +380,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("storage")
-                        .setCamBackground("night/n1/storage.jpg")
+                        .setCamBackground("night/general/storage.jpg")
                         .setOnMapLoc(542, 111, 140, 70)
                         .setSoundVolume(0.2)
                         .setSoundPan(1)
@@ -379,7 +389,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("dining area")
-                        .setCamBackground("night/n1/dining area.jpg")
+                        .setCamBackground("night/general/dining area.jpg")
                         .setOnMapLoc(168, 182, 140, 70)
                         .setSoundVolume(0.4)
                         .setSoundPan(-0.1)
@@ -387,7 +397,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("main stage")
-                        .setCamBackground("night/n1/main stage.jpg")
+                        .setCamBackground("night/general/main stage.jpg")
                         .setOnMapLoc(537, 399, 140, 70)
                         .setSoundVolume(0.4)
                         .setSoundPan(0.1)
@@ -395,7 +405,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 1")
-                        .setCamBackground("night/n1/corridor 1.jpg")
+                        .setCamBackground("night/general/corridor 1.jpg")
                         .setOnMapLoc(314, 469, 140, 70)
                         .setSoundVolume(0.6)
                         .setSoundPan(-0.5)
@@ -403,7 +413,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 2")
-                        .setCamBackground("night/n1/corridor 2.jpg")
+                        .setCamBackground("night/general/corridor 2.jpg")
                         .setOnMapLoc(456, 469, 140, 70)
                         .setSoundVolume(0.6)
                         .setSoundPan(0.5)
@@ -411,7 +421,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("staff lounge")
-                        .setCamBackground("night/n1/staff lounge.jpg")
+                        .setCamBackground("night/general/staff lounge.jpg")
                         .setOnMapLoc(30, 821, 140, 70)
                         .setSoundVolume(0.6)
                         .setSoundPan(-1)
@@ -419,7 +429,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("offices")
-                        .setCamBackground("night/n1/offices.jpg")
+                        .setCamBackground("night/general/offices.jpg")
                         .setOnMapLoc(825, 840, 140, 70)
                         .setSoundVolume(0.6)
                         .setSoundPan(1)
@@ -428,7 +438,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("bathrooms")
-                        .setCamBackground("night/n1/bathrooms.jpg")
+                        .setCamBackground("night/general/bathrooms.jpg")
                         .setOnMapLoc(560, 734, 140, 51)
                         .setSoundVolume(1)
                         .setSoundPan(0)
@@ -436,7 +446,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")
-                        .setCamBackground("night/n1/corridor 3.jpg")
+                        .setCamBackground("night/general/corridor 3.jpg")
                         .setOnMapLoc(225, 561, 140, 70)
                         .setSoundVolume(1)
                         .setSoundPan(-1)
@@ -445,7 +455,7 @@ public class Main {
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 4")
-                        .setCamBackground("night/n1/corridor 4.jpg")
+                        .setCamBackground("night/general/corridor 4.jpg")
                         .setOnMapLoc(662, 568, 140, 70)
                         .setSoundVolume(1)
                         .setSoundPan(1)
@@ -457,7 +467,164 @@ public class Main {
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
                 new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
-                Resources.loadSound("night/n1/completed.wav", "n1Com.wav")) {
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
+            @Override
+            protected void onJumpscare() {
+                nightPanel.removeAll();
+                cards.show(cardPanel, "menu");
+                System.out.println("Player died.");
+            }
+        };
+        night.addOnNightCompleted(() -> {
+            saveFile.addCompletedNight(night.getNightName());
+            try {
+                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                MenuData menuData = getUpdatedMenuData(saveFile);
+                mainMenu.updateBackground(menuData.background);
+                mainMenu.updateMenuItems(menuData.mmItems);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not save victory to save file.", e);
+            }
+            cards.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
+            System.out.println(
+                    "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
+        });
+        nightPanel.add(night);
+        window.setTitle(getTitleForWindow(night.getNightName()));
+        cards.show(cardPanel, "night");
+        System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        night.startNight();
+
+        return night;
+    }
+
+    private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
+        aiNightBob.put(0, 3);
+        aiNightBob.put(2, 4);
+        aiNightBob.put(4, 5);
+        aiNightBob.put(5, 6);
+        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+
+        HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
+        aiNightMaria.put(1, 3);
+        aiNightMaria.put(3, 4);
+        aiNightMaria.put(4, 5);
+        aiNightMaria.put(5, 6);
+        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+
+        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
+        aiNightPaco.put(0, 4);
+        aiNightPaco.put(3, 6);
+        aiNightPaco.put(4, 7);
+        aiNightPaco.put(5, 8);
+        Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
+                "kitchen", 1f, 12);
+
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
+        nightMap.addAll(
+                new Camera.Builder()
+                        .setName("kitchen")
+                        .setCamBackground("night/general/kitchen.jpg")
+                        .setOnMapLoc(187, 45, 140, 70)
+                        .setSoundVolume(0.2)
+                        .setSoundPan(-1)
+                        .addAnimatronics(paco)
+                        .addConnection("dining area")
+                        .build(),
+                new Camera.Builder()
+                        .setName("storage")
+                        .setCamBackground("night/general/storage.jpg")
+                        .setOnMapLoc(542, 111, 140, 70)
+                        .setSoundVolume(0.2)
+                        .setSoundPan(1)
+                        .addAnimatronics(bob)
+                        .addConnection("dining area")
+                        .build(),
+                new Camera.Builder()
+                        .setName("dining area")
+                        .setCamBackground("night/general/dining area.jpg")
+                        .setOnMapLoc(168, 182, 140, 70)
+                        .setSoundVolume(0.4)
+                        .setSoundPan(-0.1)
+                        .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
+                        .build(),
+                new Camera.Builder()
+                        .setName("main stage")
+                        .setCamBackground("night/general/main stage.jpg")
+                        .setOnMapLoc(537, 399, 140, 70)
+                        .setSoundVolume(0.4)
+                        .setSoundPan(0.1)
+                        .addConnection("dining area")
+                        .build(),
+                new Camera.Builder()
+                        .setName("corridor 1")
+                        .setCamBackground("night/general/corridor 1.jpg")
+                        .setOnMapLoc(314, 469, 140, 70)
+                        .setSoundVolume(0.6)
+                        .setSoundPan(-0.5)
+                        .addConnection("dining area", "corridor 3", "staff lounge")
+                        .build(),
+                new Camera.Builder()
+                        .setName("corridor 2")
+                        .setCamBackground("night/general/corridor 2.jpg")
+                        .setOnMapLoc(456, 469, 140, 70)
+                        .setSoundVolume(0.6)
+                        .setSoundPan(0.5)
+                        .addConnection("dining area", "corridor 4", "bathrooms")
+                        .build(),
+                new Camera.Builder()
+                        .setName("staff lounge")
+                        .setCamBackground("night/general/staff lounge.jpg")
+                        .setOnMapLoc(30, 821, 140, 70)
+                        .setSoundVolume(0.6)
+                        .setSoundPan(-1)
+                        .addConnection("corridor 1")
+                        .build(),
+                new Camera.Builder()
+                        .setName("offices")
+                        .setCamBackground("night/general/offices.jpg")
+                        .setOnMapLoc(825, 840, 140, 70)
+                        .setSoundVolume(0.6)
+                        .setSoundPan(1)
+                        .addConnection("corridor 4")  //Offices go to corridor 4, but not vice-versa
+                        .addAnimatronics(maria)
+                        .build(),
+                new Camera.Builder()
+                        .setName("bathrooms")
+                        .setCamBackground("night/general/bathrooms.jpg")
+                        .setOnMapLoc(560, 734, 140, 51)
+                        .setSoundVolume(1)
+                        .setSoundPan(0)
+                        .addConnection("corridor 2")
+                        .build(),
+                new Camera.Builder()
+                        .setName("corridor 3")
+                        .setCamBackground("night/general/corridor 3.jpg")
+                        .setOnMapLoc(225, 561, 140, 70)
+                        .setSoundVolume(1)
+                        .setSoundPan(-1)
+                        .addConnection("corridor 1")
+                        .connectToOfficeLeft()
+                        .build(),
+                new Camera.Builder()
+                        .setName("corridor 4")
+                        .setCamBackground("night/general/corridor 4.jpg")
+                        .setOnMapLoc(662, 568, 140, 70)
+                        .setSoundVolume(1)
+                        .setSoundPan(1)
+                        .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
+                        .connectToOfficeRight()
+                        .build()
+        );
+
+        long seed = new Random().nextLong();
+        Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
