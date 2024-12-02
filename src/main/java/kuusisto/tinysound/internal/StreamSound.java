@@ -31,6 +31,7 @@ import kuusisto.tinysound.Sound;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedList;
 
 /**
  * Thes StreamSound class is an implementation of the Sound interface that
@@ -44,6 +45,8 @@ public class StreamSound implements Sound {
 	private final long numBytesPerChannel;
 	private Mixer mixer;
 	private final int ID;
+
+	private LinkedList<Runnable> onFinished;
 	
 	/**
 	 * Construct a new StreamSound with the given data and Mixer which will
@@ -95,7 +98,7 @@ public class StreamSound implements Sound {
 		SoundReference ref;
 		try {
 			ref = new StreamSoundReference(this.dataURL.openStream(),
-					this.numBytesPerChannel, volume, pan, this.ID);
+					this.numBytesPerChannel, volume, pan, this.ID, onFinished);
 			this.mixer.registerSoundReference(ref);
 		} catch (IOException e) {
 			System.err.println("Failed to open stream for Sound");
@@ -122,7 +125,12 @@ public class StreamSound implements Sound {
 		this.mixer = null;
 		this.dataURL = null;
 	}
-	
+
+	@Override
+	public void addOnEndListener(Runnable runnable) {
+		onFinished.add(runnable);
+	}
+
 	/////////////
 	//Reference//
 	/////////////
@@ -144,6 +152,8 @@ public class StreamSound implements Sound {
 		private final double pan;
 		private byte[] buf;
 		private byte[] skipBuf;
+
+		private final LinkedList<Runnable> onFinished;
 		
 		/**
 		 * Construct a new StreamSoundReference with the given reference data.
@@ -155,7 +165,7 @@ public class StreamSound implements Sound {
 		 * @param soundID ID of the StreamSound for which this is a reference
 		 */
 		public StreamSoundReference(InputStream data, long numBytesPerChannel,
-				double volume, double pan, int soundID) {
+				double volume, double pan, int soundID, LinkedList<Runnable> onFinished) {
 			this.data = data;
 			this.numBytesPerChannel = numBytesPerChannel;
 			this.volume = (volume >= 0.0) ? volume : 1.0;
@@ -164,6 +174,8 @@ public class StreamSound implements Sound {
 			this.buf = new byte[4];
 			this.skipBuf = new byte[20];
 			this.SOUND_ID = soundID;
+
+			this.onFinished = onFinished;
 		}
 
 		/**
@@ -307,6 +319,11 @@ public class StreamSound implements Sound {
 			}
 			this.buf = null;
 			this.skipBuf = null;
+		}
+
+		@Override
+		public LinkedList<Runnable> getOnEndListeners() {
+			return onFinished;
 		}
 
 	}

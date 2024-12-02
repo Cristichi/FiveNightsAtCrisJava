@@ -11,12 +11,13 @@ import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
 import kuusisto.tinysound.TinySound;
 
-import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Random;
 
 public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
@@ -150,29 +151,29 @@ public class Main {
 
     private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 0);
-        aiNightBob.put(1, 1);
-        aiNightBob.put(4, 2);
+        aiNightBob.put(0, 20);
+        aiNightBob.put(21, 1);
+        aiNightBob.put(24, 2);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(0, 0);
-        aiNightMaria.put(3, 1);
-        aiNightMaria.put(4, 2);
-        aiNightMaria.put(5, 3);
+        aiNightMaria.put(0, 20);
+        aiNightMaria.put(23, 1);
+        aiNightMaria.put(24, 2);
+        aiNightMaria.put(25, 3);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.Builder()
                 .setName("cam1")
                 .setCamBackground("night/tutorial/cam1.jpg")
                 .setLoc(113, 111, 378, 177)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
+                .addAnimatronics(new Bob(1, aiNightBob, List.of("cam4"), 1))
                 .addConnection("cam2", "cam3")
                 .build();
         Camera cam2 = new Camera.Builder()
                 .setName("cam2")
                 .setCamBackground("night/tutorial/cam2.jpg")
                 .setLoc(491, 117, 379, 177)
-                .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
+                .addAnimatronics(new Maria(1, aiNightMaria, List.of("cam3"), 1))
                 .addConnection("cam1", "cam4")
                 .build();
         Camera cam3 = new Camera.Builder()
@@ -192,7 +193,8 @@ public class Main {
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f) {
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
+                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
@@ -319,7 +321,8 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f) {
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                Resources.loadSound("night/n1/completed.wav", "n1Com.wav")) {
             @Override
             protected void onJumpscare() {
                 nightPanel.removeAll();
@@ -327,20 +330,17 @@ public class Main {
                 System.out.println("Player died.");
             }
         };
-        night.addOnNightCompleted(new TimerTask() {
-            @Override
-            public void run() {
-                saveFile.addCompletedNight(night.getNightName());
-                try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not save victory to save file.", e);
-                }
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-                System.out.println(
-                        "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
+        night.addOnNightCompleted(() -> {
+            saveFile.addCompletedNight(night.getNightName());
+            try {
+                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not save victory to save file.", e);
             }
+            nightPanel.removeAll();
+            cards.show(cardPanel, "menu");
+            System.out.println(
+                    "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
         });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));

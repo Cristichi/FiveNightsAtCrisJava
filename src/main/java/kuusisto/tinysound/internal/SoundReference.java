@@ -26,6 +26,8 @@
  */
 package kuusisto.tinysound.internal;
 
+import java.util.LinkedList;
+
 /**
  * The SoundReference interface is the Mixer's interface to the audio data of a
  * Sound object.  SoundReference is an internal interface of the TinySound
@@ -77,5 +79,10 @@ public interface SoundReference {
 	 * SoundReference.
 	 */
     void dispose();
-	
+
+	/**
+	 * Added by Cristichi.
+	 * @return The list of Runnables to run when sound is finished.
+	 */
+	LinkedList<Runnable> getOnEndListeners();
 }

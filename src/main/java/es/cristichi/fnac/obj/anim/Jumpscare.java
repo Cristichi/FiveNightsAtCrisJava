@@ -3,6 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Sound;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -10,9 +11,8 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
 public class Jumpscare {
     private final Sound sound;
@@ -22,20 +22,40 @@ public class Jumpscare {
     private int currentReps;
     private int currentFrame;
 
-    public Jumpscare(String filepath, int reps) throws ResourceException {
-        this(filepath, reps, null, -1);
+    private final LinkedList<Runnable> onFinish;
+    private Boolean soundFinished;
+
+    public Jumpscare(String filepath, int reps, Runnable... onFinish) throws ResourceException {
+        this(filepath, reps, null, -1, onFinish);
     }
 
-    public Jumpscare(String filepath, int reps, Sound sound, int soundStartFrame) throws ResourceException {
+    public Jumpscare(String filepath, int reps, @Nullable Sound sound, int soundStartFrame, Runnable... onFinish) throws ResourceException {
         this.repsMax = Math.max(1, reps);
         this.currentFrame = 0;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
         loadFrames(filepath);
+
+        this.onFinish = new LinkedList<>();
+        this.onFinish.addAll(Arrays.asList(onFinish));
+        if (sound == null){
+            soundFinished = null;
+        } else {
+            soundFinished = false;
+            sound.addOnEndListener(() -> {
+                soundFinished = true;
+                if (isFramesFinished()){
+                    for (Runnable onFinished : this.onFinish){
+                        onFinished.run();
+                    }
+                    this.onFinish.clear();
+                }
+            });
+        }
     }
 
     public BufferedImage getCurrentFrame() {
-        return frames.get(currentFrame);
+        return frames.get(currentFrame<frames.size()?currentFrame:frames.size()-1);
     }
 
     public Sound getSound() {
@@ -90,7 +110,7 @@ public class Jumpscare {
         this.currentReps = 0;
     }
 
-    public void update() {
+    public void updateFrame() {
         if (currentFrame < frames.size()){
             if (currentReps == repsMax) {
                 currentFrame++;
@@ -99,10 +119,19 @@ public class Jumpscare {
             if (currentReps > repsMax){
                 currentReps = 0;
             }
+        } else if (isFramesFinished() && (soundFinished == null || soundFinished)){
+            for (Runnable onFinished : onFinish){
+                onFinished.run();
+            }
+            onFinish.clear();
         }
     }
 
-    public boolean isFinished() {
+    public void addOnFinishedListener(Runnable onFinished){
+        this.onFinish.add(onFinished);
+    }
+
+    public boolean isFramesFinished() {
         return currentFrame == frames.size();
     }
 }

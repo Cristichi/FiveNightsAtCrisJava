@@ -28,6 +28,8 @@ package kuusisto.tinysound.internal;
 
 import kuusisto.tinysound.Sound;
 
+import java.util.LinkedList;
+
 /**
  * The MemSound class is an implementation of the Sound interface that stores
  * all audio data in memory for low latency.
@@ -40,6 +42,8 @@ public class MemSound implements Sound {
 	private byte[] right;
 	private Mixer mixer;
 	private final int ID; //unique ID to match references
+
+	private final LinkedList<Runnable> onFinished;
 	
 	/**
 	 * Construct a new MemSound with the given data and Mixer which will handle
@@ -54,6 +58,8 @@ public class MemSound implements Sound {
 		this.right = right;
 		this.mixer = mixer;
 		this.ID = id;
+
+		onFinished = new LinkedList<>();
 	}
 	
 	/**
@@ -83,7 +89,7 @@ public class MemSound implements Sound {
 	public void play(double volume, double pan) {
 		//dispatch a sound refence to the mixer
 		SoundReference ref = new MemSoundReference(this.left, this.right,
-				volume, pan, this.ID);
+				volume, pan, this.ID, onFinished);
 		this.mixer.registerSoundReference(ref);
 	}
 	
@@ -108,7 +114,16 @@ public class MemSound implements Sound {
 		this.left = null;
 		this.right = null;
 	}
-	
+
+	/**
+	 * Added by Cristichi.
+	 * @param runnable Runnable to run when sound is finished.
+	 */
+	@Override
+	public void addOnEndListener(Runnable runnable) {
+		onFinished.add(runnable);
+	}
+
 	/////////////
 	//Reference//
 	/////////////
@@ -128,7 +143,8 @@ public class MemSound implements Sound {
 		private int position;
 		private final double volume;
 		private final double pan;
-		
+
+		private final LinkedList<Runnable> onFinished;
 		/**
 		 * Construct a new MemSoundReference with the given reference data.
 		 * @param left left channel of sound data
@@ -138,13 +154,15 @@ public class MemSound implements Sound {
 		 * @param soundID ID of the MemSound for which this is a reference
 		 */
 		public MemSoundReference(byte[] left, byte[] right, double volume,
-				double pan, int soundID) {
+				double pan, int soundID, LinkedList<Runnable> onFinished) {
 			this.left = left;
 			this.right = right;
 			this.volume = (volume >= 0.0) ? volume : 1.0;
 			this.pan = (pan >= -1.0 && pan <= 1.0) ? pan : 0.0;
 			this.position = 0;
 			this.SOUND_ID = soundID;
+
+			this.onFinished = onFinished;
 		}
 
 		/**
@@ -230,7 +248,11 @@ public class MemSound implements Sound {
 			this.left = null;
 			this.right = null;
 		}
-		
-	}
 
+		@Override
+		public LinkedList<Runnable> getOnEndListeners() {
+			return onFinished;
+		}
+
+	}
 }

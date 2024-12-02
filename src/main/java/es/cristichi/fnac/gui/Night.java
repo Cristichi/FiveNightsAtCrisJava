@@ -8,6 +8,8 @@ import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.Animatronic;
 import es.cristichi.fnac.obj.anim.Jumpscare;
+import kuusisto.tinysound.Sound;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,7 @@ public abstract class Night extends JComponent {
 	private final Jumpscare powerOutageJumpscare;
 
 	private final LinkedList<Runnable> onCompletedListeners;
+	private final Sound soundOnCompleted;
 
 	private int currentTick;
 	private int nightHour;
@@ -97,8 +100,10 @@ public abstract class Night extends JComponent {
 	/**
 	 *
 	 * @param nightName Name of the Night. Barely used.
-	 * @param mapAndAnimatronics Map of the place. Animatronics present in the Night must start inside
+	 * @param camMap Map of the place. Animatronics present in the Night must start inside
 	 *                              their starting Cameras, they are only stored there.
+	 * @param paperImgPath Path to the Image that has the paper to put at the office. The paper should be
+	 *                     2480x4193px, or keep that same aspect ratio to be printed correctly.
 	 * @param secsPerHour Number of seconds per in-game hour. It significantly affects difficulty, as
 	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
 	 *                    the human aspect of the difficulty like keeping concentration.
@@ -108,18 +113,21 @@ public abstract class Night extends JComponent {
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you use everything all the time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
+	 * @param soundOnNightCompleted Sound played when Night is completed. Can be null for dev purposes but having
+	 *                              one is encouraged.
 	 * @throws ResourceException If any of the images required for Nights cannot be loaded from the resources.
 	 */
-	public Night(String nightName, CameraMap mapAndAnimatronics, String paperResource,
+	public Night(String nightName, CameraMap camMap, @Nullable String paperImgPath,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				 float passivePowerUsage) throws ResourceException {
+				 float passivePowerUsage, @Nullable Sound soundOnNightCompleted) throws ResourceException {
 		this.rng = rng;
 		this.nightName = nightName;
-		this.camerasMap = mapAndAnimatronics;
+		this.camerasMap = camMap;
 		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (FPS * secsPerHour);
 
 		onCompletedListeners = new LinkedList<>();
+		this.soundOnCompleted = soundOnNightCompleted;
 
 		powerLeft = 1;
 		// So this calculates depending on the fps, which determines the total number of ticks per night, which is
@@ -134,10 +142,10 @@ public abstract class Night extends JComponent {
 
 		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		backgroundImg = Resources.loadImageResource("office/background.jpg");
-		if (paperResource == null){
+		if (paperImgPath == null){
 			paperImg = null;
 		} else {
-			paperImg = Resources.loadImageResource(paperResource);
+			paperImg = Resources.loadImageResource(paperImgPath);
 		}
 		camMonitorImg = Resources.loadImageResource("office/monitor.png");
 		camMonitorStaticImg = Resources.loadImageResource("office/monitorStatic.png");
@@ -261,9 +269,14 @@ public abstract class Night extends JComponent {
 
 				if (powerLeft <= 0){
 					jumpscare = powerOutageJumpscare;
+					jumpscare.addOnFinishedListener(() -> {
+						for(Runnable onCompleted : onCompletedListeners){
+							onCompleted.run();
+						}
+					});
 				}
 
-				// Animatronic movements and jumpscare opportunities
+				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
 					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
@@ -284,6 +297,11 @@ public abstract class Night extends JComponent {
 								// In case I want phantom jumpscares in the future
 								// and the same phantom happens twice.
 								jumpscare.reset();
+								jumpscare.addOnFinishedListener(() -> {
+									for(Runnable onCompleted : onCompletedListeners){
+										onCompleted.run();
+									}
+								});
 							}
 							if (tickReturn.sound() != null){
 								tickReturn.sound().play(tickReturn.soundVol(), tickReturn.soundPan());
@@ -318,18 +336,16 @@ public abstract class Night extends JComponent {
 
 	private void advanceTime() {
 		if (++nightHour == TOTAL_HOURS) {
-			nightTicks.cancel();
 			jumpscare = null;
 			victoryScreen = true;
-			Timer end = new Timer("End Thread");
-			end.schedule(new TimerTask() {
-				@Override
-				public void run() {
-                    for(Runnable onCompleted : onCompletedListeners){
-                        onCompleted.run();
-                    }
-                }
-			}, 5000);
+			nightTicks.cancel();
+			soundOnCompleted.addOnEndListener(() -> {
+					for(Runnable onCompleted : onCompletedListeners){
+						onCompleted.run();
+					}
+				});
+			soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
+			soundOnCompleted.play();
 		}
 	}
 
@@ -792,6 +808,7 @@ public abstract class Night extends JComponent {
 			g2d.drawString(text, centerX, centerY);
         }
 
+		// Jumpscares system. Yes, in the paint method, I know.
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
 			if (camsUp){
 				Action closeCamsAction = getActionMap().get("camsAction");
@@ -803,17 +820,11 @@ public abstract class Night extends JComponent {
 					jumpscare.getSound().play();
 				}
 				g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
-				jumpscare.update();
-				if (jumpscare.isFinished()) {
+				if (jumpscare.isFramesFinished()) {
 					nightTicks.cancel();
 					victoryScreen = false;
-					Timer end = new Timer("End Thread");
-					end.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							onJumpscare();
-						}
-					}, 5000);
+				} else {
+					jumpscare.updateFrame();
 				}
 			}
 		}

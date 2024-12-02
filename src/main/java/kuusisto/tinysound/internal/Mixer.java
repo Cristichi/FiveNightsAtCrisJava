@@ -202,6 +202,9 @@ public class Mixer {
 					bytesRead = true;
 					//remove the reference if done
 					if (sound.bytesAvailable() <= 0) {
+						for (Runnable onFinished : sound.getOnEndListeners()){
+							onFinished.run();
+						}
 						this.sounds.remove(s).dispose();
 					}
 				}

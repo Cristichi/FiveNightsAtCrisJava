@@ -66,5 +66,10 @@ public interface Sound {
 	 * unloading will result in error.
 	 */
 	void unload();
-	
+
+	/**
+	 * Added by Cristichi
+	 * @param runnable Runnable to run when sound is finished.
+	 */
+	void addOnEndListener(Runnable runnable);
 }
