@@ -99,6 +99,7 @@ public class Main {
             background = "menu/background.jpg";
             mmItems.add("Tutorial Night");
         }
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
 
         Menu mainMenu = createMenu(saveFile, cards, background, mmItems, window);
@@ -132,6 +133,9 @@ public class Main {
             @Override
             protected Night onMenuItemClick(String item) throws IOException {
                 switch (item) {
+                    case "Testing Night" -> {
+                        return startTESTINGNIGHT(cards, window);
+                    }
                     case "Tutorial Night", "Repeat Tutorial" -> {
                         return startTutorialNight(saveFile, cards, window);
                     }
@@ -147,6 +151,72 @@ public class Main {
                 }
             }
         };
+    }
+
+    private static Night startTESTINGNIGHT(CardLayout cards, JFrame window) throws IOException {
+        HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
+        aiNightBob.put(0, 20);
+
+        HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
+        aiNightMaria.put(0, 20);
+
+        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
+        aiNightPaco.put(0, 20);
+
+        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
+        Camera cam1 = new Camera.Builder()
+                .setName("cam1")
+                .setCamBackground("night/tutorial/cam1.jpg")
+                .setLoc(113, 111, 378, 177)
+                .addAnimatronics(new Bob(1, aiNightBob, List.of(), 2),
+                        new Maria(1, aiNightMaria, List.of(), 2),
+                        new Paco(1, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 2)
+                )
+                .addConnection("cam2", "cam3")
+                .build();
+        Camera cam2 = new Camera.Builder()
+                .setName("cam2")
+                .setCamBackground("night/tutorial/cam2.jpg")
+                .setLoc(491, 117, 379, 177)
+                .addConnection("cam1", "cam4")
+                .build();
+        Camera cam3 = new Camera.Builder()
+                .setName("cam3")
+                .setCamBackground("night/tutorial/cam3.jpg")
+                .setLoc(134, 287, 167, 571)
+                .addConnection("cam1")
+                .connectToOfficeLeft()
+                .build();
+        Camera cam4 = new Camera.Builder()
+                .setName("cam4")
+                .setCamBackground("night/tutorial/cam4.jpg")
+                .setLoc(720, 296, 141, 586)
+                .addConnection("cam2")
+                .connectToOfficeRight()
+                .build();
+        nightMap.addAll(cam1, cam2, cam3, cam4);
+        long seed = new Random().nextLong();
+        Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
+                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
+            @Override
+            protected void onJumpscare() {
+                nightPanel.removeAll();
+                cards.show(cardPanel, "menu");
+                System.out.println("Player died.");
+            }
+        };
+        night.addOnNightCompleted(() -> {
+            nightPanel.removeAll();
+            cards.show(cardPanel, "menu");
+            System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
+        });
+        nightPanel.add(night);
+        window.setTitle(getTitleForWindow(night.getNightName()));
+        cards.show(cardPanel, "night");
+        System.out.printf("Today's testing night is using the seed \"%d\". Have fun!%n", seed);
+        night.startNight();
+        return night;
     }
 
     private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
