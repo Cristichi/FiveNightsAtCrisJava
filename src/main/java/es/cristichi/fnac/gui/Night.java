@@ -64,13 +64,13 @@ public abstract class Night extends JComponent {
 	private final float MOUSE_MOVE_THRESHOLD = 0.05f;
 
 	// Cam up/down
-	private static final int CAMS_TRANSITION_TICKS = 10;
+	private static final int CAMS_UPDOWN_TRANSITION_TICKS = 30;
 	private boolean camsUp;
 	private int camsUpDownTransTicks;
 	private final HashMap<String, Rectangle> camsLocOnScreen;
 
 	// Change cams
-	private static final int CHANGE_CAMS_TRANSITION_TICKS = 10;
+	private static final int CHANGE_CAMS_TRANSITION_TICKS = 5;
 	private int changeCamsTransTicks;
 	private final CameraMap camerasMap;
 
@@ -586,7 +586,7 @@ public abstract class Night extends JComponent {
 			if (camsUp) {
 				// Transition cams up
 				if (camsUpDownTransTicks > 0) {
-					double transitionScale = (double) (CAMS_TRANSITION_TICKS - camsUpDownTransTicks) / CAMS_TRANSITION_TICKS;
+					double transitionScale = (double) (CAMS_UPDOWN_TRANSITION_TICKS - camsUpDownTransTicks) / CAMS_UPDOWN_TRANSITION_TICKS;
 					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
 					int scaledMonitorHeight = (int) (monitorTargetHeight * transitionScale);
 					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
@@ -740,7 +740,7 @@ public abstract class Night extends JComponent {
 			} else {
 				// Transition cams down
 				if (camsUpDownTransTicks > 0) {
-					double transitionScale = (double) camsUpDownTransTicks / CAMS_TRANSITION_TICKS;
+					double transitionScale = (double) camsUpDownTransTicks / CAMS_UPDOWN_TRANSITION_TICKS;
 					int scaledMonitorWidth = (int) (monitorTargetWidth * transitionScale);
 					int scaledMonitorHeight = (int) (monitorTargetHeight * transitionScale);
 					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
@@ -887,10 +887,10 @@ public abstract class Night extends JComponent {
 		public void actionPerformed(ActionEvent e) {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null){
 				if (camsUp) {
-					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
+					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUp = false;
 				} else {
-					camsUpDownTransTicks = CAMS_TRANSITION_TICKS;
+					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUp = true;
 				}
 			}
