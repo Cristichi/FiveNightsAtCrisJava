@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * This class implements {@link Animatronic#onMovementOppSuccess(CameraMap, Camera, Random)} with a simple
+ * movement that makes the Animatronic move on a set path. When the end is reached, it goes back to a set Camera.
+ */
 public abstract class PathedMoveAnimatronic extends Animatronic{
     protected final List<String> orderedCamPath;
     protected final String returnToCamera;

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.*;
 
 /**
- * This class implements {@link Animatronic} with a default movement that simply avoids a list of Camera names.
+ * This class implements {@link Animatronic#onMovementOppSuccess(CameraMap, Camera, Random)} with a simple
+ * movement that avoids a list of Camera names. From the possible Cameras, movement is completely random.
  */
 public abstract class AvoidCamsAnimatronic extends Animatronic {
     protected final List<String> forbiddenCameras;
