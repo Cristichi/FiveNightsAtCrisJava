@@ -10,6 +10,7 @@ import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
 import kuusisto.tinysound.TinySound;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,7 @@ public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
     private static JPanel cardPanel;
     private static JPanel nightPanel;
+    private static Menu mainMenu;
 
     public static String getTitleForWindow(String window) {
         if (window == null){
@@ -81,6 +83,18 @@ public class Main {
         Timer mouseRestrictTimer = getMouseRestrictTimer(window);
         mouseRestrictTimer.start();
 
+        MenuData menuData = getUpdatedMenuData(saveFile);
+
+        mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
+        cardPanel.add(mainMenu, "menu");
+        cards.show(cardPanel, "menu");
+
+        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        window.setMinimumSize(new Dimension(600, 400));
+        window.setVisible(true);
+    }
+
+    private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) {
         ArrayList<String> mmItems = new ArrayList<>(2);
         String background;
         List<String> completed = saveFile.completedNights();
@@ -99,16 +113,12 @@ public class Main {
             background = "menu/background.jpg";
             mmItems.add("Tutorial Night");
         }
-        mmItems.add("Testing Night");
+        //mmItems.add("Testing Night");
         mmItems.add("Exit");
+        return new MenuData(mmItems, background);
+    }
 
-        Menu mainMenu = createMenu(saveFile, cards, background, mmItems, window);
-        cardPanel.add(mainMenu, "menu");
-        cards.show(cardPanel, "menu");
-
-        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        window.setMinimumSize(new Dimension(600, 400));
-        window.setVisible(true);
+    private record MenuData(ArrayList<String> mmItems, String background) {
     }
 
     private static Timer getMouseRestrictTimer(JFrame window) throws AWTException {
@@ -292,6 +302,9 @@ public class Main {
             saveFile.addCompletedNight(night.getNightName());
             try {
                 SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                MenuData menuData = getUpdatedMenuData(saveFile);
+                mainMenu.updateBackground(menuData.background);
+                mainMenu.updateMenuItems(menuData.mmItems);
             } catch (IOException e) {
                 throw new RuntimeException("Progress could not be saved.", e);
             }
@@ -442,6 +455,9 @@ public class Main {
             saveFile.addCompletedNight(night.getNightName());
             try {
                 SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                MenuData menuData = getUpdatedMenuData(saveFile);
+                mainMenu.updateBackground(menuData.background);
+                mainMenu.updateMenuItems(menuData.mmItems);
             } catch (IOException e) {
                 throw new RuntimeException("Could not save victory to save file.", e);
             }

@@ -1,5 +1,6 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Music;
 
@@ -14,7 +15,7 @@ import java.util.TimerTask;
 
 public abstract class Menu extends JComponent {
 	private final List<String> menuItems;
-	private final Image backgroundImage;
+	private Image backgroundImage;
 	private final Image loadingImage;
 	private boolean loading;
 	private final Font btnFont;
@@ -35,7 +36,6 @@ public abstract class Menu extends JComponent {
 
 		music = Resources.loadMusic("menu/main.wav", "menuBack.wav");
 
-        setLayout(new GroupLayout(this));
 		initializeMenuItems();
 
 		Timer menuTicks = new Timer();
@@ -52,8 +52,21 @@ public abstract class Menu extends JComponent {
 		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
 
-	// Initialize and position the menu items
+	public void updateBackground(String backgroundImg) throws ResourceException {
+		backgroundImage = Resources.loadImageResource(backgroundImg);
+	}
+
+	public synchronized void updateMenuItems(List<String> newMenuItems) {
+		this.menuItems.clear();
+		this.menuItems.addAll(newMenuItems);
+		initializeMenuItems();
+		revalidate();
+		repaint();
+	}
+
 	private void initializeMenuItems() {
+		removeAll();
+		setLayout(new GroupLayout(this));
 		GroupLayout layout = (GroupLayout) getLayout();
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
@@ -63,35 +76,8 @@ public abstract class Menu extends JComponent {
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
 		for (String item : menuItems) {
-			float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) /1000;
-            JButton button = new JButton("<html>"+item+"</html>");
-            button.setFont(btnFont.deriveFont(fontScale));
-            button.setForeground(Color.WHITE);
-            button.setContentAreaFilled(false);
-            button.setBorderPainted(false);
-            button.setFocusPainted(false);
-            button.setAlignmentX(Component.LEFT_ALIGNMENT);
-            button.addActionListener(new MenuActionListener(item));
-            button.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    button.setText("<html><u>" + item + "</u></html>");
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    button.setText("<html>"+item+"</html>");
-                }
-            });
-			addComponentListener(new ComponentAdapter() {
-				@Override
-				public void componentResized(ComponentEvent e) {
-					float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) /1000;
-					button.setFont(btnFont.deriveFont(fontScale));
-				}
-			});
-            horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-					GroupLayout.PREFERRED_SIZE);
+			JButton button = createMenuButton(item);
+			horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(button);
 		}
 
@@ -99,6 +85,37 @@ public abstract class Menu extends JComponent {
 
 		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
+	}
+
+	private JButton createMenuButton(String item) {
+		JButton button = new JButton("<html>" + item + "</html>");
+		float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
+		button.setFont(btnFont.deriveFont(fontScale));
+		button.setForeground(Color.WHITE);
+		button.setContentAreaFilled(false);
+		button.setBorderPainted(false);
+		button.setFocusPainted(false);
+		button.setAlignmentX(Component.LEFT_ALIGNMENT);
+		button.addActionListener(new MenuActionListener(item));
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				button.setText("<html><u>" + item + "</u></html>");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				button.setText("<html>" + item + "</html>");
+			}
+		});
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
+				button.setFont(btnFont.deriveFont(fontScale));
+			}
+		});
+		return button;
 	}
 
 	@Override
