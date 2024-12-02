@@ -191,10 +191,10 @@ public class Main {
                 .setOnMapLoc(113, 111, 378, 177)
                 .setSoundVolume(0.5)
                 .setSoundPan(-1)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of(), 2),
-                        new Maria(5, aiNightMaria, List.of(), 2),
-                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 2),
-                        new Cris(5, aiNightCris, List.of(), 1)
+                .addAnimatronics(new Bob(5, aiNightBob, List.of(), 5),
+                        new Maria(5, aiNightMaria, List.of(), 5),
+                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 5),
+                        new Cris(5, aiNightCris, List.of(), 5)
                 )
                 .addConnection("cam2", "cam3")
                 .build();
