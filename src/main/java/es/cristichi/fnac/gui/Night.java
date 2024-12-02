@@ -278,16 +278,16 @@ public abstract class Night extends JComponent {
 
 				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
-					HashMap<Animatronic, Map.Entry<Camera, Camera>> moves = new HashMap<>(5);
+					HashMap<Animatronic, Map.Entry<Camera, Animatronic.MoveOppReturn>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
 						for (Animatronic anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(nightHour);
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
-									String moveToCamName = anim.onMovementOppSuccess(camerasMap, cam, rng);
-									if (moveToCamName != null && !moveToCamName.equals(cam.getName())){
-										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, camerasMap.get(moveToCamName)));
+									Animatronic.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
+									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
+										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 									}
 								}
 							}
@@ -308,20 +308,26 @@ public abstract class Night extends JComponent {
 							}
 						}
 					}
-					for (Map.Entry<Animatronic, Map.Entry<Camera, Camera>> move : moves.entrySet()){
-						if (!move.getValue().getKey().equals(move.getValue().getValue())){
+					for (Animatronic anim : moves.keySet()){
+						Map.Entry<Camera, Animatronic.MoveOppReturn> move = moves.get(anim);
+
+						Camera fromCam = move.getKey();
+						Camera toCam = camerasMap.get(move.getValue().moveToCam());
+						// If moving to a different camera
+						if (!fromCam.equals(toCam)){
 							try {
-								move.getValue().getKey().move(move.getKey(), move.getValue().getValue());
-								camsHidingMovement.add(move.getValue().getKey().getName());
-								camsHidingMovement.add(move.getValue().getValue().getName());
+								fromCam.move(anim, toCam);
+								if (move.getValue().sound() != null){
+									toCam.playSoundHere(move.getValue().sound());
+								}
+								animPosInCam.remove(fromCam.getName());
+								camsHidingMovement.add(fromCam.getName());
+								camsHidingMovement.add(toCam.getName());
 								camsHidingMovementTicks = CAMS_STATIC_MOVE_TICKS;
-								animPosInCam.remove(move.getKey().getName());
 							} catch (AnimatronicException e){
 								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
 										" Perhaps there is a design flaw in the Animatronic.%n",
-										move.getKey().getName(),
-										move.getValue().getKey(),
-										move.getValue().getValue());
+										anim.getName(), fromCam, toCam);
 								e.printStackTrace();
 							}
 						}

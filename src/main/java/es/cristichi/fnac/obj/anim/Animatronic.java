@@ -5,6 +5,7 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -79,7 +80,7 @@ public abstract class Animatronic {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
+    public abstract MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
      * This is only called at the moment of the defined internal during any given Night.
@@ -162,5 +163,7 @@ public abstract class Animatronic {
     }
 
     public record TickReturn(boolean jumpscare, Sound sound, double soundVol, double soundPan){
+    }
+    public record MoveOppReturn(@Nullable String moveToCam, @Nullable Sound sound){
     }
 }

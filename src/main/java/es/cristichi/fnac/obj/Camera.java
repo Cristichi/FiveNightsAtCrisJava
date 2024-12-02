@@ -5,6 +5,7 @@ import es.cristichi.fnac.exception.CameraException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.anim.Animatronic;
+import kuusisto.tinysound.Sound;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,20 +16,24 @@ import java.util.Objects;
 public class Camera {
     private final String name;
     private final BufferedImage camBackground;
-    private final Rectangle loc;
+    private final Rectangle onMapLoc;
     private final LinkedList<String> connections;
     private final LinkedList<Animatronic> animatronicsHere;
-    private final boolean isLeftDoorOfOffice;
-    private final boolean isRightDoorOfOffice;
+    private final boolean isLeftDoorOfOffice, isRightDoorOfOffice;
+    private final double soundVolume, soundPan;
 
-    private Camera(String name, BufferedImage camBackground, Rectangle loc, LinkedList<String> connections, LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice) {
+    private Camera(String name, BufferedImage camBackground, Rectangle onMapLoc, LinkedList<String> connections,
+                   LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice,
+                   double soundVolume, double soundPan) {
         this.name = name;
         this.camBackground = camBackground;
-        this.loc = loc;
+        this.onMapLoc = onMapLoc;
         this.connections = connections;
         this.animatronicsHere = animatronicsHere;
         this.isLeftDoorOfOffice = isLeftDoorOfOffice;
         this.isRightDoorOfOffice = isRightDoorOfOffice;
+        this.soundVolume = soundVolume;
+        this.soundPan = soundPan;
     }
 
     public String getName() {
@@ -40,7 +45,7 @@ public class Camera {
     }
 
     public Rectangle getMapLoc() {
-        return loc;
+        return onMapLoc;
     }
 
     public LinkedList<String> getConnections() {
@@ -68,6 +73,12 @@ public class Camera {
         return animatronicsHere;
     }
 
+    /**
+     * This method does not check whether the Cameras are connected, but it will fail if
+     * {@link LinkedList#remove(Object)} on the List of Animatronics here returns false.
+     * @param animatronic Animatronic that is on this Camera and has to move.
+     * @param dest Camera to move to.
+     */
     public void move(Animatronic animatronic, Camera dest){
         if (animatronicsHere.remove(animatronic)){
             dest.animatronicsHere.add(animatronic);
@@ -75,6 +86,11 @@ public class Camera {
             throw new AnimatronicException("Animatronic "+animatronic.getName()+" not found in camera "+name+".");
         }
     }
+
+    public void playSoundHere(Sound sound){
+        sound.play(soundVolume, soundPan);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,11 +111,13 @@ public class Camera {
     public static class Builder {
         private String name = null;
         private BufferedImage camBackground = null;
-        private Rectangle loc = null;
+        private Rectangle onMapLoc = null;
         private final LinkedList<String> connections = new LinkedList<>();
         private final LinkedList<Animatronic> animatronicsHere = new LinkedList<>();
         private boolean isLeftDoorOfOffice = false;
         private boolean isRightDoorOfOffice = false;
+        private double soundVolume = 1;
+        private double soundPan = 0;
 
         public Builder(){}
 
@@ -113,8 +131,18 @@ public class Camera {
             return this;
         }
 
-        public Builder setLoc(int x, int y, int width, int height) {
-            this.loc = new Rectangle(x,y,width,height);
+        public Builder setOnMapLoc(int x, int y, int width, int height) {
+            this.onMapLoc = new Rectangle(x,y,width,height);
+            return this;
+        }
+
+        public Builder setSoundVolume(double soundVolume) {
+            this.soundVolume = soundVolume;
+            return this;
+        }
+
+        public Builder setSoundPan(double soundPan) {
+            this.soundPan = soundPan;
             return this;
         }
 
@@ -146,10 +174,12 @@ public class Camera {
             if (camBackground == null){
                 throw new CameraException("Cameras must have a background.");
             }
-            if (loc == null){
-                throw new CameraException("Cameras must have a Location on the map image. It's needed to click on them with the mouse and also highlight when selected.");
+            if (onMapLoc == null){
+                throw new CameraException("Cameras must have a Location on the map image. It's needed to " +
+                        "click on them with the mouse and also highlight when selected.");
             }
-            return new Camera(name, camBackground, loc, connections, animatronicsHere, isLeftDoorOfOffice, isRightDoorOfOffice);
+            return new Camera(name, camBackground, onMapLoc, connections, animatronicsHere, isLeftDoorOfOffice,
+                    isRightDoorOfOffice, soundVolume, soundPan);
         }
     }
 }

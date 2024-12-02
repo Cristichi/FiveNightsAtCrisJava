@@ -5,10 +5,7 @@ import kuusisto.tinysound.Music;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.font.LineMetrics;
 import java.io.IOException;
 import java.util.List;
@@ -66,8 +63,9 @@ public abstract class Menu extends JComponent {
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
 		for (String item : menuItems) {
+			float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) /1000;
             JButton button = new JButton("<html>"+item+"</html>");
-            button.setFont(btnFont);
+            button.setFont(btnFont.deriveFont(fontScale));
             button.setForeground(Color.WHITE);
             button.setContentAreaFilled(false);
             button.setBorderPainted(false);
@@ -85,6 +83,13 @@ public abstract class Menu extends JComponent {
                     button.setText("<html>"+item+"</html>");
                 }
             });
+			addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) /1000;
+					button.setFont(btnFont.deriveFont(fontScale));
+				}
+			});
             horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 					GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(button);
@@ -99,32 +104,33 @@ public abstract class Menu extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		int fontScale = Math.min(getWidth(), getHeight())/1000;
+
+		int fontSize = 40*fontScale;
 
 		// Draw the background image, scaled to fit the component's dimensions
 		g.drawImage(loading?loadingImage:backgroundImage, 0, 0, getWidth(), getHeight(), this);
 
 		if (errorTicks-- > 0) {
-			int yOg = 40;
-			g.setFont(new Font("Arial", Font.BOLD, yOg));
+			g.setFont(new Font("Arial", Font.BOLD, fontSize));
 			g.setColor(Color.RED);
-			int y = yOg;
+			int y = fontSize;
 			for (String line : error) {
 				g.drawString(line, 10, y);
-				y+=yOg;
+				y+=fontSize;
 			}
 		}
 
 		if (musicCreditsTicks-- > 0) {
-			int yOg = 40;
-			g.setFont(new Font("Arial", Font.BOLD, yOg));
+			g.setFont(new Font("Arial", Font.BOLD, fontSize));
 			g.setColor(Color.WHITE);
-			int y = yOg* musicCreditsMsg.length;
+			int y = fontSize* musicCreditsMsg.length;
 			int x = (int)(getWidth()*0.99);
 			for (String line : musicCreditsMsg) {
 				FontMetrics fm = g.getFontMetrics();
 				LineMetrics lm = fm.getLineMetrics(line, g);
 				g.drawString(line, x-fm.stringWidth(line), getHeight()-y);
-				y-=yOg;
+				y-=fontSize;
 			}
 		}
 	}

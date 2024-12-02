@@ -23,14 +23,14 @@ public abstract class PathedMoveAnimatronic extends Animatronic{
     }
 
     @Override
-    public String onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+    public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<String> connections = currentLoc.getConnections();
         boolean passedCurrCam = false;
         for (String cam : orderedCamPath){
             if (passedCurrCam){
                 for (String connection : connections){
                     if (cam.equals(connection)){
-                        return cam;
+                        return new MoveOppReturn(cam, null);
                     }
                 }
             } else {
@@ -39,6 +39,6 @@ public abstract class PathedMoveAnimatronic extends Animatronic{
                 }
             }
         }
-        return returnToCamera;
+        return new MoveOppReturn(returnToCamera, null);
     }
 }
