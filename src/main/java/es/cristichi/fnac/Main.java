@@ -138,7 +138,7 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        //mmItems.add("Testing Night");
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -173,13 +173,16 @@ public class Main {
 
     private static Night startTESTINGNIGHT(CardLayout cards, JFrame window) throws IOException {
         HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 20);
+        aiNightBob.put(0, 0);
 
         HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(0, 20);
+        aiNightMaria.put(0, 0);
 
         HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(0, 20);
+        aiNightPaco.put(0, 0);
+
+        HashMap<Integer, Integer> aiNightCris = new HashMap<>(4);
+        aiNightCris.put(0, 20);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.Builder()
@@ -190,7 +193,8 @@ public class Main {
                 .setSoundPan(-1)
                 .addAnimatronics(new Bob(5, aiNightBob, List.of(), 2),
                         new Maria(5, aiNightMaria, List.of(), 2),
-                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 2)
+                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 2),
+                        new Cris(5, aiNightCris, List.of(), 1)
                 )
                 .addConnection("cam2", "cam3")
                 .build();
@@ -223,7 +227,7 @@ public class Main {
         nightMap.addAll(cam1, cam2, cam3, cam4);
         long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 1, 0.45f,
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
