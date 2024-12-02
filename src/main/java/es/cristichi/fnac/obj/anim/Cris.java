@@ -7,15 +7,15 @@ import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Cris extends AvoidCamsAnimatronic {
     private final Sound moveSound;
     private final double secsToKill;
 
-    public Cris(double secInterval, HashMap<Integer, Integer> aiDuringNight,
+    public Cris(double secInterval, Map<Integer, Integer> aiDuringNight,
                 List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Cris", secInterval, aiDuringNight, 20, "anims/cris/camImg.png",
                 new Jumpscare("anims/cris/jumpscare.gif", 4,

@@ -12,13 +12,12 @@ import es.cristichi.fnac.obj.anim.*;
 import kuusisto.tinysound.TinySound;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Main {
     public static final String GAME_TITLE = "Five Nights at Cris'";
@@ -182,18 +181,6 @@ public class Main {
     }
 
     private static Night startTESTINGNIGHT(CardLayout cards, JFrame window) throws IOException {
-        HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 0);
-
-        HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(0, 0);
-
-        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(0, 0);
-
-        HashMap<Integer, Integer> aiNightCris = new HashMap<>(4);
-        aiNightCris.put(0, 20);
-
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
         Camera cam1 = new Camera.Builder()
                 .setName("cam1")
@@ -201,10 +188,10 @@ public class Main {
                 .setOnMapLoc(113, 111, 378, 177)
                 .setSoundVolume(0.5)
                 .setSoundPan(-1)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of(), 5),
-                        new Maria(5, aiNightMaria, List.of(), 5),
-                        new Paco(5, aiNightPaco, List.of("cam1", "cam2", "cam4"), "cam1", 1f, 5),
-                        new Cris(5, aiNightCris, List.of(), 5)
+                .addAnimatronics(new Bob(5, Map.of(0,0), List.of(), 5),
+                        new Maria(5, Map.of(0,0), List.of(), 5),
+                        new Paco(5, Map.of(0,0), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 5),
+                        new Cris(5, Map.of(0,20), List.of(), 5)
                 )
                 .addConnection("cam2", "cam3")
                 .build();
@@ -345,27 +332,14 @@ public class Main {
     }
 
     private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 3);
-        aiNightBob.put(2, 4);
-        aiNightBob.put(4, 5);
-        aiNightBob.put(5, 6);
-        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        Animatronic bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(1, 3);
-        aiNightMaria.put(3, 4);
-        aiNightMaria.put(4, 5);
-        aiNightMaria.put(5, 6);
-        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        Animatronic maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(0, 4);
-        aiNightPaco.put(3, 6);
-        aiNightPaco.put(4, 7);
-        aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
-                "kitchen", 1f, 12);
+        Animatronic paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
         nightMap.addAll(
@@ -502,27 +476,16 @@ public class Main {
     }
 
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        HashMap<Integer, Integer> aiNightBob = new HashMap<>(4);
-        aiNightBob.put(0, 3);
-        aiNightBob.put(2, 4);
-        aiNightBob.put(4, 5);
-        aiNightBob.put(5, 6);
-        Animatronic bob = new Bob(3, aiNightBob, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        Animatronic bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        HashMap<Integer, Integer> aiNightMaria = new HashMap<>(4);
-        aiNightMaria.put(1, 3);
-        aiNightMaria.put(3, 4);
-        aiNightMaria.put(4, 5);
-        aiNightMaria.put(5, 6);
-        Animatronic maria = new Maria(3, aiNightMaria, List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        Animatronic maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        HashMap<Integer, Integer> aiNightPaco = new HashMap<>(4);
-        aiNightPaco.put(0, 4);
-        aiNightPaco.put(3, 6);
-        aiNightPaco.put(4, 7);
-        aiNightPaco.put(5, 8);
-        Animatronic paco = new Paco(5, aiNightPaco, List.of("kitchen", "dining area", "corridor 1", "corridor 3"),
-                "kitchen", 1f, 12);
+        Animatronic paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
+
+        Animatronic cris = new Cris(5, Map.of(0,4, 3,6, 4,7, 5,8), List.of(), 5);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
         nightMap.addAll(
@@ -600,6 +563,7 @@ public class Main {
                         .setSoundVolume(1)
                         .setSoundPan(0)
                         .addConnection("corridor 2")
+                        .addAnimatronics(cris)
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -19,7 +20,7 @@ import java.util.Random;
 public abstract class Animatronic {
     protected final String name;
     protected final Color debugColor;
-    protected final HashMap<Integer, Integer> iaDuringNight;
+    protected final Map<Integer, Integer> iaDuringNight;
     protected int aiLevel;
     protected final int maxIaLevel;
     protected final double secInterval;
@@ -27,7 +28,7 @@ public abstract class Animatronic {
     protected final BufferedImage camImg;
     protected boolean kill = false;
     protected Integer startKillTick = null;
-    protected final HashMap<String, Sound> sounds;
+    protected final Map<String, Sound> sounds;
 
     /**
      * Creating an Animatronic.
@@ -44,7 +45,7 @@ public abstract class Animatronic {
      * @param jumpscare Jumpscare to play when this Animatronic kills the player.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    Animatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
+    Animatronic(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
                 int maxIaLevel, String camImgPath, Jumpscare jumpscare, Color debugColor) throws ResourceException {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);

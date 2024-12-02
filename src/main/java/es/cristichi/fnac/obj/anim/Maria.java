@@ -7,15 +7,15 @@ import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Maria extends AvoidCamsAnimatronic {
     private final Sound moveSound;
     private final double secsToKill;
 
-    public Maria(double secInterval, HashMap<Integer, Integer> aiDuringNight,
+    public Maria(double secInterval, Map<Integer, Integer> aiDuringNight,
                  List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 1, Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0), forbiddenCams, Color.YELLOW);

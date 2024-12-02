@@ -14,7 +14,7 @@ import java.util.*;
 public abstract class AvoidCamsAnimatronic extends Animatronic {
     protected final List<String> forbiddenCameras;
 
-    public AvoidCamsAnimatronic(String name, double secInterval, HashMap<Integer, Integer> iaDuringNight,
+    public AvoidCamsAnimatronic(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
                                 int maxIaLevel, String camImgPath, Jumpscare jumpscare,
                                 List<String> forbiddenCameras, Color debugColor) throws ResourceException {
         super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscare, debugColor);

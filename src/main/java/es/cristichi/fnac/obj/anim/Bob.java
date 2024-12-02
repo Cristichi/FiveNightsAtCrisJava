@@ -7,15 +7,15 @@ import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Bob extends AvoidCamsAnimatronic {
     private final Sound moveSound;
     private final double secsToKill;
 
-    public Bob(double secInterval, HashMap<Integer, Integer> aiDuringNight,
+    public Bob(double secInterval, Map<Integer, Integer> aiDuringNight,
                List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Bob", secInterval, aiDuringNight, 20, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 1,

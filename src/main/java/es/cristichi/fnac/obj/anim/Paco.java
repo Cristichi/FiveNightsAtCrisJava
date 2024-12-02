@@ -7,8 +7,8 @@ import es.cristichi.fnac.obj.CameraMap;
 import kuusisto.tinysound.Sound;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Paco extends PathedMoveAnimatronic{
@@ -16,7 +16,7 @@ public class Paco extends PathedMoveAnimatronic{
     private final float moveSoundChance;
     private final double secsToKill;
 
-    public Paco(double secInterval, HashMap<Integer, Integer> aiDuringNight, List<String> orderedCamPath,
+    public Paco(double secInterval, Map<Integer, Integer> aiDuringNight, List<String> orderedCamPath,
                 String retreatCam, float moveSoundChance, double secsToKill) throws ResourceException {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 1, Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0),
