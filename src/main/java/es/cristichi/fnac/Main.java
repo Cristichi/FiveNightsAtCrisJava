@@ -403,7 +403,7 @@ public class Main {
                         .setName("bathrooms")
                         .setCamBackground("night/n1/bathrooms.jpg")
                         .setOnMapLoc(560, 734, 140, 51)
-                        .setSoundVolume(0.8)
+                        .setSoundVolume(1)
                         .setSoundPan(0)
                         .addConnection("corridor 2")
                         .build(),
