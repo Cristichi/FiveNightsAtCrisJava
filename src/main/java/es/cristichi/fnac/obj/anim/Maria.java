@@ -4,7 +4,6 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import kuusisto.tinysound.Sound;
 
 import java.awt.*;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class Maria extends AvoidCamsAnimatronic {
-    private final Sound moveSound;
     private final double secsToKill;
 
     public Maria(double secInterval, Map<Integer, Integer> aiDuringNight,
@@ -21,13 +19,13 @@ public class Maria extends AvoidCamsAnimatronic {
                 new Jumpscare("anims/maria/jumpscare.gif", 1, Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0), forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;
 
-        this.moveSound = Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav");
+        this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
     }
 
     @Override
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveOppReturn(ret.moveToCam(), moveSound);
+        return new MoveOppReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
     }
 
     @Override

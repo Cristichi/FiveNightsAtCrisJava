@@ -151,6 +151,10 @@ public abstract class Animatronic {
         return debugColor;
     }
 
+    public Map<String, Sound> getSounds() {
+        return sounds;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

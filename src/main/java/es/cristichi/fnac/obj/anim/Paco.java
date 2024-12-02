@@ -4,7 +4,6 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
-import kuusisto.tinysound.Sound;
 
 import java.awt.*;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class Paco extends PathedMoveAnimatronic{
-    private final Sound moveSound;
     private final float moveSoundChance;
     private final double secsToKill;
 
@@ -23,14 +21,14 @@ public class Paco extends PathedMoveAnimatronic{
                 orderedCamPath, retreatCam, Color.BLUE);
 
         this.secsToKill = secsToKill;
-        this.moveSound = Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav");
+        this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav"));
         this.moveSoundChance = moveSoundChance;
     }
 
     @Override
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveOppReturn(ret.moveToCam(), rng.nextFloat()<moveSoundChance?moveSound:null);
+        return new MoveOppReturn(ret.moveToCam(), rng.nextFloat()<moveSoundChance?sounds.getOrDefault("move", null):null);
     }
 
     @Override
