@@ -178,7 +178,7 @@ public abstract class Menu extends JComponent {
 					errorTicks = 0;
 					Night night = onMenuItemClick(item);
 					if (night != null){
-						night.addOnNightCompleted(() -> {
+						night.addOnNightEnd((completed) -> {
                             music.play(true);
 							musicCreditsTicks = 160;
                         });

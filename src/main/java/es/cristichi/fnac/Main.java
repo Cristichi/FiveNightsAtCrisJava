@@ -233,10 +233,9 @@ public class Main {
                 System.out.println("Player died.");
             }
         };
-        night.addOnNightCompleted(() -> {
+        night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
             cards.show(cardPanel, "menu");
-            System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
         });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));
@@ -307,15 +306,17 @@ public class Main {
                 System.out.println("Player died.");
             }
         };
-        night.addOnNightCompleted(() -> {
-            saveFile.addCompletedNight(night.getNightName());
-            try {
-                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                MenuData menuData = getUpdatedMenuData(saveFile);
-                mainMenu.updateBackground(menuData.background);
-                mainMenu.updateMenuItems(menuData.mmItems);
-            } catch (IOException e) {
-                throw new RuntimeException("Progress could not be saved.", e);
+        night.addOnNightEnd((completed) -> {
+            if (completed) {
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    mainMenu.updateBackground(menuData.background);
+                    mainMenu.updateMenuItems(menuData.mmItems);
+                } catch (IOException e) {
+                    throw new RuntimeException("Progress could not be saved.", e);
+                }
             }
             cards.show(cardPanel, "menu");
             nightPanel.remove(night);
@@ -446,25 +447,24 @@ public class Main {
             protected void onJumpscare() {
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
-                System.out.println("Player died.");
             }
         };
-        night.addOnNightCompleted(() -> {
-            saveFile.addCompletedNight(night.getNightName());
-            try {
-                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                MenuData menuData = getUpdatedMenuData(saveFile);
-                mainMenu.updateBackground(menuData.background);
-                mainMenu.updateMenuItems(menuData.mmItems);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not save victory to save file.", e);
+        night.addOnNightEnd((completed) -> {
+            if (completed) {
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    mainMenu.updateBackground(menuData.background);
+                    mainMenu.updateMenuItems(menuData.mmItems);
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not save victory to save file.", e);
+                }
             }
             cards.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
-            System.out.println(
-                    "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
         });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));
@@ -593,25 +593,25 @@ public class Main {
             protected void onJumpscare() {
                 nightPanel.removeAll();
                 cards.show(cardPanel, "menu");
-                System.out.println("Player died.");
             }
         };
-        night.addOnNightCompleted(() -> {
-            saveFile.addCompletedNight(night.getNightName());
-            try {
-                SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                MenuData menuData = getUpdatedMenuData(saveFile);
-                mainMenu.updateBackground(menuData.background);
-                mainMenu.updateMenuItems(menuData.mmItems);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not save victory to save file.", e);
+        night.addOnNightEnd((completed) -> {
+            if (completed){
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    mainMenu.updateBackground(menuData.background);
+                    mainMenu.updateMenuItems(menuData.mmItems);
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not save victory to save file.", e);
+                }
             }
+
             cards.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
-            System.out.println(
-                    "Congratulations! Progressively more challenging experiences do not seem to put a hold on you.\nFor now.");
         });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));

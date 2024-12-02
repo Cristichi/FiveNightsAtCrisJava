@@ -28,12 +28,26 @@ public abstract class Night extends JComponent {
 
 	private final String nightName;
 	private final Random rng;
+	/**
+	 * How many ticks must happen for an in-game hour to pass. It must be calculated from FPS to translate to the
+	 * configured IRL seconds.
+	 */
 	private final int hourTicksInterval;
 	private float powerLeft;
+	/**
+	 * This represents the amount of Power lost each second passively, and is multiplied for each resource in use
+	 * (Cameras, left door and right door)
+	 */
 	private final float powerPerTickPerResource;
+	/**
+	 * Jumpscare to play when the Player runs out of Power.
+	 */
 	private final Jumpscare powerOutageJumpscare;
 
-	private final LinkedList<Runnable> onCompletedListeners;
+	/**
+	 * List of Runnables that must be executed if Night is completed.
+	 */
+	private final LinkedList<NightEndedListener> onNightEndListeners;
 	private final Sound soundOnCompleted;
 
 	private int currentTick;
@@ -42,9 +56,6 @@ public abstract class Night extends JComponent {
 
 	private Boolean victoryScreen;
 	private final BufferedImage backgroundImg;
-	/**
-	 * This image contains a "paper" describing new things to the player, from the previous guy.
-	 */
 	private final BufferedImage paperImg;
 
 	// Office transition
@@ -100,7 +111,7 @@ public abstract class Night extends JComponent {
 	private Jumpscare jumpscare;
 
 	/**
-	 *
+	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
 	 * @param camMap Map of the place. Animatronics present in the Night must start inside
 	 *                              their starting Cameras, they are only stored there.
@@ -117,7 +128,7 @@ public abstract class Night extends JComponent {
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 * @param soundOnNightCompleted Sound played when Night is completed. Can be null for dev purposes but having
 	 *                              one is encouraged.
-	 * @throws ResourceException If any of the images required for Nights cannot be loaded from the resources.
+	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
 	 */
 	public Night(String nightName, CameraMap camMap, @Nullable String paperImgPath,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
@@ -128,7 +139,7 @@ public abstract class Night extends JComponent {
 		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (FPS * secsPerHour);
 
-		onCompletedListeners = new LinkedList<>();
+		onNightEndListeners = new LinkedList<>();
 		this.soundOnCompleted = soundOnNightCompleted;
 
 		powerLeft = 1;
@@ -272,8 +283,8 @@ public abstract class Night extends JComponent {
 				if (powerLeft <= 0){
 					jumpscare = powerOutageJumpscare;
 					jumpscare.addOnFinishedListener(() -> {
-						for(Runnable onCompleted : onCompletedListeners){
-							onCompleted.run();
+						for(NightEndedListener onCompleted : onNightEndListeners){
+							onCompleted.run(false);
 						}
 					});
 				}
@@ -300,8 +311,8 @@ public abstract class Night extends JComponent {
 								// and the same phantom happens twice.
 								jumpscare.reset();
 								jumpscare.addOnFinishedListener(() -> {
-									for(Runnable onCompleted : onCompletedListeners){
-										onCompleted.run();
+									for(NightEndedListener onCompleted : onNightEndListeners){
+										onCompleted.run(false);
 									}
 								});
 							}
@@ -347,8 +358,8 @@ public abstract class Night extends JComponent {
 			victoryScreen = true;
 			nightTicks.cancel();
 			soundOnCompleted.addOnEndListener(() -> {
-					for(Runnable onCompleted : onCompletedListeners){
-						onCompleted.run();
+					for(NightEndedListener onCompleted : onNightEndListeners){
+						onCompleted.run(true);
 					}
 				});
 			soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
@@ -358,8 +369,8 @@ public abstract class Night extends JComponent {
 
 	protected abstract void onJumpscare();
 
-	public void addOnNightCompleted(Runnable runnable) {
-		onCompletedListeners.add(runnable);
+	public void addOnNightEnd(NightEndedListener runnable) {
+		onNightEndListeners.add(runnable);
 	}
 
 	@Override
@@ -911,5 +922,9 @@ public abstract class Night extends JComponent {
 				}
 			}
 		}
+	}
+
+	public interface NightEndedListener {
+		void run(boolean completed);
 	}
 }
