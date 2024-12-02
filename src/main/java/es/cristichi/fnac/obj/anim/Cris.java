@@ -18,7 +18,7 @@ public class Cris extends AvoidCamsAnimatronic {
     public Cris(double secInterval, HashMap<Integer, Integer> aiDuringNight,
                 List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Cris", secInterval, aiDuringNight, 20, "anims/cris/camImg.png",
-                new Jumpscare("anims/cris/jumpscare.gif", 20,
+                new Jumpscare("anims/cris/jumpscare.gif", 7,
                         Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump.wav"), 6), forbiddenCams, Color.PINK);
         this.secsToKill = secsToKill;
 
