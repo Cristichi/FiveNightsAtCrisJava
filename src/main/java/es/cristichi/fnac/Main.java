@@ -26,6 +26,7 @@ public class Main {
     private static JPanel cardPanel;
     private static JPanel nightPanel;
     private static Menu mainMenu;
+    private static Jumpscare powerOutage;
 
     public static String getTitleForWindow(String window) {
         if (window == null){
@@ -98,6 +99,7 @@ public class Main {
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
+        powerOutage = new Jumpscare("office/powerOutage.gif", 10);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
@@ -147,7 +149,7 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        //mmItems.add("Testing Night");
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -209,7 +211,7 @@ public class Main {
         }
         long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0f,
+                powerOutage, new Random(seed), 60, 2f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -241,7 +243,7 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
+                powerOutage, new Random(seed), 60, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -293,7 +295,7 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                powerOutage, new Random(seed), 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -348,7 +350,7 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                powerOutage, new Random(seed), 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -404,7 +406,7 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 3", nightMap, null,
-                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                powerOutage, new Random(seed), 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
