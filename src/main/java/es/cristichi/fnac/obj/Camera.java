@@ -49,7 +49,7 @@ public class Camera {
     }
 
     public LinkedList<String> getConnections() {
-        return connections;
+        return new LinkedList<>(connections);
     }
 
     public boolean isLeftDoorOfOffice() {
@@ -58,15 +58,6 @@ public class Camera {
 
     public boolean isRightDoorOfOffice() {
         return isRightDoorOfOffice;
-    }
-
-    public void addMutualConnection(Camera cam) {
-        addConnection(cam.getName());
-        cam.addConnection(name);
-    }
-
-    public void addConnection(String camName) {
-        connections.add(camName);
     }
 
     public LinkedList<Animatronic> getAnimatronicsHere() {
