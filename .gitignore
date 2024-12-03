@@ -29,6 +29,6 @@ bin/
 .DS_Store
 /.idea/*
 
-### Testings and such ###
-!/save.fnac
+### Mine ###
+/save.fnac
 /target/*
