@@ -468,7 +468,7 @@ public class Main {
                         .setOnMapLoc(168, 182, 140, 70)
                         .setSoundVolume(0.4)
                         .setSoundPan(-0.1)
-                        .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
+                        .addConnection("main stage", "corridor 1", "corridor 2")
                         .build(),
                 new Camera.Builder()
                         .setName("main stage")
@@ -613,7 +613,7 @@ public class Main {
                         .setOnMapLoc(168, 182, 140, 70)
                         .setSoundVolume(0.4)
                         .setSoundPan(-0.1)
-                        .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
+                        .addConnection("main stage", "corridor 1", "corridor 2")
                         .build(),
                 new Camera.Builder()
                         .setName("main stage")
