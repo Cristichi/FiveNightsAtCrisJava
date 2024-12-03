@@ -3,11 +3,11 @@ package es.cristichi.fnac.gui;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.obj.Camera;
-import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.anim.Jumpscare;
+import es.cristichi.fnac.obj.cams.Camera;
+import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 

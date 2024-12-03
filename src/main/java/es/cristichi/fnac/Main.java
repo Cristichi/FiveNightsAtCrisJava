@@ -6,9 +6,9 @@ import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.Night;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
-import es.cristichi.fnac.obj.Camera;
-import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.anim.*;
+import es.cristichi.fnac.obj.cams.Camera;
+import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.TinySound;
 import org.jetbrains.annotations.NotNull;
 

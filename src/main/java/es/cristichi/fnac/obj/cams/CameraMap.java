@@ -1,4 +1,4 @@
-package es.cristichi.fnac.obj;
+package es.cristichi.fnac.obj.cams;
 
 import es.cristichi.fnac.exception.CameraException;
 
