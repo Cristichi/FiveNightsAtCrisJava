@@ -149,7 +149,7 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        mmItems.add("Testing Night");
+        //mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
