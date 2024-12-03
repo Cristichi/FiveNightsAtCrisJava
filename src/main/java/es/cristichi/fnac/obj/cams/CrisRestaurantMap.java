@@ -15,7 +15,7 @@ public class CrisRestaurantMap extends CameraMap {
                         .setCamBackground("night/general/kitchen.jpg")
                         .setOnMapLoc(187, 45, 140, 70)
                         .setSoundVolume(0.2)
-                        .setSoundPan(-1)
+                        .setSoundPan(-0.5)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
@@ -23,7 +23,7 @@ public class CrisRestaurantMap extends CameraMap {
                         .setCamBackground("night/general/storage.jpg")
                         .setOnMapLoc(542, 111, 140, 70)
                         .setSoundVolume(0.2)
-                        .setSoundPan(1)
+                        .setSoundPan(0.5)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
@@ -31,7 +31,7 @@ public class CrisRestaurantMap extends CameraMap {
                         .setCamBackground("night/general/dining area.jpg")
                         .setOnMapLoc(168, 182, 140, 70)
                         .setSoundVolume(0.4)
-                        .setSoundPan(-0.1)
+                        .setSoundPan(-0.5)
                         .addConnection("main stage", "corridor 1", "corridor 2")
                         .build(),
                 new Camera.Builder()
@@ -39,7 +39,7 @@ public class CrisRestaurantMap extends CameraMap {
                         .setCamBackground("night/general/main stage.jpg")
                         .setOnMapLoc(537, 399, 140, 70)
                         .setSoundVolume(0.4)
-                        .setSoundPan(0.1)
+                        .setSoundPan(0.5)
                         .addConnection("dining area")
                         .build(),
                 new Camera.Builder()
@@ -79,7 +79,7 @@ public class CrisRestaurantMap extends CameraMap {
                         .setCamBackground("night/general/bathrooms.jpg")
                         .setOnMapLoc(560, 734, 140, 51)
                         .setSoundVolume(1)
-                        .setSoundPan(0)
+                        .setSoundPan(0.1)
                         .addConnection("corridor 2")
                         .build(),
                 new Camera.Builder()
