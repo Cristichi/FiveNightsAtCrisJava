@@ -99,7 +99,7 @@ public class Main {
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 10);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 40);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
@@ -211,7 +211,7 @@ public class Main {
         }
         long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                powerOutage, new Random(seed), 60, 2f,
+                powerOutage, new Random(seed), 60, 22f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
