@@ -403,7 +403,7 @@ public class Main {
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
 
         long seed = new Random().nextLong();
-        Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
+        Night night = new Night("Night 3", nightMap, null,
                 new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
