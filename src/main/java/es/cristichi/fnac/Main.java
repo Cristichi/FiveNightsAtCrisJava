@@ -580,7 +580,8 @@ public class Main {
         AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
-        AnimatronicDrawing cris = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8), List.of(), 5);
+        AnimatronicDrawing cris = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
+                List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
         nightMap.addAll(
@@ -641,6 +642,7 @@ public class Main {
                         .setSoundVolume(0.6)
                         .setSoundPan(-1)
                         .addConnection("corridor 1")
+                        .addAnimatronics(cris)
                         .build(),
                 new Camera.Builder()
                         .setName("offices")
@@ -658,7 +660,6 @@ public class Main {
                         .setSoundVolume(1)
                         .setSoundPan(0)
                         .addConnection("corridor 2")
-                        .addAnimatronics(cris)
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")
