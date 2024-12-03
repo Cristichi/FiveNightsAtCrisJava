@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-public abstract class Animatronic {
+public abstract class AnimatronicDrawing {
     protected final String name;
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
@@ -42,8 +42,8 @@ public abstract class Animatronic {
      * @param jumpscare Jumpscare to play when this Animatronic kills the player.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    Animatronic(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
-                int maxIaLevel, String camImgPath, Jumpscare jumpscare, Color debugColor) throws ResourceException {
+    AnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
+                       int maxIaLevel, String camImgPath, Jumpscare jumpscare, Color debugColor) throws ResourceException {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
@@ -87,7 +87,7 @@ public abstract class Animatronic {
      * @param isOpenDoor If there is a door to the Office from the current Camera and it is open.
      * @param rng        Random in charge of today's night.
      * @return True if Animatronic should move on this tick. In that case,
-     * {@link Animatronic#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
+     * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
     public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
         if (kill || startKillTick != null || isOpenDoor){
@@ -156,7 +156,7 @@ public abstract class Animatronic {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return name.equals(((Animatronic) o).name);
+        return name.equals(((AnimatronicDrawing) o).name);
     }
 
     @Override

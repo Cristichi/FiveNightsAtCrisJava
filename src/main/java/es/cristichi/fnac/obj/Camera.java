@@ -4,7 +4,7 @@ import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.CameraException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.obj.anim.Animatronic;
+import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import kuusisto.tinysound.Sound;
 
 import java.awt.*;
@@ -18,12 +18,12 @@ public class Camera {
     private final BufferedImage camBackground;
     private final Rectangle onMapLoc;
     private final LinkedList<String> connections;
-    private final LinkedList<Animatronic> animatronicsHere;
+    private final LinkedList<AnimatronicDrawing> animatronicsHere;
     private final boolean isLeftDoorOfOffice, isRightDoorOfOffice;
     private final double soundVolume, soundPan;
 
     private Camera(String name, BufferedImage camBackground, Rectangle onMapLoc, LinkedList<String> connections,
-                   LinkedList<Animatronic> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice,
+                   LinkedList<AnimatronicDrawing> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice,
                    double soundVolume, double soundPan) {
         this.name = name;
         this.camBackground = camBackground;
@@ -60,21 +60,21 @@ public class Camera {
         return isRightDoorOfOffice;
     }
 
-    public LinkedList<Animatronic> getAnimatronicsHere() {
+    public LinkedList<AnimatronicDrawing> getAnimatronicsHere() {
         return animatronicsHere;
     }
 
     /**
      * This method does not check whether the Cameras are connected, but it will fail if
      * {@link LinkedList#remove(Object)} on the List of Animatronics here returns false.
-     * @param animatronic Animatronic that is on this Camera and has to move.
+     * @param animatronicDrawing Animatronic that is on this Camera and has to move.
      * @param dest Camera to move to.
      */
-    public void move(Animatronic animatronic, Camera dest){
-        if (animatronicsHere.remove(animatronic)){
-            dest.animatronicsHere.add(animatronic);
+    public void move(AnimatronicDrawing animatronicDrawing, Camera dest){
+        if (animatronicsHere.remove(animatronicDrawing)){
+            dest.animatronicsHere.add(animatronicDrawing);
         } else {
-            throw new AnimatronicException("Animatronic "+animatronic.getName()+" not found in camera "+name+".");
+            throw new AnimatronicException("Animatronic "+ animatronicDrawing.getName()+" not found in camera "+name+".");
         }
     }
 
@@ -104,7 +104,7 @@ public class Camera {
         private BufferedImage camBackground = null;
         private Rectangle onMapLoc = null;
         private final LinkedList<String> connections = new LinkedList<>();
-        private final LinkedList<Animatronic> animatronicsHere = new LinkedList<>();
+        private final LinkedList<AnimatronicDrawing> animatronicsHere = new LinkedList<>();
         private boolean isLeftDoorOfOffice = false;
         private boolean isRightDoorOfOffice = false;
         private double soundVolume = 1;
@@ -137,8 +137,8 @@ public class Camera {
             return this;
         }
 
-        public Builder addAnimatronics(Animatronic... animatronics) {
-            Collections.addAll(animatronicsHere, animatronics);
+        public Builder addAnimatronics(AnimatronicDrawing... animatronicDrawings) {
+            Collections.addAll(animatronicsHere, animatronicDrawings);
             return this;
         }
 

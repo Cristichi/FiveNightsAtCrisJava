@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Cris extends AvoidCamsAnimatronic {
+public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private final double secsToKill;
 
-    public Cris(double secInterval, Map<Integer, Integer> aiDuringNight,
-                List<String> forbiddenCams, double secsToKill) throws ResourceException {
+    public RoamingCris(double secInterval, Map<Integer, Integer> aiDuringNight,
+                       List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Cris", secInterval, aiDuringNight, 20, "anims/cris/camImg.png",
                 new Jumpscare("anims/cris/jumpscare.gif", 4,
                         Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump.wav"), 6), forbiddenCams, Color.PINK);

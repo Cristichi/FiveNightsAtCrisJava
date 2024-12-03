@@ -433,13 +433,13 @@ public class Main {
     }
 
     private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        Animatronic bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        Animatronic maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
+        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        Animatronic paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
+        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
@@ -576,16 +576,16 @@ public class Main {
     }
 
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        Animatronic bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        Animatronic maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
+        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        Animatronic paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
+        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
-        Animatronic cris = new Cris(5, Map.of(0,4, 3,6, 4,7, 5,8), List.of(), 5);
+        AnimatronicDrawing cris = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8), List.of(), 5);
 
         CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
         nightMap.addAll(

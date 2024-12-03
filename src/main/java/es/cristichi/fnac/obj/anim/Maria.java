@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Maria extends AvoidCamsAnimatronic {
+public class Maria extends AvoidCamsAnimatronicDrawing {
     private final double secsToKill;
 
     public Maria(double secInterval, Map<Integer, Integer> aiDuringNight,

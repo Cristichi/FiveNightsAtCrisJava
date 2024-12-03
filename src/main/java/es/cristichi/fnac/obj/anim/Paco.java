@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Paco extends PathedMoveAnimatronic{
+public class Paco extends PathedMoveAnimatronicDrawing {
     private final float moveSoundChance;
     private final double secsToKill;
 

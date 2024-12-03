@@ -6,7 +6,7 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Camera;
 import es.cristichi.fnac.obj.CameraMap;
 import es.cristichi.fnac.obj.OfficeLocation;
-import es.cristichi.fnac.obj.anim.Animatronic;
+import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.anim.Jumpscare;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
@@ -292,20 +292,20 @@ public abstract class Night extends JComponent {
 
 				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
-					HashMap<Animatronic, Map.Entry<Camera, Animatronic.MoveOppReturn>> moves = new HashMap<>(5);
+					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveOppReturn>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
-						for (Animatronic anim : cam.getAnimatronicsHere()){
+						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(nightHour);
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
-									Animatronic.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
+									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 									}
 								}
 							}
-							Animatronic.TickReturn tickReturn = anim.onTick(currentTick, FPS, camsUp, openDoor, cam, rng);
+							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, FPS, camsUp, openDoor, cam, rng);
 							if (tickReturn.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future
@@ -322,8 +322,8 @@ public abstract class Night extends JComponent {
 							}
 						}
 					}
-					for (Animatronic anim : moves.keySet()){
-						Map.Entry<Camera, Animatronic.MoveOppReturn> move = moves.get(anim);
+					for (AnimatronicDrawing anim : moves.keySet()){
+						Map.Entry<Camera, AnimatronicDrawing.MoveOppReturn> move = moves.get(anim);
 
 						Camera fromCam = move.getKey();
 						Camera toCam = camerasMap.get(move.getValue().moveToCam());
@@ -630,7 +630,7 @@ public abstract class Night extends JComponent {
 									camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
 
-							for (Animatronic an : current.getAnimatronicsHere()){
+							for (AnimatronicDrawing an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed
 										|| current.isRightDoorOfOffice()&&!rightDoorClosed;
 								if (an.showOnCam(currentTick, FPS, openDoor, current, rng)){
@@ -731,7 +731,7 @@ public abstract class Night extends JComponent {
 							int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight) / 3;
 							int debugRecX = scaledCamMapRecX;
 							int debugRecY = scaledCamMapRecY;
-							for (Animatronic anim : cam.getAnimatronicsHere()) {
+							for (AnimatronicDrawing anim : cam.getAnimatronicsHere()) {
 								g.setColor(anim.getDebugColor());
 								g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
 								debugRecX += debugRecDim;

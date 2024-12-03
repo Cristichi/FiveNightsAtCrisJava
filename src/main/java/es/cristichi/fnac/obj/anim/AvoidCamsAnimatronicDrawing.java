@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.*;
 
 /**
- * This class implements {@link Animatronic#onMovementOppSuccess(CameraMap, Camera, Random)} with a simple
+ * This class implements {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} with a simple
  * movement that avoids a list of Camera names. From the possible Cameras, movement is completely random.
  */
-public abstract class AvoidCamsAnimatronic extends Animatronic {
+public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
     protected final List<String> forbiddenCameras;
 
-    public AvoidCamsAnimatronic(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
-                                int maxIaLevel, String camImgPath, Jumpscare jumpscare,
-                                List<String> forbiddenCameras, Color debugColor) throws ResourceException {
+    public AvoidCamsAnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
+                                       int maxIaLevel, String camImgPath, Jumpscare jumpscare,
+                                       List<String> forbiddenCameras, Color debugColor) throws ResourceException {
         super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscare, debugColor);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }
