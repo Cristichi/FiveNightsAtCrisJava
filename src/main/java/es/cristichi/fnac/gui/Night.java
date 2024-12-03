@@ -844,9 +844,8 @@ public abstract class Night extends JComponent {
 				if (jumpscare.isFramesFinished()) {
 					nightTicks.cancel();
 					victoryScreen = false;
-				} else {
-					jumpscare.updateFrame();
 				}
+				jumpscare.updateFrame();
 			}
 		}
     }
