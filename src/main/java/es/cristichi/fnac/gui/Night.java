@@ -831,7 +831,7 @@ public abstract class Night extends JComponent {
 
 		// Jumpscares system. Yes, in the paint method, I know.
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
-			if (camsUp){
+			if (camsUp && jumpscare.shouldCamsBeDown()){
 				Action closeCamsAction = getActionMap().get("camsAction");
 				if (closeCamsAction instanceof CamsAction camsAction) {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));

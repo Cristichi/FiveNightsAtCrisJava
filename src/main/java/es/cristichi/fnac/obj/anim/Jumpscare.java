@@ -11,12 +11,15 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.*;
 
 public class Jumpscare {
     private final Sound sound;
     private final int soundStartFrame;
+    private final int camsDownFrame;
     private List<BufferedImage> frames;
     private final int repsMax;
     private int currentReps;
@@ -25,19 +28,15 @@ public class Jumpscare {
     private final LinkedList<Runnable> onFinish;
     private Boolean soundFinished;
 
-    public Jumpscare(String filepath, int reps, Runnable... onFinish) throws ResourceException {
-        this(filepath, reps, null, -1, onFinish);
-    }
-
-    public Jumpscare(String filepath, int reps, @Nullable Sound sound, int soundStartFrame, Runnable... onFinish) throws ResourceException {
-        this.repsMax = Math.max(1, reps);
+    public Jumpscare(String filepath, int repFrames, int camsDownFrame, @Nullable Sound sound, int soundStartFrame) throws ResourceException {
+        this.repsMax = Math.max(1, repFrames);
         this.currentFrame = 0;
+        this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
         loadFrames(filepath);
 
         this.onFinish = new LinkedList<>();
-        this.onFinish.addAll(Arrays.asList(onFinish));
         if (sound == null){
             soundFinished = null;
         } else {
@@ -64,6 +63,10 @@ public class Jumpscare {
 
     public boolean isFrameToPlaySound(){
         return currentFrame==soundStartFrame;
+    }
+
+    public boolean shouldCamsBeDown(){
+        return currentFrame>=camsDownFrame;
     }
 
     private void loadFrames(String resourcePath) throws ResourceException {

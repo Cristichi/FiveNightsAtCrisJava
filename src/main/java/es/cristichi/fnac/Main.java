@@ -99,7 +99,7 @@ public class Main {
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 40);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 40, 0, null, -1);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
@@ -149,7 +149,7 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        //mmItems.add("Testing Night");
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -190,15 +190,17 @@ public class Main {
 
     @SuppressWarnings("all")
     private static Night startTESTINGNIGHT(CardLayout cards, JFrame window) throws IOException {
+        long seed = new Random().nextLong();
+        Random rng = new Random(seed);
         boolean newnight = true;
         CameraMap nightMap;
         if (newnight){
             nightMap = new CrisRestaurantMap();
             ((CrisRestaurantMap) nightMap).addCamAnimatronics("dining area",
-                    new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
-                    new Maria(1, Map.of(0,0), List.of(), 5),
-                    new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5),
-                    new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
+                    //new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
+                    //new Maria(1, Map.of(0,0), List.of(), 5),
+                    new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
+                    ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
             );
         } else {
             nightMap = new TutorialMap();
@@ -209,9 +211,8 @@ public class Main {
 //                        new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 555)
             );
         }
-        long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                powerOutage, new Random(seed), 60, 22f,
+                powerOutage, rng, 60, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -233,6 +234,8 @@ public class Main {
     }
 
     private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        long seed = new Random().nextLong();
+        Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(0,0, 1,1, 4,2);
 
         Map<Integer, Integer> aiNightMaria = Map.of(0,0, 3,1, 4,2, 5,3);
@@ -241,9 +244,8 @@ public class Main {
         tutorialMap.addCam1Animatronics(new Bob(5, aiNightBob, List.of("cam4"), 8));
         tutorialMap.addCam2Animatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8));
 
-        long seed = new Random().nextLong();
         Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
-                powerOutage, new Random(seed), 60, 0.45f,
+                powerOutage, rng, 60, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -330,6 +332,8 @@ public class Main {
     }
 
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        long seed = new Random().nextLong();
+        Random rng = new Random(seed);
         AnimatronicDrawing bob = new Bob(3, Map.of(0,2, 2,3, 4,4, 5,5),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
@@ -340,7 +344,7 @@ public class Main {
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
         AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
-                List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5);
+                List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -348,9 +352,8 @@ public class Main {
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
 
-        long seed = new Random().nextLong();
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
-                powerOutage, new Random(seed), 90, 0.45f,
+                powerOutage, rng, 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
@@ -386,6 +389,9 @@ public class Main {
     }
 
     private static Night startNight3(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        long seed = new Random().nextLong();
+        Random rng = new Random(seed);
+
         AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
@@ -396,7 +402,7 @@ public class Main {
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
         AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,3, 3,5, 4,6),
-                List.of("kitchen", "storage", "dining area", "main stage"), 5);
+                List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -404,9 +410,8 @@ public class Main {
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
 
-        long seed = new Random().nextLong();
         Night night = new Night("Night 3", nightMap, null,
-                powerOutage, new Random(seed), 90, 0.45f,
+                powerOutage, rng, 90, 0.45f,
                 Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
             @Override
             protected void onJumpscare() {
