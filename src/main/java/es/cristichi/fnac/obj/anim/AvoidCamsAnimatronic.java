@@ -26,6 +26,7 @@ public abstract class AvoidCamsAnimatronic extends Animatronic {
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
-        return new MoveOppReturn(connections.get(rng.nextInt(connections.size())), null);
+        int random = rng.nextInt(connections.size());
+        return new MoveOppReturn(connections.get(random), null);
     }
 }
