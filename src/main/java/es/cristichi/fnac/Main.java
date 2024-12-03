@@ -7,8 +7,9 @@ import es.cristichi.fnac.gui.Night;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.anim.*;
-import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
+import es.cristichi.fnac.obj.cams.TutorialMap;
 import kuusisto.tinysound.TinySound;
 import org.jetbrains.annotations.NotNull;
 
@@ -181,148 +182,21 @@ public class Main {
         boolean newnight = true;
         CameraMap nightMap;
         if (newnight){
-            nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
-            nightMap.addAll(
-                    new Camera.Builder()
-                            .setName("kitchen")
-                            .setCamBackground("night/general/kitchen.jpg")
-                            .setOnMapLoc(187, 45, 140, 70)
-                            .setSoundVolume(0.2)
-                            .setSoundPan(-1)
-                            .addConnection("dining area")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("storage")
-                            .setCamBackground("night/general/storage.jpg")
-                            .setOnMapLoc(542, 111, 140, 70)
-                            .setSoundVolume(0.2)
-                            .setSoundPan(1)
-                            .addConnection("dining area")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("dining area")
-                            .setCamBackground("night/general/dining area.jpg")
-                            .setOnMapLoc(168, 182, 140, 70)
-                            .setSoundVolume(0.4)
-                            .setSoundPan(-0.1)
-                            .addConnection("kitchen", "storage", "main stage", "corridor 1", "corridor 2")
-                            .addAnimatronics(
-//                                    new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
-//                                    new Maria(1, Map.of(0,0), List.of(), 5),
-//                                    new Cris(1, Map.of(0,20), List.of(), 5),
-                                    new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
-                            )
-                            .build(),
-                    new Camera.Builder()
-                            .setName("main stage")
-                            .setCamBackground("night/general/main stage.jpg")
-                            .setOnMapLoc(537, 399, 140, 70)
-                            .setSoundVolume(0.4)
-                            .setSoundPan(0.1)
-                            .addConnection("dining area")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("corridor 1")
-                            .setCamBackground("night/general/corridor 1.jpg")
-                            .setOnMapLoc(314, 469, 140, 70)
-                            .setSoundVolume(0.6)
-                            .setSoundPan(-0.5)
-                            .addConnection("dining area", "corridor 3", "staff lounge")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("corridor 2")
-                            .setCamBackground("night/general/corridor 2.jpg")
-                            .setOnMapLoc(456, 469, 140, 70)
-                            .setSoundVolume(0.6)
-                            .setSoundPan(0.5)
-                            .addConnection("dining area", "corridor 4", "bathrooms")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("staff lounge")
-                            .setCamBackground("night/general/staff lounge.jpg")
-                            .setOnMapLoc(30, 821, 140, 70)
-                            .setSoundVolume(0.6)
-                            .setSoundPan(-1)
-                            .addConnection("corridor 1")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("offices")
-                            .setCamBackground("night/general/offices.jpg")
-                            .setOnMapLoc(825, 840, 140, 70)
-                            .setSoundVolume(0.6)
-                            .setSoundPan(1)
-                            .addConnection("corridor 4")  //Offices go to corridor 4, but not vice-versa
-                            .build(),
-                    new Camera.Builder()
-                            .setName("bathrooms")
-                            .setCamBackground("night/general/bathrooms.jpg")
-                            .setOnMapLoc(560, 734, 140, 51)
-                            .setSoundVolume(1)
-                            .setSoundPan(0)
-                            .addConnection("corridor 2")
-                            .build(),
-                    new Camera.Builder()
-                            .setName("corridor 3")
-                            .setCamBackground("night/general/corridor 3.jpg")
-                            .setOnMapLoc(225, 561, 140, 70)
-                            .setSoundVolume(1)
-                            .setSoundPan(-1)
-                            .addConnection("corridor 1")
-                            .connectToOfficeLeft()
-                            .build(),
-                    new Camera.Builder()
-                            .setName("corridor 4")
-                            .setCamBackground("night/general/corridor 4.jpg")
-                            .setOnMapLoc(662, 568, 140, 70)
-                            .setSoundVolume(1)
-                            .setSoundPan(1)
-                            .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
-                            .connectToOfficeRight()
-                            .build()
+            nightMap = new CrisRestaurantMap();
+            ((CrisRestaurantMap) nightMap).addCamAnimatronics("dining area",
+                    new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
+                    new Maria(1, Map.of(0,0), List.of(), 5),
+                    new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5),
+                    new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
             );
         } else {
-            nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
-            Camera cam1 = new Camera.Builder()
-                    .setName("cam1")
-                    .setCamBackground("night/tutorial/cam1.jpg")
-                    .setOnMapLoc(113, 111, 378, 177)
-                    .setSoundVolume(0.5)
-                    .setSoundPan(-1)
-                    .addAnimatronics(
-                            new Bob(1, Map.of(0, 20), List.of("cam4"), 555)
+            nightMap = new TutorialMap();
+            ((TutorialMap) nightMap).addCam1Animatronics(
+                    new Bob(1, Map.of(0, 20), List.of("cam4"), 555)
 //                        new Maria(1, Map.of(0,0), List.of(), 5),
 //                        new Cris(1, Map.of(0,20), List.of(), 5),
 //                        new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 555)
-                    )
-                    .addConnection("cam2", "cam3")
-                    .build();
-            Camera cam2 = new Camera.Builder()
-                    .setName("cam2")
-                    .setCamBackground("night/tutorial/cam2.jpg")
-                    .setOnMapLoc(491, 117, 379, 177)
-                    .setSoundVolume(0.5)
-                    .setSoundPan(1)
-                    .addConnection("cam1", "cam4")
-                    .build();
-            Camera cam3 = new Camera.Builder()
-                    .setName("cam3")
-                    .setCamBackground("night/tutorial/cam3.jpg")
-                    .setOnMapLoc(134, 287, 167, 571)
-                    .setSoundVolume(1)
-                    .setSoundPan(-1)
-                    .addConnection("cam1")
-                    .connectToOfficeLeft()
-                    .build();
-            Camera cam4 = new Camera.Builder()
-                    .setName("cam4")
-                    .setCamBackground("night/tutorial/cam4.jpg")
-                    .setOnMapLoc(720, 296, 141, 586)
-                    .setSoundVolume(1)
-                    .setSoundPan(1)
-                    .addConnection("cam2")
-                    .connectToOfficeRight()
-                    .build();
-            nightMap.addAll(cam1, cam2, cam3, cam4);
+            );
         }
         long seed = new Random().nextLong();
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
@@ -352,46 +226,12 @@ public class Main {
 
         Map<Integer, Integer> aiNightMaria = Map.of(0,0, 3,1, 4,2, 5,3);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/tutorial/map.png"), "cam3");
-        Camera cam1 = new Camera.Builder()
-                .setName("cam1")
-                .setCamBackground("night/tutorial/cam1.jpg")
-                .setOnMapLoc(113, 111, 378, 177)
-                .setSoundVolume(0.5)
-                .setSoundPan(-1)
-                .addAnimatronics(new Bob(5, aiNightBob, List.of("cam4"), 8))
-                .addConnection("cam2", "cam3")
-                .build();
-        Camera cam2 = new Camera.Builder()
-                .setName("cam2")
-                .setCamBackground("night/tutorial/cam2.jpg")
-                .setOnMapLoc(491, 117, 379, 177)
-                .setSoundVolume(0.5)
-                .setSoundPan(1)
-                .addAnimatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8))
-                .addConnection("cam1", "cam4")
-                .build();
-        Camera cam3 = new Camera.Builder()
-                .setName("cam3")
-                .setCamBackground("night/tutorial/cam3.jpg")
-                .setOnMapLoc(134, 287, 167, 571)
-                .setSoundVolume(1)
-                .setSoundPan(-1)
-                .addConnection("cam1")
-                .connectToOfficeLeft()
-                .build();
-        Camera cam4 = new Camera.Builder()
-                .setName("cam4")
-                .setCamBackground("night/tutorial/cam4.jpg")
-                .setOnMapLoc(720, 296, 141, 586)
-                .setSoundVolume(1)
-                .setSoundPan(1)
-                .addConnection("cam2")
-                .connectToOfficeRight()
-                .build();
-        nightMap.addAll(cam1, cam2, cam3, cam4);
+        TutorialMap tutorialMap = new TutorialMap();
+        tutorialMap.addCam1Animatronics(new Bob(5, aiNightBob, List.of("cam4"), 8));
+        tutorialMap.addCam2Animatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8));
+
         long seed = new Random().nextLong();
-        Night night = new Night("Tutorial", nightMap, "night/tutorial/paper.png",
+        Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
                 new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 60, 0.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
             @Override
@@ -437,102 +277,10 @@ public class Main {
         AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
-        nightMap.addAll(
-                new Camera.Builder()
-                        .setName("kitchen")
-                        .setCamBackground("night/general/kitchen.jpg")
-                        .setOnMapLoc(187, 45, 140, 70)
-                        .setSoundVolume(0.2)
-                        .setSoundPan(-1)
-                        .addAnimatronics(paco)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("storage")
-                        .setCamBackground("night/general/storage.jpg")
-                        .setOnMapLoc(542, 111, 140, 70)
-                        .setSoundVolume(0.2)
-                        .setSoundPan(1)
-                        .addAnimatronics(bob)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("dining area")
-                        .setCamBackground("night/general/dining area.jpg")
-                        .setOnMapLoc(168, 182, 140, 70)
-                        .setSoundVolume(0.4)
-                        .setSoundPan(-0.1)
-                        .addConnection("main stage", "corridor 1", "corridor 2")
-                        .build(),
-                new Camera.Builder()
-                        .setName("main stage")
-                        .setCamBackground("night/general/main stage.jpg")
-                        .setOnMapLoc(537, 399, 140, 70)
-                        .setSoundVolume(0.4)
-                        .setSoundPan(0.1)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 1")
-                        .setCamBackground("night/general/corridor 1.jpg")
-                        .setOnMapLoc(314, 469, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(-0.5)
-                        .addConnection("dining area", "corridor 3", "staff lounge")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 2")
-                        .setCamBackground("night/general/corridor 2.jpg")
-                        .setOnMapLoc(456, 469, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(0.5)
-                        .addConnection("dining area", "corridor 4", "bathrooms")
-                        .build(),
-                new Camera.Builder()
-                        .setName("staff lounge")
-                        .setCamBackground("night/general/staff lounge.jpg")
-                        .setOnMapLoc(30, 821, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(-1)
-                        .addConnection("corridor 1")
-                        .build(),
-                new Camera.Builder()
-                        .setName("offices")
-                        .setCamBackground("night/general/offices.jpg")
-                        .setOnMapLoc(825, 840, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(1)
-                        .addConnection("corridor 4")  //Offices go to corridor 4, but not vice-versa
-                        .addAnimatronics(maria)
-                        .build(),
-                new Camera.Builder()
-                        .setName("bathrooms")
-                        .setCamBackground("night/general/bathrooms.jpg")
-                        .setOnMapLoc(560, 734, 140, 51)
-                        .setSoundVolume(1)
-                        .setSoundPan(0)
-                        .addConnection("corridor 2")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 3")
-                        .setCamBackground("night/general/corridor 3.jpg")
-                        .setOnMapLoc(225, 561, 140, 70)
-                        .setSoundVolume(1)
-                        .setSoundPan(-1)
-                        .addConnection("corridor 1")
-                        .connectToOfficeLeft()
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 4")
-                        .setCamBackground("night/general/corridor 4.jpg")
-                        .setOnMapLoc(662, 568, 140, 70)
-                        .setSoundVolume(1)
-                        .setSoundPan(1)
-                        .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
-                        .connectToOfficeRight()
-                        .build()
-        );
+        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        nightMap.addCamAnimatronics("kitchen", paco);
+        nightMap.addCamAnimatronics("storage", bob);
+        nightMap.addCamAnimatronics("offices", maria);
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
@@ -571,115 +319,23 @@ public class Main {
     }
 
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,2, 2,3, 4,4, 5,5),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
+        AnimatronicDrawing maria = new Maria(4, Map.of(1,1, 2,2, 3,3, 4,4, 5,5),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
+        AnimatronicDrawing paco = new Paco(4, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
         AnimatronicDrawing cris = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5);
 
-        CameraMap nightMap = new CameraMap(Resources.loadImageResource("night/general/map.png"), "storage");
-        nightMap.addAll(
-                new Camera.Builder()
-                        .setName("kitchen")
-                        .setCamBackground("night/general/kitchen.jpg")
-                        .setOnMapLoc(187, 45, 140, 70)
-                        .setSoundVolume(0.2)
-                        .setSoundPan(-1)
-                        .addAnimatronics(paco)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("storage")
-                        .setCamBackground("night/general/storage.jpg")
-                        .setOnMapLoc(542, 111, 140, 70)
-                        .setSoundVolume(0.2)
-                        .setSoundPan(1)
-                        .addAnimatronics(bob)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("dining area")
-                        .setCamBackground("night/general/dining area.jpg")
-                        .setOnMapLoc(168, 182, 140, 70)
-                        .setSoundVolume(0.4)
-                        .setSoundPan(-0.1)
-                        .addConnection("main stage", "corridor 1", "corridor 2")
-                        .build(),
-                new Camera.Builder()
-                        .setName("main stage")
-                        .setCamBackground("night/general/main stage.jpg")
-                        .setOnMapLoc(537, 399, 140, 70)
-                        .setSoundVolume(0.4)
-                        .setSoundPan(0.1)
-                        .addConnection("dining area")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 1")
-                        .setCamBackground("night/general/corridor 1.jpg")
-                        .setOnMapLoc(314, 469, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(-0.5)
-                        .addConnection("dining area", "corridor 3", "staff lounge")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 2")
-                        .setCamBackground("night/general/corridor 2.jpg")
-                        .setOnMapLoc(456, 469, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(0.5)
-                        .addConnection("dining area", "corridor 4", "bathrooms")
-                        .build(),
-                new Camera.Builder()
-                        .setName("staff lounge")
-                        .setCamBackground("night/general/staff lounge.jpg")
-                        .setOnMapLoc(30, 821, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(-1)
-                        .addConnection("corridor 1")
-                        .addAnimatronics(cris)
-                        .build(),
-                new Camera.Builder()
-                        .setName("offices")
-                        .setCamBackground("night/general/offices.jpg")
-                        .setOnMapLoc(825, 840, 140, 70)
-                        .setSoundVolume(0.6)
-                        .setSoundPan(1)
-                        .addConnection("corridor 4")  //Offices go to corridor 4, but not vice-versa
-                        .addAnimatronics(maria)
-                        .build(),
-                new Camera.Builder()
-                        .setName("bathrooms")
-                        .setCamBackground("night/general/bathrooms.jpg")
-                        .setOnMapLoc(560, 734, 140, 51)
-                        .setSoundVolume(1)
-                        .setSoundPan(0)
-                        .addConnection("corridor 2")
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 3")
-                        .setCamBackground("night/general/corridor 3.jpg")
-                        .setOnMapLoc(225, 561, 140, 70)
-                        .setSoundVolume(1)
-                        .setSoundPan(-1)
-                        .addConnection("corridor 1")
-                        .connectToOfficeLeft()
-                        .build(),
-                new Camera.Builder()
-                        .setName("corridor 4")
-                        .setCamBackground("night/general/corridor 4.jpg")
-                        .setOnMapLoc(662, 568, 140, 70)
-                        .setSoundVolume(1)
-                        .setSoundPan(1)
-                        .addConnection("corridor 2") //Offices go to corridor 4, but not vice-versa
-                        .connectToOfficeRight()
-                        .build()
-        );
+        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        nightMap.addCamAnimatronics("kitchen", paco);
+        nightMap.addCamAnimatronics("storage", bob);
+        nightMap.addCamAnimatronics("offices", maria);
+        nightMap.addCamAnimatronics("staff lounge", cris);
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
