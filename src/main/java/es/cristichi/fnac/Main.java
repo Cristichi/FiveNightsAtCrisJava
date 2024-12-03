@@ -80,23 +80,8 @@ public class Main {
         nightPanel = new JPanel(new BorderLayout());
         cardPanel.add(nightPanel, "night");
 
-        Timer mouseRestrictTimer = getMouseRestrictTimer(window);
-        mouseRestrictTimer.start();
-
-        MenuData menuData = getUpdatedMenuData(saveFile);
-
-        mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
-        cardPanel.add(mainMenu, "menu");
-        cards.show(cardPanel, "menu");
-
-        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        window.setMinimumSize(new Dimension(600, 400));
-        window.setVisible(true);
-    }
-
-    private static Timer getMouseRestrictTimer(JFrame window) throws AWTException {
         Robot robot = new Robot();
-        return new Timer(10, e -> {
+        new Timer(10, e -> {
             if (window.isFocused()) {
                 Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
                 Rectangle bounds = window.getBounds();
@@ -108,7 +93,17 @@ public class Main {
                     robot.mouseMove(closestX, closestY);
                 }
             }
-        });
+        }).start();
+
+        MenuData menuData = getUpdatedMenuData(saveFile);
+
+        mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
+        cardPanel.add(mainMenu, "menu");
+        cards.show(cardPanel, "menu");
+
+        window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        window.setMinimumSize(new Dimension(600, 400));
+        window.setVisible(true);
     }
 
     private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) {
