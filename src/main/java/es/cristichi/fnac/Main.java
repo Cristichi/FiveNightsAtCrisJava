@@ -122,13 +122,19 @@ public class Main {
             mmItems.add("Repeat Tutorial");
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
-            mmItems.add("More Nights don't exist (yet)");
             mmItems.add("Night 2");
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         } else if (numCompleted == 3) {
             background = "menu/background3.jpg";
+            mmItems.add("Night 3");
+            mmItems.add("Repeat Night 2");
+            mmItems.add("Repeat Night 1");
+            mmItems.add("Repeat Tutorial");
+        } else if (numCompleted == 4) {
+            background = "menu/background4.jpg";
             mmItems.add("More Nights don't exist (yet)");
+            mmItems.add("Repeat Night 3");
             mmItems.add("Repeat Night 2");
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
@@ -165,6 +171,9 @@ public class Main {
                     }
                     case "Night 2", "Repeat Night 2" -> {
                         return startNight2(saveFile, cards, window);
+                    }
+                    case "Night 3", "Repeat Night 3" -> {
+                        return startNight3(saveFile, cards, window);
                     }
                     case "Exit" -> {
                         window.dispose();
@@ -328,14 +337,70 @@ public class Main {
         AnimatronicDrawing paco = new Paco(4, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
 
-        AnimatronicDrawing cris = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
+        AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
-        nightMap.addCamAnimatronics("staff lounge", cris);
+        nightMap.addCamAnimatronics("staff lounge", crisIsClose);
+
+        long seed = new Random().nextLong();
+        Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
+                new Jumpscare("office/powerOutage.gif", 1), new Random(seed), 90, 0.45f,
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
+            @Override
+            protected void onJumpscare() {
+                nightPanel.removeAll();
+                cards.show(cardPanel, "menu");
+            }
+        };
+        night.addOnNightEnd((completed) -> {
+            if (completed){
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    mainMenu.updateBackground(menuData.background);
+                    mainMenu.updateMenuItems(menuData.mmItems);
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not save victory to save file.", e);
+                }
+            }
+
+            cards.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
+        });
+        nightPanel.add(night);
+        window.setTitle(getTitleForWindow(night.getNightName()));
+        cards.show(cardPanel, "night");
+        System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        night.startNight();
+
+        return night;
+    }
+
+    private static Night startNight3(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+
+        AnimatronicDrawing maria = new Maria(4, Map.of(0,1, 2,2, 3,3, 4,4, 5,5),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+
+        AnimatronicDrawing paco = new Paco(4, Map.of(0,4, 3,6, 4,7, 5,8),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
+
+        AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,3, 3,5, 4,6),
+                List.of("kitchen", "storage", "dining area", "main stage"), 5);
+
+        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        nightMap.addCamAnimatronics("kitchen", paco);
+        nightMap.addCamAnimatronics("storage", bob);
+        nightMap.addCamAnimatronics("offices", maria);
+        nightMap.addCamAnimatronics("dining area", crisChoosesSide);
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
