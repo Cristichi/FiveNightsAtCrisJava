@@ -281,13 +281,13 @@ public class Main {
     }
 
     private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,1, 4,2),
+        AnimatronicDrawing bob = new Bob(5, Map.of(0,1, 4,2),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
 
-        AnimatronicDrawing maria = new Maria(3, Map.of(4,1),
+        AnimatronicDrawing maria = new Maria(5, Map.of(4,1),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 6);
 
-        AnimatronicDrawing paco = new Paco(5, Map.of(0,2, 4,3),
+        AnimatronicDrawing paco = new Paco(6, Map.of(0,2, 4,3),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 6);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
@@ -334,13 +334,13 @@ public class Main {
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,4),
+        AnimatronicDrawing bob = new Bob(5, Map.of(0,4),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(3, Map.of(1,1, 4,2),
+        AnimatronicDrawing maria = new Maria(5, Map.of(1,1, 4,2),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 4,5),
+        AnimatronicDrawing paco = new Paco(6, Map.of(0,4, 4,5),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
 
         AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,1, 4,2, 5,3),
@@ -392,13 +392,13 @@ public class Main {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,7),
+        AnimatronicDrawing bob = new Bob(5, Map.of(0,7),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 4,5),
+        AnimatronicDrawing maria = new Maria(5, Map.of(1,3, 4,5),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        AnimatronicDrawing paco = new Paco(5, Map.of(0,5, 4,7),
+        AnimatronicDrawing paco = new Paco(6, Map.of(0,5, 4,7),
                 List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
 
         AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
