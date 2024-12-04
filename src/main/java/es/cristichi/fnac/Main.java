@@ -238,7 +238,7 @@ public class Main {
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(0,0, 1,1, 4,2);
 
-        Map<Integer, Integer> aiNightMaria = Map.of(0,0, 3,1, 4,2, 5,3);
+        Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,1, 4,2);
 
         TutorialMap tutorialMap = new TutorialMap();
         tutorialMap.addCam1Animatronics(new Bob(5, aiNightBob, List.of("cam4"), 8));
@@ -281,14 +281,14 @@ public class Main {
     }
 
     private static Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
-                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,1, 4,2),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
 
-        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 3,4, 4,5, 5,6),
-                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        AnimatronicDrawing maria = new Maria(3, Map.of(4,1),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 6);
 
-        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 3,6, 4,7, 5,8),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
+        AnimatronicDrawing paco = new Paco(5, Map.of(0,2, 4,3),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 6);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -334,16 +334,16 @@ public class Main {
     private static Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,2, 2,3, 4,4, 5,5),
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,4),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(4, Map.of(1,1, 2,2, 3,3, 4,4, 5,5),
+        AnimatronicDrawing maria = new Maria(3, Map.of(1,1, 4,2),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        AnimatronicDrawing paco = new Paco(4, Map.of(0,4, 3,6, 4,7, 5,8),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
+        AnimatronicDrawing paco = new Paco(5, Map.of(0,4, 4,5),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
 
-        AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,4, 3,6, 4,7, 5,8),
+        AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,1, 4,2, 5,3),
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
@@ -392,16 +392,16 @@ public class Main {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
-        AnimatronicDrawing bob = new Bob(3, Map.of(0,3, 2,4, 4,5, 5,6),
+        AnimatronicDrawing bob = new Bob(3, Map.of(0,7),
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(4, Map.of(0,1, 2,2, 3,3, 4,4, 5,5),
+        AnimatronicDrawing maria = new Maria(3, Map.of(1,3, 4,5),
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
-        AnimatronicDrawing paco = new Paco(4, Map.of(0,4, 3,6, 4,7, 5,8),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 12);
+        AnimatronicDrawing paco = new Paco(5, Map.of(0,5, 4,7),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
 
-        AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,3, 3,5, 4,6),
+        AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
                 List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
