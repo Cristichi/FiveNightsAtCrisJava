@@ -1,14 +1,16 @@
 package es.cristichi.fnac.obj.cams;
 
 import es.cristichi.fnac.exception.CameraException;
+import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 
 public class CameraMap extends HashMap<String, Camera> {
-    private final BufferedImage mapImage;
-    private final String defaultSelected;
-    private String selected;
+    protected final BufferedImage mapImage;
+    protected final String defaultSelected;
+    protected String selected;
 
     public CameraMap(BufferedImage mapImage, String defaultSelected) {
         super();
@@ -41,5 +43,9 @@ public class CameraMap extends HashMap<String, Camera> {
         for (Camera cam : cams) {
             put(cam.getName(), cam);
         }
+    }
+
+    public void addCamAnimatronics(String cam, AnimatronicDrawing... anims){
+        get(cam).getAnimatronicsHere().addAll(List.of(anims));
     }
 }

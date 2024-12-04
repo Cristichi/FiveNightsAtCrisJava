@@ -349,7 +349,7 @@ public abstract class Night extends JComponent {
 					for(Camera cam : camerasMap.values()){
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
-							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
+							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
 									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
@@ -687,8 +687,8 @@ public abstract class Night extends JComponent {
 									0, 0, camImgWidth, camImgHeight, this);
 
 							for (AnimatronicDrawing an : current.getAnimatronicsHere()){
-								boolean openDoor = current.isLeftDoorOfOffice()&&!leftDoorClosed
-										|| current.isRightDoorOfOffice()&&!rightDoorClosed;
+								boolean openDoor = current.isLeftDoor()&&!leftDoorClosed
+										|| current.isRightDoor()&&!rightDoorClosed;
 								if (an.showOnCam(currentTick, FPS, openDoor, current, rng)){
 									BufferedImage img = an.getCamImg();
 
@@ -747,63 +747,68 @@ public abstract class Night extends JComponent {
 
                     //for (int i = 0; i < camerasMap.size(); i++) {
                     for (Camera cam : camerasMap.values()) {
-						// Scale the current camera’s rectangle position
-						Rectangle camMapRec = new Rectangle(cam.getMapLoc());
-						int scaledCamMapRecX = mapX + (int) (camMapRec.x * scaleRatioX);
-						int scaledCamMapRecY = mapY + (int) (camMapRec.y * scaleRatioY);
-						int scaledCamMapRecWidth = (int) (camMapRec.width * scaleRatioX);
-						int scaledCamMapRecHeight = (int) (camMapRec.height * scaleRatioY);
+						if (!cam.isInvisible()){
+							// Scale the current camera’s rectangle position
+							Rectangle camMapRec = new Rectangle(cam.getMapLoc());
+							int scaledCamMapRecX = mapX + (int) (camMapRec.x * scaleRatioX);
+							int scaledCamMapRecY = mapY + (int) (camMapRec.y * scaleRatioY);
+							int scaledCamMapRecWidth = (int) (camMapRec.width * scaleRatioX);
+							int scaledCamMapRecHeight = (int) (camMapRec.height * scaleRatioY);
 
-						// Draw rectangle
-						if (cam.getName().equals(camerasMap.getSelectedName())){
-							if (cam.isBroken()){
-								g.setColor(Color.PINK);
+							// Draw rectangle
+							if (cam.getName().equals(camerasMap.getSelectedName())){
+								if (cam.isBroken()){
+									g.setColor(Color.PINK);
+								} else {
+									g.setColor(Color.LIGHT_GRAY);
+								}
+							} else if (cam.isBroken()){
+								g.setColor(Color.RED);
 							} else {
-								g.setColor(Color.LIGHT_GRAY);
+								g.setColor(Color.GRAY);
 							}
-						} else if (cam.isBroken()){
-							g.setColor(Color.RED);
+							g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
+
+							// Name of cam in map
+							{
+								String camName = cam.getName().toUpperCase();
+								g.setColor(Color.BLACK);
+								int marginX = scaledCamMapRecX/500;
+								int marginY = scaledCamMapRecY/500;
+								float fontSize = 25;
+								Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
+								FontMetrics metrics = g2d.getFontMetrics(font);
+								Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
+								while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
+									font = font.deriveFont(--fontSize);
+									metrics = g2d.getFontMetrics(font);
+									lineBounds = metrics.getStringBounds(camName, g);
+								}
+								g.setFont(font);
+								int camNameX = (int) (scaledCamMapRecX + lineBounds.getX() + marginX);
+								int camNameY = (int) (scaledCamMapRecY + (scaledCamMapRecHeight - lineBounds.getHeight()) / 2 + metrics.getAscent());
+								g2d.drawString(camName, camNameX, camNameY);
+							}
+
+							if (DEBUG_MODE){
+								int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight) / 3;
+								int debugRecX = scaledCamMapRecX;
+								int debugRecY = scaledCamMapRecY;
+								for (AnimatronicDrawing anim : cam.getAnimatronicsHere()) {
+									g.setColor(anim.getDebugColor());
+									g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
+									debugRecX += debugRecDim;
+									debugRecY += debugRecDim;
+								}
+							}
+
+							// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
+							camsLocOnMapOnScreen.put(cam.getName(),
+									new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
 						} else {
-							g.setColor(Color.GRAY);
+							// If Camera is now invisible but it was previously visible, we remove this to make sure it's not clickable
+							camsLocOnMapOnScreen.remove(cam.getName());
 						}
-						g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
-
-						// Name of cam in map
-						{
-							String camName = cam.getName().toUpperCase();
-							g.setColor(Color.BLACK);
-							int marginX = scaledCamMapRecX/500;
-							int marginY = scaledCamMapRecY/500;
-							float fontSize = 25;
-							Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
-							FontMetrics metrics = g2d.getFontMetrics(font);
-							Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
-							while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
-								font = font.deriveFont(--fontSize);
-								metrics = g2d.getFontMetrics(font);
-								lineBounds = metrics.getStringBounds(camName, g);
-							}
-							g.setFont(font);
-							int camNameX = (int) (scaledCamMapRecX + lineBounds.getX() + marginX);
-							int camNameY = (int) (scaledCamMapRecY + (scaledCamMapRecHeight - lineBounds.getHeight()) / 2 + metrics.getAscent());
-							g2d.drawString(camName, camNameX, camNameY);
-						}
-
-						if (DEBUG_MODE){
-							int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight) / 3;
-							int debugRecX = scaledCamMapRecX;
-							int debugRecY = scaledCamMapRecY;
-							for (AnimatronicDrawing anim : cam.getAnimatronicsHere()) {
-								g.setColor(anim.getDebugColor());
-								g.fillRect(debugRecX, debugRecY, debugRecDim, debugRecDim);
-								debugRecX += debugRecDim;
-								debugRecY += debugRecDim;
-							}
-						}
-
-						// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
-						camsLocOnMapOnScreen.put(cam.getName(),
-								new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
                     }
 
 					// Cam name in top-left of monitor

@@ -44,9 +44,9 @@ public class Maria extends AvoidCamsAnimatronicDrawing {
         } else {
             kill = false;
             startKillTick = null;
-            if (cam.isLeftDoorOfOffice()){
+            if (cam.isLeftDoor()){
                 return new TickReturn(false, sounds.getOrDefault("knock", null), 1, -1);
-            } else if (cam.isRightDoorOfOffice()){
+            } else if (cam.isRightDoor()){
                 return new TickReturn(false, sounds.getOrDefault("knock", null), 1, 1);
             }
         }

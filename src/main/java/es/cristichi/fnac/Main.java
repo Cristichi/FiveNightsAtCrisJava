@@ -149,7 +149,7 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        //mmItems.add("Testing Night");
+        mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -192,23 +192,23 @@ public class Main {
     private static Night startTESTINGNIGHT(CardLayout cards, JFrame window) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        boolean newnight = true;
         CameraMap nightMap;
-        if (newnight){
+        if (true){
             nightMap = new CrisRestaurantMap();
-            ((CrisRestaurantMap) nightMap).addCamAnimatronics("dining area",
+            ((CrisRestaurantMap) nightMap).addCamAnimatronics("corridor 1",
                     //new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
                     //new Maria(1, Map.of(0,0), List.of(), 5),
-                    new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
+                    //new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
+                    new RoamingCris(3, Map.of(0,20), List.of(), 5555, rng)
                     ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
             );
         } else {
             nightMap = new TutorialMap();
-            ((TutorialMap) nightMap).addCam1Animatronics(
-                    new Bob(1, Map.of(0, 20), List.of("cam4"), 555)
-//                        new Maria(1, Map.of(0,0), List.of(), 5),
-//                        new Cris(1, Map.of(0,20), List.of(), 5),
-//                        new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 555)
+            ((TutorialMap) nightMap).addCamAnimatronics("cam1",
+                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 555),
+                    //new Maria(1, Map.of(0,0), List.of(), 5),
+                    new RoamingCris(2, Map.of(0,20), List.of(), 5555, rng)
+                    //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 555)
             );
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
@@ -241,8 +241,8 @@ public class Main {
         Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,1, 4,2);
 
         TutorialMap tutorialMap = new TutorialMap();
-        tutorialMap.addCam1Animatronics(new Bob(5, aiNightBob, List.of("cam4"), 8));
-        tutorialMap.addCam2Animatronics(new Maria(5, aiNightMaria, List.of("cam3"), 8));
+        tutorialMap.addCamAnimatronics("cam1", new Bob(5, aiNightBob, List.of("cam4"), 8));
+        tutorialMap.addCamAnimatronics("cam2", new Maria(5, aiNightMaria, List.of("cam3"), 8));
 
         Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f,

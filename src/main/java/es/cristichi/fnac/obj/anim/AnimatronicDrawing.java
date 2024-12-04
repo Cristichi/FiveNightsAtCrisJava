@@ -95,7 +95,7 @@ public abstract class AnimatronicDrawing {
         if (kill || startKillTick != null || isOpenDoor){
             return false;
         }
-        if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice())){
+        if ((cam.isLeftDoor() || cam.isRightDoor())){
             return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
         }
         return rng.nextInt(maxIaLevel) < aiLevel;

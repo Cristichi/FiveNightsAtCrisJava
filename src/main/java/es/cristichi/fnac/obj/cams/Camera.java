@@ -20,12 +20,12 @@ public class Camera {
     private final LinkedList<String> connections;
     private final LinkedList<AnimatronicDrawing> animatronicsHere;
     private final boolean isLeftDoorOfOffice, isRightDoorOfOffice;
-    private boolean broken;
+    private boolean broken, invisible;
     private final double soundVolume, soundPan;
 
     private Camera(String name, BufferedImage camBackground, Rectangle onMapLoc, LinkedList<String> connections,
                    LinkedList<AnimatronicDrawing> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice,
-                   double soundVolume, double soundPan, boolean broken) {
+                   double soundVolume, double soundPan, boolean broken, boolean invisible) {
         this.name = name;
         this.camBackground = camBackground;
         this.onMapLoc = onMapLoc;
@@ -36,6 +36,7 @@ public class Camera {
         this.soundVolume = soundVolume;
         this.soundPan = soundPan;
         this.broken = broken;
+        this.invisible = invisible;
     }
 
     public String getName() {
@@ -54,11 +55,11 @@ public class Camera {
         return new LinkedList<>(connections);
     }
 
-    public boolean isLeftDoorOfOffice() {
+    public boolean isLeftDoor() {
         return isLeftDoorOfOffice;
     }
 
-    public boolean isRightDoorOfOffice() {
+    public boolean isRightDoor() {
         return isRightDoorOfOffice;
     }
 
@@ -72,6 +73,23 @@ public class Camera {
 
     public void setBroken(boolean broken) {
         this.broken = broken;
+    }
+
+    public boolean isInvisible() {
+        return invisible;
+    }
+
+    public void setInvisible(boolean invisible) {
+        if (!invisible){
+            if (camBackground == null){
+                throw new CameraException("Cameras must have a background or be invisible.");
+            }
+            if (onMapLoc == null){
+                throw new CameraException("Cameras must have a Location on the map image. It's needed to " +
+                        "click on them with the mouse and also highlight when selected.");
+            }
+        }
+        this.invisible = invisible;
     }
 
     /**
@@ -120,6 +138,7 @@ public class Camera {
         private double soundVolume = 1;
         private double soundPan = 0;
         private boolean broken = false;
+        private boolean invisible = false;
 
         public Builder(){}
 
@@ -133,20 +152,51 @@ public class Camera {
             return this;
         }
 
-        public Builder setOnMapLoc(int x, int y, int width, int height) {
+        public Builder setOnMapLocManually(int x, int y, int width, int height) {
             this.onMapLoc = new Rectangle(x,y,width,height);
             return this;
         }
 
-        public Builder setSoundVolume(double soundVolume) {
+        public Builder setSoundVolumeManually(double soundVolume) {
             this.soundVolume = soundVolume;
             return this;
         }
 
-        public Builder setSoundPan(double soundPan) {
+        public Builder setSoundPanManually(double soundPan) {
             this.soundPan = soundPan;
             return this;
         }
+
+        public Builder setOnMapLocationVolumeAndPan(int x, int y, int width, int height, Point officeLoc, int mapWidth, int mapHeight) {
+            this.onMapLoc = new Rectangle(x, y, width, height);
+
+            // Calculate the center of the rectangle
+            int centerX = x + (width / 2);
+            int centerY = y + (height / 2);
+
+            // Calculate pan based on horizontal position
+            double pan = (double) (centerX - officeLoc.x) / ((double) mapWidth / 2);
+            pan = Math.max(-1, Math.min(1, pan)); // Clamp to range [-1, 1]
+            this.soundPan = pan;
+
+            // Calculate distance from the office
+            double distance = Math.sqrt(
+                    Math.pow(centerX - officeLoc.x, 2) +
+                            Math.pow(centerY - officeLoc.y, 2)
+            );
+
+            // Calculate maximum distance on the map
+            double maxDistance = Math.sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
+
+            // Calculate volume based on distance
+            double minVolume = 0.2; // Minimum volume level
+            double volume = minVolume + (1 - minVolume) * (1 - (distance / maxDistance));
+            volume = Math.max(minVolume, Math.min(1, volume));
+            this.soundVolume = volume;
+
+            return this;
+        }
+
 
         public Builder addAnimatronics(AnimatronicDrawing... animatronicDrawings) {
             Collections.addAll(animatronicsHere, animatronicDrawings);
@@ -158,12 +208,12 @@ public class Camera {
             return this;
         }
 
-        public Builder connectToOfficeLeft() {
+        public Builder isLeftDoor() {
             this.isLeftDoorOfOffice = true;
             return this;
         }
 
-        public Builder connectToOfficeRight() {
+        public Builder isRightDoor() {
             this.isRightDoorOfOffice = true;
             return this;
         }
@@ -173,19 +223,26 @@ public class Camera {
             return this;
         }
 
+        public Builder isInvisible() {
+            this.invisible = true;
+            return this;
+        }
+
         public Camera build(){
             if (name == null){
                 throw new CameraException("Name of Camera cannot be unset.");
             }
-            if (camBackground == null){
-                throw new CameraException("Cameras must have a background.");
-            }
-            if (onMapLoc == null){
-                throw new CameraException("Cameras must have a Location on the map image. It's needed to " +
-                        "click on them with the mouse and also highlight when selected.");
+            if (!invisible){
+                if (camBackground == null){
+                    throw new CameraException("Cameras must have a background or be invisible.");
+                }
+                if (onMapLoc == null){
+                    throw new CameraException("Cameras must have a Location on the map image. It's needed to " +
+                            "click on them with the mouse and also highlight when selected.");
+                }
             }
             return new Camera(name, camBackground, onMapLoc, connections, animatronicsHere, isLeftDoorOfOffice,
-                    isRightDoorOfOffice, soundVolume, soundPan, broken);
+                    isRightDoorOfOffice, soundVolume, soundPan, broken, invisible);
         }
     }
 }
