@@ -263,7 +263,7 @@ public class Main {
                     mainMenu.updateBackground(menuData.background);
                     mainMenu.updateMenuItems(menuData.mmItems);
                 } catch (IOException e) {
-                    throw new RuntimeException("Progress could not be saved.", e);
+                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cards.show(cardPanel, "menu");
@@ -314,7 +314,7 @@ public class Main {
                     mainMenu.updateBackground(menuData.background);
                     mainMenu.updateMenuItems(menuData.mmItems);
                 } catch (IOException e) {
-                    throw new RuntimeException("Could not save victory to save file.", e);
+                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cards.show(cardPanel, "menu");
@@ -370,7 +370,7 @@ public class Main {
                     mainMenu.updateBackground(menuData.background);
                     mainMenu.updateMenuItems(menuData.mmItems);
                 } catch (IOException e) {
-                    throw new RuntimeException("Could not save victory to save file.", e);
+                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
 
@@ -428,7 +428,7 @@ public class Main {
                     mainMenu.updateBackground(menuData.background);
                     mainMenu.updateMenuItems(menuData.mmItems);
                 } catch (IOException e) {
-                    throw new RuntimeException("Could not save victory to save file.", e);
+                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
 
