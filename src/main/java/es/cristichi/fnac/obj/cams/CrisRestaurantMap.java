@@ -70,21 +70,22 @@ public class CrisRestaurantMap extends CameraMap {
                 new Camera.Builder()
                         .setName("bathrooms")
                         .setCamBackground("night/general/bathrooms.jpg")
-                        .setOnMapLocationVolumeAndPan(560, 734, 140, 51, OFFICE_LOC_ON_MAP,
-                                getMapImage().getWidth(), getMapImage().getHeight())
+                        .setOnMapLocManually(560, 734, 140, 51)
+                        .setSoundVolumeManually(1) // The bathrooms is the false alarm but still scary to hear
+                        .setSoundPanManually(1) // You can tell the fake alarm apart because it sounds on both ears
                         .addConnection("corridor 2")
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 3")
                         .setCamBackground("night/general/corridor 3.jpg")
-                        .setOnMapLocationVolumeAndPan(225, 561, 140, 70, OFFICE_LOC_ON_MAP,
+                        .setOnMapLocationVolumeAndPan(189, 701, 140, 70, OFFICE_LOC_ON_MAP,
                                 getMapImage().getWidth(), getMapImage().getHeight())
                         .addConnection("corridor 1", "leftDoor")
                         .build(),
                 new Camera.Builder()
                         .setName("corridor 4")
                         .setCamBackground("night/general/corridor 4.jpg")
-                        .setOnMapLocationVolumeAndPan(662, 568, 140, 70, OFFICE_LOC_ON_MAP,
+                        .setOnMapLocationVolumeAndPan(686, 714, 140, 70, OFFICE_LOC_ON_MAP,
                                 getMapImage().getWidth(), getMapImage().getHeight())
                         .addConnection("corridor 2", "rightDoor") //Offices go to corridor 4, but not vice-versa
                         .build(),
