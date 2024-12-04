@@ -19,15 +19,13 @@ import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.*;
 
-public abstract class Night extends JComponent {
+public class Night extends JComponent {
 	private static final boolean DEBUG_MODE = false;
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
 	private static final int FPS = 60;
 	/** Objective hour. Reaching this hour results in a win. */
 	private static final int TOTAL_HOURS = 6;
-	/** String used to show how much power is being used by the player each tick. */
-	private static final String POWER_USAGE_CHAR = "█";
 
 	/** Night identifier, used to save the Night after completion and also for the window title. */
 	private final String nightName;
@@ -44,6 +42,8 @@ public abstract class Night extends JComponent {
 	 * (Cameras, left door and right door)
 	 */
 	private final float powerPerTickPerResource;
+	/** String used to show how much power is being used by the player each tick. */
+	private static final String POWER_USAGE_CHAR = "█";
 	/** Jumpscare to play when the Player runs out of Power. */
 	private final Jumpscare powerOutageJumpscare;
 
@@ -273,6 +273,7 @@ public abstract class Night extends JComponent {
 			getActionMap().put("doorAction", action);
 		}
 
+		// For moving left or right with the mouse
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
@@ -286,6 +287,7 @@ public abstract class Night extends JComponent {
 				}
 			}
 		});
+		// For clicking cams
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -306,10 +308,16 @@ public abstract class Night extends JComponent {
 		nightTicks = new Timer("Night [" + nightName + "]");
 	}
 
+	/**
+	 * @return Name of the Night. It should be unique to this Night.
+	 */
 	public String getNightName() {
 		return nightName;
 	}
 
+	/**
+	 * Make the Night start. It should never be called twice, even after a Night is finished.
+	 */
 	public void startNight(){
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -420,8 +428,6 @@ public abstract class Night extends JComponent {
 			soundOnCompleted.play();
 		}
 	}
-
-	protected abstract void onJumpscare();
 
 	public void addOnNightEnd(NightEndedListener runnable) {
 		onNightEndListeners.add(runnable);

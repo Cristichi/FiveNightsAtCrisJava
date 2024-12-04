@@ -213,14 +213,7 @@ public class Main {
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f,
-                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
-            @Override
-            protected void onJumpscare() {
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-                System.out.println("Player died.");
-            }
-        };
+                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
             cards.show(cardPanel, "menu");
@@ -246,16 +239,10 @@ public class Main {
 
         Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f,
-                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav")) {
-            @Override
-            protected void onJumpscare() {
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-                System.out.println("Player died.");
-            }
-        };
+                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
         night.addOnNightEnd((completed) -> {
             if (completed) {
+                System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
@@ -270,7 +257,6 @@ public class Main {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
-            System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
         });
         nightPanel.add(night);
         window.setTitle(getTitleForWindow(night.getNightName()));
@@ -298,13 +284,7 @@ public class Main {
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
                 powerOutage, new Random(seed), 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
-            @Override
-            protected void onJumpscare() {
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-            }
-        };
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
         night.addOnNightEnd((completed) -> {
             if (completed) {
                 saveFile.addCompletedNight(night.getNightName());
@@ -354,13 +334,7 @@ public class Main {
 
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
                 powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
-            @Override
-            protected void onJumpscare() {
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-            }
-        };
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
         night.addOnNightEnd((completed) -> {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
@@ -411,15 +385,8 @@ public class Main {
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
         nightMap.get("bathrooms").setBroken(true);
 
-        Night night = new Night("Night 3", nightMap, null,
-                powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav")) {
-            @Override
-            protected void onJumpscare() {
-                nightPanel.removeAll();
-                cards.show(cardPanel, "menu");
-            }
-        };
+        Night night = new Night("Night 3", nightMap, null, powerOutage, rng, 90, 0.45f,
+                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
         night.addOnNightEnd((completed) -> {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
