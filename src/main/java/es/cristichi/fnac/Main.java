@@ -409,6 +409,7 @@ public class Main {
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
+        nightMap.get("bathrooms").setBroken(true);
 
         Night night = new Night("Night 3", nightMap, null,
                 powerOutage, rng, 90, 0.45f,

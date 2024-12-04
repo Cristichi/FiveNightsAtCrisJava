@@ -664,7 +664,7 @@ public abstract class Night extends JComponent {
 
 				// Watching cams
 				} else {
-					// Draw static in transition of camera change or current camera
+					// Draw static in transition of camera change
 					if (changeCamsTransTicks>0){
 						g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 								0, 0, camImgWidth, camImgHeight, this);
@@ -672,11 +672,14 @@ public abstract class Night extends JComponent {
 					} else {
 						Camera current = camerasMap.getSelectedCam();
 						// On current camera, if an Animatronic moved from or to this camera recently, we show static instead
+						// Also if Camera is broken
 						int currentCamHidingTicks = camsHidingMovementTicks.getOrDefault(current.getName(), 0);
-						if (currentCamHidingTicks>0){
+						if (currentCamHidingTicks>0 || current.isBroken()){
 							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
-							camsHidingMovementTicks.put(current.getName(), currentCamHidingTicks-1);
+							if (currentCamHidingTicks>0) {
+								camsHidingMovementTicks.put(current.getName(), currentCamHidingTicks - 1);
+							}
 						} else {
 							// Here we draw the camera and the animatronics in there if no static is drawn
 							g.drawImage(current.getCamBackground(),
@@ -753,7 +756,13 @@ public abstract class Night extends JComponent {
 
 						// Draw rectangle
 						if (cam.getName().equals(camerasMap.getSelectedName())){
-							g.setColor(Color.LIGHT_GRAY);
+							if (cam.isBroken()){
+								g.setColor(Color.PINK);
+							} else {
+								g.setColor(Color.LIGHT_GRAY);
+							}
+						} else if (cam.isBroken()){
+							g.setColor(Color.RED);
 						} else {
 							g.setColor(Color.GRAY);
 						}

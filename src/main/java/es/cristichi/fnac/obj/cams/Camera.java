@@ -20,11 +20,12 @@ public class Camera {
     private final LinkedList<String> connections;
     private final LinkedList<AnimatronicDrawing> animatronicsHere;
     private final boolean isLeftDoorOfOffice, isRightDoorOfOffice;
+    private boolean broken;
     private final double soundVolume, soundPan;
 
     private Camera(String name, BufferedImage camBackground, Rectangle onMapLoc, LinkedList<String> connections,
                    LinkedList<AnimatronicDrawing> animatronicsHere, boolean isLeftDoorOfOffice, boolean isRightDoorOfOffice,
-                   double soundVolume, double soundPan) {
+                   double soundVolume, double soundPan, boolean broken) {
         this.name = name;
         this.camBackground = camBackground;
         this.onMapLoc = onMapLoc;
@@ -34,6 +35,7 @@ public class Camera {
         this.isRightDoorOfOffice = isRightDoorOfOffice;
         this.soundVolume = soundVolume;
         this.soundPan = soundPan;
+        this.broken = broken;
     }
 
     public String getName() {
@@ -62,6 +64,14 @@ public class Camera {
 
     public LinkedList<AnimatronicDrawing> getAnimatronicsHere() {
         return animatronicsHere;
+    }
+
+    public boolean isBroken() {
+        return broken;
+    }
+
+    public void setBroken(boolean broken) {
+        this.broken = broken;
     }
 
     /**
@@ -109,6 +119,7 @@ public class Camera {
         private boolean isRightDoorOfOffice = false;
         private double soundVolume = 1;
         private double soundPan = 0;
+        private boolean broken = false;
 
         public Builder(){}
 
@@ -142,7 +153,6 @@ public class Camera {
             return this;
         }
 
-        @SuppressWarnings("unused")
         public Builder addConnection(String... camNames) {
             Collections.addAll(connections, camNames);
             return this;
@@ -158,6 +168,11 @@ public class Camera {
             return this;
         }
 
+        public Builder isBroken() {
+            this.broken = true;
+            return this;
+        }
+
         public Camera build(){
             if (name == null){
                 throw new CameraException("Name of Camera cannot be unset.");
@@ -170,7 +185,7 @@ public class Camera {
                         "click on them with the mouse and also highlight when selected.");
             }
             return new Camera(name, camBackground, onMapLoc, connections, animatronicsHere, isLeftDoorOfOffice,
-                    isRightDoorOfOffice, soundVolume, soundPan);
+                    isRightDoorOfOffice, soundVolume, soundPan, broken);
         }
     }
 }
