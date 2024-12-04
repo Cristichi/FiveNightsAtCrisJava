@@ -16,9 +16,14 @@ public class AmbientSoundSystem extends ArrayList<AmbientSound> {
     }
 
     public void attemptRandomSound(Random rng, int tick, CameraMap map){
+        AmbientSound sound = get(rng.nextInt(size()));
         if (tick%tickInterval==0){
-            ArrayList<Camera> values = new ArrayList<>(map.values());
-            get(rng.nextInt(size())).attemptPlayOnCamera(rng, values.get(rng.nextInt(values.size())));
+            if (sound.shouldPlayOnCams()){
+                ArrayList<Camera> values = new ArrayList<>(map.values());
+                sound.attemptPlay(rng, values.get(rng.nextInt(values.size())));
+            } else {
+                sound.attemptPlay(rng);
+            }
         }
     }
 }

@@ -238,9 +238,10 @@ public class Night extends JComponent {
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
 		ambientSounds = new AmbientSoundSystem((int) (FPS*7.2),
-				new AmbientSound(0.1f, Resources.loadSound("office/ambient/weird1.wav", "amDanger.wav")),
-				new AmbientSound(0.3f, Resources.loadSound("office/ambient/waterLeak.wav", "amDanger.wav")),
-				new AmbientSound(0.1f, Resources.loadSound("office/ambient/fakeSteps1.wav", "amDanger.wav"))
+				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/weird1.wav", "weird1.wav")),
+				new AmbientSound(0.3f, true, Resources.loadSound("office/ambient/waterLeak.wav", "waterLeak.wav")),
+				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/fakeSteps1.wav", "fakeSteps.wav")),
+				new AmbientSound(0.4f, false, Resources.loadSound("office/ambient/deep-breath-247459.wav", "amBreath.wav"))
 		);
 		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav", "openCams.wav");
 		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav", "keepCams.wav");
@@ -443,14 +444,14 @@ public class Night extends JComponent {
 
 				// We check if door is about to close on this tick
 				if (leftDoorTransTicks == 1 && leftDoorClosed){
-					closeDoor.play(doorsSoundsVolume, -0.9);
+					closeDoor.play(doorsSoundsVolume, -0.1);
 				} else if (leftDoorTransTicks == DOOR_TRANSITION_TICKS && !leftDoorClosed){
-					openDoor.play(doorsSoundsVolume, -0.9);
+					openDoor.play(doorsSoundsVolume, -0.1);
 				}
 				if (rightDoorTransTicks == 1 && rightDoorClosed){
-					closeDoor.play(doorsSoundsVolume, 0.9);
+					closeDoor.play(doorsSoundsVolume, 0.1);
 				} else if (rightDoorTransTicks == DOOR_TRANSITION_TICKS && !rightDoorClosed){
-					openDoor.play(doorsSoundsVolume, 0.9);
+					openDoor.play(doorsSoundsVolume, 0.1);
 				}
 				// We repaint da thing
 				repaint();
