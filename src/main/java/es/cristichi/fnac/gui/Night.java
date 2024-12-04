@@ -22,11 +22,16 @@ import java.util.*;
 public abstract class Night extends JComponent {
 	private static final boolean DEBUG_MODE = false;
 
+	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
 	private static final int FPS = 60;
+	/** Objective hour. Reaching this hour results in a win. */
 	private static final int TOTAL_HOURS = 6;
+	/** String used to show how much power is being used by the player each tick. */
 	private static final String POWER_USAGE_CHAR = "█";
 
+	/** Night identifier, used to save the Night after completion and also for the window title. */
 	private final String nightName;
+	/** RNG for the Night. All randomness must use this object exclusively. */
 	private final Random rng;
 	/**
 	 * How many ticks must happen for an in-game hour to pass. It must be calculated from FPS to translate to the
@@ -39,75 +44,120 @@ public abstract class Night extends JComponent {
 	 * (Cameras, left door and right door)
 	 */
 	private final float powerPerTickPerResource;
-	/**
-	 * Jumpscare to play when the Player runs out of Power.
-	 */
+	/** Jumpscare to play when the Player runs out of Power. */
 	private final Jumpscare powerOutageJumpscare;
 
-	/**
-	 * List of Runnables that must be executed if Night is completed.
-	 */
+	/** List of Runnables that must be executed when the Night is finished, either win or lose. */
 	private final LinkedList<NightEndedListener> onNightEndListeners;
+	/** Victory Sound. */
 	private final Sound soundOnCompleted;
 
+	/** Keeps track of the exact tick, the first tick of the Night being tick 1. */
 	private int currentTick;
-	private int nightHour;
+	/** Keeps track of the current hour, starting at 0 representing 00:00h. */
+	private int currentHour;
+	/** Thread that runs on a loop that controls everything that happens on the game, tick by tick. */
 	private final Timer nightTicks;
 
+	/** Boolean object that is null when the game is running:
+	 * <br><code>true</code> when Night is won
+	 * <br><code>false</code> when Jumpscared. */
 	private Boolean victoryScreen;
-	private final BufferedImage backgroundImg;
-	private final BufferedImage paperImg;
 
-	// Office transition
+	private final BufferedImage backgroundImg;
+	/** Ticks the "camera" takes to move between the 3 views of your office. */
 	private static final int OFFICE_TRANSITION_TICKS = 30;
+	/** In the source image of the background, the X for where the left-side of the screen is while at LEFTDOOR. */
 	private static final int LEFTDOOR_X_IN_SOURCE = 200;
+	/** In the source image of the background, the X for where the left-side of the screen is while at MONITOR. */
 	private static final int MONITOR_X_IN_SOURCE = 1000;
+	/** In the source image of the background, the X for where the left-side of the screen is while at RIGHTDOOR. */
 	private static final int RIGHTDOOR_X_IN_SOURCE = 1800;
-	private static final int OFFICEWIDTH_OF_SOURCE = 2000; // Important not to change this xD it has to be 2k
-	private static final int PAPER_X_IN_SOURCE_BACKGROUND = 2405;
-	private static final int PAPER_Y_IN_SOURCE_BACKGROUND = 595;
+	/** Width of the source image taken on each frame. Everything else works around the fact that
+	 * this is exactly 2000. Modifying this results in de-centered and stretch things, but it won't crash. */
+	private static final int OFFICEWIDTH_OF_SOURCE = 2000;
+
+	private final BufferedImage paperImg;
+	/** In the source image of the background, the X for the top-left Point where the paper must be drawn (if any). */
+	private static final int PAPER_X_IN_BACKGROUND_SOURCE = 2405;
+	/** In the source image of the background, the Y for the top-left Point where the paper must be drawn (if any). */
+	private static final int PAPER_Y_IN_BACKGROUND_SOURCE = 595;
+	/** Width the paper must adjust to, on the screen. Height is calculated from this and the source image's values. */
 	private static final int PAPER_WIDTH = 246;
+
+	/** Current view of the player. */
 	private OfficeLocation officeLoc;
+	/** Ticks left for the player to finish a "moving" transition. If 0, player is not moving around at the moment. */
 	private int offTransTicks;
+	/** During transitions, previous view of the player so that we know how to calculate what they are currently seeing. */
 	private OfficeLocation offTransFrom;
-	private final BufferedImage camMonitorImg, camMonitorStaticImg;
-	private final BufferedImage camStaticImg;
+
+	/** Used for mouse control of movement. It indicates the percentage of the screen (on each side) that detects the
+	 * mouse to make the movement. */
 	private final float MOUSE_MOVE_THRESHOLD = 0.05f;
 
-	// Cam up/down
-	private static final int CAMS_UPDOWN_TRANSITION_TICKS = 30;
+	/** Image of the frame of the Camera monitor. */
+	private final BufferedImage camMonitorImg;
+	/** Image showing static, for the Camera to use when not displaying during transitions or Animatronic's movement. */
+	private final BufferedImage camStaticImg;
+	/** Image showing both the monitor and static, for convenience. */
+	private final BufferedImage camMonitorStaticImg;
+
+	/** Usual number of ticks it takes the player to start and stop watching Cameras. */
+	private static final int CAMS_UPDOWN_TRANSITION_TICKS = FPS/2;
+	/** It controls whether Cameras are up or not. */
 	private boolean camsUp;
+	/** Ticks left until Cameras are either fully up or fully down. */
 	private int camsUpDownTransTicks;
-	private final HashMap<String, Rectangle> camsLocOnScreen;
+
+	/** name of Camera -> Rectangle where that Camera was last drawn on the map.<br>
+	 * This is used for the mouse clicks to know if there is a clickable Camera where the mouse clicked.
+	 * Each frame, after the map is drawn, this is updated. */
+	private final HashMap<String, Rectangle> camsLocOnMapOnScreen;
 
 	// Change cams
-	private static final int CHANGE_CAMS_TRANSITION_TICKS = 5;
+	/** Usual number of ticks it takes the player to start watching another Camera after they clicked on one. */
+	private static final int CHANGE_CAMS_TRANSITION_TICKS = FPS/12;
+	/** Ticks left until Cameras are visible again after switching Camera. */
 	private int changeCamsTransTicks;
+	/** Map of all Cameras, including their Animatronics. */
 	private final CameraMap camerasMap;
 
 	// Animatronics moving around cams makes static
-	private static final int CAMS_STATIC_MOVE_TICKS = 20;
+	/** Usual number of ticks it takes for Cameras to be visible again after an Animatronic moved from or to them. */
+	private static final int CAMS_STATIC_MOVE_TICKS = FPS/3;
 	/**
-	 * Cameras (their names) and the ticks left of hiding from view. This is used so that Animatronics don't simply
-	 * "pop" from and to existence, instead the view is hidden for {@link Night#CAMS_STATIC_MOVE_TICKS} ticks..
+	 * Camera name -> Ticks left until this Camera is visible again after Animatronic move from or to this Camera.<br>
+	 * This is used so that Animatronics don't simply "pop" from and to existence,
+	 * instead the view is hidden for {@link Night#CAMS_STATIC_MOVE_TICKS} ticks. <br>
 	 */
 	private final HashMap<String, Integer> camsHidingMovementTicks;
+	/** Camera name -> Point on this JComponent where Animatronic was last drawn on this Camera.<br>
+	 * This is used so that they are not randomly moving around each tick. If the position becomes impossible after
+	 * window resizing, a new Point is calculated randomly.
+	 */
 	private final HashMap<String, Point> animPosInCam;
 
 	// Doors
-	private static final int DOOR_TRANSITION_TICKS = 10;
+	/** Usual number of ticks it takes for doors to fully open or close. */
+	private static final int DOOR_TRANSITION_TICKS = FPS/6;
+	/** Whether the left door is effectively closed. */
 	private boolean leftDoorClosed;
+	/** Ticks left until left door is visually opened or closed. */
 	private int leftDoorTransTicks;
 	private final BufferedImage leftDoorClosedImg;
 	private final BufferedImage leftDoorTransImg;
 	private final BufferedImage leftDoorOpenImg;
+	/** Whether the right door is effectively closed. */
 	private boolean rightDoorClosed;
+	/** Ticks left until right door is visually opened or closed. */
 	private int rightDoorTransTicks;
 	private final BufferedImage rightDoorClosedImg;
 	private final BufferedImage rightDoorTransImg;
 	private final BufferedImage rightDoorOpenImg;
 
 	// Jumpscare
+	/** Active Jumpscare, or null if player is still alive or won. */
 	private Jumpscare jumpscare;
 
 	/**
@@ -124,8 +174,9 @@ public abstract class Night extends JComponent {
 	 * @param rng Random for the night. Use <code>new Random()</code> unless you want a specific seed.
 	 * @param powerOutageJumpscare Jumpscare that will happen when the player runs out of power.
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
-	 *                             a power outage (even if you use everything all the time),
+	 *                             a power outage (even if you have both doors closed at all time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
+	 *                             It must be kept in mind that Cameras also use power.
 	 * @param soundOnNightCompleted Sound played when Night is completed. Can be null for dev purposes but having
 	 *                              one is encouraged.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
@@ -143,17 +194,19 @@ public abstract class Night extends JComponent {
 		this.soundOnCompleted = soundOnNightCompleted;
 
 		powerLeft = 1;
-		// So this calculates depending on the fps, which determines the total number of ticks per night, which is
-		// important to calibrate that the night cannot be survived by using everything (extremely easy)
-		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance
+		// So this is calculated depending on the FPS, which determines the total number of ticks per night, which is
+		// important to calibrate that the Night cannot be survived by keeping both doors closed (extremely easy)
+		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance.
 		int totalTicks = hourTicksInterval * TOTAL_HOURS;
 		// Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
 		float minPowerPerTickPerResource = 1.0f / totalTicks;
 		// Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
+		// Its "4" counts for passive+leftDoor+rightDoor+camsUp
 		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks);
+		// Current power used per tick per resource as the given percentage in-between the minimum and maximum.
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
 
-		nightHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
+		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		backgroundImg = Resources.loadImageResource("office/background.jpg");
 		if (paperImgPath == null){
 			paperImg = null;
@@ -174,7 +227,7 @@ public abstract class Night extends JComponent {
 		camsUpDownTransTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
-		camsLocOnScreen = new HashMap<>(camerasMap.size());
+		camsLocOnMapOnScreen = new HashMap<>(camerasMap.size());
 		camsHidingMovementTicks = new HashMap<>(camerasMap.size());
 		animPosInCam = new HashMap<>(5);
 		leftDoorClosed = false;
@@ -238,8 +291,8 @@ public abstract class Night extends JComponent {
 			public void mouseReleased(MouseEvent e) {
 				Point click = e.getPoint();
 				for (Camera cam : camerasMap.values()) {
-					if (camsLocOnScreen.containsKey(cam.getName())) {
-						Rectangle camLocScreen = camsLocOnScreen.get(cam.getName());
+					if (camsLocOnMapOnScreen.containsKey(cam.getName())) {
+						Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getName());
 						if (camLocScreen.contains(click)) {
 							camerasMap.setSelected(cam.getName());
 							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
@@ -295,7 +348,7 @@ public abstract class Night extends JComponent {
 					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveOppReturn>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
-							anim.updateIADuringNight(nightHour);
+							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoorOfOffice()&&!leftDoorClosed ||cam.isRightDoorOfOffice()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
@@ -354,7 +407,7 @@ public abstract class Night extends JComponent {
 	}
 
 	private void advanceTime() {
-		if (++nightHour == TOTAL_HOURS) {
+		if (++currentHour == TOTAL_HOURS) {
 			jumpscare = null;
 			victoryScreen = true;
 			nightTicks.cancel();
@@ -423,7 +476,7 @@ public abstract class Night extends JComponent {
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight() * ((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
 							this);
 				}
@@ -445,7 +498,7 @@ public abstract class Night extends JComponent {
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_SOURCE_BACKGROUND-RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)((PAPER_X_IN_BACKGROUND_SOURCE -RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
 							this);
 				}
@@ -466,7 +519,7 @@ public abstract class Night extends JComponent {
 
 				// Paper
 				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+					g.drawImage(paperImg, (int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
 				}
 
@@ -489,7 +542,7 @@ public abstract class Night extends JComponent {
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_SOURCE_BACKGROUND-MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)((PAPER_X_IN_BACKGROUND_SOURCE -MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
 							this);
 				}
@@ -502,7 +555,7 @@ public abstract class Night extends JComponent {
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
 							this);
 				}
@@ -527,7 +580,7 @@ public abstract class Night extends JComponent {
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_SOURCE_BACKGROUND-xPosition)*scaleX), (int)(PAPER_Y_IN_SOURCE_BACKGROUND*scaleY),
+							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
 							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
 							this);
 				}
@@ -740,7 +793,7 @@ public abstract class Night extends JComponent {
 						}
 
 						// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
-						camsLocOnScreen.put(cam.getName(),
+						camsLocOnMapOnScreen.put(cam.getName(),
 								new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
                     }
 
@@ -770,7 +823,7 @@ public abstract class Night extends JComponent {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
             g.setFont(new Font("Arial", Font.BOLD, getWidth()/50));
-            String strTime = String.format("%02d:%02d AM", nightHour,
+            String strTime = String.format("%02d:%02d AM", currentHour,
 					(int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
 			FontMetrics fontMetrics = g.getFontMetrics();
 			{
@@ -925,6 +978,9 @@ public abstract class Night extends JComponent {
 	}
 
 	public interface NightEndedListener {
+		/**
+		 * @param completed <code>true</code> if player won, <code>false</code> otherwise.
+		 */
 		void run(boolean completed);
 	}
 }
