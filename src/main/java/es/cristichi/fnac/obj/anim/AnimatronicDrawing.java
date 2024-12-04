@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Random;
 
 public abstract class AnimatronicDrawing {
+    protected static final int EXTRA_AI_FOR_LEAVING = 5;
+
     protected final String name;
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
@@ -94,7 +96,7 @@ public abstract class AnimatronicDrawing {
             return false;
         }
         if ((cam.isLeftDoorOfOffice() || cam.isRightDoorOfOffice())){
-            return rng.nextInt(maxIaLevel) < aiLevel + 5;
+            return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
         }
         return rng.nextInt(maxIaLevel) < aiLevel;
     }
