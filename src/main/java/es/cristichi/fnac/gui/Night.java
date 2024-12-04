@@ -169,6 +169,11 @@ public class Night extends JComponent {
 	private final Sound backgroundCamsSound;
 	private final Sound closeCamsSound;
 	private final Sound clickCamSound;
+
+	private final double doorsSoundsVolume = 1;
+	private final Sound openDoor;
+	private final Sound closeDoor;
+
 	/**
 	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
@@ -243,6 +248,9 @@ public class Night extends JComponent {
 		backgroundCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav", "closeCams.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav", "clickCams.wav");
+
+		openDoor = Resources.loadSound("office/sounds/opening-metal-door-199581.wav", "openDoor.wav");
+		closeDoor = Resources.loadSound("office/sounds/metal-door-slam-172172.wav", "closeDoor.wav");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -433,6 +441,17 @@ public class Night extends JComponent {
 				// Ambient sounds
 				ambientSounds.attemptRandomSound(rng, currentTick, camerasMap);
 
+				// We check if door is about to close on this tick
+				if (leftDoorTransTicks == 1 && leftDoorClosed){
+					closeDoor.play(doorsSoundsVolume, -0.9);
+				} else if (leftDoorTransTicks == DOOR_TRANSITION_TICKS && !leftDoorClosed){
+					openDoor.play(doorsSoundsVolume, -0.9);
+				}
+				if (rightDoorTransTicks == 1 && rightDoorClosed){
+					closeDoor.play(doorsSoundsVolume, 0.9);
+				} else if (rightDoorTransTicks == DOOR_TRANSITION_TICKS && !rightDoorClosed){
+					openDoor.play(doorsSoundsVolume, 0.9);
+				}
 				// We repaint da thing
 				repaint();
 			}
