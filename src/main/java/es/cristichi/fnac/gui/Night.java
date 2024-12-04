@@ -3,6 +3,8 @@ package es.cristichi.fnac.gui;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.obj.AmbientSound;
+import es.cristichi.fnac.obj.AmbientSoundSystem;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.anim.Jumpscare;
@@ -46,6 +48,8 @@ public class Night extends JComponent {
 	private static final String POWER_USAGE_CHAR = "█";
 	/** Jumpscare to play when the Player runs out of Power. */
 	private final Jumpscare powerOutageJumpscare;
+
+	private final AmbientSoundSystem ambientSounds;
 
 	/** List of Runnables that must be executed when the Night is finished, either win or lose. */
 	private final LinkedList<NightEndedListener> onNightEndListeners;
@@ -156,10 +160,15 @@ public class Night extends JComponent {
 	private final BufferedImage rightDoorTransImg;
 	private final BufferedImage rightDoorOpenImg;
 
-	// Jumpscare
 	/** Active Jumpscare, or null if player is still alive or won. */
 	private Jumpscare jumpscare;
 
+
+	private final double camSoundsVolume = 0.3;
+	private final Sound openedCamsSound;
+	private final Sound backgroundCamsSound;
+	private final Sound closeCamsSound;
+	private final Sound clickCamSound;
 	/**
 	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
@@ -222,6 +231,18 @@ public class Night extends JComponent {
 		rightDoorOpenImg = Resources.loadImageResource("office/rightDoorOpen.png");
 		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
+
+		ambientSounds = new AmbientSoundSystem((int) (FPS*7.2),
+				new AmbientSound(0.1f, Resources.loadSound("office/ambient/weird1.wav", "amDanger.wav")),
+				new AmbientSound(0.3f, Resources.loadSound("office/ambient/waterLeak.wav", "amDanger.wav")),
+				new AmbientSound(0.1f, Resources.loadSound("office/ambient/fakeSteps1.wav", "amDanger.wav"))
+		);
+		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav", "openCams.wav");
+		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav", "keepCams.wav");
+		openedCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
+		backgroundCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
+		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav", "closeCams.wav");
+		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav", "clickCams.wav");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -298,6 +319,7 @@ public class Night extends JComponent {
 						if (camLocScreen.contains(click)) {
 							camerasMap.setSelected(cam.getName());
 							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+							clickCamSound.play(camSoundsVolume);
 							break;
 						}
 					}
@@ -407,6 +429,9 @@ public class Night extends JComponent {
 						}
 					}
 				}
+
+				// Ambient sounds
+				ambientSounds.attemptRandomSound(rng, currentTick, camerasMap);
 
 				// We repaint da thing
 				repaint();
@@ -973,9 +998,13 @@ public class Night extends JComponent {
 				if (camsUp) {
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUp = false;
+					backgroundCamsSound.stop();
+					openedCamsSound.stop();
+					closeCamsSound.play(camSoundsVolume);
 				} else {
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUp = true;
+					openedCamsSound.play(camSoundsVolume);
 				}
 			}
 		}
