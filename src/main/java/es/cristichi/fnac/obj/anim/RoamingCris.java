@@ -11,25 +11,22 @@ import java.util.Map;
 import java.util.Random;
 
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
-    private static final Jumpscare jumpscareNormal, jumpscareItsMe;
-
-    static {
-        try {
-            jumpscareNormal = new Jumpscare("anims/cris/jumpscare.gif", 4, 0,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump1.wav"), 6);
-            jumpscareItsMe = new Jumpscare("anims/cris/jumpscare2.gif", 10, 8,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12);
-        } catch (ResourceException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
     private final double secsToKill;
 
     public RoamingCris(double secInterval, Map<Integer, Integer> aiDuringNight,
                        List<String> forbiddenCams, double secsToKill, Random rng) throws ResourceException {
         super("Cris", secInterval, aiDuringNight, 20, "anims/cris/camImg.png",
-                rng.nextFloat()<0.0? jumpscareNormal : jumpscareItsMe, forbiddenCams, Color.PINK);
+                null, forbiddenCams, Color.PINK);
+
+        if (jumpscareNormal == null || jumpscareItsMe == null){
+            jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump1.wav"), 1);
+            jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12);
+        }
+        jumpscare = rng.nextFloat()<.9? jumpscareNormal : jumpscareItsMe;
         this.secsToKill = secsToKill;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));

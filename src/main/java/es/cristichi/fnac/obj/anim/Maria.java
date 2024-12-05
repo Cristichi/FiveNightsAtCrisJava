@@ -16,7 +16,7 @@ public class Maria extends AvoidCamsAnimatronicDrawing {
     public Maria(double secInterval, Map<Integer, Integer> aiDuringNight,
                  List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
-                new Jumpscare("anims/maria/jumpscare.gif", 1, 0,
+                new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0),
                         forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;

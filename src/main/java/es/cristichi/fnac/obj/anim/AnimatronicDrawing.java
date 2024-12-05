@@ -23,7 +23,7 @@ public abstract class AnimatronicDrawing {
     protected int aiLevel;
     protected final int maxIaLevel;
     protected final double secInterval;
-    protected final Jumpscare jumpscare;
+    protected Jumpscare jumpscare;
     protected final BufferedImage camImg;
     protected boolean kill = false;
     protected Integer startKillTick = null;

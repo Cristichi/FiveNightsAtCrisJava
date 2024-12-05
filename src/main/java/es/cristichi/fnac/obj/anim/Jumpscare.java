@@ -1,18 +1,14 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.io.GifAnimation;
+import es.cristichi.fnac.io.GifDisposalMethod;
+import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,31 +16,29 @@ public class Jumpscare {
     private final Sound sound;
     private final int soundStartFrame;
     private final int camsDownFrame;
-    private List<BufferedImage> frames;
-    private final int repsMax;
-    private int currentReps;
+    private final GifAnimation frames;
     private int currentFrame;
+    private int currentFrameStartTick;
 
     private final LinkedList<Runnable> onFinish;
     private Boolean soundFinished;
 
-    public Jumpscare(String filepath, int repFrames, int camsDownFrame, @Nullable Sound sound, int soundStartFrame) throws ResourceException {
-        this.repsMax = Math.max(1, repFrames);
+    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame) throws ResourceException {
         this.currentFrame = 0;
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
-        loadFrames(filepath);
+        this.frames = Resources.loadGif(filepath);
 
         this.onFinish = new LinkedList<>();
-        if (sound == null){
+        if (sound == null) {
             soundFinished = null;
         } else {
             soundFinished = false;
             sound.addOnEndListener(() -> {
                 soundFinished = true;
-                if (isFramesFinished()){
-                    for (Runnable onFinished : this.onFinish){
+                if (isFramesFinished()) {
+                    for (Runnable onFinished : this.onFinish) {
                         onFinished.run();
                     }
                     this.onFinish.clear();
@@ -53,90 +47,85 @@ public class Jumpscare {
         }
     }
 
-    public BufferedImage getCurrentFrame() {
-        return frames.get(currentFrame<frames.size()?currentFrame:frames.size()-1);
+    public void reset() {
+        this.currentFrame = 0;
+        this.currentFrameStartTick = 0;
+    }
+
+    public GifFrame[] getCurrentFrame() {
+        return getCombinedFrames(currentFrame);
+    }
+
+    public GifFrame[] getSetFrameDEBUG(int frame) {
+        return getCombinedFrames(frame);
+    }
+
+    public int getFullWidth(){
+        return frames.get(frames.size()-1).image().getWidth();
+    }
+
+    public int getFullHeight(){
+        return frames.get(frames.size()-1).image().getHeight();
+    }
+
+    public boolean isFramesFinished() {
+        return currentFrame == frames.size();
     }
 
     public Sound getSound() {
         return sound;
     }
 
-    public boolean isFrameToPlaySound(){
-        return currentFrame==soundStartFrame;
+    public boolean isFrameToPlaySound() {
+        return currentFrame == soundStartFrame;
     }
 
-    public boolean shouldCamsBeDown(){
-        return currentFrame>=camsDownFrame;
+    public boolean shouldCamsBeDown() {
+        return currentFrame >= camsDownFrame;
     }
 
-    private void loadFrames(String resourcePath) throws ResourceException {
-        try (ImageInputStream stream = ImageIO.createImageInputStream(Resources.loadInputStream(resourcePath))) {
-            if (stream == null) {
-                throw new ResourceException("No suitable reader found for " + resourcePath + ".");
+    public GifFrame[] updateAndGetFrame(int tick, int fps) {
+        GifFrame frame = frames.get(currentFrame>=frames.size()?frames.size()-1:currentFrame);
+        if (currentFrameStartTick == 0) {
+            currentFrameStartTick = tick;
+            System.out.printf("First time on tick %d.%n", tick);
+        } else if (tick >= currentFrameStartTick + frame.delaySecs() * fps) {
+            currentFrame++;
+            currentFrameStartTick = tick;
+            if (isFramesFinished() && (soundFinished == null || soundFinished)) {
+                for (Runnable onFinished : onFinish) {
+                    onFinished.run();
+                }
+                onFinish.clear();
             }
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(stream);
-            if (!readers.hasNext()) {
-                throw new IOException("No reader for: " + resourcePath);
-            }
-
-            ImageReader reader = readers.next();
-            reader.setInput(stream);
-
-            int numFrames = reader.getNumImages(true); // Count of frames
-            frames = new ArrayList<>(numFrames);
-
-            for (int i = 0; i < numFrames; i++) {
-                // Read the frame
-                BufferedImage rawFrame = reader.read(i);
-
-                // Create a new ARGB image for transparency
-                BufferedImage transparentFrame = new BufferedImage(
-                        rawFrame.getWidth(), rawFrame.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-                // Draw the raw frame onto the transparent canvas
-                Graphics2D g2d = transparentFrame.createGraphics();
-                g2d.setComposite(AlphaComposite.Src);
-                g2d.drawImage(rawFrame, 0, 0, null);
-                g2d.dispose();
-
-                // Add the processed frame to the list
-                frames.add(transparentFrame);
-            }
-            reader.dispose();
-        } catch (IOException | NullPointerException e) {
-            throw new ResourceException("Error when reading \"" + resourcePath + "\".", e);
         }
+
+        return getCombinedFrames(currentFrame);
     }
 
-    public void reset() {
-        this.currentFrame = 0;
-        this.currentReps = 0;
-    }
-
-    public void updateFrame() {
-        if (currentFrame < frames.size()){
-            if (currentReps == repsMax) {
-                currentFrame++;
-            }
-            currentReps++;
-            if (currentReps > repsMax){
-                currentReps = 0;
-            }
-        } else if (isFramesFinished() && (soundFinished == null || soundFinished)){
-            for (Runnable onFinished : onFinish){
-                onFinished.run();
-            }
-            onFinish.clear();
+    private GifFrame[] getCombinedFrames(int frameIndex) {
+        if (frameIndex >= frames.size()) {
+            frameIndex = frames.size()-1;
         }
+
+        List<GifFrame> combinedFrames = new ArrayList<>(frames.size());
+        for (int i = 0; i <= frameIndex; i++) {
+            GifFrame frame = frames.get(i);
+            combinedFrames.add(frame);
+            if (frame.disposalMethod().equals(GifDisposalMethod.UNSPECIFIED)
+                    || frame.disposalMethod().equals(GifDisposalMethod.RESTORE_TO_BACKGROUND_COLOR)) {
+                combinedFrames.clear();
+                combinedFrames.add(frame);
+            } else if (!frame.disposalMethod().equals(GifDisposalMethod.DO_NOT_DISPOSE)) {
+                System.err.printf("%s not supported. Check frame %d of one of the Jumpscares. Defaulting to DO_NOT_DISPOSE.%n",
+                        frame.disposalMethod(), frameIndex);
+            }
+        }
+
+        return combinedFrames.toArray(new GifFrame[0]);
     }
 
-    public void addOnFinishedListener(Runnable onFinished){
+    public void addOnFinishedListener(Runnable onFinished) {
         this.onFinish.add(onFinished);
     }
-
-    public boolean isFramesFinished() {
-        return currentFrame == frames.size();
-    }
 }
-
-

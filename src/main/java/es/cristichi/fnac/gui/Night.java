@@ -2,6 +2,7 @@ package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.AmbientSound;
 import es.cristichi.fnac.obj.AmbientSoundSystem;
@@ -947,7 +948,6 @@ public class Night extends JComponent {
 			g2d.drawString(text, centerX, centerY);
         }
 
-		// Jumpscares system. Yes, in the paint method, I know.
 		if (jumpscare != null && camsUpDownTransTicks == 0) {
 			if (camsUp && jumpscare.shouldCamsBeDown()){
 				Action closeCamsAction = getActionMap().get("camsAction");
@@ -955,15 +955,57 @@ public class Night extends JComponent {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			} else {
+				GifFrame[] frames = jumpscare.updateAndGetFrame(currentTick, FPS);
 				if (jumpscare.isFrameToPlaySound()){
 					jumpscare.getSound().play();
 				}
-				g.drawImage(jumpscare.getCurrentFrame(), 0, 0, getWidth(), getHeight(), this);
+
+				// Full dimensions of the final full-sized frame
+				int fullWidth = jumpscare.getFullWidth();
+				int fullHeight = jumpscare.getFullHeight();
+
+				// Calculate scaling factor for the full frame
+				double scaleJumpX = (double) getWidth() / fullWidth;
+				double scaleJumpY = (double) getHeight() / fullHeight;
+				double scale = Math.min(scaleJumpX, scaleJumpY); // Uniform scaling to maintain aspect ratio
+
+				// Calculate the size of the scaled full frame
+				int scaledFullWidth = (int) (fullWidth * scale);
+				int scaledFullHeight = (int) (fullHeight * scale);
+
+				// Calculate the top-left corner for the full frame
+				int fullDrawX = (getWidth() - scaledFullWidth) / 2;
+				int fullDrawY = (getHeight() - scaledFullHeight) / 2;
+
+				// Draw all frames of the jumpscare
+				for (GifFrame frame : frames) {
+					// Frame's original size
+					int frameWidth = frame.image().getWidth();
+					int frameHeight = frame.image().getHeight();
+
+					// Frame's offset relative to the full image
+					int frameOffsetX = frame.offsetX();
+					int frameOffsetY = frame.offsetY();
+
+					// Scale offsets and dimensions
+					int scaledFrameWidth = (int) (frameWidth * scale);
+					int scaledFrameHeight = (int) (frameHeight * scale);
+					int scaledOffsetX = (int) (frameOffsetX * scale);
+					int scaledOffsetY = (int) (frameOffsetY * scale);
+
+					// Position the frame relative to the scaled full frame
+					int frameDrawX = fullDrawX + scaledOffsetX;
+					int frameDrawY = fullDrawY + scaledOffsetY;
+
+					// Draw the frame without stretching it
+					g.drawImage(frame.image(), frameDrawX, frameDrawY, frameDrawX + scaledFrameWidth, frameDrawY + scaledFrameHeight,
+							0, 0, frameWidth, frameHeight, this);
+				}
+
 				if (jumpscare.isFramesFinished()) {
 					nightTicks.cancel();
 					victoryScreen = false;
 				}
-				jumpscare.updateFrame();
 			}
 		}
     }

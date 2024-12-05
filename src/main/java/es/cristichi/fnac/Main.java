@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class Main {
+    public static final boolean DEBUG = true;
+    public static final boolean DEBUG_TEST_NIGHT_MODE = false;
     public static final String GAME_TITLE = "Five Nights at Cris'";
     private static JPanel cardPanel;
     private static JPanel nightPanel;
@@ -99,7 +101,7 @@ public class Main {
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 40, 0, null, -1);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
@@ -149,7 +151,8 @@ public class Main {
             mmItems.add("Repeat Night 1");
             mmItems.add("Repeat Tutorial");
         }
-        //mmItems.add("Testing Night");
+        if (DEBUG)
+            mmItems.add("Testing Night");
         mmItems.add("Exit");
         return new MenuData(mmItems, background);
     }
@@ -193,22 +196,22 @@ public class Main {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         CameraMap nightMap;
-        if (true){
+        if (DEBUG_TEST_NIGHT_MODE){
             nightMap = new CrisRestaurantMap();
             ((CrisRestaurantMap) nightMap).addCamAnimatronics("corridor 1",
                     //new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
                     //new Maria(1, Map.of(0,0), List.of(), 5),
                     //new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
-                    new RoamingCris(3, Map.of(0,20), List.of(), 5555, rng)
+                    new RoamingCris(3, Map.of(0,20), List.of(), 3, rng)
                     ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
             );
         } else {
             nightMap = new TutorialMap();
-            ((TutorialMap) nightMap).addCamAnimatronics("cam1",
-                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 555),
-                    //new Maria(1, Map.of(0,0), List.of(), 5),
-                    new RoamingCris(2, Map.of(0,20), List.of(), 5555, rng)
-                    //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 555)
+            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
+                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
+                    //new Maria(1, Map.of(0,0), List.of(), 1)
+                    //new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
+                    new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
             );
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
