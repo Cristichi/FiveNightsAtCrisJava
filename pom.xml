@@ -6,7 +6,7 @@
 
     <groupId>es.cristichi.fnac</groupId>
     <artifactId>FiveNightsAtCris</artifactId>
-    <version>0.3.4-N3</version>
+    <version>0.3.5-N3</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
