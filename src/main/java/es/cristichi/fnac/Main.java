@@ -22,8 +22,9 @@ import java.util.Map;
 import java.util.Random;
 
 public class Main {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final boolean DEBUG_TEST_NIGHT_MODE = false;
+
     public static final String GAME_TITLE = "Five Nights at Cris'";
     private static JPanel cardPanel;
     private static JPanel nightPanel;
@@ -207,15 +208,15 @@ public class Main {
             );
         } else {
             nightMap = new TutorialMap();
-            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
-                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
-                    //new Maria(1, Map.of(0,0), List.of(), 1)
-                    //new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
-                    new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
-            );
+//            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
+//                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
+//                    //new Maria(1, Map.of(0,0), List.of(), 1)
+//                    //new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
+//                    new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
+//            );
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                powerOutage, rng, 60, 0.45f,
+                powerOutage, rng, 60, 01111.45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
