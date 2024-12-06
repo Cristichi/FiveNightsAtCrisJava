@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class Menu extends JComponent {
-	private final List<String> menuItems;
+	private final List<MenuItem> menuItems;
 	private Image backgroundImage;
 	private final Image loadingImage;
 	private boolean loading;
@@ -27,7 +27,7 @@ public abstract class Menu extends JComponent {
 	private int musicCreditsTicks;
 	private final String[] musicCreditsMsg;
 
-    public Menu(String backgroundImg, String loadingImg, List<String> menuItems) throws IOException {
+    public Menu(String backgroundImg, String loadingImg, List<MenuItem> menuItems) throws IOException {
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
 		loadingImage = Resources.loadImageResource(loadingImg);
@@ -56,7 +56,7 @@ public abstract class Menu extends JComponent {
 		backgroundImage = Resources.loadImageResource(backgroundImg);
 	}
 
-	public synchronized void updateMenuItems(List<String> newMenuItems) {
+	public synchronized void updateMenuItems(List<MenuItem> newMenuItems) {
 		this.menuItems.clear();
 		this.menuItems.addAll(newMenuItems);
 		initializeMenuItems();
@@ -75,7 +75,7 @@ public abstract class Menu extends JComponent {
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup()
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
-		for (String item : menuItems) {
+		for (MenuItem item : menuItems) {
 			JButton button = createMenuButton(item);
 			horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(button);
@@ -87,8 +87,8 @@ public abstract class Menu extends JComponent {
 		layout.setVerticalGroup(verticalGroup);
 	}
 
-	private JButton createMenuButton(String item) {
-		JButton button = new JButton("<html>" + item + "</html>");
+	private JButton createMenuButton(MenuItem item) {
+		JButton button = new JButton("<html>" + item.display() + "</html>");
 		float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
 		button.setFont(btnFont.deriveFont(fontScale));
 		button.setForeground(Color.WHITE);
@@ -96,16 +96,16 @@ public abstract class Menu extends JComponent {
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);
 		button.setAlignmentX(Component.LEFT_ALIGNMENT);
-		button.addActionListener(new MenuActionListener(item));
+		button.addActionListener(new MenuActionListener(item.id()));
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				button.setText("<html><u>" + item + "</u></html>");
+				button.setText("<html><u>" + item.display() + "</u></html>");
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				button.setText("<html>" + item + "</html>");
+				button.setText("<html>" + item.display() + "</html>");
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
@@ -154,16 +154,17 @@ public abstract class Menu extends JComponent {
 
 	/**
 	 * This is performed after an item is clicked. It also loads a loading screen in case you need time to load resources.
-	 * @param item String identifying the item clicked.
+	 * It also makes sure to attach a listener to start playing the menu music when Night finishes.
+	 * @param item String identifying the item clicked, or null if no Night should start.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
 	protected abstract Night onMenuItemClick(String item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
-		private final String item;
+		private final String itemId;
 
-		public MenuActionListener(String item) {
-			this.item = item;
+		public MenuActionListener(String itemId) {
+			this.itemId = itemId;
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -176,7 +177,7 @@ public abstract class Menu extends JComponent {
 					music.stop();
 					error = null;
 					errorTicks = 0;
-					Night night = onMenuItemClick(item);
+					Night night = onMenuItemClick(itemId);
 					if (night != null){
 						night.addOnNightEnd((completed) -> {
                             music.play(true);
@@ -185,7 +186,7 @@ public abstract class Menu extends JComponent {
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					error = new String[] {"Error trying to load "+item, e1.getMessage(), "Check console for full stack trace."};
+					error = new String[] {"Error trying to load "+ itemId, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
 					musicCreditsTicks = 160;
 					music.play(true);
@@ -194,7 +195,7 @@ public abstract class Menu extends JComponent {
 					component.setVisible(true);
 				}
 				loading = false;
-			}, item).start();
+			}, itemId).start();
 		}
 	}
 }

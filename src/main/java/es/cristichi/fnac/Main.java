@@ -1,9 +1,9 @@
 package es.cristichi.fnac;
 
 import es.cristichi.fnac.exception.MenuItemNotFound;
-import es.cristichi.fnac.gui.ExceptionViewer;
 import es.cristichi.fnac.gui.Menu;
-import es.cristichi.fnac.gui.Night;
+import es.cristichi.fnac.gui.MenuItem;
+import es.cristichi.fnac.gui.*;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.anim.*;
@@ -116,77 +116,78 @@ public class Main {
     }
 
     private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) {
-        ArrayList<String> mmItems = new ArrayList<>(2);
+        ArrayList<MenuItem> mmItems = new ArrayList<>(2);
         String background;
         List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
 
         if (numCompleted == 0) {
             background = "menu/background0.jpg";
-            mmItems.add("Tutorial Night");
+            mmItems.add(new MenuItem("tutorial", "Tutorial Night"));
         } else if (numCompleted == 1) {
             background = "menu/background1.jpg";
-            mmItems.add("Night 1");
-            mmItems.add("Repeat Tutorial");
+            mmItems.add(new MenuItem("n1", "Night 1"));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
-            mmItems.add("Night 2");
-            mmItems.add("Repeat Night 1");
-            mmItems.add("Repeat Tutorial");
+            mmItems.add(new MenuItem("n2", "Night 2"));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
         } else if (numCompleted == 3) {
             background = "menu/background3.jpg";
-            mmItems.add("Night 3");
-            mmItems.add("Repeat Night 2");
-            mmItems.add("Repeat Night 1");
-            mmItems.add("Repeat Tutorial");
+            mmItems.add(new MenuItem("n3", "Night 3"));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
         } else if (numCompleted == 4) {
             background = "menu/background4.jpg";
-            mmItems.add("More Nights don't exist (yet)");
-            mmItems.add("Repeat Night 3");
-            mmItems.add("Repeat Night 2");
-            mmItems.add("Repeat Night 1");
-            mmItems.add("Repeat Tutorial");
+            mmItems.add(new MenuItem("n3", "Repeat Night 3"));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
         } else {
             RuntimeException error = new RuntimeException("Menu is not prepared for "+numCompleted+
                     " nights completed. Cristichi forgot to add it.");
             new ExceptionViewer(error);
             background = "menu/background2.jpg";
-            mmItems.add("More Nights don't exist (yet)");
-            mmItems.add("Repeat Night 1");
-            mmItems.add("Repeat Tutorial");
+            mmItems.add(new MenuItem("", "More Nights coming soon!"));
+            mmItems.add(new MenuItem("n3", "Repeat Night 3"));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
         }
         if (DEBUG)
-            mmItems.add("Testing Night");
-        mmItems.add("Exit");
+            mmItems.add(new MenuItem("test", "TESTING NIGHT (DEBUG ONLY)"));
+        mmItems.add(new MenuItem("exit", "Run away"));
         return new MenuData(mmItems, background);
     }
 
-    private record MenuData(ArrayList<String> mmItems, String background) {
-    }
-
-    private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, ArrayList<String> mmItems, JFrame window) throws IOException {
+    private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, List<MenuItem> mmItems, JFrame window) throws IOException {
         return new Menu(background, "menu/loading.jpg", mmItems) {
             @Override
             protected Night onMenuItemClick(String item) throws IOException {
                 switch (item) {
-                    case "Testing Night" -> {
+                    case "test" -> {
                         return startTESTINGNIGHT(cards, window);
                     }
-                    case "Tutorial Night", "Repeat Tutorial" -> {
+                    case "tutorial" -> {
                         return startTutorialNight(saveFile, cards, window);
                     }
-                    case "Night 1", "Repeat Night 1" -> {
+                    case "n1" -> {
                         return startNight1(saveFile, cards, window);
                     }
-                    case "Night 2", "Repeat Night 2" -> {
+                    case "n2" -> {
                         return startNight2(saveFile, cards, window);
                     }
-                    case "Night 3", "Repeat Night 3" -> {
+                    case "n3" -> {
                         return startNight3(saveFile, cards, window);
                     }
-                    case "Exit" -> {
+                    case "exit" -> {
                         window.dispose();
                         System.exit(0);
+                        return null;
+                    }
+                    case "" -> {
                         return null;
                     }
                     default -> throw new MenuItemNotFound("Menu item \"" + item + "\" not found in this menu.");
@@ -254,8 +255,8 @@ public class Main {
                 try {
                     SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                     MenuData menuData = getUpdatedMenuData(saveFile);
-                    mainMenu.updateBackground(menuData.background);
-                    mainMenu.updateMenuItems(menuData.mmItems);
+                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateMenuItems(menuData.mmItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -298,8 +299,8 @@ public class Main {
                 try {
                     SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                     MenuData menuData = getUpdatedMenuData(saveFile);
-                    mainMenu.updateBackground(menuData.background);
-                    mainMenu.updateMenuItems(menuData.mmItems);
+                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateMenuItems(menuData.mmItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -348,8 +349,8 @@ public class Main {
                 try {
                     SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                     MenuData menuData = getUpdatedMenuData(saveFile);
-                    mainMenu.updateBackground(menuData.background);
-                    mainMenu.updateMenuItems(menuData.mmItems);
+                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateMenuItems(menuData.mmItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -400,8 +401,8 @@ public class Main {
                 try {
                     SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
                     MenuData menuData = getUpdatedMenuData(saveFile);
-                    mainMenu.updateBackground(menuData.background);
-                    mainMenu.updateMenuItems(menuData.mmItems);
+                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateMenuItems(menuData.mmItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
