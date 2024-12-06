@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Main {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final boolean DEBUG_TEST_NIGHT_MODE = false;
 
     public static final String GAME_TITLE = "Five Nights at Cris'";
