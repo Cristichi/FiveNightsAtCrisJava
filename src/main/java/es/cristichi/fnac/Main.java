@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Main {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final boolean DEBUG_TEST_NIGHT_MODE = false;
 
     public static final String GAME_TITLE = "Five Nights at Cris'";
@@ -70,7 +70,7 @@ public class Main {
         }
     }
 
-    private static void initializeGUI(SaveFileIO.SaveFile saveFile) throws IOException, AWTException {
+    private static void initializeGUI(SaveFileIO.SaveFile saveFile) throws IOException {
         JFrame window = new JFrame(GAME_TITLE);
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,6 +85,8 @@ public class Main {
         nightPanel = new JPanel(new BorderLayout());
         cardPanel.add(nightPanel, "night");
 
+        /* This was becoming annoying, I'l try deactivating it for a while and perhaps work on capturing the mouse
+           like real games do xD
         Robot robot = new Robot();
         new Timer(10, e -> {
             if (window.isFocused()) {
@@ -99,10 +101,11 @@ public class Main {
                 }
             }
         }).start();
+         */
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, true);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
@@ -208,15 +211,15 @@ public class Main {
             );
         } else {
             nightMap = new TutorialMap();
-//            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
-//                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
-//                    //new Maria(1, Map.of(0,0), List.of(), 1)
-//                    //new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
-//                    new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
-//            );
+            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
+                    //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
+                    //new Maria(1, Map.of(0,0), List.of(), 3)
+                    new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
+                    //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
+            );
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                powerOutage, rng, 60, 01111.45f,
+                powerOutage, rng, 60, .45f,
                 Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();

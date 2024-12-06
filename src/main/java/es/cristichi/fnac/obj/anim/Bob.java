@@ -17,7 +17,8 @@ public class Bob extends AvoidCamsAnimatronicDrawing {
                List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Bob", secInterval, aiDuringNight, 20, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
-                        Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0), forbiddenCams, Color.RED);
+                        Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, false),
+                forbiddenCams, Color.RED);
         this.secsToKill = secsToKill;
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));

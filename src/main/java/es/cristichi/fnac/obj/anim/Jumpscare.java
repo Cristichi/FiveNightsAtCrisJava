@@ -17,20 +17,24 @@ public class Jumpscare {
     private final int soundStartFrame;
     private final int camsDownFrame;
     private final GifAnimation frames;
+    private final boolean stretch;
     private int currentFrame;
     private int currentFrameStartTick;
 
     private final LinkedList<Runnable> onFinish;
     private Boolean soundFinished;
 
-    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame) throws ResourceException {
-        this.currentFrame = 0;
+    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame, boolean stretch) throws ResourceException {
+        this.frames = Resources.loadGif(filepath);
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
-        this.frames = Resources.loadGif(filepath);
+        this.stretch = stretch;
 
+        this.currentFrame = 0;
+        this.currentFrameStartTick = 0;
         this.onFinish = new LinkedList<>();
+
         if (sound == null) {
             soundFinished = null;
         } else {
@@ -50,6 +54,10 @@ public class Jumpscare {
     public void reset() {
         this.currentFrame = 0;
         this.currentFrameStartTick = 0;
+    }
+
+    public boolean shouldStretch(){
+        return stretch;
     }
 
     public GifFrame[] getCurrentFrame() {

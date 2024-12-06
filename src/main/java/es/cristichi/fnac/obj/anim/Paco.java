@@ -18,7 +18,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                 String retreatCam, float moveSoundChance, double secsToKill) throws ResourceException {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
-                        Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0),
+                        Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0, false),
                 orderedCamPath, retreatCam, Color.BLUE);
 
         this.secsToKill = secsToKill;
