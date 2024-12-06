@@ -236,9 +236,9 @@ public class Main {
     private static Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        Map<Integer, Integer> aiNightBob = Map.of(0,0, 1,1, 4,2);
+        Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
 
-        Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,1, 4,2);
+        Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,2, 3,3, 4,4);
 
         TutorialMap tutorialMap = new TutorialMap();
         tutorialMap.addCamAnimatronics("cam1", new Bob(5, aiNightBob, List.of("cam4"), 8));
