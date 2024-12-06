@@ -26,7 +26,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
             jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12, false);
         }
-        jumpscare = rng.nextFloat()<9.9? jumpscareNormal : jumpscareItsMe;
+        jumpscare = rng.nextFloat()<.9? jumpscareNormal : jumpscareItsMe;
         this.secsToKill = secsToKill;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));
