@@ -2,7 +2,7 @@
 Just another Five Night at Freddy's fangame, FNAC, except that I decided to do it in the worst possible way by using only vanilla Java with its Swing components and doing everything frame by frame. It also posseses my unique drawing style.
 
 ## Work in Progress
-This is still a work in progress. The Tutorial Night and Nights 1 and 2 are mostly finished and they are 100% playable. Nonetheless, there is still some work to do for the future Nights, so stay tuned!
+This is still a work in progress. The Tutorial Night and some of the Nights are mostly finished and 100% playable. Nonetheless, there is still some work to do for the game mechanics and future Nights, so stay tuned!
 
 ## The idea
 The idea of the game is to make it as modificable as possible with as little effort as possible. With that in mind, I'm trying to parametrize everything and I will attempt to make it data-driven once its finished.
