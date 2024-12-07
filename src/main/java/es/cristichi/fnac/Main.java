@@ -1,6 +1,7 @@
 package es.cristichi.fnac;
 
 import es.cristichi.fnac.exception.MenuItemNotFound;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.Menu;
 import es.cristichi.fnac.gui.MenuItem;
 import es.cristichi.fnac.gui.*;
@@ -99,7 +100,7 @@ public class Main {
         window.setVisible(true);
     }
 
-    private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) {
+    private static @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) throws ResourceException {
         ArrayList<MenuItem> mmItems = new ArrayList<>(2);
         String background;
         List<String> completed = saveFile.completedNights();
@@ -107,50 +108,50 @@ public class Main {
 
         if (numCompleted == 0) {
             background = "menu/background0.jpg";
-            mmItems.add(new MenuItem("tutorial", "Tutorial Night"));
+            mmItems.add(new MenuItem("tutorial", "Tutorial Night", null));
         } else if (numCompleted == 1) {
             background = "menu/background1.jpg";
-            mmItems.add(new MenuItem("n1", "Night 1"));
-            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
+            mmItems.add(new MenuItem("n1", "Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         } else if (numCompleted == 2) {
             background = "menu/background2.jpg";
-            mmItems.add(new MenuItem("n2", "Night 2"));
-            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
-            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
+            mmItems.add(new MenuItem("n2", "Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         } else if (numCompleted == 3) {
             background = "menu/background3.jpg";
-            mmItems.add(new MenuItem("n3", "Night 3"));
-            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
-            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
-            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
+            mmItems.add(new MenuItem("n3", "Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         } else if (numCompleted == 4) {
             background = "menu/background4.jpg";
-            mmItems.add(new MenuItem("n3", "Repeat Night 3"));
-            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
-            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
-            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
+            mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         } else {
             RuntimeException error = new RuntimeException("Menu is not prepared for "+numCompleted+
                     " nights completed. Cristichi forgot to add it.");
             new ExceptionViewer(error);
             background = "menu/background2.jpg";
-            mmItems.add(new MenuItem("", "More Nights coming soon!"));
-            mmItems.add(new MenuItem("n3", "Repeat Night 3"));
-            mmItems.add(new MenuItem("n2", "Repeat Night 2"));
-            mmItems.add(new MenuItem("n1", "Repeat Night 1"));
-            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial"));
+            mmItems.add(new MenuItem("", "More Nights coming soon!", null));
+            mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         }
         if (DEBUG)
-            mmItems.add(new MenuItem("test", "TESTING NIGHT (DEBUG ONLY)"));
-        mmItems.add(new MenuItem("exit", "Run away"));
+            mmItems.add(new MenuItem("test", "TESTING NIGHT (DEBUG ONLY)", null));
+        mmItems.add(new MenuItem("exit", "Run away", null));
         return new MenuData(mmItems, background);
     }
 
     private static Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, List<MenuItem> mmItems, JFrame window) throws IOException {
         return new Menu(background, "menu/loading.jpg", mmItems) {
             @Override
-            protected Night onMenuItemClick(String item) throws IOException {
-                switch (item) {
+            protected Night onMenuItemClick(MenuItem item) throws IOException {
+                switch (item.id()) {
                     case "test" -> {
                         return startTESTINGNIGHT(cards, window);
                     }

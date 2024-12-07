@@ -16,7 +16,8 @@ import java.util.TimerTask;
 public abstract class Menu extends JComponent {
 	private final List<MenuItem> menuItems;
 	private Image backgroundImage;
-	private final Image loadingImage;
+	private final Image defaultLoadingImg;
+	private Image currentLoadingImg;
 	private boolean loading;
 	private final Font btnFont;
 
@@ -30,7 +31,7 @@ public abstract class Menu extends JComponent {
     public Menu(String backgroundImg, String loadingImg, List<MenuItem> menuItems) throws IOException {
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
-		loadingImage = Resources.loadImageResource(loadingImg);
+		defaultLoadingImg = Resources.loadImageResource(loadingImg);
 		loading = false;
 		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
 
@@ -96,7 +97,7 @@ public abstract class Menu extends JComponent {
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);
 		button.setAlignmentX(Component.LEFT_ALIGNMENT);
-		button.addActionListener(new MenuActionListener(item.id()));
+		button.addActionListener(new MenuActionListener(item));
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -126,7 +127,10 @@ public abstract class Menu extends JComponent {
 		int fontSize = 40*fontScale;
 
 		// Draw the background image, scaled to fit the component's dimensions
-		g.drawImage(loading?loadingImage:backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		g.drawImage((loading?
+					(currentLoadingImg ==null?defaultLoadingImg: currentLoadingImg)
+					:backgroundImage),
+				0, 0, getWidth(), getHeight(), this);
 
 		if (errorTicks-- > 0) {
 			g.setFont(new Font("Arial", Font.BOLD, fontSize));
@@ -158,17 +162,18 @@ public abstract class Menu extends JComponent {
 	 * @param item String identifying the item clicked, or null if no Night should start.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract Night onMenuItemClick(String item) throws Exception;
+	protected abstract Night onMenuItemClick(MenuItem item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
-		private final String itemId;
+		private final MenuItem menuItem;
 
-		public MenuActionListener(String itemId) {
-			this.itemId = itemId;
+		public MenuActionListener(MenuItem menuItem) {
+			this.menuItem = menuItem;
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
+			currentLoadingImg = menuItem.loadingScreen();
 			for (Component component : Menu.this.getComponents()) {
 				component.setVisible(false);
 			}
@@ -177,7 +182,7 @@ public abstract class Menu extends JComponent {
 					music.stop();
 					error = null;
 					errorTicks = 0;
-					Night night = onMenuItemClick(itemId);
+					Night night = onMenuItemClick(menuItem);
 					if (night != null){
 						night.addOnNightEnd((completed) -> {
                             music.play(true);
@@ -186,7 +191,7 @@ public abstract class Menu extends JComponent {
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					error = new String[] {"Error trying to load "+ itemId, e1.getMessage(), "Check console for full stack trace."};
+					error = new String[] {"Error trying to load "+ menuItem, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
 					musicCreditsTicks = 160;
 					music.play(true);
@@ -195,7 +200,7 @@ public abstract class Menu extends JComponent {
 					component.setVisible(true);
 				}
 				loading = false;
-			}, itemId).start();
+			}, menuItem.id()).start();
 		}
 	}
 }
