@@ -70,8 +70,6 @@ public class Night extends JComponent {
 	private Boolean victoryScreen;
 
 	private final BufferedImage backgroundImg;
-	/** Ticks the "camera" takes to move between the 3 views of your office. */
-	private static final int OFFICE_TRANSITION_TICKS = 30;
 	/** In the source image of the background, the X for where the left-side of the screen is while at LEFTDOOR. */
 	private static final int LEFTDOOR_X_IN_SOURCE = 200;
 	/** In the source image of the background, the X for where the left-side of the screen is while at MONITOR. */
@@ -92,6 +90,8 @@ public class Night extends JComponent {
 
 	/** Current view of the player. */
 	private OfficeLocation officeLoc;
+	/** Ticks the "camera" takes to move between the 3 views of your office. */
+	private static final int OFFICE_TRANSITION_TICKS = FPS/2;
 	/** Ticks left for the player to finish a "moving" transition. If 0, player is not moving around at the moment. */
 	private int offTransTicks;
 	/** During transitions, previous view of the player so that we know how to calculate what they are currently seeing. */
