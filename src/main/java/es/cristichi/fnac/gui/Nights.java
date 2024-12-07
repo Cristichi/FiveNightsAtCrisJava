@@ -68,48 +68,51 @@ public class Nights extends JFrame {
      * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to maximize it in window.
      */
     public void setFullScreen(boolean set) {
-        if (set) {
-            Rectangle windowBounds = getBounds();
+        Rectangle windowBounds = getBounds();
 
-            GraphicsEnvironment graphicsEnvironment =
-                    GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsEnvironment graphicsEnvironment =
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] graphicsDevices =
+                graphicsEnvironment.getScreenDevices();
 
-            GraphicsDevice[] graphicsDevices =
-                    graphicsEnvironment.getScreenDevices();
+        GraphicsDevice best = null;
+        int bestArea = 0;
+        for (GraphicsDevice graphicsDevice : graphicsDevices) {
+            GraphicsConfiguration[] graphicsConfigurations =
+                    graphicsDevice.getConfigurations();
 
-            GraphicsDevice best = null;
-            int bestArea = 0;
-            for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                GraphicsConfiguration[] graphicsConfigurations =
-                        graphicsDevice.getConfigurations();
+            for (GraphicsConfiguration graphicsConfiguration : graphicsConfigurations) {
+                Rectangle graphicsBounds =
+                        graphicsConfiguration.getBounds();
 
-                for (GraphicsConfiguration graphicsConfiguration : graphicsConfigurations) {
-                    Rectangle graphicsBounds =
-                            graphicsConfiguration.getBounds();
+                Rectangle intersection = windowBounds.intersection(graphicsBounds);
 
-                    Rectangle intersection = windowBounds.
-                            intersection(graphicsBounds);
-
-                    int intersectionArea = intersection.width * intersection.height;
-                    if (intersectionArea > bestArea) {
-                        best = graphicsDevice;
-                        bestArea = intersectionArea;
-                    }
+                int intersectionArea = intersection.width * intersection.height;
+                if (intersectionArea > bestArea) {
+                    best = graphicsDevice;
+                    bestArea = intersectionArea;
                 }
-
             }
+        }
 
+        dispose();
+        setUndecorated(set);
+        if (set) {
             if (best != null && best.isFullScreenSupported()) {
-                setUndecorated(true);
                 best.setFullScreenWindow(this);
             } else {
-                setUndecorated(false);
                 setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
             }
         } else {
-            setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+            if (best != null) {
+                best.setFullScreenWindow(null);
+            }
+            setBounds(windowBounds);
         }
+
+        setVisible(true);
     }
+
 
     private @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) throws ResourceException {
         ArrayList<MenuItem> mmItems = new ArrayList<>(2);
