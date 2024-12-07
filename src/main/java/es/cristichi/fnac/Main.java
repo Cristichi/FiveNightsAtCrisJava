@@ -87,24 +87,6 @@ public class Main {
         nightPanel = new JPanel(new BorderLayout());
         cardPanel.add(nightPanel, "night");
 
-        /* This was becoming annoying, I'l try deactivating it for a while and perhaps work on capturing the mouse
-           like real games do xD
-        Robot robot = new Robot();
-        new Timer(10, e -> {
-            if (window.isFocused()) {
-                Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
-                Rectangle bounds = window.getBounds();
-
-                // Check if the cursor is outside the bounds
-                if (!bounds.contains(cursorLocation)) {
-                    int closestX = Math.max(bounds.x, Math.min(cursorLocation.x, bounds.x + bounds.width - 1));
-                    int closestY = Math.max(bounds.y, Math.min(cursorLocation.y, bounds.y + bounds.height - 1));
-                    robot.mouseMove(closestX, closestY);
-                }
-            }
-        }).start();
-         */
-
         MenuData menuData = getUpdatedMenuData(saveFile);
 
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisual.STRETCHED);
