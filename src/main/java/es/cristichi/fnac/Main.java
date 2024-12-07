@@ -6,6 +6,7 @@ import es.cristichi.fnac.gui.MenuItem;
 import es.cristichi.fnac.gui.*;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
+import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.*;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
