@@ -126,6 +126,14 @@ public class Main {
             mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
         } else if (numCompleted == 4) {
             background = "menu/background4.jpg";
+            mmItems.add(new MenuItem("n4", "Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
+            mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+            mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+            mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+            mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+        } else if (numCompleted == 5) {
+            background = "menu/background4.jpg";
+            mmItems.add(new MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
             mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
             mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
             mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
@@ -136,6 +144,7 @@ public class Main {
             new ExceptionViewer(error);
             background = "menu/background2.jpg";
             mmItems.add(new MenuItem("", "More Nights coming soon!", null));
+            mmItems.add(new MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
             mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
             mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
             mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
@@ -167,6 +176,9 @@ public class Main {
                     case "n3" -> {
                         return startNight3(saveFile, cards, window);
                     }
+                    case "n4" -> {
+                        return startNight4(saveFile, cards, window);
+                    }
                     case "exit" -> {
                         window.dispose();
                         System.exit(0);
@@ -193,7 +205,7 @@ public class Main {
                     //new Maria(1, Map.of(0,0), List.of(), 5),
                     //new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
                     new RoamingCris(3, Map.of(0,20), List.of(), 3, rng)
-                    ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 555)
+                    ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 555)
             );
         } else {
             nightMap = new TutorialMap();
@@ -201,12 +213,11 @@ public class Main {
                     //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
                     //new Maria(1, Map.of(0,0), List.of(), 3)
                     new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
-                    //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4"), "cam1", 1f, 1)
+                    //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 1)
             );
         }
         Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
-                powerOutage, rng, 60, .45f,
-                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
+                powerOutage, rng, 60, .45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
             cards.show(cardPanel, "menu");
@@ -231,8 +242,7 @@ public class Main {
         tutorialMap.addCamAnimatronics("cam2", new Maria(5, aiNightMaria, List.of("cam3"), 8));
 
         Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
-                powerOutage, rng, 60, 0.45f,
-                Resources.loadSound("night/tutorial/completed.wav", "tutorialCom.wav"));
+                powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
                 System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
@@ -267,7 +277,7 @@ public class Main {
                 List.of("corridor 1", "corridor 3", "staff lounge"), 6);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,2, 4,3),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 6);
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 6);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -276,8 +286,7 @@ public class Main {
 
         long seed = new Random().nextLong();
         Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
-                powerOutage, new Random(seed), 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
+                powerOutage, new Random(seed), 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
                 saveFile.addCompletedNight(night.getNightName());
@@ -314,7 +323,7 @@ public class Main {
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,4, 4,5),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
 
         AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,1, 4,2, 5,3),
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5, rng);
@@ -326,8 +335,7 @@ public class Main {
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
 
         Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
-                powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
+                powerOutage, rng, 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
@@ -366,7 +374,7 @@ public class Main {
                 List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,5, 4,7),
-                List.of("kitchen", "dining area", "corridor 1", "corridor 3"), "kitchen", 1f, 5);
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
 
         AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
                 List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
@@ -378,8 +386,61 @@ public class Main {
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
         nightMap.get("bathrooms").setBroken(true);
 
-        Night night = new Night("Night 3", nightMap, null, powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav", "ngCom.wav"));
+        Night night = new Night("Night 3", nightMap, "night/n4/paper.png", powerOutage, rng,
+                90, 0.45f, "night/general/completed.wav");
+        night.addOnNightEnd((completed) -> {
+            if (completed){
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
+                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateMenuItems(menuData.mmItems());
+                } catch (IOException e) {
+                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                }
+            }
+
+            cards.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
+        });
+        nightPanel.add(night);
+        window.setTitle(getTitleForWindow(night.getNightName()));
+        cards.show(cardPanel, "night");
+        System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        night.startNight();
+
+        return night;
+    }
+
+    private static Night startNight4(SaveFileIO.SaveFile saveFile, CardLayout cards, JFrame window) throws IOException {
+        long seed = new Random().nextLong();
+        Random rng = new Random(seed);
+
+        AnimatronicDrawing bob = new Bob(5, Map.of(0,8, 4,9),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+
+        AnimatronicDrawing maria = new Maria(5, Map.of(0,3, 2,5, 4,6),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+
+        AnimatronicDrawing paco = new Paco(6, Map.of(0,7, 5,8),
+                List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
+
+        AnimatronicDrawing crisChoosesSide = new PathCris(5, Map.of(0,1, 4,2, 5,4),
+                List.of("storage", "dining area", "corridor 2", "bathrooms", "corridor 4", "rightDoor"), "storage", 5, rng);
+
+        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        nightMap.addCamAnimatronics("kitchen", paco);
+        nightMap.addCamAnimatronics("storage", bob);
+        nightMap.addCamAnimatronics("offices", maria);
+        nightMap.addCamAnimatronics("dining area", crisChoosesSide);
+        nightMap.get("bathrooms").setBroken(true);
+        nightMap.remove("main stage");
+
+        Night night = new Night("Night 4", nightMap, null, powerOutage, rng,
+                90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());

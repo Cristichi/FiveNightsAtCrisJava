@@ -192,13 +192,13 @@ public class Night extends JComponent {
 	 *                             a power outage (even if you have both doors closed at all time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 *                             It must be kept in mind that Cameras also use power.
-	 * @param soundOnNightCompleted Sound played when Night is completed. Can be null for dev purposes but having
-	 *                              one is encouraged.
+	 * @param soundOnNightCompletedPath Path to the sound played when Night is completed. Can be null for dev
+	 *                                     purposes but having one is encouraged.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
 	 */
 	public Night(String nightName, CameraMap camMap, @Nullable String paperImgPath,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				 float passivePowerUsage, @Nullable Sound soundOnNightCompleted) throws ResourceException {
+				 float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException {
 		this.rng = rng;
 		this.nightName = nightName;
 		this.camerasMap = camMap;
@@ -206,7 +206,6 @@ public class Night extends JComponent {
 		this.hourTicksInterval = (int) (FPS * secsPerHour);
 
 		onNightEndListeners = new LinkedList<>();
-		this.soundOnCompleted = soundOnNightCompleted;
 
 		powerLeft = 1;
 		// So this is calculated depending on the FPS, which determines the total number of ticks per night, which is
@@ -238,6 +237,7 @@ public class Night extends JComponent {
 		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
+		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath, "nightPassed.wav");
 		ambientSounds = new AmbientSoundSystem((int) (FPS*7.2),
 				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/weird1.wav", "weird1.wav")),
 				new AmbientSound(0.3f, true, Resources.loadSound("office/ambient/waterLeak.wav", "waterLeak.wav")),
