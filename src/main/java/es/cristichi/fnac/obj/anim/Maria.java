@@ -3,6 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
+import es.cristichi.fnac.obj.JumpscareVisual;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
@@ -18,7 +19,7 @@ public class Maria extends AvoidCamsAnimatronicDrawing {
                  List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
-                        Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0, false),
+                        Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0, JumpscareVisual.CENTERED),
                         forbiddenCams, Color.YELLOW);
         this.secsToKill = secsToKill;
 

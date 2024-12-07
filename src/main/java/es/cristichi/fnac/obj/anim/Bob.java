@@ -3,6 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
+import es.cristichi.fnac.obj.JumpscareVisual;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
@@ -18,7 +19,7 @@ public class Bob extends AvoidCamsAnimatronicDrawing {
                List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("Bob", secInterval, aiDuringNight, 20, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
-                        Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, false),
+                        Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, JumpscareVisual.CENTERED),
                 forbiddenCams, Color.RED);
         this.secsToKill = secsToKill;
 

@@ -967,7 +967,11 @@ public class Night extends JComponent {
 				// Calculate scaling factor for the full frame
 				double scaleJumpX = (double) getWidth() / fullWidth;
 				double scaleJumpY = (double) getHeight() / fullHeight;
-				double scale = jumpscare.shouldStretch() ? Math.max(scaleJumpX, scaleJumpY) : Math.min(scaleJumpX, scaleJumpY);
+				//double scale = jumpscare.getVisualSetting() ? Math.max(scaleJumpX, scaleJumpY) : Math.min(scaleJumpX, scaleJumpY);
+				double scale = switch (jumpscare.getVisualSetting()){
+					case CENTERED -> Math.min(scaleJumpX, scaleJumpY);
+					case STRETCHED -> Math.max(scaleJumpX, scaleJumpY);
+				};
 
 				// Calculate the size of the scaled full frame
 				int scaledFullWidth = (int) (fullWidth * scale);
@@ -987,29 +991,32 @@ public class Night extends JComponent {
 					int frameOffsetX = frame.offsetX();
 					int frameOffsetY = frame.offsetY();
 
-					if (jumpscare.shouldStretch()) {
-						// Stretching logic: scale entire frame to fill the screen
-						int stretchFrameWidth = (int) (frameWidth * scaleX);
-						int stretchFrameHeight = (int) (frameHeight * scaleY);
-						int stretchDrawX = (int) (frameOffsetX * scaleX);
-						int stretchDrawY = (int) (frameOffsetY * scaleY);
+					switch (jumpscare.getVisualSetting()){
+						case CENTERED -> {
+							// Standard logic: center frames with offsets and scaling
+							int scaledFrameWidth = (int) (frameWidth * scale);
+							int scaledFrameHeight = (int) (frameHeight * scale);
+							int scaledOffsetX = (int) (frameOffsetX * scale);
+							int scaledOffsetY = (int) (frameOffsetY * scale);
 
-						g.drawImage(frame.image(), stretchDrawX, stretchDrawY, stretchDrawX + stretchFrameWidth, stretchDrawY + stretchFrameHeight,
-								0, 0, frameWidth, frameHeight, this);
-					} else {
-						// Standard logic: center frames with offsets and scaling
-						int scaledFrameWidth = (int) (frameWidth * scale);
-						int scaledFrameHeight = (int) (frameHeight * scale);
-						int scaledOffsetX = (int) (frameOffsetX * scale);
-						int scaledOffsetY = (int) (frameOffsetY * scale);
+							// Position the frame relative to the scaled full frame
+							int frameDrawX = fullDrawX + scaledOffsetX;
+							int frameDrawY = fullDrawY + scaledOffsetY;
 
-						// Position the frame relative to the scaled full frame
-						int frameDrawX = fullDrawX + scaledOffsetX;
-						int frameDrawY = fullDrawY + scaledOffsetY;
+							// Draw the frame without stretching it
+							g.drawImage(frame.image(), frameDrawX, frameDrawY, frameDrawX + scaledFrameWidth, frameDrawY + scaledFrameHeight,
+									0, 0, frameWidth, frameHeight, this);
+						}
+						case STRETCHED -> {
+							// Stretching logic: scale entire frame to fill the screen
+							int stretchFrameWidth = (int) (frameWidth * scaleX);
+							int stretchFrameHeight = (int) (frameHeight * scaleY);
+							int stretchDrawX = (int) (frameOffsetX * scaleX);
+							int stretchDrawY = (int) (frameOffsetY * scaleY);
 
-						// Draw the frame without stretching it
-						g.drawImage(frame.image(), frameDrawX, frameDrawY, frameDrawX + scaledFrameWidth, frameDrawY + scaledFrameHeight,
-								0, 0, frameWidth, frameHeight, this);
+							g.drawImage(frame.image(), stretchDrawX, stretchDrawY, stretchDrawX + stretchFrameWidth, stretchDrawY + stretchFrameHeight,
+									0, 0, frameWidth, frameHeight, this);
+						}
 					}
 				}
 

@@ -7,6 +7,7 @@ import es.cristichi.fnac.gui.*;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.obj.Jumpscare;
+import es.cristichi.fnac.obj.JumpscareVisual;
 import es.cristichi.fnac.obj.anim.*;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
@@ -106,7 +107,7 @@ public class Main {
 
         MenuData menuData = getUpdatedMenuData(saveFile);
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, true);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisual.STRETCHED);
         mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems(), window);
         cardPanel.add(mainMenu, "menu");
         cards.show(cardPanel, "menu");
