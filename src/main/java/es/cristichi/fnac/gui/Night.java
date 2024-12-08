@@ -1,6 +1,5 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
@@ -440,7 +439,7 @@ public class Night extends JComponent {
 								animPosInCam.remove(fromCam.getName());
 								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);
 								camsHidingMovementTicks.put(toCam.getName(), CAMS_STATIC_MOVE_TICKS);
-							} catch (AnimatronicException e){
+							} catch (Exception e){
 								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
 										" Perhaps there is a design flaw in the Animatronic.%n",
 										anim.getName(), fromCam, toCam);
