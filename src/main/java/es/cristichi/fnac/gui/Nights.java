@@ -33,10 +33,13 @@ public class Nights extends JFrame {
     private final Menu mainMenu;
     private final Jumpscare powerOutage;
 
+    private final SaveFileIO.SaveFile saveFile;
+    private final CardLayout cardLayout;
     private Settings settings;
 
     public Nights(SaveFileIO.SaveFile saveFile, Settings settings) throws IOException {
         super();
+        this.saveFile = saveFile;
         this.settings = settings;
 
         setTitle(getTitleForWindow(null));
@@ -46,19 +49,56 @@ public class Nights extends JFrame {
         setTitle(getTitleForWindow(null));
         setLayout(new BorderLayout());
 
-        CardLayout cards = new CardLayout();
-        cardPanel = new JPanel(cards);
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
         add(cardPanel);
 
         nightPanel = new JPanel(new BorderLayout());
         cardPanel.add(nightPanel, "night");
 
-        MenuData menuData = getUpdatedMenuData(saveFile);
+        MenuData menuData = getUpdatedMenuData();
 
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisual.STRETCHED);
-        mainMenu = createMenu(saveFile, cards, menuData.background(), menuData.mmItems());
+        mainMenu = new Menu(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
+            @Override
+            protected Night onMenuItemClick(MenuItem item) throws IOException {
+                switch (item.id()) {
+                    case "test" -> {
+                        return startTESTINGNIGHT(cardLayout);
+                    }
+                    case "tutorial" -> {
+                        return startTutorialNight(Nights.this.saveFile, cardLayout);
+                    }
+                    case "n1" -> {
+                        return startNight1(Nights.this.saveFile, cardLayout);
+                    }
+                    case "n2" -> {
+                        return startNight2(Nights.this.saveFile, cardLayout);
+                    }
+                    case "n3" -> {
+                        return startNight3(Nights.this.saveFile, cardLayout);
+                    }
+                    case "n4" -> {
+                        return startNight4(Nights.this.saveFile, cardLayout);
+                    }
+                    case "settings" -> {
+                        cardLayout.show(cardPanel, "settings");
+                        return null;
+                    }
+                    case "exit" -> {
+                        dispose();
+                        System.exit(0);
+                        return null;
+                    }
+                    case "" -> {
+                        return null;
+                    }
+                    default -> throw new MenuItemNotFound("Menu item \"" + item + "\" not found in this menu.");
+                }
+            }
+        };
         cardPanel.add(mainMenu, "menu");
-        cards.show(cardPanel, "menu");
+        cardLayout.show(cardPanel, "menu");
 
         settingsPanel = new JSettings(settings) {
             @Override
@@ -72,7 +112,7 @@ public class Nights extends JFrame {
 
             @Override
             public void onReturnToMenu() {
-                cards.show(cardPanel, "menu");
+                cardLayout.show(cardPanel, "menu");
             }
         };
         cardPanel.add(settingsPanel, "settings");
@@ -80,15 +120,19 @@ public class Nights extends JFrame {
         setMinimumSize(new Dimension(200, 50));
     }
 
-    public String getTitleForWindow(@Nullable String window) {
-        if (window == null){
+    /**
+     * @param subtitle Subtitle. Something like "Night 1" or "Settings menu", or null for nothing.
+     * @return A String of the form "{@link Nights#GAME_TITLE} - <code>subtitle</code>".
+     */
+    public String getTitleForWindow(@Nullable String subtitle) {
+        if (subtitle == null){
             return String.format("%s", GAME_TITLE);
         }
-        return String.format("%s - %s", GAME_TITLE, window);
+        return String.format("%s - %s", GAME_TITLE, subtitle);
     }
 
     /**
-     * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to maximize it in window.
+     * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to simply maximize the window.
      */
     public void setFullScreen(boolean set) {
         Rectangle windowBounds = getBounds();
@@ -137,8 +181,13 @@ public class Nights extends JFrame {
         setVisible(true);
     }
 
-
-    private @NotNull MenuData getUpdatedMenuData(SaveFileIO.SaveFile saveFile) throws ResourceException {
+    /**
+     * Simply a method that updates the Menu, useful for when the player unlocked a new Night
+     * after completing one.
+     * @return A {@link MenuData} object with the information needed to build a Menu (items, background, etc).
+     * @throws ResourceException If any of the loading screens could not be loaded.
+     */
+    private @NotNull MenuData getUpdatedMenuData() throws ResourceException {
         ArrayList<MenuItem> mmItems = new ArrayList<>(2);
         String background;
         java.util.List<String> completed = saveFile.completedNights();
@@ -193,47 +242,6 @@ public class Nights extends JFrame {
         mmItems.add(new MenuItem("settings", "Settings", false, null));
         mmItems.add(new MenuItem("exit", "Run away", false, null));
         return new MenuData(mmItems, background);
-    }
-
-    private Menu createMenu(SaveFileIO.SaveFile saveFile, CardLayout cards, String background, java.util.List<MenuItem> mmItems) throws IOException {
-        return new Menu(background, "menu/loading.jpg", mmItems) {
-            @Override
-            protected Night onMenuItemClick(MenuItem item) throws IOException {
-                switch (item.id()) {
-                    case "test" -> {
-                        return startTESTINGNIGHT(cards);
-                    }
-                    case "tutorial" -> {
-                        return startTutorialNight(saveFile, cards);
-                    }
-                    case "n1" -> {
-                        return startNight1(saveFile, cards);
-                    }
-                    case "n2" -> {
-                        return startNight2(saveFile, cards);
-                    }
-                    case "n3" -> {
-                        return startNight3(saveFile, cards);
-                    }
-                    case "n4" -> {
-                        return startNight4(saveFile, cards);
-                    }
-                    case "settings" -> {
-                        cards.show(cardPanel, "settings");
-                        return null;
-                    }
-                    case "exit" -> {
-                        dispose();
-                        System.exit(0);
-                        return null;
-                    }
-                    case "" -> {
-                        return null;
-                    }
-                    default -> throw new MenuItemNotFound("Menu item \"" + item + "\" not found in this menu.");
-                }
-            }
-        };
     }
 
     @SuppressWarnings("all")
@@ -291,10 +299,10 @@ public class Nights extends JFrame {
                 System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(menuData.background());
-                    mainMenu.updateMenuItems(menuData.mmItems());
+                    mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -334,10 +342,10 @@ public class Nights extends JFrame {
             if (completed) {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(menuData.background());
-                    mainMenu.updateMenuItems(menuData.mmItems());
+                    mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -383,10 +391,10 @@ public class Nights extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(menuData.background());
-                    mainMenu.updateMenuItems(menuData.mmItems());
+                    mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -435,10 +443,10 @@ public class Nights extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(menuData.background());
-                    mainMenu.updateMenuItems(menuData.mmItems());
+                    mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
@@ -488,10 +496,10 @@ public class Nights extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    SaveFileIO.saveToFile(SaveFileIO.SAVE_FILE, saveFile);
-                    MenuData menuData = getUpdatedMenuData(saveFile);
+                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(menuData.background());
-                    mainMenu.updateMenuItems(menuData.mmItems());
+                    mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }

@@ -9,29 +9,6 @@ public class SaveFileIO {
     private static final String MAGIC_NUMBER = "FNACSV1"; // Unique magic number for FNAC save files. Version 1.
 
     /**
-     * Saves the completed nights to a binary file.
-     *
-     * @param path The path to the save file.
-     * @param saveFile The FNACSaveFile object containing the save data.
-     * @throws IOException If an error occurs while writing to the file.
-     */
-    public static void saveToFile(String path, SaveFile saveFile) throws IOException {
-        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(path))) {
-            // Write the magic number
-            out.writeBytes(MAGIC_NUMBER);
-
-            // Write the number of completed nights
-            List<String> completedNights = saveFile.completedNights();
-            out.writeInt(completedNights.size());
-
-            // Write each completed night
-            for (String night : completedNights) {
-                out.writeUTF(night);
-            }
-        }
-    }
-
-    /**
      * Loads the completed nights from a binary file.
      *
      * @param path The path to the save file.
@@ -90,6 +67,27 @@ public class SaveFileIO {
             public void addCompletedNight(String night) {
                 if (!completedNights.contains(night)) {
                     completedNights.add(night);
+                }
+            }
+
+            /**
+             * Saves the completed nights to a binary file.
+             *
+             * @param path The path to the save file.
+             * @throws IOException If an error occurs while writing to the file.
+             */
+            public void saveToFile(String path) throws IOException {
+                try (DataOutputStream out = new DataOutputStream(new FileOutputStream(path))) {
+                    // Write the magic number
+                    out.writeBytes(MAGIC_NUMBER);
+
+                    // Write the number of completed nights
+                    out.writeInt(completedNights.size());
+
+                    // Write each completed night
+                    for (String night : completedNights) {
+                        out.writeUTF(night);
+                    }
                 }
             }
         }
