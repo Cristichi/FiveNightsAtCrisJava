@@ -1,5 +1,6 @@
 package es.cristichi.fnac.io;
 
+import es.cristichi.fnac.gui.ExceptionViewer;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -84,7 +85,7 @@ public class Settings {
             ));
             yaml.dump(config, writer);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            new ExceptionViewer(new IOException("Settings save file could not be saved.", e));
         }
     }
 }
