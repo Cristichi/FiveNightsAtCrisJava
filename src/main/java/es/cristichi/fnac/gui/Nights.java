@@ -301,7 +301,7 @@ public class Nights extends JFrame {
                 try {
                     saveFile.saveToFile(SaveFileIO.SAVE_FILE);
                     MenuData menuData = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
@@ -344,7 +344,7 @@ public class Nights extends JFrame {
                 try {
                     saveFile.saveToFile(SaveFileIO.SAVE_FILE);
                     MenuData menuData = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
@@ -393,7 +393,7 @@ public class Nights extends JFrame {
                 try {
                     saveFile.saveToFile(SaveFileIO.SAVE_FILE);
                     MenuData menuData = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
@@ -445,7 +445,7 @@ public class Nights extends JFrame {
                 try {
                     saveFile.saveToFile(SaveFileIO.SAVE_FILE);
                     MenuData menuData = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
@@ -498,7 +498,7 @@ public class Nights extends JFrame {
                 try {
                     saveFile.saveToFile(SaveFileIO.SAVE_FILE);
                     MenuData menuData = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuData.background());
+                    mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));

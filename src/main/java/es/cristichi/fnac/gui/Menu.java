@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.LineMetrics;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -28,10 +29,18 @@ public abstract class Menu extends JComponent {
 	private int musicCreditsTicks;
 	private final String[] musicCreditsMsg;
 
-    public Menu(String backgroundImg, String loadingImg, List<MenuItem> menuItems) throws IOException {
+	/**
+	 * Creates a new {@link Menu} with the given data.
+	 * @param backgroundImg Path to background image in the resources.
+	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link MenuItem}s
+	 *                         that don't specify one.
+	 * @param menuItems List of {@link MenuItem}s. It must not be null or empty.
+	 * @throws ResourceException If there are any errors loading the images from the resources.
+	 */
+    public Menu(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
-		defaultLoadingImg = Resources.loadImageResource(loadingImg);
+		this.defaultLoadingImg = Resources.loadImageResource(defaultLoadingImg);
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
 
@@ -53,10 +62,16 @@ public abstract class Menu extends JComponent {
 		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
 
-	public void updateBackground(String backgroundImg) throws ResourceException {
-		backgroundImage = Resources.loadImageResource(backgroundImg);
+	/**
+	 * @param backgroundImg New background image in the Resources.
+	 */
+	public void updateBackground(BufferedImage backgroundImg) {
+		backgroundImage = backgroundImg;
 	}
 
+	/**
+	 * @param newMenuItems New menu items. It can be used on the fly, and it will reload the new items.
+	 */
 	public synchronized void updateMenuItems(List<MenuItem> newMenuItems) {
 		this.menuItems.clear();
 		this.menuItems.addAll(newMenuItems);
@@ -65,6 +80,9 @@ public abstract class Menu extends JComponent {
 		repaint();
 	}
 
+	/**
+	 * Starts the music. If it is already playing, it does nothing.
+	 */
 	public void startMusic(){
 		if (!music.playing()){
 			music.play(true);
