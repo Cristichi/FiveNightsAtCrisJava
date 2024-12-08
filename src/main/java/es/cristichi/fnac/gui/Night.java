@@ -431,7 +431,7 @@ public class Night extends JComponent {
 						Camera fromCam = move.getKey();
 						Camera toCam = camerasMap.get(move.getValue().moveToCam());
 						// If moving to a different camera
-						if (!fromCam.equals(toCam)){
+						if (!fromCam.equals(toCam) && toCam != null){
 							try {
 								fromCam.move(anim, toCam);
 								if (move.getValue().sound() != null){
