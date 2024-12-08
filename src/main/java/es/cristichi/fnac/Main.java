@@ -1,12 +1,15 @@
 package es.cristichi.fnac;
 
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionViewer;
 import es.cristichi.fnac.gui.Nights;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
 import kuusisto.tinysound.TinySound;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -20,6 +23,25 @@ public class Main {
         System.setProperty("sun.java2d.opengl", "true");
 
         TinySound.init();
+
+
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Resources.loadCustomFont("fonts/EraserDust.ttf"));
+            boolean fontIsLoaded = false;
+            for (Font font : ge.getAllFonts()){
+                if (font.getFamily().equals("Eraser")){
+                    fontIsLoaded = true;
+                    break;
+                }
+            }
+            if (!fontIsLoaded){
+                throw new ResourceException("EraserDust Font was not registered.");
+            }
+        } catch (ResourceException e) {
+            new ExceptionViewer(e);
+            throw new RuntimeException(e);
+        }
 
         final SaveFileIO.SaveFile saveFile;
         try {
@@ -47,7 +69,7 @@ public class Main {
         // Initialize the GUI on the EDT
         SwingUtilities.invokeLater(() -> {
             try {
-                Nights window = new Nights(saveFile, settings.getFps());
+                Nights window = new Nights(saveFile, settings);
                 window.setFullScreen(settings.isFullscreen());
                 window.setVisible(true);
                 {

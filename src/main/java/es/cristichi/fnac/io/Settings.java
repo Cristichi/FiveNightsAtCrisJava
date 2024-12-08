@@ -44,6 +44,13 @@ public class Settings {
     public Settings() {
     }
 
+    public Settings(Settings copy) {
+        this();
+        setFullscreen(copy.fullscreen);
+        setFps(copy.fps);
+        setVolume(copy.volume);
+    }
+
     public boolean isFullscreen() {
         return fullscreen;
     }

@@ -33,7 +33,7 @@ public abstract class Menu extends JComponent {
 		backgroundImage = Resources.loadImageResource(backgroundImg);
 		defaultLoadingImg = Resources.loadImageResource(loadingImg);
 		loading = false;
-		btnFont = Resources.loadCustomFont("fonts/EraserRegular.ttf").deriveFont(140f);
+		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
 
 		music = Resources.loadMusic("menu/main.wav", "menuBack.wav");
 
@@ -63,6 +63,12 @@ public abstract class Menu extends JComponent {
 		initializeMenuItems();
 		revalidate();
 		repaint();
+	}
+
+	public void startMusic(){
+		if (!music.playing()){
+			music.play(true);
+		}
 	}
 
 	private void initializeMenuItems() {
@@ -179,15 +185,19 @@ public abstract class Menu extends JComponent {
 			}
 			new Thread(() -> {
 				try {
-					music.stop();
+					if (menuItem.stopMusic()){
+						music.stop();
+					}
 					error = null;
 					errorTicks = 0;
 					Night night = onMenuItemClick(menuItem);
-					if (night != null){
-						night.addOnNightEnd((completed) -> {
-                            music.play(true);
-							musicCreditsTicks = 160;
-                        });
+					if (menuItem.stopMusic()){
+						if (night != null){
+							night.addOnNightEnd((completed) -> {
+								music.play(true);
+								musicCreditsTicks = 160;
+							});
+						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();

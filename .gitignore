@@ -33,3 +33,4 @@ bin/
 /save.fnac
 /target/*
 settings.yaml
+error.log

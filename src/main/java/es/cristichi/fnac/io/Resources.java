@@ -175,10 +175,7 @@ public class Resources {
             if (in == null){
                 throw new NullPointerException("Resource not found.");
             }
-            Font font = Font.createFont(Font.TRUETYPE_FONT, in).deriveFont(40f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-            return font;
+            return Font.createFont(Font.TRUETYPE_FONT, in);
         } catch (IOException | FontFormatException | NullPointerException e) {
             throw new ResourceException("Error when trying to load Font "+path, e);
         }
