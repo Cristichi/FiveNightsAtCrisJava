@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Main window, it controls all the thingies.
+ */
 public class Nights extends JFrame {
-
     public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
     private final JSettings settingsPanel;
@@ -37,7 +39,13 @@ public class Nights extends JFrame {
     private final CardLayout cardLayout;
     private Settings settings;
 
-    public Nights(SaveFileIO.SaveFile saveFile, Settings settings) throws IOException {
+    /**
+     * Creates a new window for the game.
+     * @param saveFile Save file.
+     * @param settings Settings of the user.
+     * @throws ResourceException If an error occurs when loading a Resource.
+     */
+    public Nights(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
         super();
         this.saveFile = saveFile;
         this.settings = settings;
@@ -64,22 +72,22 @@ public class Nights extends JFrame {
             protected Night onMenuItemClick(MenuItem item) throws IOException {
                 switch (item.id()) {
                     case "test" -> {
-                        return startTESTINGNIGHT(cardLayout);
+                        return startSandboxNight();
                     }
                     case "tutorial" -> {
-                        return startTutorialNight(Nights.this.saveFile, cardLayout);
+                        return startTutorialNight(Nights.this.saveFile);
                     }
                     case "n1" -> {
-                        return startNight1(Nights.this.saveFile, cardLayout);
+                        return startNight1(Nights.this.saveFile);
                     }
                     case "n2" -> {
-                        return startNight2(Nights.this.saveFile, cardLayout);
+                        return startNight2(Nights.this.saveFile);
                     }
                     case "n3" -> {
-                        return startNight3(Nights.this.saveFile, cardLayout);
+                        return startNight3(Nights.this.saveFile);
                     }
                     case "n4" -> {
-                        return startNight4(Nights.this.saveFile, cardLayout);
+                        return startNight4(Nights.this.saveFile);
                     }
                     case "settings" -> {
                         cardLayout.show(cardPanel, "settings");
@@ -244,8 +252,13 @@ public class Nights extends JFrame {
         return new MenuData(mmItems, background);
     }
 
+    /**
+     * Just a sandbox Night for me to test. Not intended for gameplay.
+     * @return The created Night for any further modifications from {@link Menu} or here.
+     * @throws IOException
+     */
     @SuppressWarnings("all")
-    private Night startTESTINGNIGHT(CardLayout cards) throws IOException {
+    private Night startSandboxNight() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         CameraMap nightMap;
@@ -271,17 +284,17 @@ public class Nights extends JFrame {
                 powerOutage, rng, 60, .45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's testing night is using the seed \"%d\". Have fun!%n", seed);
         night.startNight();
         return night;
     }
 
-    private Night startTutorialNight(SaveFileIO.SaveFile saveFile, CardLayout cards) throws IOException {
+    private Night startTutorialNight(SaveFileIO.SaveFile saveFile) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
@@ -307,20 +320,20 @@ public class Nights extends JFrame {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
         night.startNight();
         return night;
     }
 
-    private Night startNight1(SaveFileIO.SaveFile saveFile, CardLayout cards) throws IOException {
+    private Night startNight1(SaveFileIO.SaveFile saveFile) throws IOException {
         AnimatronicDrawing bob = new Bob(5, Map.of(0,1, 4,2),
                 java.util.List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
 
@@ -350,21 +363,21 @@ public class Nights extends JFrame {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         night.startNight();
 
         return night;
     }
 
-    private Night startNight2(SaveFileIO.SaveFile saveFile, CardLayout cards) throws IOException {
+    private Night startNight2(SaveFileIO.SaveFile saveFile) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         AnimatronicDrawing bob = new Bob(5, Map.of(0,4),
@@ -400,21 +413,21 @@ public class Nights extends JFrame {
                 }
             }
 
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         night.startNight();
 
         return night;
     }
 
-    private Night startNight3(SaveFileIO.SaveFile saveFile, CardLayout cards) throws IOException {
+    private Night startNight3(SaveFileIO.SaveFile saveFile) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -452,21 +465,21 @@ public class Nights extends JFrame {
                 }
             }
 
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         night.startNight();
 
         return night;
     }
 
-    private Night startNight4(SaveFileIO.SaveFile saveFile, CardLayout cards) throws IOException {
+    private Night startNight4(SaveFileIO.SaveFile saveFile) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -504,15 +517,14 @@ public class Nights extends JFrame {
                     new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
-
-            cards.show(cardPanel, "menu");
+            cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
-        cards.show(cardPanel, "night");
+        cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         night.startNight();
 
