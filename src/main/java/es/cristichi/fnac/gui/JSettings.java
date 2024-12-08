@@ -18,7 +18,7 @@ import java.util.Hashtable;
 public abstract class JSettings extends JComponent {
     private static final Color foreground = Color.YELLOW;
 
-    private Settings settings;
+    private Settings editingSettings;
     private Settings ogSettings;
 
     private final Font font;
@@ -40,7 +40,7 @@ public abstract class JSettings extends JComponent {
         this.background = Resources.loadImageResource("settings/background.jpg");
         this.checkSel = Resources.loadImageResource("settings/checkSel.jpg");
         this.checkNotSel = Resources.loadImageResource("settings/checkNot.jpg");
-        this.settings = new Settings(settings);
+        this.editingSettings = new Settings(settings);
         this.ogSettings = new Settings(settings);
         font = new Font("Eraser Dust", Font.PLAIN, 100);
 
@@ -66,13 +66,13 @@ public abstract class JSettings extends JComponent {
         fullscreenCheckbox = new JCheckBox();
         fullscreenCheckbox.setIcon(new ImageIcon(checkNotSel));
         fullscreenCheckbox.setSelectedIcon(new ImageIcon(checkSel));
-        fullscreenCheckbox.setSelected(settings.isFullscreen());
+        fullscreenCheckbox.setSelected(editingSettings.isFullscreen());
         fullscreenCheckbox.setFont(font);
         fullscreenCheckbox.setForeground(foreground);
         fullscreenCheckbox.setOpaque(true);
         fullscreenCheckbox.setBorderPainted(false);
         fullscreenCheckbox.setContentAreaFilled(false);
-        fullscreenCheckbox.addActionListener(e -> settings.setFullscreen(fullscreenCheckbox.isSelected()));
+        fullscreenCheckbox.addActionListener(e -> editingSettings.setFullscreen(fullscreenCheckbox.isSelected()));
         add(fullscreenCheckbox, gbc);
 
         // FPS Selector
@@ -86,7 +86,7 @@ public abstract class JSettings extends JComponent {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        fpsSpinner = new JSpinner(new SpinnerNumberModel(settings.getFps(), 30, 240, 1));
+        fpsSpinner = new JSpinner(new SpinnerNumberModel(editingSettings.getFps(), 30, 240, 1));
         fpsSpinner.setUI(new BasicSpinnerUI() {
             @Override
             protected Component createNextButton() {
@@ -116,7 +116,7 @@ public abstract class JSettings extends JComponent {
         editor.getTextField().setOpaque(false);
         editor.getTextField().setEditable(false);
         editor.getTextField().setForeground(foreground);
-        fpsSpinner.addChangeListener(e -> settings.setFps((Integer) fpsSpinner.getValue()));
+        fpsSpinner.addChangeListener(e -> editingSettings.setFps((Integer) fpsSpinner.getValue()));
         add(fpsSpinner, gbc);
 
         // Volume Slider
@@ -130,7 +130,7 @@ public abstract class JSettings extends JComponent {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        volumeSlider = new JSlider(10, 100, (int) (settings.getVolume() * 100));
+        volumeSlider = new JSlider(10, 100, (int) (editingSettings.getVolume() * 100));
         volumeSlider.setMajorTickSpacing(25);
         volumeSlider.setMinorTickSpacing(5);
         volumeSlider.setOpaque(false);
@@ -168,12 +168,10 @@ public abstract class JSettings extends JComponent {
         gbc.anchor = GridBagConstraints.CENTER;
         saveButton = createCustomButton("Save Settings");
         saveButton.addActionListener(e -> {
-            settings.saveToFile(Settings.SETTINGS_FILE);
-            ogSettings = new Settings(this.settings);
-            onSettingsSaved(settings);
+            this.editingSettings.saveToFile(Settings.SETTINGS_FILE);
+            ogSettings = new Settings(this.editingSettings);
+            onSettingsSaved(this.editingSettings);
             onReturnToMenu();
-            invalidate();
-            repaint();
         });
         add(saveButton, gbc);
 
@@ -181,13 +179,12 @@ public abstract class JSettings extends JComponent {
         gbc.gridy++;
         returnButton = createCustomButton("Cancel");
         returnButton.addActionListener(e -> {
-            this.settings = new Settings(ogSettings);
+            this.editingSettings = new Settings(ogSettings);
             TinySound.setGlobalVolume(ogSettings.getVolume());
             fullscreenCheckbox.setSelected(ogSettings.isFullscreen());
             fpsSpinner.setValue(ogSettings.getFps());
             volumeSlider.setValue((int) (ogSettings.getVolume() * 100));
             onReturnToMenu();
-            invalidate();
         });
         add(returnButton, gbc);
 
