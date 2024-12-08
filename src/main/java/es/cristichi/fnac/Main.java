@@ -20,11 +20,13 @@ public class Main {
     public static final boolean DEBUG_TEST_NIGHT_MODE = false;
 
     public static void main(String[] args) {
+        // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
 
+        // Sound system init
         TinySound.init();
 
-
+        // Making sure our EraserDust font is installed or registered for later used.
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Resources.loadCustomFont("fonts/EraserDust.ttf"));
@@ -43,6 +45,7 @@ public class Main {
             throw new RuntimeException(e);
         }
 
+        // Save file
         final SaveFileIO.SaveFile saveFile;
         try {
             saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
@@ -53,6 +56,7 @@ public class Main {
             throw new RuntimeException("Failed to load save file: " + e.getMessage(), e);
         }
 
+        // Settings
         Settings.init();
         final Settings settings;
         try {
@@ -66,7 +70,7 @@ public class Main {
             throw new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
         }
 
-        // Initialize the GUI on the EDT
+        // JFrame in correct Thread
         SwingUtilities.invokeLater(() -> {
             try {
                 Nights window = new Nights(saveFile, settings);
