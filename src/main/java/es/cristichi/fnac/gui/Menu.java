@@ -208,6 +208,8 @@ public abstract class Menu extends JComponent {
 					}
 					error = null;
 					errorTicks = 0;
+					musicCreditsTicks = 0;
+
 					Night night = onMenuItemClick(menuItem);
 					if (menuItem.stopMusic()){
 						if (night != null){
