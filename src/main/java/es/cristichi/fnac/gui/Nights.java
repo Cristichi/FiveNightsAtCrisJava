@@ -25,13 +25,16 @@ import java.util.Random;
 public class Nights extends JFrame {
 
     public final String GAME_TITLE = "Five Nights at Cris'";
+    private final int fps;
     private final JPanel cardPanel;
     private final JPanel nightPanel;
     private final Menu mainMenu;
     private final Jumpscare powerOutage;
 
-    public Nights(SaveFileIO.SaveFile saveFile) throws IOException {
+    public Nights(SaveFileIO.SaveFile saveFile, int fps) throws IOException {
         super();
+        this.fps = fps;
+
         setTitle(getTitleForWindow(null));
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,7 +67,6 @@ public class Nights extends JFrame {
     }
 
     /**
-     * TODO: For whatever reason this lags {@link Night#paintComponent(Graphics)} a lot.
      * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to maximize it in window.
      */
     public void setFullScreen(boolean set) {
@@ -108,6 +110,7 @@ public class Nights extends JFrame {
                 best.setFullScreenWindow(null);
             }
             setBounds(windowBounds);
+            setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         }
 
         setVisible(true);
@@ -230,7 +233,7 @@ public class Nights extends JFrame {
                     //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 1)
             );
         }
-        Night night = new Night("Testing", nightMap, "night/tutorial/paper.png",
+        Night night = new Night("Testing", fps, nightMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, .45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
@@ -255,7 +258,7 @@ public class Nights extends JFrame {
         tutorialMap.addCamAnimatronics("cam1", new Bob(5, aiNightBob, java.util.List.of("cam4"), 8));
         tutorialMap.addCamAnimatronics("cam2", new Maria(5, aiNightMaria, java.util.List.of("cam3"), 8));
 
-        Night night = new Night("Tutorial", tutorialMap, "night/tutorial/paper.png",
+        Night night = new Night("Tutorial", fps, tutorialMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
@@ -299,7 +302,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("offices", maria);
 
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", nightMap, "night/n1/paper.png",
+        Night night = new Night("Night 1", fps, nightMap, "night/n1/paper.png",
                 powerOutage, new Random(seed), 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
@@ -348,7 +351,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
 
-        Night night = new Night("Night 2", nightMap, "night/n2/paper.png",
+        Night night = new Night("Night 2", fps, nightMap, "night/n2/paper.png",
                 powerOutage, rng, 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -400,7 +403,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("dining area", crisChoosesSide);
         nightMap.get("bathrooms").setBroken(true);
 
-        Night night = new Night("Night 3", nightMap, "night/n4/paper.png", powerOutage, rng,
+        Night night = new Night("Night 3", fps, nightMap, "night/n4/paper.png", powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -453,7 +456,7 @@ public class Nights extends JFrame {
         nightMap.get("bathrooms").setBroken(true);
         nightMap.remove("main stage");
 
-        Night night = new Night("Night 4", nightMap, null, powerOutage, rng,
+        Night night = new Night("Night 4", fps, nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){

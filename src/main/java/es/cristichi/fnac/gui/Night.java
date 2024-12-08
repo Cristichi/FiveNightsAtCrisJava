@@ -26,7 +26,8 @@ public class Night extends JComponent {
 	private static final boolean DEBUG_MODE = false;
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
-	private static final int FPS = 60;
+	//private static final int FPS = 60;
+	private final int fps;
 	/** Objective hour. Reaching this hour results in a win. */
 	private static final int TOTAL_HOURS = 6;
 
@@ -91,7 +92,7 @@ public class Night extends JComponent {
 	/** Current view of the player. */
 	private OfficeLocation officeLoc;
 	/** Ticks the "camera" takes to move between the 3 views of your office. */
-	private static final int OFFICE_TRANSITION_TICKS = FPS/2;
+	private final int OFFICE_TRANSITION_TICKS;
 	/** Ticks left for the player to finish a "moving" transition. If 0, player is not moving around at the moment. */
 	private int offTransTicks;
 	/** During transitions, previous view of the player so that we know how to calculate what they are currently seeing. */
@@ -109,7 +110,7 @@ public class Night extends JComponent {
 	private final BufferedImage camMonitorStaticImg;
 
 	/** Usual number of ticks it takes the player to start and stop watching Cameras. */
-	private static final int CAMS_UPDOWN_TRANSITION_TICKS = FPS/2;
+	private final int CAMS_UPDOWN_TRANSITION_TICKS;
 	/** It controls whether Cameras are up or not. */
 	private boolean camsUp;
 	/** Ticks left until Cameras are either fully up or fully down. */
@@ -122,7 +123,7 @@ public class Night extends JComponent {
 
 	// Change cams
 	/** Usual number of ticks it takes the player to start watching another Camera after they clicked on one. */
-	private static final int CHANGE_CAMS_TRANSITION_TICKS = FPS/12;
+	private final int CHANGE_CAMS_TRANSITION_TICKS;
 	/** Ticks left until Cameras are visible again after switching Camera. */
 	private int changeCamsTransTicks;
 	/** Map of all Cameras, including their Animatronics. */
@@ -130,7 +131,7 @@ public class Night extends JComponent {
 
 	// Animatronics moving around cams makes static
 	/** Usual number of ticks it takes for Cameras to be visible again after an Animatronic moved from or to them. */
-	private static final int CAMS_STATIC_MOVE_TICKS = FPS/3;
+	private final int CAMS_STATIC_MOVE_TICKS;
 	/**
 	 * Camera name -> Ticks left until this Camera is visible again after Animatronic move from or to this Camera.<br>
 	 * This is used so that Animatronics don't simply "pop" from and to existence,
@@ -145,7 +146,8 @@ public class Night extends JComponent {
 
 	// Doors
 	/** Usual number of ticks it takes for doors to fully open or close. */
-	private static final int DOOR_TRANSITION_TICKS = FPS/6;
+	private final int DOOR_TRANSITION_TICKS;
+	private boolean doDoorTransSound;
 	/** Whether the left door is effectively closed. */
 	private boolean leftDoorClosed;
 	/** Ticks left until left door is visually opened or closed. */
@@ -196,14 +198,15 @@ public class Night extends JComponent {
 	 *                                     purposes but having one is encouraged.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
 	 */
-	public Night(String nightName, CameraMap camMap, @Nullable String paperImgPath,
+	public Night(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
 				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
 				 float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException {
 		this.rng = rng;
+		this.fps = fps;
 		this.nightName = nightName;
 		this.camerasMap = camMap;
 		this.powerOutageJumpscare = powerOutageJumpscare;
-		this.hourTicksInterval = (int) (FPS * secsPerHour);
+		this.hourTicksInterval = (int) (this.fps * secsPerHour);
 
 		onNightEndListeners = new LinkedList<>();
 
@@ -238,7 +241,7 @@ public class Night extends JComponent {
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
 		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath, "nightPassed.wav");
-		ambientSounds = new AmbientSoundSystem((int) (FPS*7.2),
+		ambientSounds = new AmbientSoundSystem((int) (this.fps *7.2),
 				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/weird1.wav", "weird1.wav")),
 				new AmbientSound(0.3f, true, Resources.loadSound("office/ambient/waterLeak.wav", "waterLeak.wav")),
 				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/fakeSteps1.wav", "fakeSteps.wav")),
@@ -267,6 +270,13 @@ public class Night extends JComponent {
 		jumpscare = null;
 
 		officeLoc = OfficeLocation.MONITOR;
+
+		DOOR_TRANSITION_TICKS = fps/6;
+		doDoorTransSound = false;
+		CHANGE_CAMS_TRANSITION_TICKS = fps/12;
+		CAMS_UPDOWN_TRANSITION_TICKS = fps/2;
+		OFFICE_TRANSITION_TICKS = fps/2;
+		CAMS_STATIC_MOVE_TICKS = fps/3;
 
 		{
 			AbstractAction action = new LeftAction();
@@ -390,7 +400,7 @@ public class Night extends JComponent {
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
-							if (currentTick % (int) Math.round(anim.getSecInterval() * FPS) == 0){
+							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
 								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
 									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
@@ -398,7 +408,7 @@ public class Night extends JComponent {
 									}
 								}
 							}
-							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, FPS, camsUp, openDoor, cam, rng);
+							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
 							if (tickReturn.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future
@@ -443,21 +453,31 @@ public class Night extends JComponent {
 				// Ambient sounds
 				ambientSounds.attemptRandomSound(rng, currentTick, camerasMap);
 
-				// We check if door is about to close on this tick
-				if (leftDoorTransTicks == 1 && leftDoorClosed){
-					closeDoor.play(doorsSoundsVolume, -0.1);
-				} else if (leftDoorTransTicks == DOOR_TRANSITION_TICKS && !leftDoorClosed){
-					openDoor.play(doorsSoundsVolume, -0.1);
+				// Door sounds
+				switch (officeLoc){
+					case LEFTDOOR -> {
+						if (leftDoorTransTicks == 1 && leftDoorClosed){
+							closeDoor.play(doorsSoundsVolume, -0.1);
+						} else if (doDoorTransSound && !leftDoorClosed){
+							openDoor.play(doorsSoundsVolume, -0.1);
+							doDoorTransSound = false;
+						}
+					}
+					case RIGHTDOOR -> {
+						if (rightDoorTransTicks == 1 && rightDoorClosed){
+							closeDoor.play(doorsSoundsVolume, 0.1);
+						} else if (doDoorTransSound && !rightDoorClosed){
+							openDoor.play(doorsSoundsVolume, 0.1);
+							doDoorTransSound = false;
+						}
+					}
+					case MONITOR -> {}
 				}
-				if (rightDoorTransTicks == 1 && rightDoorClosed){
-					closeDoor.play(doorsSoundsVolume, 0.1);
-				} else if (rightDoorTransTicks == DOOR_TRANSITION_TICKS && !rightDoorClosed){
-					openDoor.play(doorsSoundsVolume, 0.1);
-				}
+
 				// We repaint da thing
 				repaint();
 			}
-		}, 100, 1000 / FPS);
+		}, 100, 1000 / fps);
 	}
 
 	private void advanceTime() {
@@ -741,7 +761,7 @@ public class Night extends JComponent {
 							for (AnimatronicDrawing an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoor()&&!leftDoorClosed
 										|| current.isRightDoor()&&!rightDoorClosed;
-								if (an.showOnCam(currentTick, FPS, openDoor, current, rng)){
+								if (an.showOnCam(currentTick, fps, openDoor, current, rng)){
 									BufferedImage img = an.getCamImg();
 
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
@@ -955,7 +975,7 @@ public class Night extends JComponent {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			} else {
-				GifFrame[] frames = jumpscare.updateAndGetFrame(currentTick, FPS);
+				GifFrame[] frames = jumpscare.updateAndGetFrame(currentTick, fps);
 				if (jumpscare.isFrameToPlaySound()) {
 					jumpscare.getSound().play();
 				}
@@ -1098,9 +1118,11 @@ public class Night extends JComponent {
 				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 					rightDoorClosed = !rightDoorClosed;
 					rightDoorTransTicks = DOOR_TRANSITION_TICKS;
+					doDoorTransSound = true;
 				} else if (leftDoorTransTicks==0 && officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 					leftDoorClosed = !leftDoorClosed;
 					leftDoorTransTicks = DOOR_TRANSITION_TICKS;
+					doDoorTransSound = true;
 				}
 			}
 		}

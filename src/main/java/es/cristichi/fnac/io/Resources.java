@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Resources {
-
     public static InputStream loadInputStream(String path) throws ResourceException {
         InputStream in = Resources.class.getClassLoader().getResourceAsStream(path);
         if (in == null) {
