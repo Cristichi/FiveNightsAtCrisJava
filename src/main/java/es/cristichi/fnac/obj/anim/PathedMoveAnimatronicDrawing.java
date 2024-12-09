@@ -7,10 +7,8 @@ import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class implements {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} with a series
@@ -51,7 +49,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
                                         String camImgPath, Jumpscare jumpscare,
                                         List<List<String>> camPaths, Color debugColor) throws ResourceException {
         super(name, secInterval, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath, jumpscare, debugColor);
-        this.camPaths = camPaths;
+        this.camPaths = new LinkedList<>(camPaths);
     }
 
     @Override
