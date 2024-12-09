@@ -75,19 +75,19 @@ public class Nights extends JFrame {
                         return startSandboxNight();
                     }
                     case "tutorial" -> {
-                        return startTutorialNight(Nights.this.saveFile);
+                        return startTutorialNight();
                     }
                     case "n1" -> {
-                        return startNight1(Nights.this.saveFile);
+                        return startNight1();
                     }
                     case "n2" -> {
-                        return startNight2(Nights.this.saveFile);
+                        return startNight2();
                     }
                     case "n3" -> {
-                        return startNight3(Nights.this.saveFile);
+                        return startNight3();
                     }
                     case "n4" -> {
-                        return startNight4(Nights.this.saveFile);
+                        return startNight4();
                     }
                     case "settings" -> {
                         cardLayout.show(cardPanel, "settings");
@@ -294,7 +294,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startTutorialNight(SaveFileIO.SaveFile saveFile) throws IOException {
+    private Night startTutorialNight() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
@@ -333,7 +333,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight1(SaveFileIO.SaveFile saveFile) throws IOException {
+    private Night startNight1() throws IOException {
         AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,1, 4,2), false, false,
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
 
@@ -380,7 +380,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight2(SaveFileIO.SaveFile saveFile) throws IOException {
+    private Night startNight2() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,4), false, false,
@@ -433,7 +433,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight3(SaveFileIO.SaveFile saveFile) throws IOException {
+    private Night startNight3() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -488,7 +488,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight4(SaveFileIO.SaveFile saveFile) throws IOException {
+    private Night startNight4() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
