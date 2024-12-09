@@ -25,6 +25,7 @@ public abstract class AnimatronicDrawing {
     protected final int maxIaLevel;
     protected final double secInterval;
     protected final boolean cameraStalled;
+    protected final boolean globalCameraStalled;
     protected Jumpscare jumpscare;
     protected final BufferedImage camImg;
     protected boolean kill = false;
@@ -44,13 +45,14 @@ public abstract class AnimatronicDrawing {
      *                      weird Animatronics. By default, this is only used to determine the chances of
      *                      movement opportunities.
      * @param cameraStalled Whether this Animatronic is Camera-stalled.
+     * @param globalCameraStalled Whether this Animatronic is Camera-stalled.
      * @param camImgPath    Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare     Jumpscare to play when this Animatronic kills the player.
      * @param debugColor    Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
-                       int maxIaLevel, boolean cameraStalled, String camImgPath,
+    AnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
+                       boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
                        Jumpscare jumpscare, Color debugColor) throws ResourceException {
         this.name = name;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
@@ -58,6 +60,7 @@ public abstract class AnimatronicDrawing {
         this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.cameraStalled = cameraStalled;
+        this.globalCameraStalled = globalCameraStalled;
         this.camImg = Resources.loadImageResource(camImgPath);
         this.sounds = new HashMap<>(1);
         this.jumpscare = jumpscare;
@@ -77,6 +80,28 @@ public abstract class AnimatronicDrawing {
     }
 
     /**
+     * This is only called at the moment of the defined internal during any given Night.
+     * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
+     *
+     * @param currentCam    Current camera from which the Animatronic is trying to move.
+     * @param beingLookedAt Whether the player is looking at that Camera on this tick.
+     * @param camsUp Whether the player is looking at any Camera.
+     * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
+     * @param rng           Random in charge of today's night.
+     * @return <code>true</code> if Animatronic should move on this tick. In that case,
+     * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
+     */
+    public boolean onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng){
+        if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt || camsUp && globalCameraStalled){
+            return false;
+        }
+        if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
+            return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
+        }
+        return rng.nextInt(maxIaLevel) < aiLevel;
+    }
+
+    /**
      * By default, Animatronics should only move to cameras connected with the current one.
      * Animatronics must override this method.
      * @param map Entire map, with all Cams.
@@ -87,27 +112,6 @@ public abstract class AnimatronicDrawing {
      * must be cancelled at this step, just return null.
      */
     public abstract MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
-
-    /**
-     * This is only called at the moment of the defined internal during any given Night.
-     * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
-     *
-     * @param currentCam    Current camera from which the Animatronic is trying to move.
-     * @param beingLookedAt Whether the player is looking at that Camera on this tick.
-     * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
-     * @param rng           Random in charge of today's night.
-     * @return <code>true</code> if Animatronic should move on this tick. In that case,
-     * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
-     */
-    public boolean onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean isOpenDoor, Random rng){
-        if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt){
-            return false;
-        }
-        if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
-            return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
-        }
-        return rng.nextInt(maxIaLevel) < aiLevel;
-    }
 
     /**
      * This method should be implemented per animatronic. This is called on every single tick.

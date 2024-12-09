@@ -401,7 +401,7 @@ public class Night extends JComponent {
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
 								if (anim.onMovementOpportunityAttempt(cam,
-										(camsUp && cam.equals(camerasMap.getSelectedCam())), openDoor, rng)){
+										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng)){
 									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));

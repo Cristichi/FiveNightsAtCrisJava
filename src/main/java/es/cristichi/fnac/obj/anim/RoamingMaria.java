@@ -16,8 +16,9 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     private final double secsToKill;
 
     public RoamingMaria(double secInterval, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
-                        List<String> forbiddenCams, double secsToKill) throws ResourceException {
-        super("María", secInterval, aiDuringNight, 20, cameraStalled, "anims/maria/camImg.png",
+                        boolean globalCameraStalled, List<String> forbiddenCams,
+                        double secsToKill) throws ResourceException {
+        super("María", secInterval, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
                         0, JumpscareVisual.CENTERED),

@@ -47,9 +47,10 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      * @throws ResourceException If a given Resource's path does not exist.
      */
     public PathedMoveAnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
-                                        int maxIaLevel, boolean cameraStalled, String camImgPath, Jumpscare jumpscare,
+                                        int maxIaLevel, boolean cameraStalled, boolean globalCameraStalled,
+                                        String camImgPath, Jumpscare jumpscare,
                                         List<List<String>> camPaths, Color debugColor) throws ResourceException {
-        super(name, secInterval, iaDuringNight, maxIaLevel, cameraStalled, camImgPath, jumpscare, debugColor);
+        super(name, secInterval, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath, jumpscare, debugColor);
         this.camPaths = camPaths;
     }
 
