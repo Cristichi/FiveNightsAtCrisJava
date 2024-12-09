@@ -449,7 +449,7 @@ public class Nights extends JFrame {
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
                 ), 1f, 5);
 
-        AnimatronicDrawing crisRandomSideAllNight = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
+        AnimatronicDrawing crisRandomSideAllNight = new RoamingCris(5, Map.of(0,1, 4,2, 5,3),
                 List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
@@ -493,10 +493,10 @@ public class Nights extends JFrame {
         Random rng = new Random(seed);
 
         AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,8, 4,9),
-                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices", "storage", "kitchen"), 5);
 
         AnimatronicDrawing maria = new RoamingMaria(5, Map.of(0,3, 2,5, 4,6),
-                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+                List.of("corridor 1", "corridor 3", "staff lounge", "storage", "kitchen"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,7, 5,8),
                 List.of(
