@@ -407,7 +407,8 @@ public class Night extends JComponent {
 									}
 								}
 							}
-							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
+							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, fps, camsUp, openDoor,
+									cam, cam.getName().equals(camerasMap.getSelectedName()), rng);
 							if (tickReturn.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future

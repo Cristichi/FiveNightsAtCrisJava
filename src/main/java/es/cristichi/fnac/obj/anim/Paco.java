@@ -35,7 +35,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
     }
 
     @Override
-    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
+    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, boolean beingLookedAt, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
