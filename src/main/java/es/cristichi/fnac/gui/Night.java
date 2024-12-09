@@ -146,7 +146,7 @@ public class Night extends JComponent {
 	// Doors
 	/** Usual number of ticks it takes for doors to fully open or close. */
 	private final int DOOR_TRANSITION_TICKS;
-	private boolean doDoorTransSound;
+	private boolean playDoorTransSound;
 	/** Whether the left door is effectively closed. */
 	private boolean leftDoorClosed;
 	/** Ticks left until left door is visually opened or closed. */
@@ -173,8 +173,8 @@ public class Night extends JComponent {
 	private final Sound clickCamSound;
 
 	private final double doorsSoundsVolume = 1;
-	private final Sound openDoor;
-	private final Sound closeDoor;
+	private final Sound openDoorSound;
+	private final Sound closeDoorSound;
 
 	/**
 	 * This method loads all the necessary Resources from disk.
@@ -253,8 +253,8 @@ public class Night extends JComponent {
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav", "closeCams.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav", "clickCams.wav");
 
-		openDoor = Resources.loadSound("office/sounds/opening-metal-door-199581.wav", "openDoor.wav");
-		closeDoor = Resources.loadSound("office/sounds/metal-door-slam-172172.wav", "closeDoor.wav");
+		openDoorSound = Resources.loadSound("office/sounds/opening-metal-door-199581.wav", "openDoor.wav");
+		closeDoorSound = Resources.loadSound("office/sounds/metal-door-slam-172172.wav", "closeDoor.wav");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
@@ -271,7 +271,7 @@ public class Night extends JComponent {
 		officeLoc = OfficeLocation.MONITOR;
 
 		DOOR_TRANSITION_TICKS = fps/6;
-		doDoorTransSound = false;
+		playDoorTransSound = false;
 		CHANGE_CAMS_TRANSITION_TICKS = fps/12;
 		CAMS_UPDOWN_TRANSITION_TICKS = fps/2;
 		OFFICE_TRANSITION_TICKS = fps/2;
@@ -458,18 +458,18 @@ public class Night extends JComponent {
 				switch (officeLoc){
 					case LEFTDOOR -> {
 						if (leftDoorTransTicks == 1 && leftDoorClosed){
-							closeDoor.play(doorsSoundsVolume, -0.1);
-						} else if (doDoorTransSound && !leftDoorClosed){
-							openDoor.play(doorsSoundsVolume, -0.1);
-							doDoorTransSound = false;
+							closeDoorSound.play(doorsSoundsVolume, -0.1);
+						} else if (playDoorTransSound && !leftDoorClosed){
+							openDoorSound.play(doorsSoundsVolume, -0.1);
+							playDoorTransSound = false;
 						}
 					}
 					case RIGHTDOOR -> {
 						if (rightDoorTransTicks == 1 && rightDoorClosed){
-							closeDoor.play(doorsSoundsVolume, 0.1);
-						} else if (doDoorTransSound && !rightDoorClosed){
-							openDoor.play(doorsSoundsVolume, 0.1);
-							doDoorTransSound = false;
+							closeDoorSound.play(doorsSoundsVolume, 0.1);
+						} else if (playDoorTransSound && !rightDoorClosed){
+							openDoorSound.play(doorsSoundsVolume, 0.1);
+							playDoorTransSound = false;
 						}
 					}
 					case MONITOR -> {}
@@ -1119,11 +1119,11 @@ public class Night extends JComponent {
 				if (rightDoorTransTicks==0 && officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 					rightDoorClosed = !rightDoorClosed;
 					rightDoorTransTicks = DOOR_TRANSITION_TICKS;
-					doDoorTransSound = true;
+					playDoorTransSound = true;
 				} else if (leftDoorTransTicks==0 && officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 					leftDoorClosed = !leftDoorClosed;
 					leftDoorTransTicks = DOOR_TRANSITION_TICKS;
-					doDoorTransSound = true;
+					playDoorTransSound = true;
 				}
 			}
 		}
