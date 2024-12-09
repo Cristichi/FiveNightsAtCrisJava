@@ -38,6 +38,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      * @param maxIaLevel Maximum AI level. This should usually be 20 for consistency, but can be changed on
      *                   weird Animatronics. By default, this is only used to determine the chances of
      *                   movement opportunities.
+     * @param cameraStalled Whether this Animatronic is Camera-stalled.
      * @param camImgPath Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare Jumpscare to play when this Animatronic kills the player.
      * @param camPaths List of paths the Animatronic can take. Each path is another List of Strings with the names
@@ -46,9 +47,9 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      * @throws ResourceException If a given Resource's path does not exist.
      */
     public PathedMoveAnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
-                                        int maxIaLevel, String camImgPath, Jumpscare jumpscare,
+                                        int maxIaLevel, boolean cameraStalled, String camImgPath, Jumpscare jumpscare,
                                         List<List<String>> camPaths, Color debugColor) throws ResourceException {
-        super(name, secInterval, iaDuringNight, maxIaLevel, camImgPath, jumpscare, debugColor);
+        super(name, secInterval, iaDuringNight, maxIaLevel, cameraStalled, camImgPath, jumpscare, debugColor);
         this.camPaths = camPaths;
     }
 
