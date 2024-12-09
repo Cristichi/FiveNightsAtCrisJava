@@ -271,17 +271,14 @@ public class Nights extends JFrame {
 
     /**
      * Just a sandbox Night for me to test. Not intended for gameplay.
-     * @return The created Night for any further modifications from {@link Menu} or here.
-     * @throws IOException
      */
-    @SuppressWarnings("all")
-    private Night startSandboxNight() throws IOException {
+    private Night startSandboxNight() throws ResourceException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         CameraMap nightMap;
         if (Main.DEBUG_TEST_NIGHT_MODE){
             nightMap = new CrisRestaurantMap();
-            ((CrisRestaurantMap) nightMap).addCamAnimatronics("corridor 1",
+            nightMap.addCamAnimatronics("corridor 1",
                     //new Bob(1, Map.of(0, 20), false, false, List.of("cam4"), 555),
                     //new Maria(1, Map.of(0,0), false, false, List.of(), 5),
                     //new RoamingCris(1, Map.of(0,20), true, false, List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
@@ -290,7 +287,7 @@ public class Nights extends JFrame {
             );
         } else {
             nightMap = new TutorialMap();
-            ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
+            nightMap.addCamAnimatronics("leftDoor",
                     //new Bob(5, Map.of(0, 20), false, false, List.of("cam2", "cam4"), 1)
                     //new Maria(1, Map.of(0,0), false, false, List.of(), 3)
                     new RoamingCris(2, Map.of(0,20), true, false, List.of(), 1, rng)
