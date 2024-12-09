@@ -43,6 +43,7 @@ public abstract class AnimatronicDrawing {
      *                   movement opportunities.
      * @param camImgPath Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare Jumpscare to play when this Animatronic kills the player.
+     * @param debugColor Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
     AnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
