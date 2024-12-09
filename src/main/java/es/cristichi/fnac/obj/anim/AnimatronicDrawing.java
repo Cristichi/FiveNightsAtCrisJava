@@ -168,8 +168,23 @@ public abstract class AnimatronicDrawing {
         return Objects.hash(name, aiLevel, camImg);
     }
 
-    public record TickReturn(boolean jumpscare, Sound sound, double soundVol, double soundPan){
+    /**
+     * Information given by each Animatronic at the start of each tick.
+     * @param jumpscare Whether a Jumpscare is confirmed.
+     * @param sound <code>null</code> for no Sound to play on this tick, or the Sound to play.
+     * @param soundVol If Sound is <code>null</code>, this is ignored. "1" for normal volume.
+     * @param soundPan If Sound is <code>null</code>, this is ignored. "0" for equal volume on both ears.
+     */
+    public record TickReturn(boolean jumpscare, @Nullable Sound sound, double soundVol, double soundPan){
     }
+
+    /**
+     * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
+     * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. <code>null</code> to indicate
+     *                  that the Animatronic cancels the move for any reason.
+     * @param sound Sound to play because of this movement on the destination Camera
+     *              , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
+     */
     public record MoveOppReturn(@Nullable String moveToCam, @Nullable Sound sound){
     }
 }
