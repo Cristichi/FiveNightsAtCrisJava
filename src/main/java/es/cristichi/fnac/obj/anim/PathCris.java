@@ -18,9 +18,9 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     private final double secsToKill;
 
     public PathCris(double secInterval, Map<Integer, Integer> aiDuringNight,
-                    List<String> camPath, String returnToCam, double secsToKill, Random rng) throws ResourceException {
+                    List<List<String>> camPaths, String returnToCam, double secsToKill, Random rng) throws ResourceException {
         super("Cris", secInterval, aiDuringNight, 20, "anims/cris/camImg.png",
-                null, camPath, returnToCam, Color.PINK);
+                null, camPaths, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){
             jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,

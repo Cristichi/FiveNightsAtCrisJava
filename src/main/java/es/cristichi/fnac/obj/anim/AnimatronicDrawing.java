@@ -108,7 +108,7 @@ public abstract class AnimatronicDrawing {
      * This is used to allow the Animatronic to decide what to do based on each tick.
      * At the moment, it only serves to define how and when Jumpscares occur.
      * For an example implementation see
-     * {@link Bob#onTick(int, int, boolean, boolean, Camera, boolean, Random)} where
+     * {@link RoamingBob#onTick(int, int, boolean, boolean, Camera, boolean, Random)} where
      * he waits some time at the door and if it is open after some time it kills on next cams down.
      *
      * @param tick          Current tick.

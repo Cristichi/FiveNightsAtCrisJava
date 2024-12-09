@@ -16,12 +16,12 @@ public class Paco extends PathedMoveAnimatronicDrawing {
     private final float moveSoundChance;
     private final double secsToKill;
 
-    public Paco(double secInterval, Map<Integer, Integer> aiDuringNight, List<String> orderedCamPath,
-                String retreatCam, float moveSoundChance, double secsToKill) throws ResourceException {
+    public Paco(double secInterval, Map<Integer, Integer> aiDuringNight, List<List<String>> camPaths,
+                float moveSoundChance, double secsToKill) throws ResourceException {
         super("Paco", secInterval, aiDuringNight, 20, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0, JumpscareVisual.CENTERED),
-                orderedCamPath, retreatCam, Color.BLUE);
+                camPaths, Color.BLUE);
 
         this.secsToKill = secsToKill;
         this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav"));

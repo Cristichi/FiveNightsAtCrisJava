@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Maria extends AvoidCamsAnimatronicDrawing {
+public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     private final double secsToKill;
 
-    public Maria(double secInterval, Map<Integer, Integer> aiDuringNight,
-                 List<String> forbiddenCams, double secsToKill) throws ResourceException {
+    public RoamingMaria(double secInterval, Map<Integer, Integer> aiDuringNight,
+                        List<String> forbiddenCams, double secsToKill) throws ResourceException {
         super("María", secInterval, aiDuringNight, 20, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"), 0, JumpscareVisual.CENTERED),

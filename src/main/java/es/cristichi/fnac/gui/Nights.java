@@ -268,7 +268,7 @@ public class Nights extends JFrame {
                     //new Bob(1, Map.of(0, 20), List.of("cam4"), 555),
                     //new Maria(1, Map.of(0,0), List.of(), 5),
                     //new RoamingCris(1, Map.of(0,20), List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
-                    new RoamingCris(3, Map.of(0,20), java.util.List.of(), 3, rng)
+                    new RoamingCris(3, Map.of(0,20), List.of(), 3, rng)
                     ///new Paco(4, Map.of(0,20), List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 555)
             );
         } else {
@@ -276,7 +276,7 @@ public class Nights extends JFrame {
             ((TutorialMap) nightMap).addCamAnimatronics("leftDoor",
                     //new Bob(5, Map.of(0, 20), List.of("cam2", "cam4"), 1)
                     //new Maria(1, Map.of(0,0), List.of(), 3)
-                    new RoamingCris(2, Map.of(0,20), java.util.List.of(), 1, rng)
+                    new RoamingCris(2, Map.of(0,20), List.of(), 1, rng)
                     //new Paco(4, Map.of(0,20), List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 1)
             );
         }
@@ -302,8 +302,8 @@ public class Nights extends JFrame {
         Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,2, 3,3, 4,4);
 
         TutorialMap tutorialMap = new TutorialMap();
-        tutorialMap.addCamAnimatronics("cam1", new Bob(5, aiNightBob, java.util.List.of("cam4"), 8));
-        tutorialMap.addCamAnimatronics("cam2", new Maria(5, aiNightMaria, java.util.List.of("cam3"), 8));
+        tutorialMap.addCamAnimatronics("cam1", new RoamingBob(5, aiNightBob, List.of("cam4"), 8));
+        tutorialMap.addCamAnimatronics("cam2", new RoamingMaria(5, aiNightMaria, List.of("cam3"), 8));
 
         Night night = new Night("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
@@ -334,14 +334,17 @@ public class Nights extends JFrame {
     }
 
     private Night startNight1(SaveFileIO.SaveFile saveFile) throws IOException {
-        AnimatronicDrawing bob = new Bob(5, Map.of(0,1, 4,2),
-                java.util.List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
+        AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,1, 4,2),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 6);
 
-        AnimatronicDrawing maria = new Maria(5, Map.of(4,1),
-                java.util.List.of("corridor 1", "corridor 3", "staff lounge"), 6);
+        AnimatronicDrawing maria = new RoamingMaria(5, Map.of(4,1),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 6);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,2, 4,3),
-                java.util.List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 6);
+                List.of(
+                        List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                ), 1f, 6);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -380,17 +383,20 @@ public class Nights extends JFrame {
     private Night startNight2(SaveFileIO.SaveFile saveFile) throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        AnimatronicDrawing bob = new Bob(5, Map.of(0,4),
-                java.util.List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,4),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(5, Map.of(1,1, 4,2),
-                java.util.List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        AnimatronicDrawing maria = new RoamingMaria(5, Map.of(1,1, 4,2),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,4, 4,5),
-                java.util.List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
+                List.of(
+                        List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                ), 1f, 5);
 
         AnimatronicDrawing crisIsClose = new RoamingCris(5, Map.of(0,1, 4,2, 5,3),
-                java.util.List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5, rng);
+                List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -431,23 +437,26 @@ public class Nights extends JFrame {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
-        AnimatronicDrawing bob = new Bob(5, Map.of(0,7),
-                java.util.List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,7),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(5, Map.of(1,3, 4,5),
-                java.util.List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        AnimatronicDrawing maria = new RoamingMaria(5, Map.of(1,3, 4,5),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,5, 4,7),
-                java.util.List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
+                List.of(
+                        List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                ), 1f, 5);
 
-        AnimatronicDrawing crisChoosesSide = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
-                java.util.List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
+        AnimatronicDrawing crisRandomSideAllNight = new RoamingCris(5, Map.of(0,1, 4,2, 5,4),
+                List.of("kitchen", "storage", "dining area", "main stage"), 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
-        nightMap.addCamAnimatronics("dining area", crisChoosesSide);
+        nightMap.addCamAnimatronics("dining area", crisRandomSideAllNight);
         nightMap.get("bathrooms").setBroken(true);
 
         Night night = new Night("Night 3", settings.getFps(), nightMap, "night/n4/paper.png", powerOutage, rng,
@@ -483,25 +492,31 @@ public class Nights extends JFrame {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
-        AnimatronicDrawing bob = new Bob(5, Map.of(0,8, 4,9),
-                java.util.List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
+        AnimatronicDrawing bob = new RoamingBob(5, Map.of(0,8, 4,9),
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 5);
 
-        AnimatronicDrawing maria = new Maria(5, Map.of(0,3, 2,5, 4,6),
-                java.util.List.of("corridor 1", "corridor 3", "staff lounge"), 5);
+        AnimatronicDrawing maria = new RoamingMaria(5, Map.of(0,3, 2,5, 4,6),
+                List.of("corridor 1", "corridor 3", "staff lounge"), 5);
 
         AnimatronicDrawing paco = new Paco(6, Map.of(0,7, 5,8),
-                java.util.List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 5);
+                List.of(
+                        List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                ), 1f, 5);
 
-        AnimatronicDrawing crisChoosesSide = new PathCris(5, Map.of(0,1, 4,2, 5,4),
-                List.of("storage", "dining area", "corridor 2", "bathrooms", "corridor 4", "rightDoor"), "storage", 5, rng);
+        AnimatronicDrawing crisChoosesPathAndTeleports = new PathCris(5, Map.of(0,1, 4,2, 5,4),
+                List.of(
+                        List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
+                        List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor")
+                ), "storage", 5, rng);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
-        nightMap.addCamAnimatronics("dining area", crisChoosesSide);
+        nightMap.addCamAnimatronics("dining area", crisChoosesPathAndTeleports);
         nightMap.get("bathrooms").setBroken(true);
-        nightMap.remove("main stage");
+        nightMap.get("main stage").setBroken(true);
 
         Night night = new Night("Night 4", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
