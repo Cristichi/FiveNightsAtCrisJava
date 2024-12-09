@@ -400,15 +400,16 @@ public class Night extends JComponent {
 							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
-								if (anim.onMovementOpportunityAttempt(cam, openDoor, rng)){
+								if (anim.onMovementOpportunityAttempt(cam,
+										(camsUp && cam.equals(camerasMap.getSelectedCam())), openDoor, rng)){
 									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 									}
 								}
 							}
-							AnimatronicDrawing.TickReturn tickReturn = anim.onTick(currentTick, fps, camsUp, openDoor,
-									cam, cam.getName().equals(camerasMap.getSelectedName()), rng);
+							AnimatronicDrawing.TickReturn tickReturn =
+									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
 							if (tickReturn.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future

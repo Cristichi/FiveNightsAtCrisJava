@@ -87,13 +87,14 @@ public abstract class AnimatronicDrawing {
      * This is only called at the moment of the defined internal during any given Night.
      * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
      *
-     * @param cam        Current camera from which the Animatronic is trying to move.
-     * @param isOpenDoor If there is a door to the Office from the current Camera and it is open.
-     * @param rng        Random in charge of today's night.
+     * @param cam           Current camera from which the Animatronic is trying to move.
+     * @param beingLookedAt Whether the player is looking at that Camera on this tick.
+     * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
+     * @param rng           Random in charge of today's night.
      * @return True if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public boolean onMovementOpportunityAttempt(Camera cam, boolean isOpenDoor, Random rng){
+    public boolean onMovementOpportunityAttempt(Camera cam, boolean beingLookedAt, boolean isOpenDoor, Random rng){
         if (kill || startKillTick != null || isOpenDoor){
             return false;
         }
@@ -108,22 +109,21 @@ public abstract class AnimatronicDrawing {
      * This is used to allow the Animatronic to decide what to do based on each tick.
      * At the moment, it only serves to define how and when Jumpscares occur.
      * For an example implementation see
-     * {@link RoamingBob#onTick(int, int, boolean, boolean, Camera, boolean, Random)} where
+     * {@link RoamingBob#onTick(int, int, boolean, boolean, Camera, Random)} where
      * he waits some time at the door and if it is open after some time it kills on next cams down.
      *
-     * @param tick          Current tick.
-     * @param fps           FPS for the current night. They are a constant throught the night.
-     * @param camsUp        If cams are up on this tick (this changes as soon as the Player clicks,
-     *                      on the first frame of the transition)
-     * @param openDoor      If there is a door to the Office from the current Camera and it is open.
-     * @param cam           Current Camera where the Animatronic is.
-     * @param beingLookedAt Whether or not the Player is looking at this Camera in this tick.
-     * @param rng           Random in charge of today's night.
+     * @param tick     Current tick.
+     * @param fps      FPS for the current night. They are a constant throught the night.
+     * @param camsUp   If cams are up on this tick (this changes as soon as the Player clicks,
+     *                 on the first frame of the transition)
+     * @param openDoor If there is a door to the Office from the current Camera and it is open.
+     * @param cam      Current Camera where the Animatronic is.
+     * @param rng      Random in charge of today's night.
      * @return An instance of {@link TickReturn} that defines if there is a Jumpscare,
      * along other potential data that is calculated each tick on each Animatronic.
      */
     public abstract TickReturn onTick(int tick, int fps, boolean camsUp,
-                                      boolean openDoor, Camera cam, boolean beingLookedAt, Random rng);
+                                      boolean openDoor, Camera cam, Random rng);
 
     /**
      * This determines whether the Animatronic should appear on a camera or not. Just some flavor.

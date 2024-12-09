@@ -41,7 +41,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     }
 
     @Override
-    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, boolean beingLookedAt, Random rng) {
+    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
         if (doorOpen){
             if (startKillTick == null){
                 startKillTick = tick;
