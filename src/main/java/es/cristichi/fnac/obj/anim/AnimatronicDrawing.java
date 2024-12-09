@@ -87,18 +87,18 @@ public abstract class AnimatronicDrawing {
      * This is only called at the moment of the defined internal during any given Night.
      * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
      *
-     * @param cam           Current camera from which the Animatronic is trying to move.
+     * @param currentCam    Current camera from which the Animatronic is trying to move.
      * @param beingLookedAt Whether the player is looking at that Camera on this tick.
      * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
      * @param rng           Random in charge of today's night.
-     * @return True if Animatronic should move on this tick. In that case,
+     * @return <code>true</code> if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public boolean onMovementOpportunityAttempt(Camera cam, boolean beingLookedAt, boolean isOpenDoor, Random rng){
+    public boolean onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean isOpenDoor, Random rng){
         if (kill || startKillTick != null || isOpenDoor){
             return false;
         }
-        if ((cam.isLeftDoor() || cam.isRightDoor())){
+        if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
             return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
         }
         return rng.nextInt(maxIaLevel) < aiLevel;
