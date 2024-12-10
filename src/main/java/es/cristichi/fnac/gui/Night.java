@@ -137,7 +137,7 @@ public class Night extends JComponent {
 	 * instead the view is hidden for {@link Night#CAMS_STATIC_MOVE_TICKS} ticks. <br>
 	 */
 	private final HashMap<String, Integer> camsHidingMovementTicks;
-	/** Camera name -> Point on this JComponent where Animatronic was last drawn on this Camera.<br>
+	/** Animatronic name -> Point on this JComponent where Animatronic was last drawn on this Camera.<br>
 	 * This is used so that they are not randomly moving around each tick. If the position becomes impossible after
 	 * window resizing, a new Point is calculated randomly.
 	 */
