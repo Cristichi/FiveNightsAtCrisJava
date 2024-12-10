@@ -33,8 +33,8 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     }
 
     @Override
-    public MovementSuccessReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
-        MovementSuccessReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MovementSuccessReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
+    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+        MoveSuccessRet ret = super.onMovementOppSuccess(map, currentLoc, rng);
+        return new MoveSuccessRet(ret.moveToCam(), sounds.getOrDefault("move", null));
     }
 }

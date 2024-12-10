@@ -28,10 +28,10 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MovementSuccessReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
         int random = rng.nextInt(connections.size());
-        return new MovementSuccessReturn(connections.get(random), null);
+        return new MoveSuccessRet(connections.get(random), null);
     }
 }
