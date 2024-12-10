@@ -134,7 +134,7 @@ public abstract class AnimatronicDrawing {
      */
     public TickReturn onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
         if (openDoor) {
-            // Door is open, start counting (doing nothing means we are counting up
+            // Door is open, start counting (doing nothing means we are counting up)
             if (startKillTick == null) {
                 startKillTick = tick;
             } else if (tick - startKillTick >= Math.round(secsToKill * fps)) {
@@ -143,11 +143,11 @@ public abstract class AnimatronicDrawing {
                 return new TickReturn(true, null);
             }
         } else if (!cam.isRightDoor() && !cam.isLeftDoor()) {
-            // Reset counter if Animatronic is not at the door
+            // Reset counter if the Animatronic is not at the door
             startKillTick = null;
         }
 
-        // If door is closed but Animatronic is still at the door, retain the count
+        // If door is closed but the Animatronic is still at the door, retain the count
         return new TickReturn(false, null);
     }
 
