@@ -100,7 +100,8 @@ public abstract class AnimatronicDrawing {
      */
     public MovementOpportunityReturn onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng){
         boolean itMoves;
-        if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt || camsUp && globalCameraStalled){
+        if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
+                || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled){
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
             itMoves = rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
