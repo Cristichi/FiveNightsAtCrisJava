@@ -1,6 +1,6 @@
 package es.cristichi.fnac.io;
 
-import es.cristichi.fnac.gui.ExceptionViewer;
+import es.cristichi.fnac.gui.ExceptionDialog;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -124,7 +124,7 @@ public class Settings {
             ));
             yaml.dump(config, writer);
         } catch (IOException e) {
-            new ExceptionViewer(new IOException("Settings save filePath could not be saved.", e));
+            new ExceptionDialog(new IOException("Settings save filePath could not be saved.", e));
         }
     }
 }

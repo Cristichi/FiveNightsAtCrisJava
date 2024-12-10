@@ -15,7 +15,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
-public abstract class JSettings extends JComponent {
+public abstract class SettingsJComponent extends JComponent {
     private static final Color foreground = Color.YELLOW;
 
     private Settings editingSettings;
@@ -35,7 +35,7 @@ public abstract class JSettings extends JComponent {
     private final JButton saveButton;
     private final JButton returnButton;
 
-    public JSettings(Settings settings) throws ResourceException {
+    public SettingsJComponent(Settings settings) throws ResourceException {
         super();
         this.background = Resources.loadImageResource("settings/background.jpg");
         this.checkSel = Resources.loadImageResource("settings/checkSel.jpg");
@@ -191,7 +191,7 @@ public abstract class JSettings extends JComponent {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                Font font = JSettings.this.font.deriveFont((float)(getWidth()*0.05));
+                Font font = SettingsJComponent.this.font.deriveFont((float)(getWidth()*0.05));
 
                 fullscreenLabel.setFont(font);
                 fullscreenCheckbox.setFont(font);

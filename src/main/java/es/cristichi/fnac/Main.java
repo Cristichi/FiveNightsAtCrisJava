@@ -1,8 +1,8 @@
 package es.cristichi.fnac;
 
 import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.gui.ExceptionViewer;
-import es.cristichi.fnac.gui.Nights;
+import es.cristichi.fnac.gui.ExceptionDialog;
+import es.cristichi.fnac.gui.NightsJFrame;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
@@ -41,7 +41,7 @@ public class Main {
                 throw new ResourceException("EraserDust Font was not registered.");
             }
         } catch (ResourceException e) {
-            new ExceptionViewer(e);
+            new ExceptionDialog(e);
             throw new RuntimeException(e);
         }
 
@@ -53,7 +53,7 @@ public class Main {
             saveFile.saveToFile(SaveFileIO.SAVE_FILE);
         } catch (Exception e) {
             e.printStackTrace();
-            SwingUtilities.invokeLater(() -> new ExceptionViewer(e));
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(e));
 
             throw new RuntimeException("Failed to load save file: " + e.getMessage(), e);
         }
@@ -67,7 +67,7 @@ public class Main {
             TinySound.setGlobalVolume(settings.getVolume());
         } catch (Exception e) {
             e.printStackTrace();
-            SwingUtilities.invokeLater(() -> new ExceptionViewer(e));
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(e));
 
             throw new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
         }
@@ -75,7 +75,7 @@ public class Main {
         // JFrame in correct Thread
         SwingUtilities.invokeLater(() -> {
             try {
-                Nights window = new Nights(saveFile, settings);
+                NightsJFrame window = new NightsJFrame(saveFile, settings);
                 window.setFullScreen(settings.isFullscreen());
                 window.setVisible(true);
                 {
@@ -88,7 +88,7 @@ public class Main {
                                 settings.saveToFile(Settings.SETTINGS_FILE);
                             } catch (Exception error) {
                                 window.dispose();
-                                new ExceptionViewer(error);
+                                new ExceptionDialog(error);
                             }
                         }
                     };
@@ -100,7 +100,7 @@ public class Main {
                     window.getRootPane().getActionMap().put("switchFull", action);
                 }
             } catch (Exception e) {
-                new ExceptionViewer(new Exception("Error when trying to prepare the GUI and Nights.", e));
+                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e));
                 File log = new File("error.log");
                 try {
                     BufferedWriter bw = new BufferedWriter(new FileWriter(log));
@@ -109,7 +109,7 @@ public class Main {
                     e.printStackTrace(pw);
                     bw.write(sw.toString());
                 } catch (IOException ioException) {
-                    new ExceptionViewer(new Exception("Error when trying to write log.", ioException));
+                    new ExceptionDialog(new Exception("Error when trying to write log.", ioException));
                 }
             }
         });

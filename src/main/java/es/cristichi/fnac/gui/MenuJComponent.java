@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class Menu extends JComponent {
+public abstract class MenuJComponent extends JComponent {
 	private final List<MenuItem> menuItems;
 	private Image backgroundImage;
 	private final Image defaultLoadingImg;
@@ -30,14 +30,14 @@ public abstract class Menu extends JComponent {
 	private final String[] musicCreditsMsg;
 
 	/**
-	 * Creates a new {@link Menu} with the given data.
+	 * Creates a new {@link MenuJComponent} with the given data.
 	 * @param backgroundImg Path to background image in the resources.
 	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link MenuItem}s
 	 *                         that don't specify one.
 	 * @param menuItems List of {@link MenuItem}s. It must not be null or empty.
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public Menu(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
+    public MenuJComponent(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
 		this.defaultLoadingImg = Resources.loadImageResource(defaultLoadingImg);
@@ -186,7 +186,7 @@ public abstract class Menu extends JComponent {
 	 * @param item String identifying the item clicked, or null if no Night should start.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract Night onMenuItemClick(MenuItem item) throws Exception;
+	protected abstract NightJComponent onMenuItemClick(MenuItem item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final MenuItem menuItem;
@@ -198,7 +198,7 @@ public abstract class Menu extends JComponent {
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
 			currentLoadingImg = menuItem.loadingScreen();
-			for (Component component : Menu.this.getComponents()) {
+			for (Component component : MenuJComponent.this.getComponents()) {
 				component.setVisible(false);
 			}
 			new Thread(() -> {
@@ -210,7 +210,7 @@ public abstract class Menu extends JComponent {
 					errorTicks = 0;
 					musicCreditsTicks = 0;
 
-					Night night = onMenuItemClick(menuItem);
+					NightJComponent night = onMenuItemClick(menuItem);
 					if (menuItem.stopMusic()){
 						if (night != null){
 							night.addOnNightEnd((completed) -> {
@@ -226,7 +226,7 @@ public abstract class Menu extends JComponent {
 					musicCreditsTicks = 160;
 					music.play(true);
 				}
-				for (Component component : Menu.this.getComponents()) {
+				for (Component component : MenuJComponent.this.getComponents()) {
 					component.setVisible(true);
 				}
 				loading = false;

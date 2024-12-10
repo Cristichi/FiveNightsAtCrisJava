@@ -27,12 +27,12 @@ import java.util.Random;
 /**
  * Main window, it controls all the thingies.
  */
-public class Nights extends JFrame {
+public class NightsJFrame extends JFrame {
     public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
-    private final JSettings settingsPanel;
+    private final SettingsJComponent settingsPanel;
     private final JPanel nightPanel;
-    private final Menu mainMenu;
+    private final MenuJComponent mainMenu;
     private final Jumpscare powerOutage;
 
     private final SaveFileIO.SaveFile saveFile;
@@ -45,7 +45,7 @@ public class Nights extends JFrame {
      * @param settings Settings of the user.
      * @throws ResourceException If an error occurs when loading a Resource.
      */
-    public Nights(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
+    public NightsJFrame(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
         super();
         this.saveFile = saveFile;
         this.settings = settings;
@@ -67,9 +67,9 @@ public class Nights extends JFrame {
         MenuData menuData = getUpdatedMenuData();
 
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisual.STRETCHED);
-        mainMenu = new Menu(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
+        mainMenu = new MenuJComponent(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
             @Override
-            protected Night onMenuItemClick(MenuItem item) throws IOException {
+            protected NightJComponent onMenuItemClick(MenuItem item) throws IOException {
                 switch (item.id()) {
                     case "test" -> {
                         return startSandboxNight();
@@ -96,7 +96,7 @@ public class Nights extends JFrame {
                         return startNight6();
                     }
                     case "custom" -> {
-                        new ExceptionViewer(new MenuItemNotFound("The Custom Night is not ready! " +
+                        new ExceptionDialog(new MenuItemNotFound("The Custom Night is not ready! " +
                                 "Cristichi needs more time to finish it."));
                         return null;
                     }
@@ -119,14 +119,14 @@ public class Nights extends JFrame {
         cardPanel.add(mainMenu, "menu");
         cardLayout.show(cardPanel, "menu");
 
-        settingsPanel = new JSettings(settings) {
+        settingsPanel = new SettingsJComponent(settings) {
             @Override
             public void onSettingsSaved(Settings saved) {
-                if (Nights.this.settings.isFullscreen() != saved.isFullscreen()){
-                    Nights.this.setFullScreen(saved.isFullscreen());
+                if (NightsJFrame.this.settings.isFullscreen() != saved.isFullscreen()){
+                    NightsJFrame.this.setFullScreen(saved.isFullscreen());
                 }
                 TinySound.setGlobalVolume(saved.getVolume());
-                Nights.this.settings = new Settings(saved);
+                NightsJFrame.this.settings = new Settings(saved);
             }
 
             @Override
@@ -141,7 +141,7 @@ public class Nights extends JFrame {
 
     /**
      * @param subtitle Subtitle. Something like "Night 1" or "Settings menu", or null for nothing.
-     * @return A String of the form "{@link Nights#GAME_TITLE} - <code>subtitle</code>".
+     * @return A String of the form "{@link NightsJFrame#GAME_TITLE} - <code>subtitle</code>".
      */
     public String getTitleForWindow(@Nullable String subtitle) {
         if (subtitle == null){
@@ -289,7 +289,7 @@ public class Nights extends JFrame {
     /**
      * Just a sandbox Night for me to test. Not intended for gameplay.
      */
-    private Night startSandboxNight() throws ResourceException {
+    private NightJComponent startSandboxNight() throws ResourceException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         CameraMap nightMap;
@@ -314,7 +314,7 @@ public class Nights extends JFrame {
                     //new Paco(4, Map.of(0,20), false, true, List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 1)
             );
         }
-        Night night = new Night("Testing", settings.getFps(), nightMap, "night/tutorial/paper.png",
+        NightJComponent night = new NightJComponent("Testing", settings.getFps(), nightMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, .45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             nightPanel.removeAll();
@@ -328,7 +328,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startTutorialNight() throws IOException {
+    private NightJComponent startTutorialNight() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
@@ -339,7 +339,7 @@ public class Nights extends JFrame {
         tutorialMap.addCamAnimatronics("cam1", new RoamingBob("Bob", 5, 8, aiNightBob, false, false, List.of("cam4"), 0f));
         tutorialMap.addCamAnimatronics("cam2", new RoamingMaria("Maria", 5, 8, aiNightMaria, false, false, List.of("cam3"), 0f));
 
-        Night night = new Night("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
+        NightJComponent night = new NightJComponent("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
                 powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
@@ -351,7 +351,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cardLayout.show(cardPanel, "menu");
@@ -367,7 +367,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight1() throws IOException {
+    private NightJComponent startNight1() throws IOException {
         AnimatronicDrawing bob = new RoamingBob("Bob", 5, 6, Map.of(0,1, 4,2), false, false,
                 List.of("corridor 2", "corridor 4", "bathrooms", "offices"), 0f);
 
@@ -386,7 +386,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("offices", maria);
 
         long seed = new Random().nextLong();
-        Night night = new Night("Night 1", settings.getFps(), nightMap, "night/n1/paper.png",
+        NightJComponent night = new NightJComponent("Night 1", settings.getFps(), nightMap, "night/n1/paper.png",
                 powerOutage, new Random(seed), 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed) {
@@ -397,7 +397,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cardLayout.show(cardPanel, "menu");
@@ -414,7 +414,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight2() throws IOException {
+    private NightJComponent startNight2() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         AnimatronicDrawing bob = new RoamingBob("Bob", 5, 5, Map.of(0,4), false, false,
@@ -438,7 +438,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
 
-        Night night = new Night("Night 2", settings.getFps(), nightMap, "night/n2/paper.png",
+        NightJComponent night = new NightJComponent("Night 2", settings.getFps(), nightMap, "night/n2/paper.png",
                 powerOutage, rng, 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -449,7 +449,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
 
@@ -467,7 +467,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight3() throws IOException {
+    private NightJComponent startNight3() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -493,7 +493,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("dining area", crisRandomSideAllNight);
         nightMap.get("bathrooms").setBroken(true);
 
-        Night night = new Night("Night 3", settings.getFps(), nightMap, "night/n4/paper.png", powerOutage, rng,
+        NightJComponent night = new NightJComponent("Night 3", settings.getFps(), nightMap, "night/n4/paper.png", powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -504,7 +504,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
 
@@ -522,7 +522,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight4() throws IOException {
+    private NightJComponent startNight4() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -551,7 +551,7 @@ public class Nights extends JFrame {
         nightMap.addCamAnimatronics("dining area", crisChoosesPathAndTeleports);
         nightMap.get("main stage").setBroken(true);
 
-        Night night = new Night("Night 4", settings.getFps(), nightMap, null, powerOutage, rng,
+        NightJComponent night = new NightJComponent("Night 4", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -562,7 +562,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cardLayout.show(cardPanel, "menu");
@@ -579,7 +579,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight5() throws IOException {
+    private NightJComponent startNight5() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -611,7 +611,7 @@ public class Nights extends JFrame {
         nightMap.get("bathrooms").setBroken(true);
         nightMap.get("main stage").setBroken(true);
 
-        Night night = new Night("Night 5", settings.getFps(), nightMap, null, powerOutage, rng,
+        NightJComponent night = new NightJComponent("Night 5", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -622,7 +622,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cardLayout.show(cardPanel, "menu");
@@ -639,7 +639,7 @@ public class Nights extends JFrame {
         return night;
     }
 
-    private Night startNight6() throws IOException {
+    private NightJComponent startNight6() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -675,7 +675,7 @@ public class Nights extends JFrame {
         nightMap.get("bathrooms").setBroken(true);
         nightMap.get("main stage").setBroken(true);
 
-        Night night = new Night("Night 6", settings.getFps(), nightMap, null, powerOutage, rng,
+        NightJComponent night = new NightJComponent("Night 6", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
@@ -686,7 +686,7 @@ public class Nights extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
-                    new ExceptionViewer(new IOException("Progress could not be saved due to an error.", e));
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e));
                 }
             }
             cardLayout.show(cardPanel, "menu");

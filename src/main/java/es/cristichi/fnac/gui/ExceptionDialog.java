@@ -8,9 +8,9 @@ import java.io.StringWriter;
 /**
  * Generated with ChatGPT out of 100% laziness
  */
-public class ExceptionViewer extends JFrame {
+public class ExceptionDialog extends JFrame {
 
-    public ExceptionViewer(Exception exception) {
+    public ExceptionDialog(Exception exception) {
         super("Exception Viewer");
         exception.printStackTrace();
         

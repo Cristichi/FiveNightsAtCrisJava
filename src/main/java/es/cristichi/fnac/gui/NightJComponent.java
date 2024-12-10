@@ -21,7 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.*;
 
-public class Night extends JComponent {
+public class NightJComponent extends JComponent {
 	private static final boolean DEBUG_MODE = false;
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
@@ -134,7 +134,7 @@ public class Night extends JComponent {
 	/**
 	 * Camera name -> Ticks left until this Camera is visible again after Animatronic move from or to this Camera.<br>
 	 * This is used so that Animatronics don't simply "pop" from and to existence,
-	 * instead the view is hidden for {@link Night#CAMS_STATIC_MOVE_TICKS} ticks. <br>
+	 * instead the view is hidden for {@link NightJComponent#CAMS_STATIC_MOVE_TICKS} ticks. <br>
 	 */
 	private final HashMap<String, Integer> camsHidingMovementTicks;
 	/** Animatronic name -> Point on this JComponent where Animatronic was last drawn on this Camera.<br>
@@ -199,9 +199,9 @@ public class Night extends JComponent {
 	 *                                     purposes but having one is encouraged.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
 	 */
-	public Night(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
-				 Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				 float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException {
+	public NightJComponent(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
+						   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
+						   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException {
 		this.rng = rng;
 		this.fps = fps;
 		this.nightName = nightName;
