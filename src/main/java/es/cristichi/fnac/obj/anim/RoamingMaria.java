@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
-    public RoamingMaria(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
+    public RoamingMaria(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
                         boolean cameraStalled, boolean globalCameraStalled, List<String> forbiddenCams,
                         float fakeMovementSoundChance) throws ResourceException {
-        super("María", secInterval, secsToKill, aiDuringNight, 20, cameraStalled,
+        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),

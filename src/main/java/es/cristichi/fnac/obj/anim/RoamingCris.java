@@ -15,10 +15,10 @@ import java.util.Random;
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
-    public RoamingCris(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
+    public RoamingCris(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams,
                        float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super("Cris", secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled,
                 "anims/cris/camImg.png", null, forbiddenCams, fakeMovementSoundChance, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){
