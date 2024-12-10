@@ -49,8 +49,6 @@ public class Main {
         final SaveFileIO.SaveFile saveFile;
         try {
             saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
-            saveFile.addCompletedNight("Night 5");
-            saveFile.saveToFile(SaveFileIO.SAVE_FILE);
         } catch (Exception e) {
             e.printStackTrace();
             SwingUtilities.invokeLater(() -> new ExceptionDialog(e));
