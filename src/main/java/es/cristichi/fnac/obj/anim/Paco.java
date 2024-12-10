@@ -27,8 +27,8 @@ public class Paco extends PathedMoveAnimatronicDrawing {
     }
 
     @Override
-    public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
-        MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveOppReturn(ret.moveToCam(), rng.nextFloat()<moveSoundChance?sounds.getOrDefault("move", null):null);
+    public MovementSuccessReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+        MovementSuccessReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
+        return new MovementSuccessReturn(ret.moveToCam(), rng.nextFloat()<moveSoundChance?sounds.getOrDefault("move", null):null);
     }
 }

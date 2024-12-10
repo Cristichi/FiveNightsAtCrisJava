@@ -24,8 +24,8 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
     }
 
     @Override
-    public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
-        MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveOppReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
+    public MovementSuccessReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+        MovementSuccessReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
+        return new MovementSuccessReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
     }
 }

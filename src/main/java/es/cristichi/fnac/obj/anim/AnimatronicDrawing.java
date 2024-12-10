@@ -37,20 +37,20 @@ public abstract class AnimatronicDrawing {
     /**
      * Creating an Animatronic.
      *
-     * @param name          Name of the Animatronic. This is used as an identifier.
-     * @param secInterval   Seconds between each movement opportunity.
-     * @param iaDuringNight Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
-     *                      For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
-     *                      and has an AI of 1 during the last hour. If 0 is not specified, its value is
-     *                      defaulted to 0 at the start of the night.
-     * @param maxIaLevel    Maximum AI level. This should usually be 20 for consistency, but can be changed on
-     *                      weird Animatronics. By default, this is only used to determine the chances of
-     *                      movement opportunities.
-     * @param cameraStalled Whether this Animatronic is Camera-stalled.
-     * @param globalCameraStalled Whether this Animatronic is Camera-stalled.
-     * @param camImgPath    Path to the image used when the Animatronic is shown on a Camera.
-     * @param jumpscare     Jumpscare to play when this Animatronic kills the player.
-     * @param debugColor    Color used for debugging. Not used during normal executions.
+     * @param name                    Name of the Animatronic. This is used as an identifier.
+     * @param secInterval             Seconds between each movement opportunity.
+     * @param iaDuringNight           Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
+     *                                For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
+     *                                and has an AI of 1 during the last hour. If 0 is not specified, its value is
+     *                                defaulted to 0 at the start of the night.
+     * @param maxIaLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed on
+     *                                weird Animatronics. By default, this is only used to determine the chances of
+     *                                movement opportunities.
+     * @param cameraStalled           Whether this Animatronic is Camera-stalled.
+     * @param globalCameraStalled     Whether this Animatronic is Camera-stalled.
+     * @param camImgPath              Path to the image used when the Animatronic is shown on a Camera.
+     * @param jumpscare               Jumpscare to play when this Animatronic kills the player.
+     * @param debugColor              Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
     AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
@@ -114,7 +114,7 @@ public abstract class AnimatronicDrawing {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
+    public abstract MovementSuccessReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
      * This method is called on every single tick and is used to allow the Animatronic to decide
@@ -210,6 +210,6 @@ public abstract class AnimatronicDrawing {
      * @param sound Sound to play because of this movement on the destination Camera
      *              , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
      */
-    public record MoveOppReturn(@Nullable String moveToCam, @Nullable Sound sound){
+    public record MovementSuccessReturn(@Nullable String moveToCam, @Nullable Sound sound){
     }
 }

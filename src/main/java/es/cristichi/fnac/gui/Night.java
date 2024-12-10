@@ -394,7 +394,7 @@ public class Night extends JComponent {
 
 				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
-					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveOppReturn>> moves = new HashMap<>(5);
+					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MovementSuccessReturn>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
@@ -402,7 +402,7 @@ public class Night extends JComponent {
 							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
 								if (anim.onMovementOpportunityAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng)){
-									AnimatronicDrawing.MoveOppReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
+									AnimatronicDrawing.MovementSuccessReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 									}
@@ -427,7 +427,7 @@ public class Night extends JComponent {
 						}
 					}
 					for (AnimatronicDrawing anim : moves.keySet()){
-						Map.Entry<Camera, AnimatronicDrawing.MoveOppReturn> move = moves.get(anim);
+						Map.Entry<Camera, AnimatronicDrawing.MovementSuccessReturn> move = moves.get(anim);
 
 						Camera fromCam = move.getKey();
 						Camera toCam = camerasMap.get(move.getValue().moveToCam());
