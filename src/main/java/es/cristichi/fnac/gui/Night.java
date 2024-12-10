@@ -444,7 +444,7 @@ public class Night extends JComponent {
 								if (move.getValue().sound() != null){
 									toCam.playSoundHere(move.getValue().sound());
 								}
-								animPosInCam.remove(fromCam.getName());
+								animPosInCam.remove(anim.getName());
 								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);
 								camsHidingMovementTicks.put(toCam.getName(), CAMS_STATIC_MOVE_TICKS);
 							} catch (Exception e){
