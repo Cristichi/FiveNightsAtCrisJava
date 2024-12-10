@@ -16,8 +16,8 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 
 public class Main {
-    public static final boolean DEBUG = false;
-    public static final boolean DEBUG_TEST_NIGHT_MODE = false;
+    public static final boolean DEBUG = true;
+    public static final boolean DEBUG_TEST_NIGHT_IS_RESTA = false;
 
     public static void main(String[] args) {
         // Hardware acceleration op

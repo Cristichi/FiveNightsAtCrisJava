@@ -15,12 +15,10 @@ import java.util.Random;
 public class PathCris extends PathedMoveAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
-    private final double secsToKill;
-
     public PathCris(double secInterval, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                     boolean globalCameraStalled, List<List<String>> camPaths, String returnToCam,
                     double secsToKill, Random rng) throws ResourceException {
-        super("Cris", secInterval, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
+        super("Cris", secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
                 null, camPaths, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){
@@ -30,7 +28,6 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12, JumpscareVisual.CENTERED);
         }
         jumpscare = rng.nextFloat()<.9? jumpscareNormal : jumpscareItsMe;
-        this.secsToKill = secsToKill;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));
     }
@@ -39,23 +36,5 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
         return new MoveOppReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
-    }
-
-    @Override
-    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
-        if (doorOpen){
-            if (startKillTick == null){
-                startKillTick = tick;
-            } else {
-                if (Math.round(secsToKill *fps) <= tick-startKillTick){
-                    kill = true;
-                    return new TickReturn(true, null, 0, 0);
-                }
-            }
-        } else {
-            kill = false;
-            startKillTick = null;
-        }
-        return new TickReturn(false, null, 0, 0);
     }
 }

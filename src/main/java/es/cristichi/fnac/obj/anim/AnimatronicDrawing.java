@@ -17,6 +17,7 @@ import java.util.Random;
 
 public abstract class AnimatronicDrawing {
     protected static final int EXTRA_AI_FOR_LEAVING = 5;
+    protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
 
     protected final String name;
     protected final Color debugColor;
@@ -30,6 +31,7 @@ public abstract class AnimatronicDrawing {
     protected final BufferedImage camImg;
     protected boolean kill = false;
     protected Integer startKillTick = null;
+    protected double secsToKill;
     protected final Map<String, Sound> sounds;
 
     /**
@@ -51,13 +53,14 @@ public abstract class AnimatronicDrawing {
      * @param debugColor    Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
+    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
                        boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
                        Jumpscare jumpscare, Color debugColor) throws ResourceException {
         this.name = name;
+        this.secInterval = secInterval;
+        this.secsToKill = secsToKill;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
-        this.secInterval = secInterval;
         this.maxIaLevel = maxIaLevel;
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
@@ -114,12 +117,10 @@ public abstract class AnimatronicDrawing {
     public abstract MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
 
     /**
-     * This method should be implemented per animatronic. This is called on every single tick.
-     * This is used to allow the Animatronic to decide what to do based on each tick.
-     * At the moment, it only serves to define how and when Jumpscares occur.
-     * For an example implementation see
-     * {@link RoamingBob#onTick(int, int, boolean, boolean, Camera, Random)} where
-     * he waits some time at the door and if it is open after some time it kills on next cams down.
+     * This method is called on every single tick and is used to allow the Animatronic to decide
+     * what to do based on each tick. It serves as a way to tell the Night to start a Jumpscare, as
+     * well as to play Sounds in any situation (fake movement, knocking on doors, etc). Soudns are always played
+     * At the Camera where the Animatronic is for consistency.
      *
      * @param tick     Current tick.
      * @param fps      FPS for the current night. They are a constant throught the night.
@@ -131,8 +132,24 @@ public abstract class AnimatronicDrawing {
      * @return An instance of {@link TickReturn} that defines if there is a Jumpscare,
      * along other potential data that is calculated each tick on each Animatronic.
      */
-    public abstract TickReturn onTick(int tick, int fps, boolean camsUp,
-                                      boolean openDoor, Camera cam, Random rng);
+    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
+        if (openDoor) {
+            // Door is open, start counting (doing nothing means we are counting up
+            if (startKillTick == null) {
+                startKillTick = tick;
+            } else if (tick - startKillTick >= Math.round(secsToKill * fps)) {
+                // Boo-arns
+                kill = true;
+                return new TickReturn(true, null);
+            }
+        } else if (!cam.isRightDoor() && !cam.isLeftDoor()) {
+            // Reset counter if Animatronic is not at the door
+            startKillTick = null;
+        }
+
+        // If door is closed but Animatronic is still at the door, retain the count
+        return new TickReturn(false, null);
+    }
 
     /**
      * This determines whether the Animatronic should appear on a camera or not. Just some flavor.
@@ -182,10 +199,8 @@ public abstract class AnimatronicDrawing {
      * Information given by each Animatronic at the start of each tick.
      * @param jumpscare Whether a Jumpscare is confirmed.
      * @param sound <code>null</code> for no Sound to play on this tick, or the Sound to play.
-     * @param soundVol If Sound is <code>null</code>, this is ignored. "1" for normal volume.
-     * @param soundPan If Sound is <code>null</code>, this is ignored. "0" for equal volume on both ears.
      */
-    public record TickReturn(boolean jumpscare, @Nullable Sound sound, double soundVol, double soundPan){
+    public record TickReturn(boolean jumpscare, @Nullable Sound sound){
     }
 
     /**

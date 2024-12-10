@@ -422,7 +422,7 @@ public class Night extends JComponent {
 								});
 							}
 							if (tickReturn.sound() != null){
-								tickReturn.sound().play(tickReturn.soundVol(), tickReturn.soundPan());
+								cam.playSoundHere(tickReturn.sound());
 							}
 						}
 					}

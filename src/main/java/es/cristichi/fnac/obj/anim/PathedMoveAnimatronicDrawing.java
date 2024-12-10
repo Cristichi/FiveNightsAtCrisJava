@@ -27,28 +27,29 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
 
     /**
      * Creates a new {@link PathedMoveAnimatronicDrawing} with the given data.
-     * @param name Name of the Animatronic. This is used as an identifier.
-     * @param secInterval Seconds between each movement opportunity.
+     *
+     * @param name          Name of the Animatronic. This is used as an identifier.
+     * @param secInterval   Seconds between each movement opportunity.
      * @param iaDuringNight Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
      *                      For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                      and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                      defaulted to 0 at the start of the night.
-     * @param maxIaLevel Maximum AI level. This should usually be 20 for consistency, but can be changed on
-     *                   weird Animatronics. By default, this is only used to determine the chances of
-     *                   movement opportunities.
+     * @param maxIaLevel    Maximum AI level. This should usually be 20 for consistency, but can be changed on
+     *                      weird Animatronics. By default, this is only used to determine the chances of
+     *                      movement opportunities.
      * @param cameraStalled Whether this Animatronic is Camera-stalled.
-     * @param camImgPath Path to the image used when the Animatronic is shown on a Camera.
-     * @param jumpscare Jumpscare to play when this Animatronic kills the player.
-     * @param camPaths List of paths the Animatronic can take. Each path is another List of Strings with the names
-     *                 of the Cameras in that path, ordered from first to last.
-     * @param debugColor Color used for debugging. Not used during normal executions.
+     * @param camImgPath    Path to the image used when the Animatronic is shown on a Camera.
+     * @param jumpscare     Jumpscare to play when this Animatronic kills the player.
+     * @param camPaths      List of paths the Animatronic can take. Each path is another List of Strings with the names
+     *                      of the Cameras in that path, ordered from first to last.
+     * @param debugColor    Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a given Resource's path does not exist.
      */
-    public PathedMoveAnimatronicDrawing(String name, double secInterval, Map<Integer, Integer> iaDuringNight,
+    public PathedMoveAnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
                                         int maxIaLevel, boolean cameraStalled, boolean globalCameraStalled,
                                         String camImgPath, Jumpscare jumpscare,
                                         List<List<String>> camPaths, Color debugColor) throws ResourceException {
-        super(name, secInterval, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath, jumpscare, debugColor);
+        super(name, secInterval, secsToKill, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath, jumpscare, debugColor);
         this.camPaths = new LinkedList<>(camPaths);
     }
 
@@ -59,14 +60,14 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
             for (int i = 0; i < path.size(); i++) {
                 String cam = path.get(i);
                 if (currentLoc.getName().equals(cam)) {
-                    if (path.size() > i + 1){
-                        return new MoveOppReturn(path.get(i+1), sounds.getOrDefault("move", null));
+                    if (path.size() > i + 1) {
+                        return new MoveOppReturn(path.get(i + 1), sounds.getOrDefault("move", null));
                     } else {
                         return new MoveOppReturn(path.get(0), sounds.getOrDefault("move", null));
                     }
                 }
             }
         }
-        throw new AnimatronicException("Animatronic "+name+" is not at a Camera within any of its paths.");
+        throw new AnimatronicException("Animatronic " + name + " is not at a Camera within any of its paths.");
     }
 }

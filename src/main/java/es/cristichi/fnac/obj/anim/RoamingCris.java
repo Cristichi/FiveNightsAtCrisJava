@@ -15,12 +15,10 @@ import java.util.Random;
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
-    private final double secsToKill;
-
-    public RoamingCris(double secInterval, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
-                       boolean globalCameraStalled, List<String> forbiddenCams, double secsToKill,
+    public RoamingCris(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
+                       boolean globalCameraStalled, List<String> forbiddenCams,
                        Random rng) throws ResourceException {
-        super("Cris", secInterval, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super("Cris", secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled,
                 "anims/cris/camImg.png", null, forbiddenCams, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){
@@ -29,8 +27,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
             jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12, JumpscareVisual.CENTERED);
         }
-        jumpscare = rng.nextFloat()<.9? jumpscareNormal : jumpscareItsMe;
-        this.secsToKill = secsToKill;
+        jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));
     }
@@ -39,23 +36,5 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     public MoveOppReturn onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         MoveOppReturn ret = super.onMovementOppSuccess(map, currentLoc, rng);
         return new MoveOppReturn(ret.moveToCam(), sounds.getOrDefault("move", null));
-    }
-
-    @Override
-    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean doorOpen, Camera cam, Random rng) {
-        if (doorOpen){
-            if (startKillTick == null){
-                startKillTick = tick;
-            } else {
-                if (Math.round(secsToKill *fps) <= tick-startKillTick){
-                    kill = true;
-                    return new TickReturn(true, null, 0, 0);
-                }
-            }
-        } else {
-            kill = false;
-            startKillTick = null;
-        }
-        return new TickReturn(false, null, 0, 0);
     }
 }
