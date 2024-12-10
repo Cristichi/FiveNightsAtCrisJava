@@ -96,7 +96,6 @@ public class Jumpscare {
         GifFrame frame = frames.get(currentFrame>=frames.size()?frames.size()-1:currentFrame);
         if (currentFrameStartTick == 0) {
             currentFrameStartTick = tick;
-            System.out.printf("First time on tick %d.%n", tick);
         } else if (tick >= currentFrameStartTick + frame.delaySecs() * fps) {
             currentFrame++;
             currentFrameStartTick = tick;
