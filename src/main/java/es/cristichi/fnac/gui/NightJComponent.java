@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
@@ -982,7 +983,7 @@ public class NightJComponent extends JComponent {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			} else {
-				GifFrame[] frames = jumpscare.updateAndGetFrame(currentTick, fps);
+				List<GifFrame> frames = jumpscare.updateAndGetFrame(currentTick, fps);
 				if (jumpscare.isFrameToPlaySound()) {
 					jumpscare.getSound().play(JUMPSCARE_SOUND_MODIFIER);
 				}

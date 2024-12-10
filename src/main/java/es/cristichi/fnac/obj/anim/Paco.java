@@ -3,7 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.JumpscareVisual;
+import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
@@ -20,7 +20,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                 float fakeMovementSoundChance) throws ResourceException {
         super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
-                        Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0, JumpscareVisual.CENTERED),
+                        Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0, JumpscareVisualSetting.CENTERED),
                 camPaths, fakeMovementSoundChance, Color.BLUE);
 
         this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav"));

@@ -7,7 +7,7 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.JumpscareVisual;
+import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.anim.*;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
@@ -66,7 +66,7 @@ public class NightsJFrame extends JFrame {
 
         MenuData menuData = getUpdatedMenuData();
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisual.STRETCHED);
+        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
         mainMenu = new MenuJComponent(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
             @Override
             protected NightJComponent onMenuItemClick(MenuItem item) throws IOException {
@@ -308,10 +308,10 @@ public class NightsJFrame extends JFrame {
             nightMap.remove("cam1");
             nightMap.remove("cam2");
             nightMap.addCamAnimatronics("cam3",
-                    //new Bob(5, Map.of(0, 20), false, false, List.of("cam2", "cam4"), 1)
-                    //new Maria(1, Map.of(0,0), false, false, List.of(), 3)
-                    new RoamingCris("Cris", 5, 5, Map.of(0,20), false, false, List.of(), 0f, rng)
-                    //new Paco(4, Map.of(0,20), false, true, List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 1)
+                    new RoamingBob("Bob", 1, 1, Map.of(0, 20), false, false, List.of("cam2", "cam4"), 0f)
+                    //new RoamingMaria("Maria", 1, 2, Map.of(0,0), false, false, List.of(), 0f)
+                    //new RoamingCris("Cris", 5, 5, Map.of(0,20), false, false, List.of(), 0f, rng)
+                    //new Paco("Paco", 4, 1, Map.of(0,20), false, true, List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 0f)
             );
         }
         NightJComponent night = new NightJComponent("Testing", settings.getFps(), nightMap, "night/tutorial/paper.png",

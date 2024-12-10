@@ -2,7 +2,6 @@ package es.cristichi.fnac.obj;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifAnimation;
-import es.cristichi.fnac.io.GifDisposalMethod;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Sound;
@@ -17,14 +16,14 @@ public class Jumpscare {
     private final int soundStartFrame;
     private final int camsDownFrame;
     private final GifAnimation frames;
-    private final JumpscareVisual jumpscareVisual;
+    private final JumpscareVisualSetting jumpscareVisual;
     private int currentFrame;
     private int currentFrameStartTick;
 
     private final LinkedList<Runnable> onFinish;
     private Boolean soundFinished;
 
-    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame, JumpscareVisual jumpscareVisual) throws ResourceException {
+    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame, JumpscareVisualSetting jumpscareVisual) throws ResourceException {
         this.frames = Resources.loadGif(filepath);
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
@@ -56,15 +55,15 @@ public class Jumpscare {
         this.currentFrameStartTick = 0;
     }
 
-    public JumpscareVisual getVisualSetting(){
+    public JumpscareVisualSetting getVisualSetting(){
         return jumpscareVisual;
     }
 
-    public GifFrame[] getCurrentFrame() {
+    public List<GifFrame> getCurrentFrame() {
         return getCombinedFrames(currentFrame);
     }
 
-    public GifFrame[] getSetFrameDEBUG(int frame) {
+    public List<GifFrame> getSetFrameDEBUG(int frame) {
         return getCombinedFrames(frame);
     }
 
@@ -92,7 +91,7 @@ public class Jumpscare {
         return currentFrame >= camsDownFrame;
     }
 
-    public GifFrame[] updateAndGetFrame(int tick, int fps) {
+    public List<GifFrame> updateAndGetFrame(int tick, int fps) {
         GifFrame frame = frames.get(currentFrame>=frames.size()?frames.size()-1:currentFrame);
         if (currentFrameStartTick == 0) {
             currentFrameStartTick = tick;
@@ -110,26 +109,31 @@ public class Jumpscare {
         return getCombinedFrames(currentFrame);
     }
 
-    private GifFrame[] getCombinedFrames(int frameIndex) {
+    /**
+     * @param frameIndex Current frame.
+     * @return Current frame (or the last one if frameIndex is out of the upper bound) plus any frames that should be
+     * visible according to the frame's disposal methods.
+     */
+    private List<GifFrame> getCombinedFrames(int frameIndex) {
         if (frameIndex >= frames.size()) {
-            frameIndex = frames.size()-1;
+            frameIndex = frames.size() - 1; // Clamp to the last frame
         }
 
-        List<GifFrame> combinedFrames = new ArrayList<>(frames.size());
+        List<GifFrame> visibleFrames = new ArrayList<>();
+        boolean resetVisibility = false;
+
         for (int i = 0; i <= frameIndex; i++) {
             GifFrame frame = frames.get(i);
-            combinedFrames.add(frame);
-            if (frame.disposalMethod().equals(GifDisposalMethod.UNSPECIFIED)
-                    || frame.disposalMethod().equals(GifDisposalMethod.RESTORE_TO_BACKGROUND_COLOR)) {
-                combinedFrames.clear();
-                combinedFrames.add(frame);
-            } else if (!frame.disposalMethod().equals(GifDisposalMethod.DO_NOT_DISPOSE)) {
-                System.err.printf("%s not supported. Check frame %d of one of the Jumpscares. Defaulting to DO_NOT_DISPOSE.%n",
-                        frame.disposalMethod(), frameIndex);
+
+            // Disposal methods
+            switch (frame.disposalMethod()) {
+                case RESTORE_TO_BACKGROUND_COLOR -> visibleFrames.clear();
+                case UNSPECIFIED, DO_NOT_DISPOSE -> visibleFrames.add(frame);
+                default -> throw new IllegalStateException("Unexpected or unsupported disposal method: " + frame.disposalMethod());
             }
         }
 
-        return combinedFrames.toArray(new GifFrame[0]);
+        return visibleFrames;
     }
 
     public void addOnFinishedListener(Runnable onFinished) {
