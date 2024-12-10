@@ -17,9 +17,9 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
 
     public RoamingCris(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams,
-                       Random rng) throws ResourceException {
+                       float fakeMovementSoundChance, Random rng) throws ResourceException {
         super("Cris", secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled,
-                "anims/cris/camImg.png", null, forbiddenCams, Color.PINK);
+                "anims/cris/camImg.png", null, forbiddenCams, fakeMovementSoundChance, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){
             jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,

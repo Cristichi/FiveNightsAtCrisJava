@@ -400,12 +400,16 @@ public class Night extends JComponent {
 							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
 							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
-								if (anim.onMovementOpportunityAttempt(cam,
-										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng)){
+								AnimatronicDrawing.MovementOpportunityReturn moveOppRet = anim.onMovementOpportunityAttempt(cam,
+										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
+								if (moveOppRet.move()){
 									AnimatronicDrawing.MovementSuccessReturn moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
 									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
 										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 									}
+								}
+								if (moveOppRet.sound() != null){
+									cam.playSoundHere(moveOppRet.sound());
 								}
 							}
 							AnimatronicDrawing.TickReturn tickReturn =

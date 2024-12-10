@@ -14,14 +14,14 @@ import java.util.Random;
 
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     public RoamingMaria(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
-                        boolean cameraStalled, boolean globalCameraStalled,
-                        List<String> forbiddenCams) throws ResourceException {
+                        boolean cameraStalled, boolean globalCameraStalled, List<String> forbiddenCams,
+                        float fakeMovementSoundChance) throws ResourceException {
         super("María", secInterval, secsToKill, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
                         0, JumpscareVisual.CENTERED),
-                        forbiddenCams, Color.YELLOW);
+                        forbiddenCams, fakeMovementSoundChance, Color.YELLOW);
 
         this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
     }

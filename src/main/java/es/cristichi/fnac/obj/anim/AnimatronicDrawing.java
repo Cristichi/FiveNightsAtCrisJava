@@ -33,6 +33,7 @@ public abstract class AnimatronicDrawing {
     protected Integer startKillTick = null;
     protected double secsToKill;
     protected final Map<String, Sound> sounds;
+    protected final float fakeMovementSoundChance;
 
     /**
      * Creating an Animatronic.
@@ -43,19 +44,21 @@ public abstract class AnimatronicDrawing {
      *                                For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                                and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                                defaulted to 0 at the start of the night.
-     * @param maxIaLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed on
-     *                                weird Animatronics. By default, this is only used to determine the chances of
-     *                                movement opportunities.
+     * @param maxIaLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed
+     *                                on weird Animatronics. By default, this is used to determine the chances of
+     *                                movement opportunities and also for Custom Nights.
      * @param cameraStalled           Whether this Animatronic is Camera-stalled.
      * @param globalCameraStalled     Whether this Animatronic is Camera-stalled.
      * @param camImgPath              Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare               Jumpscare to play when this Animatronic kills the player.
+     * @param fakeMovementSoundChance It determines the chance of failed Movement Opportunities playing the "move"
+     *                                Sound regardless as a fake Movement Opportunity.
      * @param debugColor              Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
     AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
                        boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
-                       Jumpscare jumpscare, Color debugColor) throws ResourceException {
+                       Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor) throws ResourceException {
         this.name = name;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
@@ -67,6 +70,7 @@ public abstract class AnimatronicDrawing {
         this.camImg = Resources.loadImageResource(camImgPath);
         this.sounds = new HashMap<>(1);
         this.jumpscare = jumpscare;
+        this.fakeMovementSoundChance = fakeMovementSoundChance;
         this.debugColor = debugColor;
     }
 
@@ -94,14 +98,17 @@ public abstract class AnimatronicDrawing {
      * @return <code>true</code> if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public boolean onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng){
+    public MovementOpportunityReturn onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng){
+        boolean itMoves;
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt || camsUp && globalCameraStalled){
-            return false;
+            itMoves = false;
+        } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
+            itMoves = rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
+        } else {
+            itMoves = rng.nextInt(maxIaLevel) < aiLevel;
         }
-        if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
-            return rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
-        }
-        return rng.nextInt(maxIaLevel) < aiLevel;
+        return new MovementOpportunityReturn(itMoves,
+                !itMoves && rng.nextFloat() < fakeMovementSoundChance? sounds.getOrDefault("move", null) : null);
     }
 
     /**
@@ -205,11 +212,24 @@ public abstract class AnimatronicDrawing {
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
-     * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. <code>null</code> to indicate
-     *                  that the Animatronic cancels the move for any reason.
+     * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. It should not be
+     *                  <code>null</code>, as the Animatronic is forced to move. The only way to not move
+     *                  is to throw an {@link es.cristichi.fnac.exception.AnimatronicException}.
      * @param sound Sound to play because of this movement on the destination Camera
      *              , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
      */
-    public record MovementSuccessReturn(@Nullable String moveToCam, @Nullable Sound sound){
+    public record MovementSuccessReturn(String moveToCam, @Nullable Sound sound){
+    }
+
+    /**
+     * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
+     * @param move <true>true</true> if this Animatronic should move on this Movement Opportunity.
+     * @param sound Sound to play because of this movement on the origin Camera, <code>null</code> if no Sound
+     *              should play. WARNING regular movement Sounds are implemented on the method
+     *              {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)}, playing
+     *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
+     *              movement Sounds.
+     */
+    public record MovementOpportunityReturn(boolean move, @Nullable Sound sound){
     }
 }

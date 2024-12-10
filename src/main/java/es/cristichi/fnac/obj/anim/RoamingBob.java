@@ -14,11 +14,11 @@ import java.util.Random;
 
 public class RoamingBob extends AvoidCamsAnimatronicDrawing {
     public RoamingBob(double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
-                      boolean globalCameraStalled, List<String> forbiddenCams) throws ResourceException {
+                      boolean globalCameraStalled, List<String> forbiddenCams, float fakeMovementSoundChance) throws ResourceException {
         super("Bob", secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
                         Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, JumpscareVisual.CENTERED),
-                forbiddenCams, Color.RED);
+                forbiddenCams, fakeMovementSoundChance, Color.RED);
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
     }
