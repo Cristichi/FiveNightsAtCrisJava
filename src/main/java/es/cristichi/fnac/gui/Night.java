@@ -164,6 +164,8 @@ public class Night extends JComponent {
 
 	/** Active Jumpscare, or null if player is still alive or won. */
 	private Jumpscare jumpscare;
+	/** For controlling how load Jumpscares are. */
+	private static final float JUMPSCARE_SOUND_MODIFIER = 1.5f;
 
 
 	private final double camSoundsVolume = 0.3;
@@ -982,7 +984,7 @@ public class Night extends JComponent {
 			} else {
 				GifFrame[] frames = jumpscare.updateAndGetFrame(currentTick, fps);
 				if (jumpscare.isFrameToPlaySound()) {
-					jumpscare.getSound().play();
+					jumpscare.getSound().play(JUMPSCARE_SOUND_MODIFIER);
 				}
 
 				// Full dimensions of the final full-sized frame
