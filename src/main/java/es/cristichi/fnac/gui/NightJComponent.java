@@ -334,15 +334,17 @@ public class NightJComponent extends JComponent {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Point click = e.getPoint();
-				for (Camera cam : camerasMap.values()) {
-					if (camsLocOnMapOnScreen.containsKey(cam.getName())) {
-						Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getName());
-						if (camLocScreen.contains(click)) {
-							camerasMap.setSelected(cam.getName());
-							changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
-							clickCamSound.play(camSoundsVolume);
-							break;
+				if (camsUp){
+					Point click = e.getPoint();
+					for (Camera cam : camerasMap.values()) {
+						if (camsLocOnMapOnScreen.containsKey(cam.getName())) {
+							Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getName());
+							if (camLocScreen.contains(click)) {
+								camerasMap.setSelected(cam.getName());
+								changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
+								clickCamSound.play(camSoundsVolume);
+								break;
+							}
 						}
 					}
 				}
