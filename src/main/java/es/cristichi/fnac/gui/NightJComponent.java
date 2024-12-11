@@ -470,16 +470,16 @@ public class NightJComponent extends JComponent {
 							closeDoorSound.play(doorsSoundsVolume, -0.1);
 						} else if (playDoorTransSound && !leftDoorClosed){
 							openDoorSound.play(doorsSoundsVolume, -0.1);
-							playDoorTransSound = false;
 						}
+						playDoorTransSound = false;
 					}
 					case RIGHTDOOR -> {
 						if (rightDoorTransTicks == 1 && rightDoorClosed){
 							closeDoorSound.play(doorsSoundsVolume, 0.1);
 						} else if (playDoorTransSound && !rightDoorClosed){
 							openDoorSound.play(doorsSoundsVolume, 0.1);
-							playDoorTransSound = false;
 						}
+						playDoorTransSound = false;
 					}
 					case MONITOR -> {}
 				}
