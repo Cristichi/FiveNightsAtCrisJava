@@ -23,7 +23,7 @@ public abstract class AnimatronicDrawing {
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
     protected int aiLevel;
-    protected final int maxIaLevel;
+    protected final int maxAiLevel;
     protected final double secInterval;
     protected final boolean cameraStalled;
     protected final boolean globalCameraStalled;
@@ -44,7 +44,7 @@ public abstract class AnimatronicDrawing {
      *                                For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                                and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                                defaulted to 0 at the start of the night.
-     * @param maxIaLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed
+     * @param maxAiLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed
      *                                on weird Animatronics. By default, this is used to determine the chances of
      *                                movement opportunities and also for Custom Nights.
      * @param cameraStalled           Whether this Animatronic is Camera-stalled.
@@ -56,7 +56,7 @@ public abstract class AnimatronicDrawing {
      * @param debugColor              Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxIaLevel,
+    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxAiLevel,
                        boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
                        Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor) throws ResourceException {
         this.name = name;
@@ -64,7 +64,7 @@ public abstract class AnimatronicDrawing {
         this.secsToKill = secsToKill;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
-        this.maxIaLevel = maxIaLevel;
+        this.maxAiLevel = maxAiLevel;
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
         this.camImg = Resources.loadImageResource(camImgPath);
@@ -80,6 +80,10 @@ public abstract class AnimatronicDrawing {
 
     public double getSecInterval() {
         return secInterval;
+    }
+
+    public int getMaxAiLevel() {
+        return maxAiLevel;
     }
 
     public void updateIADuringNight(int time){
@@ -105,9 +109,9 @@ public abstract class AnimatronicDrawing {
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled){
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
-            itMoves = rng.nextInt(maxIaLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
+            itMoves = rng.nextInt(maxAiLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
         } else {
-            itMoves = rng.nextInt(maxIaLevel) < aiLevel;
+            itMoves = rng.nextInt(maxAiLevel) < aiLevel;
         }
         return new MoveOppRet(itMoves,
                 !itMoves && rng.nextFloat() < fakeMovementSoundChance? sounds.getOrDefault("move", null) : null);
