@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.*;
 
 public class Main {
     public static final boolean DEBUG = false;
@@ -41,7 +40,7 @@ public class Main {
                 throw new ResourceException("EraserDust Font was not registered.");
             }
         } catch (ResourceException e) {
-            new ExceptionDialog(e);
+            new ExceptionDialog(e, true, true);
             throw new RuntimeException(e);
         }
 
@@ -51,9 +50,9 @@ public class Main {
             saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
         } catch (Exception e) {
             e.printStackTrace();
-            SwingUtilities.invokeLater(() -> new ExceptionDialog(e));
-
-            throw new RuntimeException("Failed to load save file: " + e.getMessage(), e);
+            RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
+            throw error;
         }
 
         // Settings
@@ -65,9 +64,9 @@ public class Main {
             TinySound.setGlobalVolume(settings.getVolume());
         } catch (Exception e) {
             e.printStackTrace();
-            SwingUtilities.invokeLater(() -> new ExceptionDialog(e));
-
-            throw new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
+            RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
+            throw error;
         }
 
         // JFrame in correct Thread
@@ -86,7 +85,7 @@ public class Main {
                                 settings.saveToFile(Settings.SETTINGS_FILE);
                             } catch (Exception error) {
                                 window.dispose();
-                                new ExceptionDialog(error);
+                                new ExceptionDialog(error, true, false);
                             }
                         }
                     };
@@ -98,17 +97,7 @@ public class Main {
                     window.getRootPane().getActionMap().put("switchFull", action);
                 }
             } catch (Exception e) {
-                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e));
-                File log = new File("error.log");
-                try {
-                    BufferedWriter bw = new BufferedWriter(new FileWriter(log));
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-                    bw.write(sw.toString());
-                } catch (IOException ioException) {
-                    new ExceptionDialog(new Exception("Error when trying to write log.", ioException));
-                }
+                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false);
             }
         });
     }

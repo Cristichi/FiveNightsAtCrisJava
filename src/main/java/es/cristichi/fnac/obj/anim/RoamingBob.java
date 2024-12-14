@@ -4,6 +4,7 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
+import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
@@ -12,7 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@CustomNightAnimatronic(name = "Bob", portraitPath = "anims/bob/portrait.png", restStart = "storage")
 public class RoamingBob extends AvoidCamsAnimatronicDrawing {
+    public RoamingBob(CustomNightAnimatronicData data) throws ResourceException {
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()),
+                true, false, switch (data.mapType()){
+                    case TUTORIAL -> List.of("cam4");
+                    case RESTAURANT -> List.of("corridor 2", "corridor 4", "bathrooms", "offices");
+                }, 0f);
+    }
+
     public RoamingBob(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                       boolean globalCameraStalled, List<String> forbiddenCams, float fakeMovementSoundChance) throws ResourceException {
         super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",

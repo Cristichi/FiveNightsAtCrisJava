@@ -38,6 +38,7 @@ public abstract class MenuJComponent extends JComponent {
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
     public MenuJComponent(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
+		super();
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
 		this.defaultLoadingImg = Resources.loadImageResource(defaultLoadingImg);
@@ -186,7 +187,7 @@ public abstract class MenuJComponent extends JComponent {
 	 * @param item String identifying the item clicked, or null if no Night should start.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract NightJComponent onMenuItemClick(MenuItem item) throws Exception;
+	protected abstract NightJC onMenuItemClick(MenuItem item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final MenuItem menuItem;
@@ -210,7 +211,7 @@ public abstract class MenuJComponent extends JComponent {
 					errorTicks = 0;
 					musicCreditsTicks = 0;
 
-					NightJComponent night = onMenuItemClick(menuItem);
+					NightJC night = onMenuItemClick(menuItem);
 					if (menuItem.stopMusic()){
 						if (night != null){
 							night.addOnNightEnd((completed) -> {

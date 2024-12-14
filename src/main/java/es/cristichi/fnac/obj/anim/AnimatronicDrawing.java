@@ -19,11 +19,12 @@ public abstract class AnimatronicDrawing {
     protected static final int EXTRA_AI_FOR_LEAVING = 5;
     protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
 
+    public static final int GENERIC_MAX_AI = 20;
+
     protected final String name;
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
     protected int aiLevel;
-    protected final int maxAiLevel;
     protected final double secInterval;
     protected final boolean cameraStalled;
     protected final boolean globalCameraStalled;
@@ -64,7 +65,6 @@ public abstract class AnimatronicDrawing {
         this.secsToKill = secsToKill;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
         this.iaDuringNight = iaDuringNight;
-        this.maxAiLevel = maxAiLevel;
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
         this.camImg = Resources.loadImageResource(camImgPath);
@@ -80,10 +80,6 @@ public abstract class AnimatronicDrawing {
 
     public double getSecInterval() {
         return secInterval;
-    }
-
-    public int getMaxAiLevel() {
-        return maxAiLevel;
     }
 
     public void updateIADuringNight(int time){
@@ -109,9 +105,9 @@ public abstract class AnimatronicDrawing {
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled){
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
-            itMoves = rng.nextInt(maxAiLevel) < aiLevel + EXTRA_AI_FOR_LEAVING;
+            itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel + EXTRA_AI_FOR_LEAVING;
         } else {
-            itMoves = rng.nextInt(maxAiLevel) < aiLevel;
+            itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
         return new MoveOppRet(itMoves,
                 !itMoves && rng.nextFloat() < fakeMovementSoundChance? sounds.getOrDefault("move", null) : null);

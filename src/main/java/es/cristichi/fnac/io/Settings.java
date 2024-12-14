@@ -124,7 +124,7 @@ public class Settings {
             ));
             yaml.dump(config, writer);
         } catch (IOException e) {
-            new ExceptionDialog(new IOException("Settings save filePath could not be saved.", e));
+            new ExceptionDialog(new IOException("Settings save filePath could not be saved.", e), false, false);
         }
     }
 }
