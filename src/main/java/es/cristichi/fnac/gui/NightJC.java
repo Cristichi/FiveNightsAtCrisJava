@@ -307,17 +307,15 @@ public class NightJC extends JComponent {
 			getActionMap().put("camsAction", action);
 		}
 
-		{
-			AbstractAction action = new DoorAction();
+        AbstractAction action = new DoorAction();
 
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "doorAction");
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "doorAction");
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "doorAction");
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "doorAction");
-			getActionMap().put("doorAction", action);
-		}
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Q"), "doorAction");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("E"), "doorAction");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "doorAction");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "doorAction");
+        getActionMap().put("doorAction", action);
 
-		// For moving left or right with the mouse
+        // For moving left or right with the mouse
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
@@ -853,27 +851,25 @@ public class NightJC extends JComponent {
 							g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
 
 							// Name of cam in map
-							{
-								String camName = cam.getName().toUpperCase();
-								g.setColor(Color.BLACK);
-								int marginX = scaledCamMapRecX/500;
-								int marginY = scaledCamMapRecY/500;
-								float fontSize = 25;
-								Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
-								FontMetrics metrics = g2d.getFontMetrics(font);
-								Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
-								while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
-									font = font.deriveFont(--fontSize);
-									metrics = g2d.getFontMetrics(font);
-									lineBounds = metrics.getStringBounds(camName, g);
-								}
-								g.setFont(font);
-								int camNameX = (int) (scaledCamMapRecX + lineBounds.getX() + marginX);
-								int camNameY = (int) (scaledCamMapRecY + (scaledCamMapRecHeight - lineBounds.getHeight()) / 2 + metrics.getAscent());
-								g2d.drawString(camName, camNameX, camNameY);
-							}
+                            String camName = cam.getName().toUpperCase();
+                            g.setColor(Color.BLACK);
+                            int marginX = scaledCamMapRecX/500;
+                            int marginY = scaledCamMapRecY/500;
+                            float fontSize = 25;
+                            Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
+                            FontMetrics metrics = g2d.getFontMetrics(font);
+                            Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
+                            while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
+                                font = font.deriveFont(--fontSize);
+                                metrics = g2d.getFontMetrics(font);
+                                lineBounds = metrics.getStringBounds(camName, g);
+                            }
+                            g.setFont(font);
+                            int camNameX = (int) (scaledCamMapRecX + lineBounds.getX() + marginX);
+                            int camNameY = (int) (scaledCamMapRecY + (scaledCamMapRecHeight - lineBounds.getHeight()) / 2 + metrics.getAscent());
+                            g2d.drawString(camName, camNameX, camNameY);
 
-							if (DEBUG_MODE){
+                            if (DEBUG_MODE){
 								int debugRecDim = Math.min(scaledCamMapRecWidth, scaledCamMapRecHeight) / 3;
 								int debugRecX = scaledCamMapRecX;
 								int debugRecY = scaledCamMapRecY;
@@ -923,46 +919,42 @@ public class NightJC extends JComponent {
             String strTime = String.format("%02d:%02d AM", currentHour,
 					(int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
 			FontMetrics fontMetrics = g.getFontMetrics();
-			{
-				int powerUsage = 0;
-				String powerUsageStr = POWER_USAGE_CHAR;
-				if (camsUp) {
-					powerUsage++;
-					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
-				}
-				if (leftDoorClosed) {
-					powerUsage++;
-					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
-				}
-				if (rightDoorClosed) {
-					powerUsage++;
-					powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
-				}
-				switch (powerUsage) {
-					case 0:
-						g.setColor(Color.GREEN);
-						break;
-					case 1:
-						g.setColor(Color.ORANGE);
-						break;
-					case 2:
-						g.setColor(Color.RED);
-						break;
-					case 3:
-						g.setColor(Color.RED.darker());
-						break;
-				}
-				String strPower1 = String.format("Power Usage: %s",  powerUsageStr);
-				String strPower2 = String.format("Left: %.0f%%", (powerLeft*100));
-				g2d.drawString(strPower1,
-						txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
-				g2d.drawString(strPower2,
-						txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
-			}
-			{
-				g.setColor(Color.WHITE);
-				g2d.drawString(strTime, getWidth() - fontMetrics.stringWidth(strTime) - txtMarginX, fontMetrics.getHeight() + txtMarginY);
-			}
+            int powerUsage = 0;
+            String powerUsageStr = POWER_USAGE_CHAR;
+            if (camsUp) {
+                powerUsage++;
+                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
+            }
+            if (leftDoorClosed) {
+                powerUsage++;
+                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
+            }
+            if (rightDoorClosed) {
+                powerUsage++;
+                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
+            }
+            switch (powerUsage) {
+                case 0:
+                    g.setColor(Color.GREEN);
+                    break;
+                case 1:
+                    g.setColor(Color.ORANGE);
+                    break;
+                case 2:
+                    g.setColor(Color.RED);
+                    break;
+                case 3:
+                    g.setColor(Color.RED.darker());
+                    break;
+            }
+            String strPower1 = String.format("Power Usage: %s",  powerUsageStr);
+            String strPower2 = String.format("Left: %.0f%%", (powerLeft*100));
+            g2d.drawString(strPower1,
+                    txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
+            g2d.drawString(strPower2,
+                    txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
+            g.setColor(Color.WHITE);
+            g2d.drawString(strTime, getWidth() - fontMetrics.stringWidth(strTime) - txtMarginX, fontMetrics.getHeight() + txtMarginY);
 
         } else {
             g.setFont(new Font("Arial", Font.BOLD, Math.min(getWidth(), getHeight())/5));

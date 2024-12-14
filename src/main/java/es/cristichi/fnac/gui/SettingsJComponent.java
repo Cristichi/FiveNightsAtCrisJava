@@ -144,19 +144,17 @@ public abstract class SettingsJComponent extends JComponent {
             volumeTest.play();
         });
 
-        {
-            Hashtable<Integer, JLabel> volumeLabels = new Hashtable<>();
-            JLabel label1 = new JLabel("<html>0%</html>");
-            label1.setForeground(foreground);
-            volumeLabels.put(0, label1);
-            JLabel label10 = new JLabel("<html>10%</html>");
-            label10.setForeground(foreground);
-            volumeLabels.put(10, label10);
-            JLabel label2 = new JLabel("<html>100%</html>");
-            label2.setForeground(foreground);
-            volumeLabels.put(100, label2);
-            volumeSlider.setLabelTable(volumeLabels);
-        }
+        Hashtable<Integer, JLabel> volumeLabels = new Hashtable<>();
+        JLabel label1 = new JLabel("<html>0%</html>");
+        label1.setForeground(foreground);
+        volumeLabels.put(0, label1);
+        JLabel label10 = new JLabel("<html>10%</html>");
+        label10.setForeground(foreground);
+        volumeLabels.put(10, label10);
+        JLabel label2 = new JLabel("<html>100%</html>");
+        label2.setForeground(foreground);
+        volumeLabels.put(100, label2);
+        volumeSlider.setLabelTable(volumeLabels);
 
         volumeSlider.addChangeListener(e -> settings.setVolume(volumeSlider.getValue() / 100.0));
         add(volumeSlider, gbc);

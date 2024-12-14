@@ -75,27 +75,25 @@ public class Main {
                 NightsJFrame window = new NightsJFrame(saveFile, settings);
                 window.setFullScreen(settings.isFullscreen());
                 window.setVisible(true);
-                {
-                    AbstractAction action = new AbstractAction() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            try {
-                                settings.setFullscreen(!settings.isFullscreen());
-                                window.setFullScreen(settings.isFullscreen());
-                                settings.saveToFile(Settings.SETTINGS_FILE);
-                            } catch (Exception error) {
-                                window.dispose();
-                                new ExceptionDialog(error, true, false);
-                            }
+                AbstractAction action = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            settings.setFullscreen(!settings.isFullscreen());
+                            window.setFullScreen(settings.isFullscreen());
+                            settings.saveToFile(Settings.SETTINGS_FILE);
+                        } catch (Exception error) {
+                            window.dispose();
+                            new ExceptionDialog(error, true, false);
                         }
-                    };
+                    }
+                };
 
-                    window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                            .put(KeyStroke.getKeyStroke("F11"), "switchFull");
-                    window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
-                    window.getRootPane().getActionMap().put("switchFull", action);
-                }
+                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke("F11"), "switchFull");
+                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
+                window.getRootPane().getActionMap().put("switchFull", action);
             } catch (Exception e) {
                 new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false);
             }

@@ -98,10 +98,8 @@ public class CustomNightMenuJC extends JComponent {
         this.settings = settings;
         this.powerOutage = powerOutage;
         this.nightsJFrame = nightsJFrame;
-        {
-            Random seedRng = new Random();
-            seed = seedRng.nextLong();
-        }
+        Random seedRng = new Random();
+        seed = seedRng.nextLong();
         rng = new Random(seed);
         customInputs = new HashMap<>(customNightAnimatronicRegistry.size());
         customAnimJPs = new LinkedList<>();
@@ -117,55 +115,47 @@ public class CustomNightMenuJC extends JComponent {
         panelSettings.setBorder(new EmptyBorder(10,20,10,20));
 
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        {
-            JButton setAll0 = new JButton("Set all to 0");
-            setAll0.setAlignmentX(Component.CENTER_ALIGNMENT);
-            setAll0.addActionListener(event -> {
-                for (CustomAnimJP customAnimJP : customAnimJPs){
-                    customAnimJP.setAi(0);
-                }
-            });
-            panelSettings.add(setAll0);
-        }
+        JButton setAll0 = new JButton("Set all to 0");
+        setAll0.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setAll0.addActionListener(event -> {
+            for (CustomAnimJP customAnimJP : customAnimJPs){
+                customAnimJP.setAi(0);
+            }
+        });
+        panelSettings.add(setAll0);
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        {
-            JButton setAll10 = new JButton("Set all to 10");
-            setAll10.setAlignmentX(Component.CENTER_ALIGNMENT);
-            setAll10.addActionListener(event -> {
-                for (CustomAnimJP customAnimJP : customAnimJPs){
-                    customAnimJP.setAi(10);
-                }
-            });
-            panelSettings.add(setAll10);
-        }
+        JButton setAll10 = new JButton("Set all to 10");
+        setAll10.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setAll10.addActionListener(event -> {
+            for (CustomAnimJP customAnimJP : customAnimJPs){
+                customAnimJP.setAi(10);
+            }
+        });
+        panelSettings.add(setAll10);
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        {
-            JButton setAll20 = new JButton("Set all to 20");
-            setAll20.setAlignmentX(Component.CENTER_ALIGNMENT);
-            setAll20.addActionListener(event -> {
-                for (CustomAnimJP customAnimJP : customAnimJPs){
-                    customAnimJP.setAi(20);
-                }
-            });
-            panelSettings.add(setAll20);
-        }
+        JButton setAll20 = new JButton("Set all to 20");
+        setAll20.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setAll20.addActionListener(event -> {
+            for (CustomAnimJP customAnimJP : customAnimJPs){
+                customAnimJP.setAi(20);
+            }
+        });
+        panelSettings.add(setAll20);
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        {
-            JButton startBtn = new JButton("Start Custom Night");
-            startBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            startBtn.addActionListener(event -> {
-                try {
-                    nightsJFrame.startCustomNight(createCustomNight());
-                    updateComponents();
-                } catch (IOException e) {
-                    new ExceptionDialog(e, false, false);
-                    updateComponents();
-                } catch (CustomNightException e) {
-                    new ExceptionDialog(e, false, true);
-                }
-            });
-            panelSettings.add(startBtn);
-        }
+        JButton startBtn = new JButton("Start Custom Night");
+        startBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startBtn.addActionListener(event -> {
+            try {
+                nightsJFrame.startCustomNight(createCustomNight());
+                updateComponents();
+            } catch (IOException e) {
+                new ExceptionDialog(e, false, false);
+                updateComponents();
+            } catch (CustomNightException e) {
+                new ExceptionDialog(e, false, true);
+            }
+        });
+        panelSettings.add(startBtn);
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override

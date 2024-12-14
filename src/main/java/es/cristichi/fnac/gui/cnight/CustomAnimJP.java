@@ -36,42 +36,38 @@ public abstract class CustomAnimJP extends JPanel {
         setBorder(border);
 
         setLayout(new BorderLayout());
-        {
-            JLabel nameLbl = new JLabel("<html>"+
-                    (annotationInfo.variant().isBlank()
-                            ? "<b>%s</b>".formatted(annotationInfo.name())
-                            : "<b>%s</b> (%s)".formatted(annotationInfo.name(), annotationInfo.variant()))
-                    +"</html>");
-            nameLbl.setFont(font);
-            nameLbl.setForeground(getForeground());
-            nameLbl.setHorizontalAlignment(SwingConstants.CENTER);
-            nameLbl.setHorizontalTextPosition(SwingConstants.CENTER);
-            add(nameLbl, BorderLayout.NORTH);
-        }
+        JLabel nameLbl = new JLabel("<html>"+
+                (annotationInfo.variant().isBlank()
+                        ? "<b>%s</b>".formatted(annotationInfo.name())
+                        : "<b>%s</b> (%s)".formatted(annotationInfo.name(), annotationInfo.variant()))
+                +"</html>");
+        nameLbl.setFont(font);
+        nameLbl.setForeground(getForeground());
+        nameLbl.setHorizontalAlignment(SwingConstants.CENTER);
+        nameLbl.setHorizontalTextPosition(SwingConstants.CENTER);
+        add(nameLbl, BorderLayout.NORTH);
 
-        {
-            aiInputLbl = new JLabel("0");
-            aiInputLbl.setOpaque(false);
-            aiInputLbl.setFont(font.deriveFont(60f));
-            aiInputLbl.setForeground(getForeground());
-            aiInputLbl.setHorizontalAlignment(SwingConstants.TRAILING);
+        aiInputLbl = new JLabel("0");
+        aiInputLbl.setOpaque(false);
+        aiInputLbl.setFont(font.deriveFont(60f));
+        aiInputLbl.setForeground(getForeground());
+        aiInputLbl.setHorizontalAlignment(SwingConstants.TRAILING);
 
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        int newAI = Math.min(annotationInfo.maxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
-                        aiInputLbl.setText(Integer.toString(newAI));
-                        onAiChanged(newAI);
-                    } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        int newAI = Math.max(0, Integer.parseInt(aiInputLbl.getText()) - 1);
-                        aiInputLbl.setText(Integer.toString(newAI));
-                        onAiChanged(newAI);
-                    }
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    int newAI = Math.min(annotationInfo.maxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
+                    aiInputLbl.setText(Integer.toString(newAI));
+                    onAiChanged(newAI);
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    int newAI = Math.max(0, Integer.parseInt(aiInputLbl.getText()) - 1);
+                    aiInputLbl.setText(Integer.toString(newAI));
+                    onAiChanged(newAI);
                 }
-            });
-            add(aiInputLbl, BorderLayout.SOUTH);
-        }
+            }
+        });
+        add(aiInputLbl, BorderLayout.SOUTH);
     }
 
     public void setAi(int ai){
