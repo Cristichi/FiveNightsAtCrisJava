@@ -20,6 +20,7 @@ import org.reflections.Reflections;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -113,49 +114,46 @@ public class CustomNightMenuJC extends JComponent {
         add(panelSettings, BorderLayout.EAST);
         panelSettings.setLayout(new BoxLayout(panelSettings, BoxLayout.Y_AXIS));
         panelSettings.setBorder(new EmptyBorder(10,20,10,20));
+        panelSettings.setBackground(Color.BLACK);
 
-        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        JButton setAll0 = new JButton("Set all to 0");
-        setAll0.setAlignmentX(Component.CENTER_ALIGNMENT);
-        setAll0.addActionListener(event -> {
-            for (CustomAnimJP customAnimJP : customAnimJPs){
+        createSettingButton("Set all to 0", event -> {
+            for (CustomAnimJP customAnimJP : customAnimJPs) {
                 customAnimJP.setAi(0);
             }
         });
-        panelSettings.add(setAll0);
-        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        JButton setAll10 = new JButton("Set all to 10");
-        setAll10.setAlignmentX(Component.CENTER_ALIGNMENT);
-        setAll10.addActionListener(event -> {
+
+        createSettingButton("Set all to 10", event -> {
             for (CustomAnimJP customAnimJP : customAnimJPs){
                 customAnimJP.setAi(10);
             }
         });
-        panelSettings.add(setAll10);
-        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        JButton setAll20 = new JButton("Set all to 20");
-        setAll20.setAlignmentX(Component.CENTER_ALIGNMENT);
-        setAll20.addActionListener(event -> {
+
+        createSettingButton("Set all to 20", event -> {
             for (CustomAnimJP customAnimJP : customAnimJPs){
                 customAnimJP.setAi(20);
             }
         });
-        panelSettings.add(setAll20);
-        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
-        JButton startBtn = new JButton("Start Custom Night");
-        startBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        startBtn.addActionListener(event -> {
-            try {
-                nightsJFrame.startCustomNight(createCustomNight());
+
+        createSettingButton("Start Custom Night", event -> {
+            JLabel loading = new JLabel("Loading");
+            loading.setFont(getFont());
+            loading.setForeground(Color.YELLOW);
+
+            scrollPaneAnims.removeAll();
+            scrollPaneAnims.add(loading);
+            invalidate();
+            repaint();
+            new Thread(() -> {
+                try {
+                    nightsJFrame.startCustomNight(createCustomNight());
+                } catch (IOException e) {
+                    new ExceptionDialog(e, false, false);
+                } catch (CustomNightException e) {
+                    new ExceptionDialog(e, false, true);
+                }
                 updateComponents();
-            } catch (IOException e) {
-                new ExceptionDialog(e, false, false);
-                updateComponents();
-            } catch (CustomNightException e) {
-                new ExceptionDialog(e, false, true);
-            }
+            }, "cnight_t").start();
         });
-        panelSettings.add(startBtn);
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -163,6 +161,20 @@ public class CustomNightMenuJC extends JComponent {
                 updateComponents();
             }
         });
+    }
+
+    private void createSettingButton(String txt, ActionListener action){
+        JButton btn = new JButton(txt);
+        btn.setFont(getFont());
+        btn.setForeground(Color.YELLOW);
+        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.addActionListener(action);
+
+        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelSettings.add(btn);
     }
 
     private boolean resizingInProgress = false;

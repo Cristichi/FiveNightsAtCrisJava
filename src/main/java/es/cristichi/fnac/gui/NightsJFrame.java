@@ -31,9 +31,9 @@ import java.util.Random;
 public class NightsJFrame extends JFrame {
     public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
-    private final SettingsJComponent settingsPanel;
+    private final SettingsJC settingsPanel;
     private final JPanel nightPanel;
-    private final MenuJComponent mainMenu;
+    private final MenuJC mainMenu;
     private final CustomNightMenuJC customNightMenu;
     private final Jumpscare powerOutage;
 
@@ -69,7 +69,7 @@ public class NightsJFrame extends JFrame {
         MenuData menuData = getUpdatedMenuData();
 
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
-        mainMenu = new MenuJComponent(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
+        mainMenu = new MenuJC(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
             @Override
             protected NightJC onMenuItemClick(MenuItem item) throws IOException {
                 switch (item.id()) {
@@ -120,7 +120,7 @@ public class NightsJFrame extends JFrame {
         cardPanel.add(mainMenu, "menu");
         cardLayout.show(cardPanel, "menu");
 
-        settingsPanel = new SettingsJComponent(settings) {
+        settingsPanel = new SettingsJC(settings) {
             @Override
             public void onSettingsSaved(Settings saved) {
                 if (NightsJFrame.this.settings.isFullscreen() != saved.isFullscreen()){

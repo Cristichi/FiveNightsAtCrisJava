@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class MenuJComponent extends JComponent {
+public abstract class MenuJC extends JComponent {
 	private final List<MenuItem> menuItems;
 	private Image backgroundImage;
 	private final Image defaultLoadingImg;
@@ -30,14 +30,14 @@ public abstract class MenuJComponent extends JComponent {
 	private final String[] musicCreditsMsg;
 
 	/**
-	 * Creates a new {@link MenuJComponent} with the given data.
+	 * Creates a new {@link MenuJC} with the given data.
 	 * @param backgroundImg Path to background image in the resources.
 	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link MenuItem}s
 	 *                         that don't specify one.
 	 * @param menuItems List of {@link MenuItem}s. It must not be null or empty.
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public MenuJComponent(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
+    public MenuJC(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
 		super();
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
@@ -199,7 +199,7 @@ public abstract class MenuJComponent extends JComponent {
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
 			currentLoadingImg = menuItem.loadingScreen();
-			for (Component component : MenuJComponent.this.getComponents()) {
+			for (Component component : MenuJC.this.getComponents()) {
 				component.setVisible(false);
 			}
 			new Thread(() -> {
@@ -227,7 +227,7 @@ public abstract class MenuJComponent extends JComponent {
 					musicCreditsTicks = 160;
 					music.play(true);
 				}
-				for (Component component : MenuJComponent.this.getComponents()) {
+				for (Component component : MenuJC.this.getComponents()) {
 					component.setVisible(true);
 				}
 				loading = false;
