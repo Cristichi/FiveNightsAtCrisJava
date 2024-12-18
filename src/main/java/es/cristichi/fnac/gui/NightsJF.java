@@ -10,7 +10,6 @@ import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.anim.*;
-import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
 import es.cristichi.fnac.obj.cams.TutorialMap;
 import kuusisto.tinysound.TinySound;
@@ -73,9 +72,6 @@ public class NightsJF extends JFrame {
             @Override
             protected NightJC onMenuItemClick(MenuItem item) throws IOException {
                 switch (item.id()) {
-                    case "test" -> {
-                        return startSandboxNight();
-                    }
                     case "tutorial" -> {
                         return startTutorialNight();
                     }
@@ -283,53 +279,9 @@ public class NightsJF extends JFrame {
                 mmItems.add(new MenuItem("custom", "Custom Night", true, Resources.loadImageResource("night/custom/loading.jpg")));
             }
         }
-        if (Main.DEBUG)
-            mmItems.add(new MenuItem("test", "TESTING NIGHT (DEBUG ONLY)", true, null));
         mmItems.add(new MenuItem("settings", "Settings", false, null));
         mmItems.add(new MenuItem("exit", "Run away", false, null));
         return new MenuData(mmItems, background);
-    }
-
-    /**
-     * Just a sandbox Night for me to test. Not intended for gameplay.
-     */
-    private NightJC startSandboxNight() throws ResourceException {
-        long seed = new Random().nextLong();
-        Random rng = new Random(seed);
-        CameraMap nightMap;
-        if (Main.DEBUG_TEST_NIGHT_IS_RESTA){
-            nightMap = new CrisRestaurantMap();
-            nightMap.addCamAnimatronics("corridor 1",
-                    //new Bob(1, Map.of(0, 20), false, false, List.of("cam4"), 555),
-                    //new Maria(1, Map.of(0,0), false, false, List.of(), 5),
-                    //new RoamingCris(1, Map.of(0,20), true, false, List.of("kitchen", "storage", "main stage", "dining area"), 5, rng)
-                    new RoamingCris("Cris", Map.of(0,20), true, false, List.of(), 0f, rng)
-                    ///new Paco(4, Map.of(0,20), false, true, List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"), "kitchen", 1f, 555)
-            );
-        } else {
-            nightMap = new TutorialMap();
-            nightMap.setSelected("cam3");
-            nightMap.remove("cam1");
-            nightMap.remove("cam2");
-            nightMap.addCamAnimatronics("cam3",
-                    new RoamingBob("Bob", Map.of(0, 20), false, false, List.of("cam2", "cam4"), 0f, rng)
-                    //new RoamingMaria("Maria", 1, 2, Map.of(0,0), false, false, List.of(), 0f)
-                    //new RoamingCris("Cris", 5, 5, Map.of(0,20), false, false, List.of(), 0f, rng)
-                    //new Paco("Paco", 4, 1, Map.of(0,20), false, true, List.of("cam1", "cam2", "cam4", "rightDoor"), "cam1", 1f, 0f)
-            );
-        }
-        NightJC night = new NightJC("Testing", settings.getFps(), nightMap, "night/tutorial/paper.png",
-                powerOutage, rng, 60, .45f, "night/tutorial/completed.wav");
-        night.addOnNightEnd((completed) -> {
-            nightPanel.removeAll();
-            cardLayout.show(cardPanel, "menu");
-        });
-        nightPanel.add(night);
-        setTitle(getTitleForWindow(night.getNightName()));
-        cardLayout.show(cardPanel, "night");
-        System.out.printf("Today's testing night is using the seed \"%d\". Have fun!%n", seed);
-        night.startNight();
-        return night;
     }
 
     private NightJC startTutorialNight() throws IOException {
