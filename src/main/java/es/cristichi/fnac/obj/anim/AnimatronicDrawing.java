@@ -18,7 +18,7 @@ import java.util.Random;
 public abstract class AnimatronicDrawing {
     public static final int GENERIC_MAX_AI = 20;
 
-    protected static final int EXTRA_AI_FOR_LEAVING = 5;
+    protected static final int AI_FOR_LEAVING_DOOR = 18;
     protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
     protected static final double MAX_DELAY_SECS = 11.5;
 
@@ -117,7 +117,7 @@ public abstract class AnimatronicDrawing {
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
-            itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel + EXTRA_AI_FOR_LEAVING;
+            itMoves = rng.nextInt(GENERIC_MAX_AI) < AI_FOR_LEAVING_DOOR;
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
