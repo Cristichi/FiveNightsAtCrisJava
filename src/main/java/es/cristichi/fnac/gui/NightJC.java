@@ -1106,7 +1106,7 @@ public class NightJC extends JComponent {
 					backgroundCamsSound.stop();
 					openedCamsSound.stop();
 					closeCamsSound.play(camSoundsVolume);
-				} else {
+				} else if (jumpscare == null){
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUp = true;
 					openedCamsSound.play(camSoundsVolume);
