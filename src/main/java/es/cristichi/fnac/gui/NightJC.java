@@ -1053,6 +1053,13 @@ public class NightJC extends JComponent {
 		}
     }
 
+	public interface NightEndedListener {
+		/**
+		 * @param completed <code>true</code> if player won, <code>false</code> otherwise.
+		 */
+		void run(boolean completed);
+	}
+
     private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1131,12 +1138,5 @@ public class NightJC extends JComponent {
 				}
 			}
 		}
-	}
-
-	public interface NightEndedListener {
-		/**
-		 * @param completed <code>true</code> if player won, <code>false</code> otherwise.
-		 */
-		void run(boolean completed);
 	}
 }
