@@ -3,8 +3,8 @@ package es.cristichi.fnac;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.NightsJF;
+import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
 import kuusisto.tinysound.TinySound;
 
@@ -44,9 +44,9 @@ public class Main {
         }
 
         // Save file
-        final SaveFileIO.SaveFile saveFile;
+        final NightProgress.SaveFile saveFile;
         try {
-            saveFile = SaveFileIO.loadFromFile(SaveFileIO.SAVE_FILE);
+            saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
         } catch (Exception e) {
             e.printStackTrace();
             RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);

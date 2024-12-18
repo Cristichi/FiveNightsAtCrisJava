@@ -4,8 +4,8 @@ import es.cristichi.fnac.Main;
 import es.cristichi.fnac.exception.MenuItemNotFound;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.cnight.CustomNightMenuJC;
+import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
@@ -36,7 +36,7 @@ public class NightsJF extends JFrame {
     private final CustomNightMenuJC customNightMenu;
     private final Jumpscare powerOutage;
 
-    private final SaveFileIO.SaveFile saveFile;
+    private final NightProgress.SaveFile saveFile;
     private final CardLayout cardLayout;
     private Settings settings;
 
@@ -46,7 +46,7 @@ public class NightsJF extends JFrame {
      * @param settings Settings of the user.
      * @throws ResourceException If an error occurs when loading a Resource.
      */
-    public NightsJF(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
+    public NightsJF(NightProgress.SaveFile saveFile, Settings settings) throws ResourceException {
         super();
         this.saveFile = saveFile;
         this.settings = settings;
@@ -302,7 +302,7 @@ public class NightsJF extends JFrame {
                 System.out.println("You just passed the tutorial! Congratulations, but it was only the beginning.");
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -350,7 +350,7 @@ public class NightsJF extends JFrame {
             if (completed) {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -403,7 +403,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -458,7 +458,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -516,7 +516,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -576,7 +576,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -640,7 +640,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
@@ -667,7 +667,7 @@ public class NightsJF extends JFrame {
             if (completed){
                 saveFile.addCompletedNight(night.getNightName());
                 try {
-                    saveFile.saveToFile(SaveFileIO.SAVE_FILE);
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
