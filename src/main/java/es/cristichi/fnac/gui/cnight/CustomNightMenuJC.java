@@ -4,7 +4,7 @@ import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.NightJC;
-import es.cristichi.fnac.gui.NightsJFrame;
+import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
@@ -79,7 +79,7 @@ public class CustomNightMenuJC extends JComponent {
 
     protected Settings settings;
     protected Jumpscare powerOutage;
-    protected NightsJFrame nightsJFrame;
+    protected NightsJF nightsJF;
 
     protected final long seed;
     protected final Random rng;
@@ -91,14 +91,14 @@ public class CustomNightMenuJC extends JComponent {
     protected JScrollPane scrollPaneAnims;
     protected JPanel panelSettings;
 
-    public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightsJFrame nightsJFrame) throws ResourceException {
+    public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightsJF nightsJF) throws ResourceException {
         super();
         if (backgroundImg == null){
             backgroundImg = Resources.loadImageResource("cnight/menuBackground.jpg");
         }
         this.settings = settings;
         this.powerOutage = powerOutage;
-        this.nightsJFrame = nightsJFrame;
+        this.nightsJF = nightsJF;
         Random seedRng = new Random();
         seed = seedRng.nextLong();
         rng = new Random(seed);
@@ -145,7 +145,7 @@ public class CustomNightMenuJC extends JComponent {
             repaint();
             new Thread(() -> {
                 try {
-                    nightsJFrame.startCustomNight(createCustomNight());
+                    nightsJF.startCustomNight(createCustomNight());
                 } catch (IOException e) {
                     new ExceptionDialog(e, false, false);
                 } catch (CustomNightException e) {

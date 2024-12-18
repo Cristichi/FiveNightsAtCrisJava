@@ -28,7 +28,7 @@ import java.util.Random;
 /**
  * Main window, it controls all the thingies.
  */
-public class NightsJFrame extends JFrame {
+public class NightsJF extends JFrame {
     public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
     private final SettingsJC settingsPanel;
@@ -47,7 +47,7 @@ public class NightsJFrame extends JFrame {
      * @param settings Settings of the user.
      * @throws ResourceException If an error occurs when loading a Resource.
      */
-    public NightsJFrame(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
+    public NightsJF(SaveFileIO.SaveFile saveFile, Settings settings) throws ResourceException {
         super();
         this.saveFile = saveFile;
         this.settings = settings;
@@ -123,11 +123,11 @@ public class NightsJFrame extends JFrame {
         settingsPanel = new SettingsJC(settings) {
             @Override
             public void onSettingsSaved(Settings saved) {
-                if (NightsJFrame.this.settings.isFullscreen() != saved.isFullscreen()){
-                    NightsJFrame.this.setFullScreen(saved.isFullscreen());
+                if (NightsJF.this.settings.isFullscreen() != saved.isFullscreen()){
+                    NightsJF.this.setFullScreen(saved.isFullscreen());
                 }
                 TinySound.setGlobalVolume(saved.getVolume());
-                NightsJFrame.this.settings = new Settings(saved);
+                NightsJF.this.settings = new Settings(saved);
             }
 
             @Override
@@ -145,7 +145,7 @@ public class NightsJFrame extends JFrame {
 
     /**
      * @param subtitle Subtitle. Something like "Night 1" or "Settings menu", or null for nothing.
-     * @return A String of the form "{@link NightsJFrame#GAME_TITLE} - <code>subtitle</code>".
+     * @return A String of the form "{@link NightsJF#GAME_TITLE} - <code>subtitle</code>".
      */
     public String getTitleForWindow(@Nullable String subtitle) {
         if (subtitle == null){

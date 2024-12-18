@@ -2,7 +2,7 @@ package es.cristichi.fnac;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
-import es.cristichi.fnac.gui.NightsJFrame;
+import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.SaveFileIO;
 import es.cristichi.fnac.io.Settings;
@@ -72,7 +72,7 @@ public class Main {
         // JFrame in correct Thread
         SwingUtilities.invokeLater(() -> {
             try {
-                NightsJFrame window = new NightsJFrame(saveFile, settings);
+                NightsJF window = new NightsJF(saveFile, settings);
                 window.setFullScreen(settings.isFullscreen());
                 window.setVisible(true);
                 AbstractAction action = new AbstractAction() {
