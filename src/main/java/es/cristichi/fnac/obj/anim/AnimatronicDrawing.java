@@ -93,10 +93,6 @@ public abstract class AnimatronicDrawing {
         return name;
     }
 
-    public double getSecInterval() {
-        return secInterval;
-    }
-
     public void updateIADuringNight(int time) {
         aiLevel = iaDuringNight.getOrDefault(time, aiLevel);
     }
