@@ -382,7 +382,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);
@@ -431,7 +431,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         AnimatronicDrawing crisIsClose = new RoamingCris("Cris", Map.of(0,1, 4,2, 5,3), true, false,
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 0f, rng);
@@ -485,7 +485,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         AnimatronicDrawing crisRandomSideAllNight = new RoamingCris("Cris", Map.of(0,1, 4,2, 5,3), true, false,
                 List.of("kitchen", "storage", "dining area", "main stage"), 0f, rng);
@@ -540,7 +540,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         AnimatronicDrawing crisChoosesPathAndTeleports = new PathCris("Cris", Map.of(0,1, 4,2, 5,4), true, false, List.of(
                 List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
@@ -597,7 +597,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         AnimatronicDrawing crisChoosesPathAndTeleports = new PathCris("Cris", Map.of(0,3, 1,4, 2,5, 3,6, 5,7), true, false, List.of(
                 List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
@@ -657,7 +657,7 @@ public class NightsJF extends JFrame {
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 1f, 0f);
+                ), 0f);
 
         AnimatronicDrawing crisClon1 = new PathCris("Cris", Map.of(0,5, 2,7, 4,8, 5,9), true, false, List.of(
                 List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
