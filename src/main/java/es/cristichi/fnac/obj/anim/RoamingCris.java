@@ -18,17 +18,17 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
     public RoamingCris(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()),
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of();
                     case RESTAURANT -> List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms");
                 }, 0f, data.rng());
     }
 
-    public RoamingCris(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
+    public RoamingCris(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams,
                        float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super(name, 5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
                 "anims/cris/camImg.png", null, forbiddenCams, fakeMovementSoundChance, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){

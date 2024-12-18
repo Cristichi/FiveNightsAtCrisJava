@@ -18,7 +18,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
     private final float moveSoundChance;
 
     public Paco(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()), false, true,
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()), false, true,
                 switch (data.mapType()){
                     case TUTORIAL -> List.of(
                             List.of("cam1", "cam2", "cam4", "rightDoor"),
@@ -32,10 +32,10 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                 1f, 0f);
     }
 
-    public Paco(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
+    public Paco(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                 boolean globalCameraStalled, List<List<String>> camPaths, float moveSoundChance,
                 float fakeMovementSoundChance) throws ResourceException {
-        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
+        super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 0, JumpscareVisualSetting.CENTERED),
                 camPaths, fakeMovementSoundChance, Color.BLUE);

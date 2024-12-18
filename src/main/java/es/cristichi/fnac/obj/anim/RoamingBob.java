@@ -16,16 +16,16 @@ import java.util.Random;
 @CustomNightAnimatronic(name = "Bob", portraitPath = "anims/bob/portrait.png", restStart = "storage")
 public class RoamingBob extends AvoidCamsAnimatronicDrawing {
     public RoamingBob(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()),
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of("cam4");
                     case RESTAURANT -> List.of("corridor 2", "corridor 4", "bathrooms", "offices");
                 }, 0f);
     }
 
-    public RoamingBob(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
+    public RoamingBob(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                       boolean globalCameraStalled, List<String> forbiddenCams, float fakeMovementSoundChance) throws ResourceException {
-        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",
+        super(name, 5, 6, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
                         Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, JumpscareVisualSetting.CENTERED),
                 forbiddenCams, fakeMovementSoundChance, Color.RED);

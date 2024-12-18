@@ -18,7 +18,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
     public PathCris(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()),
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of(
                             List.of("cam1", "cam2", "cam4", "rightDoor"),
@@ -33,10 +33,10 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                 }, 0f, data.rng());
     }
 
-    public PathCris(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
+    public PathCris(String name, Map<Integer, Integer> aiDuringNight,
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths,
                     float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
+        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
                 null, camPaths, fakeMovementSoundChance, Color.PINK);
 
         if (jumpscareNormal == null || jumpscareItsMe == null){

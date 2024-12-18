@@ -16,17 +16,17 @@ import java.util.Random;
 @CustomNightAnimatronic(name = "Maria", portraitPath = "anims/maria/portrait.png", restStart = "offices", tutStart = "cam2")
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     public RoamingMaria(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", 6, 5, Map.of(0, data.ai()),
+        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of("cam1");
                     case RESTAURANT -> List.of("corridor 1", "corridor 3", "staff lounge");
                 }, 0f);
     }
 
-    public RoamingMaria(String name, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
+    public RoamingMaria(String name, Map<Integer, Integer> aiDuringNight,
                         boolean cameraStalled, boolean globalCameraStalled, List<String> forbiddenCams,
                         float fakeMovementSoundChance) throws ResourceException {
-        super(name, secInterval, secsToKill, aiDuringNight, 20, cameraStalled,
+        super(name, 5, 6, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
