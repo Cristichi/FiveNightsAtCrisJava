@@ -68,6 +68,18 @@ public abstract class CustomAnimJP extends JPanel {
                 }
             }
         });
+        addMouseWheelListener(e -> {
+            int newAI = Integer.parseInt(aiInputLbl.getText());
+            if (e.getWheelRotation()<0){
+                newAI++;
+            } else {
+                newAI--;
+            }
+            if (newAI >= 0 && newAI <= annotationInfo.maxAi()){
+                aiInputLbl.setText(Integer.toString(newAI));
+                onAiChanged(newAI);
+            }
+        });
         add(aiInputLbl, BorderLayout.SOUTH);
     }
 
