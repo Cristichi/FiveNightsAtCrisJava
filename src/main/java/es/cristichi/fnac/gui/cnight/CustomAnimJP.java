@@ -22,9 +22,10 @@ public abstract class CustomAnimJP extends JPanel {
     protected BufferedImage portraitBackgroundImg;
     protected BufferedImage portraitImg;
 
-    public CustomAnimJP(Font font, CustomNightAnimatronic annotationInfo, Class<? extends AnimatronicDrawing> classInfo) throws ResourceException {
+    public CustomAnimJP(Font font, CustomNightAnimatronic annotationInfo, Class<? extends AnimatronicDrawing> classInfo,
+                        int AI) throws ResourceException {
         super();
-        if (portraitBackgroundImg == null){
+        if (portraitBackgroundImg == null) {
             portraitBackgroundImg = Resources.loadImageResource("cnight/portraitBackground.jpg");
             portraitImg = Resources.loadImageResource(annotationInfo.portraitPath());
         }
@@ -36,18 +37,18 @@ public abstract class CustomAnimJP extends JPanel {
         setBorder(border);
 
         setLayout(new BorderLayout());
-        JLabel nameLbl = new JLabel("<html>"+
+        JLabel nameLbl = new JLabel("<html>" +
                 (annotationInfo.variant().isBlank()
                         ? "<b>%s</b>".formatted(annotationInfo.name())
                         : "<b>%s</b> (%s)".formatted(annotationInfo.name(), annotationInfo.variant()))
-                +"</html>");
+                + "</html>");
         nameLbl.setFont(font);
         nameLbl.setForeground(getForeground());
         nameLbl.setHorizontalAlignment(SwingConstants.CENTER);
         nameLbl.setHorizontalTextPosition(SwingConstants.CENTER);
         add(nameLbl, BorderLayout.NORTH);
 
-        aiInputLbl = new JLabel("0");
+        aiInputLbl = new JLabel(Integer.toString(AI));
         aiInputLbl.setOpaque(false);
         aiInputLbl.setFont(font.deriveFont(60f));
         aiInputLbl.setForeground(getForeground());
@@ -70,7 +71,7 @@ public abstract class CustomAnimJP extends JPanel {
         add(aiInputLbl, BorderLayout.SOUTH);
     }
 
-    public void setAi(int ai){
+    public void setAi(int ai) {
         aiInputLbl.setText(Integer.toString(ai));
         onAiChanged(ai);
     }
@@ -80,7 +81,7 @@ public abstract class CustomAnimJP extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(portraitBackgroundImg, 0,0, getWidth(), getHeight(), this);
-        g.drawImage(portraitImg, 0,0, getWidth(), getHeight(), this);
+        g.drawImage(portraitBackgroundImg, 0, 0, getWidth(), getHeight(), this);
+        g.drawImage(portraitImg, 0, 0, getWidth(), getHeight(), this);
     }
 }

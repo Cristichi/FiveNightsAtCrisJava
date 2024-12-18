@@ -135,14 +135,8 @@ public class CustomNightMenuJC extends JComponent {
         });
 
         createSettingButton("Start Custom Night", event -> {
-            JLabel loading = new JLabel("Loading");
-            loading.setFont(getFont());
-            loading.setForeground(Color.YELLOW);
-
-            scrollPaneAnims.removeAll();
-            scrollPaneAnims.add(loading);
-            invalidate();
-            repaint();
+            panelSettings.setVisible(false);
+            updateComponents();
             new Thread(() -> {
                 try {
                     nightsJF.startCustomNight(createCustomNight());
@@ -151,6 +145,7 @@ public class CustomNightMenuJC extends JComponent {
                 } catch (CustomNightException e) {
                     new ExceptionDialog(e, false, true);
                 }
+                panelSettings.setVisible(true);
                 updateComponents();
             }, "cnight_t").start();
         });
@@ -194,11 +189,17 @@ public class CustomNightMenuJC extends JComponent {
 
             customAnimJPs.clear();
             for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : customNightAnimatronicRegistry.entrySet()) {
-                customInputs.put(entry.getValue(),
-                        new CustomNightAnimatronicData(null, entry.getKey().name(), entry.getKey().variant(), 0, rng));
+                int AI = 0;
+                if (customInputs.containsKey(entry.getValue())){
+                    CustomNightAnimatronicData previous = customInputs.get(entry.getValue());
+                    AI = previous.ai();
+                }
+                CustomNightAnimatronicData data =
+                        new CustomNightAnimatronicData(null, entry.getKey().name(), entry.getKey().variant(), AI, rng);
+                customInputs.put(entry.getValue(), data);
 
                 try {
-                    CustomAnimJP animComponent = new CustomAnimJP(getFont(), entry.getKey(), entry.getValue()){
+                    CustomAnimJP animComponent = new CustomAnimJP(getFont(), entry.getKey(), entry.getValue(), AI){
                         @Override
                         public void onAiChanged(int ai) {
                             customInputs.computeIfPresent(entry.getValue(),
