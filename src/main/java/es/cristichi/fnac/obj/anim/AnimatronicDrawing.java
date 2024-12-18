@@ -99,19 +99,6 @@ public abstract class AnimatronicDrawing {
     }
 
     /**
-     * By default, a random delay is added to every opportunity, determined at the start of the Night and
-     * unique to each Animatronic to add randomness to movements.
-     *
-     * @param tick Tick to test
-     * @param fps  Tonight's FPS to convert seconds to frames.
-     * @return <code>true</code> if a Movement Opportunity should happen for this Animatronic at this tick.
-     * <code>false</code> otherwise.
-     */
-    public boolean checkMovementOpp(int tick, int fps) {
-        return tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
-    }
-
-    /**
      * This is only called at the moment of the defined internal during any given Night.
      * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
      *
@@ -153,21 +140,26 @@ public abstract class AnimatronicDrawing {
 
     /**
      * This method is called on every single tick and is used to allow the Animatronic to decide
-     * what to do based on each tick. It serves as a way to tell the Night to start a Jumpscare, as
-     * well as to play Sounds in any situation (fake movement, knocking on doors, etc). Soudns are always played
-     * At the Camera where the Animatronic is for consistency.
+     * what to do based on each tick. For the information it must return, check {@link AnimTickInfo}.
+     * It serves as a way to tell the Night to start a Jumpscare, and tell the Night that this Animatronic
+     * should have a Movement Opportunity at the given tick. Also, it allows specific implementations to play
+     * Sounds in any situation (fake movement, knocking on doors, etc). Sounds are always played at the Camera
+     * where the Animatronic is at this tick for consistency, before it moves if it is going to move.
      *
      * @param tick     Current tick.
-     * @param fps      FPS for the current night. They are a constant throught the night.
-     * @param camsUp   If cams are up on this tick (this changes as soon as the Player clicks,
-     *                 on the first frame of the transition)
+     * @param fps      FPS for the current night. They are a constant throught the Night to convert seconds to ticks
+     *                 and vice-versa.
+     * @param camsUp   If cams are up on this tick (this changes as soon as the Player clicks, on the first frame of
+     *                 the transition)
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
      * @param cam      Current Camera where the Animatronic is.
-     * @param rng      Random in charge of today's night.
-     * @return An instance of {@link TickReturn} that defines if there is a Jumpscare,
-     * along other potential data that is calculated each tick on each Animatronic.
+     * @param rng      Random in charge of today's Night.
+     * @return An instance of {@link AnimTickInfo} with the information that the Night requires for this tick from
+     *         the Animatronic.
      */
-    public TickReturn onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
+    public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
+        boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
+
         if (openDoor) {
             // Door is open, start counting (doing nothing means we are counting up)
             if (startKillTick == null) {
@@ -175,7 +167,7 @@ public abstract class AnimatronicDrawing {
             } else if (tick - startKillTick >= Math.round(secsToKill * fps)) {
                 // Boo-arns
                 kill = true;
-                return new TickReturn(true, null);
+                return new AnimTickInfo(moveOpp, true, null);
             }
         } else if (!cam.isRightDoor() && !cam.isLeftDoor()) {
             // Reset counter if the Animatronic is not at the door
@@ -183,7 +175,7 @@ public abstract class AnimatronicDrawing {
         }
 
         // If door is closed but the Animatronic is still at the door, retain the count
-        return new TickReturn(false, null);
+        return new AnimTickInfo(moveOpp, false, null);
     }
 
     /**
@@ -236,7 +228,7 @@ public abstract class AnimatronicDrawing {
      * @param jumpscare Whether a Jumpscare is confirmed.
      * @param sound     <code>null</code> for no Sound to play on this tick, or the Sound to play.
      */
-    public record TickReturn(boolean jumpscare, @Nullable Sound sound) {
+    public record AnimTickInfo(boolean moveOpp, boolean jumpscare, @Nullable Sound sound) {
     }
 
     /**

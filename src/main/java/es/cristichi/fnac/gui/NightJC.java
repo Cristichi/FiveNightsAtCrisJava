@@ -403,7 +403,10 @@ public class NightJC extends JComponent {
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
-							if (anim.checkMovementOpp(currentTick, fps)){
+
+							AnimatronicDrawing.AnimTickInfo animTickInfo =
+									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
+							if (animTickInfo.moveOpp()){
 								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMovementOpportunityAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
 								if (moveOppRet.move()){
@@ -416,9 +419,7 @@ public class NightJC extends JComponent {
 									cam.playSoundHere(moveOppRet.sound());
 								}
 							}
-							AnimatronicDrawing.TickReturn tickReturn =
-									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
-							if (tickReturn.jumpscare()){
+							if (animTickInfo.jumpscare()){
 								jumpscare = anim.getJumpscare();
 								// In case I want phantom jumpscares in the future
 								// and the same phantom happens twice.
@@ -429,8 +430,8 @@ public class NightJC extends JComponent {
 									}
 								});
 							}
-							if (tickReturn.sound() != null){
-								cam.playSoundHere(tickReturn.sound());
+							if (animTickInfo.sound() != null){
+								cam.playSoundHere(animTickInfo.sound());
 							}
 						}
 					}
