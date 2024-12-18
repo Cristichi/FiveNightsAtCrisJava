@@ -40,19 +40,21 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      * @param cameraStalled           Whether this Animatronic is Camera-stalled.
      * @param camImgPath              Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare               Jumpscare to play when this Animatronic kills the player.
-     * @param camPaths                List of paths the Animatronic can take. Each path is another List of Strings with the names
+     * @param camPaths                List of paths the Animatronic can take. Each path is another List of Strings
+     *                                with the names
      *                                of the Cameras in that path, ordered from first to last.
      * @param fakeMovementSoundChance It determines the chance of failed Movement Opportunities playing the "move"
      *                                Sound regardless as a fake Movement Opportunity.
      * @param debugColor              Color used for debugging. Not used during normal executions.
      * @throws ResourceException If a given Resource's path does not exist.
      */
-    public PathedMoveAnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
-                                        int maxIaLevel, boolean cameraStalled, boolean globalCameraStalled,
-                                        String camImgPath, Jumpscare jumpscare, List<List<String>> camPaths,
-                                        float fakeMovementSoundChance, Color debugColor) throws ResourceException {
+    public PathedMoveAnimatronicDrawing(String name, double secInterval, double secsToKill,
+                                        Map<Integer, Integer> iaDuringNight, int maxIaLevel, boolean cameraStalled,
+                                        boolean globalCameraStalled, String camImgPath, Jumpscare jumpscare,
+                                        List<List<String>> camPaths, float fakeMovementSoundChance, Color debugColor,
+                                        Random rng) throws ResourceException {
         super(name, secInterval, secsToKill, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath,
-                jumpscare, fakeMovementSoundChance, debugColor);
+                jumpscare, fakeMovementSoundChance, debugColor, rng);
         this.camPaths = new LinkedList<>(camPaths);
     }
 

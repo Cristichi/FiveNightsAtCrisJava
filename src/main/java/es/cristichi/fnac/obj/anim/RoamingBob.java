@@ -20,15 +20,15 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of("cam4");
                     case RESTAURANT -> List.of("corridor 2", "corridor 4", "bathrooms", "offices");
-                }, 0f);
+                }, 0f, data.rng());
     }
 
     public RoamingBob(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
-                      boolean globalCameraStalled, List<String> forbiddenCams, float fakeMovementSoundChance) throws ResourceException {
+                      boolean globalCameraStalled, List<String> forbiddenCams, float fakeMovementSoundChance, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
                         Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, JumpscareVisualSetting.CENTERED),
-                forbiddenCams, fakeMovementSoundChance, Color.RED);
+                forbiddenCams, fakeMovementSoundChance, Color.RED, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
     }

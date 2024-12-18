@@ -403,7 +403,7 @@ public class NightJC extends JComponent {
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
 							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
-							if (currentTick % (int) Math.round(anim.getSecInterval() * fps) == 0){
+							if (anim.checkMovementOpp(currentTick, fps)){
 								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMovementOpportunityAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
 								if (moveOppRet.move()){

@@ -20,18 +20,18 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
                 true, false, switch (data.mapType()){
                     case TUTORIAL -> List.of("cam1");
                     case RESTAURANT -> List.of("corridor 1", "corridor 3", "staff lounge");
-                }, 0f);
+                }, 0f, data.rng());
     }
 
     public RoamingMaria(String name, Map<Integer, Integer> aiDuringNight,
                         boolean cameraStalled, boolean globalCameraStalled, List<String> forbiddenCams,
-                        float fakeMovementSoundChance) throws ResourceException {
+                        float fakeMovementSoundChance, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
                         0, JumpscareVisualSetting.CENTERED),
-                        forbiddenCams, fakeMovementSoundChance, Color.YELLOW);
+                        forbiddenCams, fakeMovementSoundChance, Color.YELLOW, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
     }

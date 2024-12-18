@@ -16,16 +16,18 @@ import java.util.Objects;
 import java.util.Random;
 
 public abstract class AnimatronicDrawing {
+    public static final int GENERIC_MAX_AI = 20;
+
     protected static final int EXTRA_AI_FOR_LEAVING = 5;
     protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
-
-    public static final int GENERIC_MAX_AI = 20;
+    protected static final double MAX_DELAY_SECS = 11.5;
 
     protected final String name;
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
     protected int aiLevel;
     protected final double secInterval;
+    protected final double randomSecDelay;
     protected final boolean cameraStalled;
     protected final boolean globalCameraStalled;
     protected Jumpscare jumpscare;
@@ -41,6 +43,9 @@ public abstract class AnimatronicDrawing {
      *
      * @param name                    Name of the Animatronic. This is used as an identifier.
      * @param secInterval             Seconds between each movement opportunity.
+     * @param secsToKill              Seconds the Animatronic needs to kill. Used by the default
+     *                                {@link #onTick(int, int, boolean, boolean, Camera, Random)} to determine
+     *                                Jumpscares.
      * @param iaDuringNight           Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
      *                                For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                                and has an AI of 1 during the last hour. If 0 is not specified, its value is
@@ -55,11 +60,16 @@ public abstract class AnimatronicDrawing {
      * @param fakeMovementSoundChance It determines the chance of failed Movement Opportunities playing the "move"
      *                                Sound regardless as a fake Movement Opportunity.
      * @param debugColor              Color used for debugging. Not used during normal executions.
+     * @param rng                     Random for the Night. Used only to determine a random delay for each
+     *                                Animatronic each Night. Its Movement Opportunities will be delayed that much.
+     *                                Specific implementations may make use of this for any other thing they need to
+     *                                ranndomize at the time of creating the instance.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight, int maxAiLevel,
-                       boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
-                       Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor) throws ResourceException {
+    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
+                       int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
+                       Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor,
+                       Random rng) throws ResourceException {
         this.name = name;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
@@ -72,6 +82,8 @@ public abstract class AnimatronicDrawing {
         this.jumpscare = jumpscare;
         this.fakeMovementSoundChance = fakeMovementSoundChance;
         this.debugColor = debugColor;
+
+        this.randomSecDelay = rng.nextDouble(MAX_DELAY_SECS);
     }
 
     public String getName() {
@@ -82,8 +94,21 @@ public abstract class AnimatronicDrawing {
         return secInterval;
     }
 
-    public void updateIADuringNight(int time){
+    public void updateIADuringNight(int time) {
         aiLevel = iaDuringNight.getOrDefault(time, aiLevel);
+    }
+
+    /**
+     * By default, a random delay is added to every opportunity, determined at the start of the Night and
+     * unique to each Animatronic to add randomness to movements.
+     *
+     * @param tick Tick to test
+     * @param fps  Tonight's FPS to convert seconds to frames.
+     * @return <code>true</code> if a Movement Opportunity should happen for this Animatronic at this tick.
+     * <code>false</code> otherwise.
+     */
+    public boolean checkMovementOpp(int tick, int fps) {
+        return tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
     }
 
     /**
@@ -92,33 +117,34 @@ public abstract class AnimatronicDrawing {
      *
      * @param currentCam    Current camera from which the Animatronic is trying to move.
      * @param beingLookedAt Whether the player is looking at that Camera on this tick.
-     * @param camsUp Whether the player is looking at any Camera.
+     * @param camsUp        Whether the player is looking at any Camera.
      * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
      * @param rng           Random in charge of today's night.
      * @return <code>true</code> if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
     public MoveOppRet onMovementOpportunityAttempt(
-            Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng){
+            Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng) {
         boolean itMoves;
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
-                || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled){
+                || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
-        } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())){
+        } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel + EXTRA_AI_FOR_LEAVING;
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
         return new MoveOppRet(itMoves,
-                !itMoves && rng.nextFloat() < fakeMovementSoundChance? sounds.getOrDefault("move", null) : null);
+                !itMoves && rng.nextFloat() < fakeMovementSoundChance ? sounds.getOrDefault("move", null) : null);
     }
 
     /**
      * By default, Animatronics should only move to cameras connected with the current one.
      * Animatronics must override this method.
-     * @param map Entire map, with all Cams.
+     *
+     * @param map         Entire map, with all Cams.
      * @param currentLoc, Cam where this Animatronic is.
-     * @param rng Random in charge of today's night.
+     * @param rng         Random in charge of today's night.
      * @return The name of the Camera it has to move to. The Night will be in charge of
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
@@ -172,7 +198,7 @@ public abstract class AnimatronicDrawing {
      * @param rng      Random in charge of today's night.
      * @return True if this Animatronic should not be drawn in the Camera. False otherwise
      */
-    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng){
+    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
         return !kill;
     }
 
@@ -184,7 +210,7 @@ public abstract class AnimatronicDrawing {
         return camImg;
     }
 
-    public Color getDebugColor(){
+    public Color getDebugColor() {
         return debugColor;
     }
 
@@ -206,32 +232,35 @@ public abstract class AnimatronicDrawing {
 
     /**
      * Information given by each Animatronic at the start of each tick.
+     *
      * @param jumpscare Whether a Jumpscare is confirmed.
-     * @param sound <code>null</code> for no Sound to play on this tick, or the Sound to play.
+     * @param sound     <code>null</code> for no Sound to play on this tick, or the Sound to play.
      */
-    public record TickReturn(boolean jumpscare, @Nullable Sound sound){
+    public record TickReturn(boolean jumpscare, @Nullable Sound sound) {
     }
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
+     *
      * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. It should not be
      *                  <code>null</code>, as the Animatronic is forced to move. The only way to not move
      *                  is to throw an {@link es.cristichi.fnac.exception.AnimatronicException}.
-     * @param sound Sound to play because of this movement on the destination Camera
-     *              , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
+     * @param sound     Sound to play because of this movement on the destination Camera
+     *                  , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
      */
-    public record MoveSuccessRet(String moveToCam, @Nullable Sound sound){
+    public record MoveSuccessRet(String moveToCam, @Nullable Sound sound) {
     }
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
-     * @param move <true>true</true> if this Animatronic should move on this Movement Opportunity.
+     *
+     * @param move  <true>true</true> if this Animatronic should move on this Movement Opportunity.
      * @param sound Sound to play because of this movement on the origin Camera, <code>null</code> if no Sound
      *              should play. WARNING regular movement Sounds are implemented on the method
      *              {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)}, playing
      *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
      *              movement Sounds.
      */
-    public record MoveOppRet(boolean move, @Nullable Sound sound){
+    public record MoveOppRet(boolean move, @Nullable Sound sound) {
     }
 }
