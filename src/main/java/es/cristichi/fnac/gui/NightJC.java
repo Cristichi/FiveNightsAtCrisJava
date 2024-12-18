@@ -441,8 +441,8 @@ public class NightJC extends JComponent {
 
 						Camera fromCam = move.getKey();
 						Camera toCam = camerasMap.get(move.getValue().moveToCam());
-						// If moving to a different camera
-						if (!fromCam.equals(toCam) && toCam != null){
+
+						if (!fromCam.equals(toCam)){
 							try {
 								fromCam.move(anim, toCam);
 								if (move.getValue().sound() != null){

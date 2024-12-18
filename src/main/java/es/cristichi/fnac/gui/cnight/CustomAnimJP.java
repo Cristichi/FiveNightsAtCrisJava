@@ -3,7 +3,7 @@ package es.cristichi.fnac.gui.cnight;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.anim.CustomNightAnimatronic;
+import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 
 import javax.swing.*;
 import javax.swing.border.Border;

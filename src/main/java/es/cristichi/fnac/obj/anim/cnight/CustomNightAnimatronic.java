@@ -1,4 +1,6 @@
-package es.cristichi.fnac.obj.anim;
+package es.cristichi.fnac.obj.anim.cnight;
+
+import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
