@@ -402,7 +402,8 @@ public class NightJC extends JComponent {
 					for(Camera cam : camerasMap.values()){
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
-							boolean openDoor = cam.isLeftDoor()&&!leftDoorClosed ||cam.isRightDoor()&&!rightDoorClosed;
+							boolean openDoor = cam.isLeftDoor() && !leftDoorClosed
+												|| cam.isRightDoor() && !rightDoorClosed;
 
 							AnimatronicDrawing.AnimTickInfo animTickInfo =
 									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
