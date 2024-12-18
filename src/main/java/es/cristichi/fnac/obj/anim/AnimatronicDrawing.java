@@ -19,6 +19,7 @@ public abstract class AnimatronicDrawing {
     public static final int GENERIC_MAX_AI = 20;
 
     protected static final int AI_FOR_LEAVING_DOOR = 18;
+    protected static final float SEC_INTERVAL_MOD_FOR_LEAVING = 0.2f;
     protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
     protected static final double MAX_DELAY_SECS = 11.5;
 
@@ -158,7 +159,9 @@ public abstract class AnimatronicDrawing {
      *         the Animatronic.
      */
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
-        boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
+        boolean closedDoor = !openDoor && (cam.isLeftDoor() || cam.isRightDoor());
+        double secIntervalNow = (closedDoor ? secInterval*SEC_INTERVAL_MOD_FOR_LEAVING : secInterval);
+        boolean moveOpp = tick % (int) Math.round((secIntervalNow + randomSecDelay) * fps) == 0;
 
         if (openDoor) {
             // Door is open, start counting (doing nothing means we are counting up)
@@ -169,7 +172,7 @@ public abstract class AnimatronicDrawing {
                 kill = true;
                 return new AnimTickInfo(moveOpp, true, null);
             }
-        } else if (!cam.isRightDoor() && !cam.isLeftDoor()) {
+        } else if (!closedDoor) {
             // Reset counter if the Animatronic is not at the door
             startKillTick = null;
         }
