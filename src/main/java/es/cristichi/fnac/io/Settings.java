@@ -10,8 +10,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Settings {
+    private static String pathToFnacFolder;
     private static Yaml yaml;
     public static void init(){
+
+        pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
+        new File(pathToFnacFolder).mkdirs();
+
         DumperOptions options = new DumperOptions();
         options.setPrettyFlow(true);
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -26,12 +31,12 @@ public class Settings {
      * You need to call {@link Settings#init()} one anywhere else before this method can work.
      * Retrieves the Settings saved on the specifiled file the filePath is pointing to. If it does not
      * exist, it will create a new one with the default values.
-     * @param filePath Path to the file.
+     * @param filePath Path to file, from the user's Documents folder, and name.
      * @return Either a new {@link Settings}, or one filled with the values saved on the specified file.
      * @throws IOException If file exists but an error happens trying to read it.
      */
     public static Settings fromFile(String filePath) throws IOException {
-        try (FileInputStream inputStream = new FileInputStream(filePath)) {
+        try (FileInputStream inputStream = new FileInputStream(pathToFnacFolder+filePath)) {
             Settings settings = new Settings();
             Map<String, Object> config = yaml.load(inputStream);
             settings.setFullscreen((Boolean) config.get("fullscreen"));
@@ -113,10 +118,10 @@ public class Settings {
     /**
      * You need to call {@link Settings#init()} one anywhere else before this method can work.
      * Saves the current values of this {@link Settings} object into the file in YAML format.
-     * @param filePath Path to file.
+     * @param filePath Path to file, from the user's Documents folder, and name.
      */
     public void saveToFile(String filePath){
-        try (Writer writer = new FileWriter(filePath)) {
+        try (Writer writer = new FileWriter(pathToFnacFolder+filePath)) {
             LinkedHashMap<String, Object> config = new LinkedHashMap<>(Map.of(
                     "fullscreen", fullscreen,
                     "fps", fps,
