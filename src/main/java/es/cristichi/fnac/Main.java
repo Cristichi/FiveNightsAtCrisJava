@@ -29,14 +29,16 @@ public class Main {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Resources.loadCustomFont("fonts/EraserDust.ttf"));
             boolean fontIsLoaded = false;
-            for (Font font : ge.getAllFonts()){
-                if (font.getFamily().equals("Eraser")){
+            for (Font font : ge.getAllFonts()) {
+                if (font.getFamily().equals("Eraser")) {
                     fontIsLoaded = true;
                     break;
                 }
             }
-            if (!fontIsLoaded){
-                throw new ResourceException("EraserDust Font was not registered.");
+            if (!fontIsLoaded) {
+                throw new ResourceException(
+                        "EraserDust Font, which this game uses everywhere, is not installed and could not be " +
+                                "registered.");
             }
         } catch (ResourceException e) {
             new ExceptionDialog(e, true, true);
