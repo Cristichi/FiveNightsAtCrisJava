@@ -24,7 +24,7 @@ public class Main {
         // Sound system init
         TinySound.init();
 
-        // Making sure our EraserDust font is installed or registered for later used.
+        // Making sure our EraserDust font is installed or registered for later use.
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(Resources.loadCustomFont("fonts/EraserDust.ttf"));
