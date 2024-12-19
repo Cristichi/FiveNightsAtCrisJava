@@ -19,7 +19,6 @@ public abstract class AnimatronicDrawing {
     public static final int GENERIC_MAX_AI = 20;
 
     protected static final int AI_FOR_LEAVING_DOOR = 18;
-    protected static final float SEC_INTERVAL_MOD_FOR_LEAVING = 0.2f;
     protected static final int MAX_FAILED_MOVES_FOR_LEAVING = 3;
     protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
     protected static final double MAX_DELAY_SECS = 11.5;
@@ -117,11 +116,6 @@ public abstract class AnimatronicDrawing {
      *         the Animatronic.
      */
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
-        boolean closedDoor = !openDoor && (cam.isLeftDoor() || cam.isRightDoor());
-        double secIntervalNow = (closedDoor ? secInterval*SEC_INTERVAL_MOD_FOR_LEAVING : secInterval);
-        boolean moveOpp = failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING
-                            || tick % (int) Math.round( (secIntervalNow + randomSecDelay) * fps) == 0;
-
         if (openDoor) {
             // Door is open, start counting (doing nothing means we are counting up)
             if (startKillTick == null) {
@@ -131,21 +125,17 @@ public abstract class AnimatronicDrawing {
                 kill = true;
                 return new AnimTickInfo(false, true, null);
             }
-        } else if (closedDoor) {
-            // Door is closed, if failed move we keep counting towards max. Otherwise reset failed.
-            if (!moveOpp){
-                failedMovesLeaving++;
-            } else {
-                failedMovesLeaving = 0;
-            }
+            return new AnimTickInfo(false, false, null);
         } else {
-            // Not at door
-            startKillTick = null;
-            failedMovesLeaving = 0;
+            boolean closedDoor = cam.isLeftDoor() || cam.isRightDoor();
+            boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
+            if (!closedDoor) {
+                // Not at door
+                startKillTick = null;
+            }
+            // If door is closed but the Animatronic is still at the door, retain the count
+            return new AnimTickInfo(moveOpp, false, null);
         }
-
-        // If door is closed but the Animatronic is still at the door, retain the count
-        return new AnimTickInfo(moveOpp, false, null);
     }
 
     /**
@@ -168,6 +158,12 @@ public abstract class AnimatronicDrawing {
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < AI_FOR_LEAVING_DOOR;
+            if (!itMoves){
+                failedMovesLeaving++;
+                if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING){
+                    itMoves = true;
+                }
+            }
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
