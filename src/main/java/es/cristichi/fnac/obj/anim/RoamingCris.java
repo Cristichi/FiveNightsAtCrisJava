@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@CustomNightAnimatronic(name = "Cris", portraitPath = "anims/cris/portrait.png")
+@CustomNightAnimatronic(name = "Cris", portraitPath = "anims/cris/portrait.png",
+        restDesc = "Cris starts at the Dining Area and moves randomly, avoiding distractions. He cannot go to the " +
+                "Kitchen, the Storage, the Main Stage, the Staff Lounge, the Bathrooms or the Office.",
+        tutDesc = "Cris roams randomly without restrictions.")
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
@@ -29,11 +32,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     public RoamingCris(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams,
                        float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name,
-                "Cris starts at the Dining Area and moves randomly, avoiding distractions. He cannot go to the " +
-                        "Kitchen, the Storage, the Main Stage, the Staff Lounge, the Bathrooms or the Office.",
-                "Cris roams randomly without restrictions.",
-                5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super(name, 5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
                 "anims/cris/camImg.png", null, forbiddenCams, fakeMovementSoundChance, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {

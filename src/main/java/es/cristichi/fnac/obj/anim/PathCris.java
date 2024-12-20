@@ -15,7 +15,15 @@ import java.util.Map;
 import java.util.Random;
 
 @CustomNightAnimatronic(name = "Cris", variant = "final form", portraitPath = "anims/cris/portrait.png", restStart =
-        "storage")
+        "storage",
+        restDesc = "Cris (final form) starts at the Storage, then goes to the Dining Area. From there, he teleports to " +
+                "either the Staff Lounge or the Offices. When at the Staff Lounge, he teleports to corridor 3" +
+                " or 4 and then he goes to the closest Office door. If at the Offices, he first teleports to " +
+                "the Bathrooms, and then from there he goes to corridor 3 or 4 and then goes to the closest " +
+                "Office door.",
+        tutDesc = "Cris (final form) moves from cam1 to cam2 and vice-versa until he decides to move to cam4 or 3. " +
+                "Nonetheless, he teleports to the opposite side when moving to cam4 or 3. Then he heads to " +
+                "your closest Office door and restarts to the same side if he leaves the door.")
 public class PathCris extends PathedMoveAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
@@ -38,16 +46,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths,
                     float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name,
-                "Cris (final form) starts at the Storage, then goes to the Dining Area. From there, he teleports to " +
-                        "either the Staff Lounge or the Offices. When at the Staff Lounge, he teleports to corridor 3" +
-                        " or 4 and then he goes to the closest Office door. If at the Offices, he first teleports to " +
-                        "the Bathrooms, and then from there he goes to corridor 3 or 4 and then goes to the closest " +
-                        "Office door.",
-                "Cris (final form) moves from cam1 to cam2 and vice-versa until he decides to move to cam4 or 3. " +
-                        "Nonetheless, he teleports to the opposite side when moving to cam4 or 3. Then he heads to " +
-                        "your closest Office door and restarts to the same side if he leaves the door.",
-                5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
+        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
                 null, camPaths, fakeMovementSoundChance, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {

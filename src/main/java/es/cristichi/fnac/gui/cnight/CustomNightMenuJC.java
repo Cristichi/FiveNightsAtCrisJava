@@ -122,7 +122,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         panelSettings.setBackground(Color.BLACK);
 
 
-        createSettingButton("Exit", event -> {
+        createSettingButton("Return to Main Menu", event -> {
             for (Runnable onExit : onExitListeners){
                 onExit.run();
             }

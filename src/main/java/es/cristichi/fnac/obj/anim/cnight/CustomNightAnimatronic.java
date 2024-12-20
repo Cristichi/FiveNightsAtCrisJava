@@ -23,4 +23,8 @@ public @interface CustomNightAnimatronic {
     String tutStart() default "cam1";
     /** Name of the Restaurant's Camera where this Animatronic starts in Custom Nights. */
     String restStart() default "dining area";
+    /** Description of how this Animatronic behaves at the Tutorial. */
+    String restDesc();
+    /** Description of how this Animatronic behaves at the Restaurant. */
+    String tutDesc();
 }
