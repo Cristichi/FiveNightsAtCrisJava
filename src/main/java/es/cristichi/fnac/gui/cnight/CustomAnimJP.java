@@ -36,6 +36,8 @@ public abstract class CustomAnimJP extends JPanel {
         setForeground(Color.YELLOW);
         setBorder(border);
 
+        setToolTipText("<html>"+annotationInfo.restDesc()+"</html>");
+
         setLayout(new BorderLayout());
         JLabel nameLbl = new JLabel("<html>" +
                 (annotationInfo.variant().isBlank()
@@ -81,6 +83,27 @@ public abstract class CustomAnimJP extends JPanel {
             }
         });
         add(aiInputLbl, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip tt = super.createToolTip();
+
+        // Get the tooltip text and the tooltip's font
+        String tooltipText = getToolTipText();
+        FontMetrics metrics = tt.getFontMetrics(tt.getFont());
+
+        // Estimate the width of the text
+        int textWidth = metrics.stringWidth(tooltipText);
+
+        // Calculate the width and height for the tooltip
+        int tooltipWidth = Math.min(200, textWidth + 20); // Limit width to line width or a reasonable value
+        int lineHeight = metrics.getHeight();
+        int numLines = (int) Math.ceil((double) textWidth / (tooltipWidth - 20)); // Estimate lines required
+        int tooltipHeight = lineHeight * numLines + 10; // Adjust for padding
+
+        tt.setPreferredSize(new Dimension(tooltipWidth, tooltipHeight));
+        return tt;
     }
 
     public void setAi(int ai) {
