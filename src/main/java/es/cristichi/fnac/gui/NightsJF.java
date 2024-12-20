@@ -277,6 +277,15 @@ public class NightsJF extends JFrame {
             default -> {
                 background = "menu/backgroundCustom.jpg";
                 mmItems.add(new MenuItem("custom", "Custom Night", true, Resources.loadImageResource("night/custom/loading.jpg")));
+                if (Main.DEBUG) {
+                    mmItems.add(new MenuItem("n6", "Repeat Night 6", true, Resources.loadImageResource("night/n6/loading.jpg")));
+                    mmItems.add(new MenuItem("n5", "Repeat Night 5", true, Resources.loadImageResource("night/n5/loading.jpg")));
+                    mmItems.add(new MenuItem("n4", "Repeat Night 4", true, Resources.loadImageResource("night/n4/loading.jpg")));
+                    mmItems.add(new MenuItem("n3", "Repeat Night 3", true, Resources.loadImageResource("night/n3/loading.jpg")));
+                    mmItems.add(new MenuItem("n2", "Repeat Night 2", true, Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuItem("n1", "Repeat Night 1", true, Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", true, null));
+                }
             }
         }
         mmItems.add(new MenuItem("settings", "Settings", false, null));
