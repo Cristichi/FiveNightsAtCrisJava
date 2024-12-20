@@ -25,7 +25,7 @@ public abstract class MenuJC extends JComponent {
 	private int errorTicks = 0;
 	private String[] error = null;
 
-	private final Music music;
+	private final Music backgroundMusic;
 	private int musicCreditsTicks;
 	private static final int MUSIC_CREDITS_TICKS = 160;
 	private final String[] musicCreditsMsg;
@@ -46,7 +46,7 @@ public abstract class MenuJC extends JComponent {
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
 
-		music = Resources.loadMusic("menu/main.wav", "menuBack.wav");
+		backgroundMusic = Resources.loadMusic("menu/main.wav", "menuBack.wav");
 
 		initializeMenuItems();
 
@@ -59,7 +59,7 @@ public abstract class MenuJC extends JComponent {
 			}
 		}, 100, 1000 / fps);
 
-		music.play(true);
+		backgroundMusic.play(true);
 		musicCreditsTicks = 160;
 		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
     }
@@ -86,9 +86,9 @@ public abstract class MenuJC extends JComponent {
 	 * Starts the music. If it is already playing, it does nothing.
 	 */
 	public void startMusic(){
-		if (!music.playing()){
+		if (!backgroundMusic.playing()){
 			musicCreditsTicks = MUSIC_CREDITS_TICKS;
-			music.play(true);
+			backgroundMusic.play(true);
 		}
 	}
 
@@ -96,9 +96,9 @@ public abstract class MenuJC extends JComponent {
 	 * Stops the music. If it is already stopped, it does nothing.
 	 */
 	public void stopMusic() {
-		if (music.playing()){
+		if (backgroundMusic.playing()){
 			musicCreditsTicks = 0;
-			music.stop();
+			backgroundMusic.stop();
 		}
 	}
 
@@ -195,12 +195,10 @@ public abstract class MenuJC extends JComponent {
 
 	/**
 	 * This is performed after an item is clicked. It also loads a loading screen in case you need time to load resources.
-	 * It also makes sure to attach a listener to start playing the menu music when Night finishes.
 	 * @param item String identifying the item clicked, or null if no Night should start.
-	 * @return A CloseableJComponent, so that the music can resume when that JComponent is exited.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract ExitableJComponent onMenuItemClick(MenuItem item) throws Exception;
+	protected abstract void onMenuItemClick(MenuItem item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final MenuItem menuItem;
@@ -220,15 +218,11 @@ public abstract class MenuJC extends JComponent {
 					error = null;
 					errorTicks = 0;
 
-					ExitableJComponent comp = onMenuItemClick(menuItem);
-					if (comp != null){
-						comp.addOnExitListener(MenuJC.this::startMusic);
-					}
+					onMenuItemClick(menuItem);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					error = new String[] {"Error trying to load "+ menuItem, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
-					startMusic();
 				}
 				for (Component component : MenuJC.this.getComponents()) {
 					component.setVisible(true);

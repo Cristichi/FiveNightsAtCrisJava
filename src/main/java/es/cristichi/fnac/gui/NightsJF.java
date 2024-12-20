@@ -69,47 +69,25 @@ public class NightsJF extends JFrame {
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
         mainMenu = new MenuJC(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
             @Override
-            protected ExitableJComponent onMenuItemClick(MenuItem item) throws IOException {
+            protected void onMenuItemClick(MenuItem item) throws IOException {
                 switch (item.id()) {
-                    case "tutorial" -> {
-                        return startTutorialNight();
-                    }
-                    case "n1" -> {
-                        return startNight1();
-                    }
-                    case "n2" -> {
-                        return startNight2();
-                    }
-                    case "n3" -> {
-                        return startNight3();
-                    }
-                    case "n4" -> {
-                        return startNight4();
-                    }
-                    case "n5" -> {
-                        return startNight5();
-                    }
-                    case "n6" -> {
-                        return startNight6();
-                    }
+                    case "tutorial" -> startTutorialNight();
+                    case "n1" -> startNight1();
+                    case "n2" -> startNight2();
+                    case "n3" -> startNight3();
+                    case "n4" -> startNight4();
+                    case "n5" -> startNight5();
+                    case "n6" -> startNight6();
                     case "custom" -> {
                         CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings, powerOutage, NightsJF.this);
                         customNightMenu.addOnExitListener(() -> cardLayout.show(cardPanel, "menu"));
                         cardPanel.add(customNightMenu, "customNightMenu");
                         cardLayout.show(cardPanel, "customNightMenu");
-                        return customNightMenu;
                     }
-                    case "settings" -> {
-                        cardLayout.show(cardPanel, "settings");
-                        return null;
-                    }
+                    case "settings" -> cardLayout.show(cardPanel, "settings");
                     case "exit" -> {
                         dispose();
                         System.exit(0);
-                        return null;
-                    }
-                    case "" -> {
-                        return null;
                     }
                     default -> throw new MenuItemNotFound("Menu item \"" + item + "\" not found in this menu.");
                 }
@@ -292,7 +270,7 @@ public class NightsJF extends JFrame {
         return new MenuData(mmItems, background);
     }
 
-    private NightJC startTutorialNight() throws IOException {
+    private void startTutorialNight() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
@@ -322,6 +300,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -329,10 +308,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
         mainMenu.stopMusic();
         night.startNight();
-        return night;
     }
 
-    private NightJC startNight1() throws IOException {
+    private void startNight1() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -371,6 +349,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -378,11 +357,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
-    private NightJC startNight2() throws IOException {
+    private void startNight2() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -426,6 +403,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -433,11 +411,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
-    private NightJC startNight3() throws IOException {
+    private void startNight3() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -482,6 +458,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -489,11 +466,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
-    private NightJC startNight4() throws IOException {
+    private void startNight4() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -540,6 +515,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -547,11 +523,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
-    private NightJC startNight5() throws IOException {
+    private void startNight5() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -601,6 +575,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -608,11 +583,9 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
-    private NightJC startNight6() throws IOException {
+    private void startNight6() throws IOException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -666,6 +639,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
@@ -673,8 +647,6 @@ public class NightsJF extends JFrame {
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
         mainMenu.stopMusic();
         night.startNight();
-
-        return night;
     }
 
     public void startCustomNight(NightJC night) {
@@ -694,6 +666,7 @@ public class NightsJF extends JFrame {
             nightPanel.remove(night);
             nightPanel.removeAll();
             nightPanel.revalidate();
+            mainMenu.startMusic();
         });
         nightPanel.add(night);
         setTitle(getTitleForWindow(night.getNightName()));
