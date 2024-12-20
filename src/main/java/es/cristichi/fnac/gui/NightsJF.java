@@ -327,6 +327,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
+        mainMenu.stopMusic();
         night.startNight();
         return night;
     }
@@ -375,6 +376,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
@@ -429,6 +431,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
@@ -484,6 +487,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
@@ -541,6 +545,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
@@ -601,6 +606,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
@@ -665,6 +671,7 @@ public class NightsJF extends JFrame {
         setTitle(getTitleForWindow(night.getNightName()));
         cardLayout.show(cardPanel, "night");
         System.out.printf("Today's %s is using the seed \"%d\". Good luck.%n", night.getNightName(), seed);
+        mainMenu.stopMusic();
         night.startNight();
 
         return night;
