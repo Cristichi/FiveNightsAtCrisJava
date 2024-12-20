@@ -16,14 +16,14 @@ import java.util.*;
 public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
     protected final List<String> forbiddenCameras;
 
-    public AvoidCamsAnimatronicDrawing(String name, double secInterval, double secsToKill,
-                                       Map<Integer, Integer> iaDuringNight, int maxIaLevel, boolean cameraStalled,
-                                       boolean globalCameraStalled,
-                                       String camImgPath, Jumpscare jumpscare,
-                                       List<String> forbiddenCameras,
-                                       float fakeMovementSoundChance, Color debugColor, Random rng) throws ResourceException {
-        super(name, secInterval, secsToKill, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled,
-                camImgPath, jumpscare, fakeMovementSoundChance, debugColor, rng);
+    public AvoidCamsAnimatronicDrawing(String name, String behaviourDescRest, String behaviourDescTut,
+                                       double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
+                                       int maxIaLevel, boolean cameraStalled, boolean globalCameraStalled,
+                                       String camImgPath, Jumpscare jumpscare, List<String> forbiddenCameras,
+                                       float fakeMovementSoundChance, Color debugColor,
+                                       Random rng) throws ResourceException {
+        super(name, behaviourDescRest, behaviourDescTut, secInterval, secsToKill, iaDuringNight, maxIaLevel,
+                cameraStalled, globalCameraStalled, camImgPath, jumpscare, fakeMovementSoundChance, debugColor, rng);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }
 

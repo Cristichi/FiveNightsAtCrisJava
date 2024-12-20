@@ -3,6 +3,7 @@ package es.cristichi.fnac.obj.anim;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
+import es.cristichi.fnac.obj.anim.cnight.CustomNightMapType;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.Sound;
@@ -24,6 +25,8 @@ public abstract class AnimatronicDrawing {
     protected static final double MAX_DELAY_SECS = 11.5;
 
     protected final String name;
+    protected final String behaviourDescRest;
+    protected final String behaviourDescTut;
     protected final Color debugColor;
     protected final Map<Integer, Integer> iaDuringNight;
     protected int aiLevel;
@@ -44,6 +47,12 @@ public abstract class AnimatronicDrawing {
      * Creating an Animatronic.
      *
      * @param name                    Name of the Animatronic. This is used as an identifier.
+     * @param behaviourDescRest       Provides a user-friendly description of what the Animatronic does. Used for
+     *                                Custom Night, not earlier, so the behaviourDescTut can be prepared for advanced
+     *                                players. This description must be accurate to the Restaurant, not the Tutorial.
+     * @param behaviourDescTut        Provides a user-friendly description of what the Animatronic does. Used for
+     *                                Custom Night, not earlier, so the behaviourDescTut can be prepared for advanced
+     *                                players. This description must be accurate to the Tutorial, not the Restaurant.
      * @param secInterval             Seconds between each movement opportunity.
      * @param secsToKill              Seconds the Animatronic needs to kill. Used by the default
      *                                {@link #onTick(int, int, boolean, boolean, Camera, Random)} to determine
@@ -68,11 +77,13 @@ public abstract class AnimatronicDrawing {
      *                                ranndomize at the time of creating the instance.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
+    AnimatronicDrawing(String name, String behaviourDescRest, String behaviourDescTut, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
                        int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
                        Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor,
                        Random rng) throws ResourceException {
         this.name = name;
+        this.behaviourDescRest = behaviourDescRest;
+        this.behaviourDescTut = behaviourDescTut;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
@@ -90,6 +101,13 @@ public abstract class AnimatronicDrawing {
 
     public String getName() {
         return name;
+    }
+
+    public String getBehaviourDesc(CustomNightMapType mapType) {
+        return switch (mapType) {
+            case TUTORIAL -> behaviourDescTut;
+            case RESTAURANT -> behaviourDescRest;
+        };
     }
 
     public void updateIADuringNight(int time) {

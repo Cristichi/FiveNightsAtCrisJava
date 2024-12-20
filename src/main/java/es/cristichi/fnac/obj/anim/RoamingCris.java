@@ -19,8 +19,8 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
 
     public RoamingCris(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
-                true, false, switch (data.mapType()){
+        this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
+                true, false, switch (data.mapType()) {
                     case TUTORIAL -> List.of();
                     case RESTAURANT -> List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms");
                 }, 0f, data.rng());
@@ -29,14 +29,20 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     public RoamingCris(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams,
                        float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name, 5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super(name,
+                "Cris starts at the Dining Area and moves randomly, avoiding distractions. He cannot go to the " +
+                        "Kitchen, the Storage, the Main Stage, the Staff Lounge, the Bathrooms or the Office.",
+                "Cris roams randomly without restrictions.",
+                5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
                 "anims/cris/camImg.png", null, forbiddenCams, fakeMovementSoundChance, Color.PINK, rng);
 
-        if (jumpscareNormal == null || jumpscareItsMe == null){
+        if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump1.wav"), 1, JumpscareVisualSetting.STRETCHED);
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump1.wav"), 1,
+                    JumpscareVisualSetting.STRETCHED);
             jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12, JumpscareVisualSetting.CENTERED);
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12,
+                    JumpscareVisualSetting.CENTERED);
         }
         jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 

@@ -32,7 +32,14 @@ public class Paco extends PathedMoveAnimatronicDrawing {
 
     public Paco(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
                 List<List<String>> camPaths, float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
+        super(name,
+                "Paco starts his cycle at the kitchen, then moves to the Dining Area, and then chooses whether he " +
+                        "goes to your left side or right side. After waiting at your closed door, he teleports back " +
+                        "to the Kitchen. He never goes into the Staff Lounge, the Bathrooms, the Storage or the Main " +
+                        "Stage.",
+                "Paco moves from cam1 to cam2 and vice-versa until he decides to move to cam4 or 3. Then he heads to " +
+                        "your closest Office door and restarts to the opposite side if he leaves the door.",
+                6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 4,
                         JumpscareVisualSetting.CENTERED),

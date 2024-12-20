@@ -27,7 +27,10 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     public RoamingMaria(String name, Map<Integer, Integer> aiDuringNight,
                         boolean cameraStalled, boolean globalCameraStalled, List<String> forbiddenCams,
                         float fakeMovementSoundChance, Random rng) throws ResourceException {
-        super(name, 5, 6, aiDuringNight, 20, cameraStalled,
+        super(name,
+                "Maria starts at the Storage, and moves randomly to any place except corridor 1.",
+                "Maria moves randomly, always avoiding cam1 and your left door.",
+                5, 6, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
