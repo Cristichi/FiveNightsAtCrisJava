@@ -27,6 +27,7 @@ public abstract class MenuJC extends JComponent {
 
 	private final Music music;
 	private int musicCreditsTicks;
+	private static final int MUSIC_CREDITS_TICKS = 160;
 	private final String[] musicCreditsMsg;
 
 	/**
@@ -86,7 +87,18 @@ public abstract class MenuJC extends JComponent {
 	 */
 	public void startMusic(){
 		if (!music.playing()){
+			musicCreditsTicks = MUSIC_CREDITS_TICKS;
 			music.play(true);
+		}
+	}
+
+	/**
+	 * Stops the music. If it is already stopped, it does nothing.
+	 */
+	public void stopMusic() {
+		if (music.playing()){
+			musicCreditsTicks = 0;
+			music.stop();
 		}
 	}
 
@@ -152,9 +164,9 @@ public abstract class MenuJC extends JComponent {
 		int fontSize = 40*fontScale;
 
 		// Draw the background image, scaled to fit the component's dimensions
-		g.drawImage((loading?
-					(currentLoadingImg ==null?defaultLoadingImg: currentLoadingImg)
-					:backgroundImage),
+		g.drawImage((loading
+					? (currentLoadingImg==null ? defaultLoadingImg : currentLoadingImg)
+					: backgroundImage),
 				0, 0, getWidth(), getHeight(), this);
 
 		if (errorTicks-- > 0) {
@@ -185,9 +197,10 @@ public abstract class MenuJC extends JComponent {
 	 * This is performed after an item is clicked. It also loads a loading screen in case you need time to load resources.
 	 * It also makes sure to attach a listener to start playing the menu music when Night finishes.
 	 * @param item String identifying the item clicked, or null if no Night should start.
+	 * @return A CloseableJComponent, so that the music can resume when that JComponent is exited.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract NightJC onMenuItemClick(MenuItem item) throws Exception;
+	protected abstract ExitableJComponent onMenuItemClick(MenuItem item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
 		private final MenuItem menuItem;
@@ -204,28 +217,18 @@ public abstract class MenuJC extends JComponent {
 			}
 			new Thread(() -> {
 				try {
-					if (menuItem.stopMusic()){
-						music.stop();
-					}
 					error = null;
 					errorTicks = 0;
-					musicCreditsTicks = 0;
 
-					NightJC night = onMenuItemClick(menuItem);
-					if (menuItem.stopMusic()){
-						if (night != null){
-							night.addOnNightEnd((completed) -> {
-								music.play(true);
-								musicCreditsTicks = 160;
-							});
-						}
+					ExitableJComponent comp = onMenuItemClick(menuItem);
+					if (comp != null){
+						comp.addOnExitListener(MenuJC.this::startMusic);
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					error = new String[] {"Error trying to load "+ menuItem, e1.getMessage(), "Check console for full stack trace."};
 					errorTicks = 60;
-					musicCreditsTicks = 160;
-					music.play(true);
+					startMusic();
 				}
 				for (Component component : MenuJC.this.getComponents()) {
 					component.setVisible(true);

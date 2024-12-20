@@ -3,6 +3,7 @@ package es.cristichi.fnac.gui.cnight;
 import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
+import es.cristichi.fnac.gui.ExitableJComponent;
 import es.cristichi.fnac.gui.NightJC;
 import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.Resources;
@@ -21,15 +22,17 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.*;
 
 
-public class CustomNightMenuJC extends JComponent {
+public class CustomNightMenuJC extends ExitableJComponent {
     protected static final Map<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> customNightAnimatronicRegistry;
-
     static {
         Set<Class<?>> classes = getClasses("es.cristichi.fnac.obj.anim");
         customNightAnimatronicRegistry = new HashMap<>(classes.size());
@@ -79,7 +82,8 @@ public class CustomNightMenuJC extends JComponent {
 
     protected Settings settings;
     protected Jumpscare powerOutage;
-    protected NightsJF nightsJF;
+
+    protected final List<Runnable> onExitListeners;
 
     protected final long seed;
     protected final Random rng;
@@ -98,12 +102,13 @@ public class CustomNightMenuJC extends JComponent {
         }
         this.settings = settings;
         this.powerOutage = powerOutage;
-        this.nightsJF = nightsJF;
         Random seedRng = new Random();
         seed = seedRng.nextLong();
         rng = new Random(seed);
         customInputs = new HashMap<>(customNightAnimatronicRegistry.size());
         customAnimJPs = new LinkedList<>();
+
+        onExitListeners = new ArrayList<>(1);
 
         mapType = CustomNightMapType.RESTAURANT;
 
@@ -115,6 +120,13 @@ public class CustomNightMenuJC extends JComponent {
         panelSettings.setLayout(new BoxLayout(panelSettings, BoxLayout.Y_AXIS));
         panelSettings.setBorder(new EmptyBorder(10,20,10,20));
         panelSettings.setBackground(Color.BLACK);
+
+
+        createSettingButton("Exit", event -> {
+            for (Runnable onExit : onExitListeners){
+                onExit.run();
+            }
+        });
 
         createSettingButton("Set all to 0", event -> {
             for (CustomAnimJP customAnimJP : customAnimJPs) {
@@ -150,9 +162,9 @@ public class CustomNightMenuJC extends JComponent {
             }, "cnight_t").start();
         });
 
-        addComponentListener(new java.awt.event.ComponentAdapter() {
+        addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
+            public void componentResized(ComponentEvent e) {
                 updateComponents();
             }
         });
@@ -170,6 +182,11 @@ public class CustomNightMenuJC extends JComponent {
 
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
         panelSettings.add(btn);
+    }
+
+    @Override
+    public void addOnExitListener(Runnable onExitListener) {
+        onExitListeners.add(onExitListener);
     }
 
     private boolean resizingInProgress = false;

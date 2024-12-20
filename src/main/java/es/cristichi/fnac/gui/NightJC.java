@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
-public class NightJC extends JComponent {
+public class NightJC extends ExitableJComponent {
 	private static final boolean DEBUG_MODE = false;
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
@@ -53,8 +53,15 @@ public class NightJC extends JComponent {
 
 	private final AmbientSoundSystem ambientSounds;
 
-	/** List of Runnables that must be executed when the Night is finished, either win or lose. */
-	private final LinkedList<NightEndedListener> onNightEndListeners;
+    /**
+     * List of Runnables that must be executed when the Night is finished, either win or lose. It carries the
+     * information of whether the player won or not.
+     */
+	private final LinkedList<NightEndedListener> onNightEndListeners;    /**
+     * List of Runnables that must be executed when the Night is finished, either win or lose. It does not
+     * carry the information of whether the player won or not.
+     */
+    private final LinkedList<Runnable> onExitListeners;
 	/** Victory Sound. */
 	private final Sound soundOnCompleted;
 
@@ -212,6 +219,7 @@ public class NightJC extends JComponent {
 		this.hourTicksInterval = (int) (this.fps * secsPerHour);
 
 		onNightEndListeners = new LinkedList<>();
+		onExitListeners = new LinkedList<>();
 
 		powerLeft = 1;
 		// So this is calculated depending on the FPS, which determines the total number of ticks per night, which is
@@ -390,9 +398,12 @@ public class NightJC extends JComponent {
 				if (powerLeft <= 0){
 					jumpscare = powerOutageJumpscare;
 					jumpscare.addOnFinishedListener(() -> {
-						for(NightEndedListener onCompleted : onNightEndListeners){
-							onCompleted.run(false);
-						}
+                        for(NightEndedListener onCompleted : onNightEndListeners){
+                            onCompleted.run(false);
+                        }
+                        for(Runnable onExit : onExitListeners){
+                            onExit.run();
+                        }
 					});
 				}
 
@@ -429,6 +440,9 @@ public class NightJC extends JComponent {
 									for(NightEndedListener onCompleted : onNightEndListeners){
 										onCompleted.run(false);
 									}
+                                    for(Runnable onExit : onExitListeners){
+                                        onExit.run();
+                                    }
 								});
 							}
 							if (animTickInfo.sound() != null){
@@ -500,6 +514,9 @@ public class NightJC extends JComponent {
 					for(NightEndedListener onCompleted : onNightEndListeners){
 						onCompleted.run(true);
 					}
+                    for(Runnable onExit : onExitListeners){
+                        onExit.run();
+                    }
 				});
 			soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
 			soundOnCompleted.play();
@@ -508,6 +525,11 @@ public class NightJC extends JComponent {
 
 	public void addOnNightEnd(NightEndedListener runnable) {
 		onNightEndListeners.add(runnable);
+	}
+
+	@Override
+	public void addOnExitListener(Runnable onExitListener) {
+		onExitListeners.add(onExitListener);
 	}
 
 	@Override
