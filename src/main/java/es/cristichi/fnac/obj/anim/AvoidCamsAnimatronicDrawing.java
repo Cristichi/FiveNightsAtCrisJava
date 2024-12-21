@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.*;
 
 /**
- * This class implements {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} with a simple
+ * This class implements {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} with a simple
  * movement that avoids a list of Camera names. From the possible Cameras, movement is completely random.
  */
 public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
@@ -27,7 +27,7 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+    public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
         int random = rng.nextInt(connections.size());

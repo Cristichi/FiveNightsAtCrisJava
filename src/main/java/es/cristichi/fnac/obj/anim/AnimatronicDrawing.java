@@ -149,9 +149,9 @@ public abstract class AnimatronicDrawing {
      * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
      * @param rng           Random in charge of today's night.
      * @return <code>true</code> if Animatronic should move on this tick. In that case,
-     * {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} is called afterwards.
+     * {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public MoveOppRet onMovementOpportunityAttempt(
+    public MoveOppRet onMoveOppAttempt(
             Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng) {
         boolean itMoves;
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
@@ -183,8 +183,8 @@ public abstract class AnimatronicDrawing {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc,
-                                                        Random rng) throws AnimatronicException;
+    public abstract MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc,
+                                                    Random rng) throws AnimatronicException;
 
     /**
      * This determines whether the Animatronic should appear on a camera or not. Just some flavor.
@@ -257,7 +257,7 @@ public abstract class AnimatronicDrawing {
      * @param move  <true>true</true> if this Animatronic should move on this Movement Opportunity.
      * @param sound Sound to play because of this movement on the origin Camera, <code>null</code> if no Sound
      *              should play. WARNING regular movement Sounds are implemented on the method
-     *              {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)}, playing
+     *              {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}, playing
      *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
      *              movement Sounds.
      */

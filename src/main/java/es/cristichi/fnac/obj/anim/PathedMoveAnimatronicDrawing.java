@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.*;
 
 /**
- * This class implements {@link AnimatronicDrawing#onMovementOppSuccess(CameraMap, Camera, Random)} with a series
+ * This class implements {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} with a series
  * of paths. Each time the Animatronic can move, they will check each given path in a random order and move to the
  * next Camera of the first randomly chosen path that contains the Camera they are at. If that path has no next
  * Camera, meaning they are at the end of the path, the return to the first Camera of that path.
@@ -59,7 +59,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException{
+    public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException{
         Collections.shuffle(camPaths, rng);
         for (List<String> path : camPaths) {
             for (int i = 0; i < path.size(); i++) {

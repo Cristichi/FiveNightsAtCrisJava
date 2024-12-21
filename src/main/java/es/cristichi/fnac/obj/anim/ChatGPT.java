@@ -72,17 +72,17 @@ public class ChatGPT extends AnimatronicDrawing {
     @Nullable
     @Override
     public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        if (building){
+        if (building) {
             return buildingCamImg;
         }
         return super.showOnCam(tick, fps, openDoor, cam, rng);
     }
 
     @Override
-    public MoveOppRet onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp,
-                                                   boolean isOpenDoor, Random rng) {
-        MoveOppRet attempt = super.onMovementOpportunityAttempt(currentCam, beingLookedAt, camsUp, isOpenDoor, rng);
-        if (building && attempt.move()){
+    public MoveOppRet onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
+                                       Random rng) {
+        MoveOppRet attempt = super.onMoveOppAttempt(currentCam, beingLookedAt, camsUp, isOpenDoor, rng);
+        if (building && attempt.move()) {
             building = false;
             return new MoveOppRet(false, sounds.getOrDefault("building", null));
         }
@@ -90,7 +90,7 @@ public class ChatGPT extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
+    public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
         if (usingRoamingMove && !connections.isEmpty()) {

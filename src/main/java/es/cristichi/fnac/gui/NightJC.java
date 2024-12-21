@@ -420,11 +420,11 @@ public class NightJC extends ExitableJComponent {
 							AnimatronicDrawing.AnimTickInfo animTickInfo =
 									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
 							if (animTickInfo.moveOpp()){
-								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMovementOpportunityAttempt(cam,
+								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMoveOppAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
 								if (moveOppRet.move()){
 									try {
-										AnimatronicDrawing.MoveSuccessRet moveOpp = anim.onMovementOppSuccess(
+										AnimatronicDrawing.MoveSuccessRet moveOpp = anim.onMoveOppSuccess(
 												camerasMap, cam, rng);
 										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())) {
 											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
