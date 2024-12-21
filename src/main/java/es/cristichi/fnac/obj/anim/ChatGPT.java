@@ -26,7 +26,7 @@ import java.util.*;
 public class ChatGPT extends AnimatronicDrawing {
     protected final List<String> forbiddenCameras;
     protected final List<List<String>> camPaths;
-    protected boolean usingRoamingMove;
+    protected boolean usingPathedMove;
     protected BufferedImage buildingCamImg;
     protected boolean building;
 
@@ -61,7 +61,7 @@ public class ChatGPT extends AnimatronicDrawing {
         this.sounds.put("building", Resources.loadSound("anims/chatgpt/sounds/building.wav", "chatGptBuild.wav"));
         this.buildingCamImg = Resources.loadImageResource("anims/chatgpt/camImgOnlyBody.png");
 
-        this.usingRoamingMove = true;
+        this.usingPathedMove = false;
         this.building = true;
     }
 
@@ -87,36 +87,29 @@ public class ChatGPT extends AnimatronicDrawing {
 
     @Override
     public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
-        LinkedList<String> connections = currentLoc.getConnections();
-        connections.removeIf(forbiddenCameras::contains);
-
-        if (usingRoamingMove && !connections.isEmpty()) {
-            // We should be doing roaming move
-            usingRoamingMove = false;
-            int random = rng.nextInt(connections.size());
-            return new MoveSuccessRet(connections.get(random),
-                    sounds.getOrDefault("moveRoam", sounds.getOrDefault("move", null)));
-        }
-
-        // We should be doing pathed move, or can't do roaming move
-        usingRoamingMove = true;
-        Collections.shuffle(camPaths, rng);
-        for (List<String> path : camPaths) {
-            for (int i = 0; i < path.size(); i++) {
-                String cam = path.get(i);
-                if (currentLoc.getName().equals(cam)) {
-                    if (path.size() > i + 1) {
-                        return new MoveSuccessRet(path.get(i + 1), sounds.getOrDefault("move", null));
-                    } else {
-                        return new MoveSuccessRet(path.get(0), sounds.getOrDefault("move", null));
+        if (usingPathedMove) {
+            // We should be doing pathed move, or can't do roaming move
+            usingPathedMove = false;
+            Collections.shuffle(camPaths, rng);
+            for (List<String> path : camPaths) {
+                for (int i = 0; i < path.size(); i++) {
+                    String cam = path.get(i);
+                    if (currentLoc.getName().equals(cam)) {
+                        if (path.size() > i + 1) {
+                            return new MoveSuccessRet(path.get(i + 1), sounds.getOrDefault("move", null));
+                        } else {
+                            return new MoveSuccessRet(path.get(0), sounds.getOrDefault("move", null));
+                        }
                     }
                 }
             }
         }
 
-        if (!connections.isEmpty()){
-            // We should be doing pathed move, but can't. And can do roaming move
-            usingRoamingMove = false;
+        LinkedList<String> connections = currentLoc.getConnections();
+        connections.removeIf(forbiddenCameras::contains);
+        if (!connections.isEmpty()) {
+            // We should be doing roaming move
+            usingPathedMove = true;
             int random = rng.nextInt(connections.size());
             return new MoveSuccessRet(connections.get(random),
                     sounds.getOrDefault("moveRoam", sounds.getOrDefault("move", null)));
