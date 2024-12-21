@@ -31,6 +31,6 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
         int random = rng.nextInt(connections.size());
-        return new MoveSuccessRet(connections.get(random), null);
+        return new MoveSuccessRet(connections.get(random), sounds.getOrDefault("move", null));
     }
 }

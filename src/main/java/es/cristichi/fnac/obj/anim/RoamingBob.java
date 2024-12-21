@@ -6,8 +6,6 @@ import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
-import es.cristichi.fnac.obj.cams.Camera;
-import es.cristichi.fnac.obj.cams.CameraMap;
 
 import java.awt.*;
 import java.util.List;
@@ -34,11 +32,5 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
                 forbiddenCams, fakeMovementSoundChance, Color.RED, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
-    }
-
-    @Override
-    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
-        MoveSuccessRet ret = super.onMovementOppSuccess(map, currentLoc, rng);
-        return new MoveSuccessRet(ret.moveToCam(), sounds.getOrDefault("move", null));
     }
 }
