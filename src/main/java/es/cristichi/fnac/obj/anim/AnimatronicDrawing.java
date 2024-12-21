@@ -187,22 +187,16 @@ public abstract class AnimatronicDrawing {
                                                     Random rng) throws AnimatronicException;
 
     /**
-     * This determines whether the Animatronic should appear on a camera or not. Just some flavor.
-     * This is called per tick, but there is a counter that is unique to each instance of cams, which
-     * increases each time the player changes cams an each time they open cams.
-     *
      * @param tick     Current tick, for accurately counting seconds.
      * @param fps      Current ticks per second, to convert from ticks to seconds for consistency with real time.
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
      * @param cam      Current Camera where the Animatronic is and the player is watching.
      * @param rng      Random in charge of today's night.
-     * @return True if this Animatronic should not be drawn in the Camera. False otherwise
+     * @return {@link BufferedImage} of the image representing this Animatronic on the Camera on this tick.
+     * <code>null</code> if it should not even appear on the Camera.
      */
     @Nullable
     public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        if (kill){
-            return null;
-        }
         return camImg;
     }
 
