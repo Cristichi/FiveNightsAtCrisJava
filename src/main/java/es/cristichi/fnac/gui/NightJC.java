@@ -1,5 +1,6 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
@@ -422,9 +423,15 @@ public class NightJC extends ExitableJComponent {
 								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMovementOpportunityAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
 								if (moveOppRet.move()){
-									AnimatronicDrawing.MoveSuccessRet moveOpp = anim.onMovementOppSuccess(camerasMap, cam, rng);
-									if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())){
-										moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
+									try {
+										AnimatronicDrawing.MoveSuccessRet moveOpp = anim.onMovementOppSuccess(
+												camerasMap, cam, rng);
+										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())) {
+											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
+										}
+									} catch (AnimatronicException e){
+										System.err.println("Animatronic needs refinement. This should be avoided.");
+										e.printStackTrace();
 									}
 								}
 								if (moveOppRet.sound() != null){

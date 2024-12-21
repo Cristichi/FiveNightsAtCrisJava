@@ -98,7 +98,7 @@ public class Camera {
      * @param animatronicDrawing Animatronic that is on this Camera and has to move.
      * @param dest Camera to move to.
      */
-    public void move(AnimatronicDrawing animatronicDrawing, Camera dest){
+    public void move(AnimatronicDrawing animatronicDrawing, Camera dest) throws AnimatronicException {
         if (animatronicsHere.remove(animatronicDrawing)){
             dest.animatronicsHere.add(animatronicDrawing);
         } else {

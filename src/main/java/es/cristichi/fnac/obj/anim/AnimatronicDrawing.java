@@ -1,5 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
+import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
@@ -113,7 +114,7 @@ public abstract class AnimatronicDrawing {
      * @param cam      Current Camera where the Animatronic is.
      * @param rng      Random in charge of today's Night.
      * @return An instance of {@link AnimTickInfo} with the information that the Night requires for this tick from
-     *         the Animatronic.
+     * the Animatronic.
      */
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
         if (openDoor) {
@@ -158,9 +159,9 @@ public abstract class AnimatronicDrawing {
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < AI_FOR_LEAVING_DOOR;
-            if (!itMoves){
+            if (!itMoves) {
                 failedMovesLeaving++;
-                if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING){
+                if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING) {
                     itMoves = true;
                 }
             }
@@ -182,7 +183,8 @@ public abstract class AnimatronicDrawing {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng);
+    public abstract MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc,
+                                                        Random rng) throws AnimatronicException;
 
     /**
      * This determines whether the Animatronic should appear on a camera or not. Just some flavor.

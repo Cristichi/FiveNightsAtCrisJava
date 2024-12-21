@@ -59,7 +59,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+    public MoveSuccessRet onMovementOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException{
         Collections.shuffle(camPaths, rng);
         for (List<String> path : camPaths) {
             for (int i = 0; i < path.size(); i++) {

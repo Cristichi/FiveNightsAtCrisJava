@@ -275,8 +275,14 @@ public class CustomNightMenuJC extends ExitableJComponent {
                             case TUTORIAL -> entry.getKey().tutStart();
                             case RESTAURANT-> entry.getKey().restStart();
                         }).getAnimatronicsHere().add(anim);
-                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e){
-                    new ExceptionDialog(new CustomNightException("Animatronic is missing the constructor for Custom Night.", e), false, false);
+                } catch (InvocationTargetException e){
+                    CustomNightException ex = new CustomNightException("Error trying to create the Animatronic.", e);
+                    new ExceptionDialog(ex, false, false);
+                    throw ex;
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e){
+                    CustomNightException ex = new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
+                    new ExceptionDialog(ex, false, false);
+                    throw ex;
                 }
             }
         }
