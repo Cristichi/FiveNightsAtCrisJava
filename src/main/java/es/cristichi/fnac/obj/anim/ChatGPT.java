@@ -32,11 +32,7 @@ public class ChatGPT extends AnimatronicDrawing {
 
     public ChatGPT(CustomNightAnimatronicData data) throws ResourceException {
         this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-                false, false,
-                switch (data.mapType()) {
-                    case TUTORIAL -> List.of();
-                    case RESTAURANT -> List.of("offices");
-                },
+                false, false, List.of(),
                 switch (data.mapType()) {
                     case TUTORIAL -> List.of(
                             List.of("cam1", "cam2", "cam4", "rightDoor"),
@@ -93,12 +89,16 @@ public class ChatGPT extends AnimatronicDrawing {
     public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
+
         if (usingRoamingMove && !connections.isEmpty()) {
-            int random = rng.nextInt(connections.size());
+            // We should be doing roaming move
             usingRoamingMove = false;
+            int random = rng.nextInt(connections.size());
             return new MoveSuccessRet(connections.get(random),
                     sounds.getOrDefault("moveRoam", sounds.getOrDefault("move", null)));
         }
+
+        // We should be doing pathed move, or can't do roaming move
         usingRoamingMove = true;
         Collections.shuffle(camPaths, rng);
         for (List<String> path : camPaths) {
@@ -113,6 +113,16 @@ public class ChatGPT extends AnimatronicDrawing {
                 }
             }
         }
+
+        if (!connections.isEmpty()){
+            // We should be doing pathed move, but can't. And can do roaming move
+            usingRoamingMove = false;
+            int random = rng.nextInt(connections.size());
+            return new MoveSuccessRet(connections.get(random),
+                    sounds.getOrDefault("moveRoam", sounds.getOrDefault("move", null)));
+        }
+
+        // Oh no, we can't do either
         throw new AnimatronicException(
                 "Animatronic " + name + " is not at a Camera within any of its paths, and there are no connected " +
                         "Cameras they are not avoiding.");
