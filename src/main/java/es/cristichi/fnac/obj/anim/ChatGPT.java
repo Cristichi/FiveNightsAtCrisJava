@@ -9,8 +9,10 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 
@@ -25,6 +27,8 @@ public class ChatGPT extends AnimatronicDrawing {
     protected final List<String> forbiddenCameras;
     protected final List<List<String>> camPaths;
     protected boolean usingRoamingMove;
+    protected BufferedImage buildingCamImg;
+    protected boolean building;
 
     public ChatGPT(CustomNightAnimatronicData data) throws ResourceException {
         this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
@@ -56,9 +60,33 @@ public class ChatGPT extends AnimatronicDrawing {
 
         this.forbiddenCameras = new ArrayList<>(forbiddenCameras);
         this.camPaths = new ArrayList<>(camPaths);
-        this.usingRoamingMove = true;
         this.sounds.put("move", Resources.loadSound("anims/chatgpt/sounds/move.wav", "chatGptMove.wav"));
         this.sounds.put("moveRoam", Resources.loadSound("anims/chatgpt/sounds/moveRoam.wav", "chatGptMoveRoam.wav"));
+        this.sounds.put("building", Resources.loadSound("anims/chatgpt/sounds/building.wav", "chatGptBuild.wav"));
+        this.buildingCamImg = Resources.loadImageResource("anims/chatgpt/camImgOnlyBody.png");
+
+        this.usingRoamingMove = true;
+        this.building = true;
+    }
+
+    @Nullable
+    @Override
+    public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        if (building){
+            return buildingCamImg;
+        }
+        return super.showOnCam(tick, fps, openDoor, cam, rng);
+    }
+
+    @Override
+    public MoveOppRet onMovementOpportunityAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp,
+                                                   boolean isOpenDoor, Random rng) {
+        MoveOppRet attempt = super.onMovementOpportunityAttempt(currentCam, beingLookedAt, camsUp, isOpenDoor, rng);
+        if (building && attempt.move()){
+            building = false;
+            return new MoveOppRet(false, sounds.getOrDefault("building", null));
+        }
+        return attempt;
     }
 
     @Override

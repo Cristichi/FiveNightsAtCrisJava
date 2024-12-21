@@ -198,16 +198,16 @@ public abstract class AnimatronicDrawing {
      * @param rng      Random in charge of today's night.
      * @return True if this Animatronic should not be drawn in the Camera. False otherwise
      */
-    public boolean showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return !kill;
+    @Nullable
+    public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        if (kill){
+            return null;
+        }
+        return camImg;
     }
 
     public Jumpscare getJumpscare() {
         return jumpscare;
-    }
-
-    public BufferedImage getCamImg() {
-        return camImg;
     }
 
     public Color getDebugColor() {

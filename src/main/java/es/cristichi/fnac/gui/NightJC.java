@@ -801,17 +801,16 @@ public class NightJC extends ExitableJComponent {
 							for (AnimatronicDrawing an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoor()&&!leftDoorClosed
 										|| current.isRightDoor()&&!rightDoorClosed;
-								if (an.showOnCam(currentTick, fps, openDoor, current, rng)){
-									BufferedImage img = an.getCamImg();
-
+								BufferedImage anCamImg =an.showOnCam(currentTick, fps, openDoor, current, rng);
+								if (anCamImg != null){
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
-									double anScaleX = camDrawWidth / (double) img.getWidth();
-									double anScaleY = camDrawHeight / (double) img.getHeight();
+									double anScaleX = camDrawWidth / (double) anCamImg.getWidth();
+									double anScaleY = camDrawHeight / (double) anCamImg.getHeight();
 									double anScale = Math.min(anScaleX, anScaleY)*0.3; // Ensure the image fits within both dimensions
 
 									// Calculate the scaled width and height
-									int scaledWidth = (int) (img.getWidth() * anScale);
-									int scaledHeight = (int) (img.getHeight() * anScale);
+									int scaledWidth = (int) (anCamImg.getWidth() * anScale);
+									int scaledHeight = (int) (anCamImg.getHeight() * anScale);
 
 									// Calculate a random position within the bounds, ensuring it doesn't overflow
 									// Then, we determine if we reuse the last one generated or not depending on
@@ -827,9 +826,9 @@ public class NightJC extends ExitableJComponent {
 									animPosInCam.put(an.getName(), p);
 
 									// Draw the scaled image
-									g.drawImage(img, p.x, p.y,
+									g.drawImage(anCamImg, p.x, p.y,
 											p.x + scaledWidth, p.y + scaledHeight,
-											0, 0, img.getWidth(), img.getHeight(),
+											0, 0, anCamImg.getWidth(), anCamImg.getHeight(),
 											this);
 								}
 							}
