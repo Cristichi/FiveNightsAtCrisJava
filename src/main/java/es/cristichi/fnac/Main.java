@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Main {
     public static final boolean DEBUG = false;
@@ -47,13 +48,25 @@ public class Main {
 
         // Save file
         final NightProgress.SaveFile saveFile;
-        try {
-            saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
-        } catch (Exception e) {
-            e.printStackTrace();
-            RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
-            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
-            throw error;
+        if (DEBUG){
+            ArrayList<String> nights = new ArrayList<>(6);
+            nights.add("tutorial");
+            nights.add("night1");
+            nights.add("night2");
+            nights.add("night3");
+            nights.add("night4");
+            nights.add("night5");
+            nights.add("night6");
+            saveFile = new NightProgress.SaveFile(nights);
+        } else {
+            try {
+                saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
+            } catch (Exception e) {
+                e.printStackTrace();
+                RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
+                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
+                throw error;
+            }
         }
 
         // Settings
