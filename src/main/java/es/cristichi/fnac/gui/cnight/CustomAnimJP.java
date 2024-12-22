@@ -59,27 +59,31 @@ public abstract class CustomAnimJP extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    int newAI = Math.min(annotationInfo.maxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
-                    aiInputLbl.setText(Integer.toString(newAI));
-                    onAiChanged(newAI);
-                } else if (e.getButton() == MouseEvent.BUTTON3) {
-                    int newAI = Math.max(0, Integer.parseInt(aiInputLbl.getText()) - 1);
-                    aiInputLbl.setText(Integer.toString(newAI));
-                    onAiChanged(newAI);
+                if (isEnabled()){
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        int newAI = Math.min(annotationInfo.maxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
+                        aiInputLbl.setText(Integer.toString(newAI));
+                        onAiChanged(newAI);
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {
+                        int newAI = Math.max(0, Integer.parseInt(aiInputLbl.getText()) - 1);
+                        aiInputLbl.setText(Integer.toString(newAI));
+                        onAiChanged(newAI);
+                    }
                 }
             }
         });
         addMouseWheelListener(e -> {
-            int newAI = Integer.parseInt(aiInputLbl.getText());
-            if (e.getWheelRotation()<0){
-                newAI++;
-            } else {
-                newAI--;
-            }
-            if (newAI >= 0 && newAI <= annotationInfo.maxAi()){
-                aiInputLbl.setText(Integer.toString(newAI));
-                onAiChanged(newAI);
+            if (isEnabled()) {
+                int newAI = Integer.parseInt(aiInputLbl.getText());
+                if (e.getWheelRotation() < 0) {
+                    newAI++;
+                } else {
+                    newAI--;
+                }
+                if (newAI >= 0 && newAI <= annotationInfo.maxAi()) {
+                    aiInputLbl.setText(Integer.toString(newAI));
+                    onAiChanged(newAI);
+                }
             }
         });
         add(aiInputLbl, BorderLayout.SOUTH);
@@ -118,5 +122,9 @@ public abstract class CustomAnimJP extends JPanel {
         super.paintComponent(g);
         g.drawImage(portraitBackgroundImg, 0, 0, getWidth(), getHeight(), this);
         g.drawImage(portraitImg, 0, 0, getWidth(), getHeight(), this);
+        if (!isEnabled()){
+            g.setColor(new Color(255, 255, 255, 160));
+            g.fillRect(0,0, getWidth(), getHeight());
+        }
     }
 }

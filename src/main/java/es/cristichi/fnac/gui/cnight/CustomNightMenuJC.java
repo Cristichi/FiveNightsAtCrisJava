@@ -85,6 +85,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
 
     protected final List<Runnable> onExitListeners;
 
+    private boolean resizingInProgress = false;
+    private boolean enabledEditing = true;
+
     protected final long seed;
     protected final Random rng;
     protected HashMap<Class<? extends AnimatronicDrawing>, CustomNightAnimatronicData> customInputs;
@@ -148,6 +151,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
 
         createSettingButton("Start Custom Night", event -> {
             panelSettings.setVisible(false);
+            enabledEditing = false;
             updateComponents();
             new Thread(() -> {
                 try {
@@ -158,6 +162,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     new ExceptionDialog(e, false, true);
                 }
                 panelSettings.setVisible(true);
+                enabledEditing = true;
                 updateComponents();
             }, "cnight_t").start();
         });
@@ -189,7 +194,6 @@ public class CustomNightMenuJC extends ExitableJComponent {
         onExitListeners.add(onExitListener);
     }
 
-    private boolean resizingInProgress = false;
     protected void updateComponents() {
         if (resizingInProgress) return;
         resizingInProgress = true;
@@ -224,6 +228,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                                             cNightData.variant(), ai, cNightData.rng()));
                         }
                     };
+                    animComponent.setEnabled(enabledEditing);
 
                     viewportPanel.add(animComponent);
                     customAnimJPs.add(animComponent);
