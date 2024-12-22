@@ -156,7 +156,7 @@ public abstract class SettingsJC extends JComponent {
         volumeLabels.put(100, label2);
         volumeSlider.setLabelTable(volumeLabels);
 
-        volumeSlider.addChangeListener(e -> settings.setVolume(volumeSlider.getValue() / 100.0));
+        volumeSlider.addChangeListener(e -> this.editingSettings.setVolume(volumeSlider.getValue() / 100.0));
         add(volumeSlider, gbc);
 
         // Save Button
