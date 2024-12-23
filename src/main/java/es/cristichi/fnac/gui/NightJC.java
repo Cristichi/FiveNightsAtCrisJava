@@ -58,7 +58,8 @@ public class NightJC extends ExitableJComponent {
      * List of Runnables that must be executed when the Night is finished, either win or lose. It carries the
      * information of whether the player won or not.
      */
-	private final LinkedList<NightEndedListener> onNightEndListeners;    /**
+	private final LinkedList<NightEndedListener> onNightEndListeners;
+	/**
      * List of Runnables that must be executed when the Night is finished, either win or lose. It does not
      * carry the information of whether the player won or not.
      */
@@ -117,12 +118,23 @@ public class NightJC extends ExitableJComponent {
 	/** Image showing both the monitor and static, for convenience. */
 	private final BufferedImage camMonitorStaticImg;
 
-	/** Usual number of ticks it takes the player to start and stop watching Cameras. */
-	private final int CAMS_UPDOWN_TRANSITION_TICKS;
 	/** It controls whether Cameras are up or not. */
 	private boolean camsUp;
+	/** Usual number of ticks it takes the player to start and stop watching Cameras. */
+	private final int CAMS_UPDOWN_TRANSITION_TICKS;
 	/** Ticks left until Cameras are either fully up or fully down. */
 	private int camsUpDownTransTicks;
+
+	/** Image showing the area that detects the mouse in order to open/close Cams. */
+	private final BufferedImage camsUpDownBtnImg;
+	/** name of Camera -> Rectangle where that Camera was last drawn on the map.<br>
+	 * This is used for the mouse clicks to know if there is a clickable Camera where the mouse clicked.
+	 * Each frame, after the map is drawn, this is updated. */
+	private Rectangle camsUpDownBtnOnScreen;
+	/** Usual number of ticks without showing the Cams Up/Down button. */
+	private final int CAMS_UPDOWN_BTN_DELAY_TICKS = 25;
+	/** Ticks left until Cams Up/Down button must be shown. */
+	private int camsUpDownBtnDelayTicks;
 
 	/** name of Camera -> Rectangle where that Camera was last drawn on the map.<br>
 	 * This is used for the mouse clicks to know if there is a clickable Camera where the mouse clicked.
@@ -242,6 +254,7 @@ public class NightJC extends ExitableJComponent {
 		} else {
 			paperImg = Resources.loadImageResource(paperImgPath);
 		}
+		camsUpDownBtnImg = Resources.loadImageResource("office/camsButton.png");
 		camMonitorImg = Resources.loadImageResource("office/monitor.png");
 		camMonitorStaticImg = Resources.loadImageResource("office/monitorStatic.png");
 		camStaticImg = Resources.loadImageResource("office/camTrans.jpg");
@@ -271,8 +284,10 @@ public class NightJC extends ExitableJComponent {
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;
+		camsUpDownBtnDelayTicks = 0;
 		changeCamsTransTicks = 0;
 		camsUp = false;
+		camsUpDownBtnOnScreen = null;
 		camsLocOnMapOnScreen = new HashMap<>(camerasMap.size());
 		camsHidingMovementTicks = new HashMap<>(camerasMap.size());
 		animPosInCam = new HashMap<>(5);
@@ -324,21 +339,6 @@ public class NightJC extends ExitableJComponent {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "doorAction");
         getActionMap().put("doorAction", action);
 
-        // For moving left or right with the mouse
-		addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				Point p = e.getPoint();
-				if (p.x < getWidth() * MOUSE_MOVE_THRESHOLD) {
-					Action leftAction = getActionMap().get("leftAction");
-					leftAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "leftAction"));
-				} else if (p.x > getWidth() * (1 - MOUSE_MOVE_THRESHOLD)) {
-					Action rightAction = getActionMap().get("rightAction");
-					rightAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rightAction"));
-				}
-			}
-		});
-		// For clicking cams
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -355,6 +355,23 @@ public class NightJC extends ExitableJComponent {
 							}
 						}
 					}
+				}
+			}
+		});
+
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Point p = e.getPoint();
+				if (p.x < getWidth() * MOUSE_MOVE_THRESHOLD) {
+					Action leftAction = getActionMap().get("leftAction");
+					leftAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "leftAction"));
+				} else if (p.x > getWidth() * (1 - MOUSE_MOVE_THRESHOLD)) {
+					Action rightAction = getActionMap().get("rightAction");
+					rightAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "rightAction"));
+				} else if (camsUpDownBtnOnScreen != null && camsUpDownBtnOnScreen.contains(p)){
+					Action camsAction = getActionMap().get("camsAction");
+					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
 				}
 			}
 		});
@@ -942,6 +959,19 @@ public class NightJC extends ExitableJComponent {
 			}
 		}
 
+		// Cams button
+		if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen == null && jumpscare == null){
+			if (camsUpDownBtnDelayTicks > 0){
+				camsUpDownBtnDelayTicks--;
+				camsUpDownBtnOnScreen = null;
+			} else {
+				camsUpDownBtnOnScreen = new Rectangle((int) (getWidth()*0.2), (int) (getHeight()*0.9),
+                        (int) (getWidth()*0.4), (int) (getHeight()*0.1));
+				g.drawImage(camsUpDownBtnImg, camsUpDownBtnOnScreen.x, camsUpDownBtnOnScreen.y,
+						camsUpDownBtnOnScreen.width,  camsUpDownBtnOnScreen.height, this);
+			}
+		}
+
         if (victoryScreen == null) {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
@@ -1137,12 +1167,14 @@ public class NightJC extends ExitableJComponent {
 			if (offTransTicks == 0 && camsUpDownTransTicks == 0 && victoryScreen==null){
 				if (camsUp) {
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
+					camsUpDownBtnDelayTicks = CAMS_UPDOWN_BTN_DELAY_TICKS;
 					camsUp = false;
 					backgroundCamsSound.stop();
 					openedCamsSound.stop();
 					closeCamsSound.play(camSoundsVolume);
 				} else if (jumpscare == null){
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
+					camsUpDownBtnDelayTicks = CAMS_UPDOWN_BTN_DELAY_TICKS;
 					camsUp = true;
 					openedCamsSound.play(camSoundsVolume);
 				}
