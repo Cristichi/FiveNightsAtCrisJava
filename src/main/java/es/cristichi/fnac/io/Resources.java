@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Resources {
@@ -30,12 +31,18 @@ public class Resources {
         return in;
     }
 
+    private static final HashMap<String, BufferedImage> loadedImgs = new HashMap<>(50);
     public static BufferedImage loadImageResource(String path) throws ResourceException {
+        if (loadedImgs.containsKey(path)){
+            return loadedImgs.get(path);
+        }
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
             if (in == null){
                 throw new NullPointerException("Resource not found.");
             }
-            return ImageIO.read(in);
+            BufferedImage img = ImageIO.read(in);
+            loadedImgs.put(path, img);
+            return img;
         } catch (IOException | NullPointerException e) {
             throw new ResourceException("Image not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
         }
