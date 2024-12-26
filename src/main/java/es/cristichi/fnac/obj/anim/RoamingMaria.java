@@ -37,6 +37,6 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
                 forbiddenCams, fakeMovementSoundChance, Color.YELLOW, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
-        this.camPos.put("main stage", new Point2D.Float(0.7f, 0.1f));
+        this.camPos.put("main stage", new Point2D.Float(0.8f, 0.1f));
     }
 }

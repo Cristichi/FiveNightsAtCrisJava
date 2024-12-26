@@ -33,6 +33,6 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
                 forbiddenCams, fakeMovementSoundChance, Color.RED, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
-        this.camPos.put("main stage", new Point2D.Float(0.8f, 0.1f));
+        this.camPos.put("main stage", new Point2D.Float(0.9f, 0.1f));
     }
 }

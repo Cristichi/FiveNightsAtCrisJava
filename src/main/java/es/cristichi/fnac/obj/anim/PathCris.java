@@ -8,6 +8,7 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +40,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                             List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
                     );
                 }, 0f, data.rng());
+        this.camPos.put("main stage", new Point2D.Float(0.6f, 0f));
     }
 
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,

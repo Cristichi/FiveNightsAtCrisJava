@@ -8,6 +8,7 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -44,5 +45,6 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
         jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));
+        this.camPos.put("main stage", new Point2D.Float(0.7f, 0.05f));
     }
 }
