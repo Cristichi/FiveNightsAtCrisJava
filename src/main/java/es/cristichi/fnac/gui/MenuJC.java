@@ -3,6 +3,7 @@ package es.cristichi.fnac.gui;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Music;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -230,5 +231,11 @@ public abstract class MenuJC extends JComponent {
 				loading = false;
 			}, menuItem.id()).start();
 		}
+	}
+
+	public record MenuItem(String id, String display, @Nullable BufferedImage loadingScreen){
+	}
+
+	public record MenuData(List<MenuItem> menuItems, String background) {
 	}
 }

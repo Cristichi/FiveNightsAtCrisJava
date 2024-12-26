@@ -64,7 +64,7 @@ public class NightsJF extends JFrame {
         nightPanel = new JPanel(new BorderLayout());
         cardPanel.add(nightPanel, "night");
 
-        MenuData menuData = getUpdatedMenuData();
+        MenuJC.MenuData menuData = getUpdatedMenuData();
 
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
         mainMenu = new MenuJC(menuData.background(), "menu/loading.jpg", menuData.menuItems()) {
@@ -180,11 +180,11 @@ public class NightsJF extends JFrame {
     /**
      * Simply a method that updates the Menu, useful for when the player unlocked a new Night
      * after completing one.
-     * @return A {@link MenuData} object with the information needed to build a Menu (items, background, etc).
+     * @return A {@link MenuJC.MenuData} object with the information needed to build a Menu (items, background, etc).
      * @throws ResourceException If any of the loading screens could not be loaded.
      */
-    private @NotNull MenuData getUpdatedMenuData() throws ResourceException {
-        ArrayList<MenuItem> mmItems = new ArrayList<>(2);
+    private @NotNull MenuJC.MenuData getUpdatedMenuData() throws ResourceException {
+        ArrayList<MenuJC.MenuItem> mmItems = new ArrayList<>(2);
         String background;
         java.util.List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
@@ -192,82 +192,82 @@ public class NightsJF extends JFrame {
         switch (numCompleted) {
             case 0 -> {
                 background = "menu/background0.jpg";
-                mmItems.add(new MenuItem("tutorial", "Tutorial Night", null));
+                mmItems.add(new MenuJC.MenuItem("tutorial", "Tutorial Night", null));
             }
             case 1 -> {
                 background = "menu/background1.jpg";
-                mmItems.add(new MenuItem("n1", "Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n1", "Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
                 if (Main.DEBUG){
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             case 2 -> {
                 background = "menu/background2.jpg";
-                mmItems.add(new MenuItem("n2", "Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n2", "Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             case 3 -> {
                 background = "menu/background3.jpg";
-                mmItems.add(new MenuItem("n3", "Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n3", "Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             case 4 -> {
                 background = "menu/background4.jpg";
-                mmItems.add(new MenuItem("n4", "Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n4", "Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
-                    mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             case 5 -> {
                 background = "menu/background5.jpg";
-                mmItems.add(new MenuItem("n5", "Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n5", "Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
-                    mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
-                    mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             case 6 -> {
                 background = "menu/background6.jpg";
-                mmItems.add(new MenuItem("n6", "Help me", Resources.loadImageResource("night/n6/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("n6", "Help me", Resources.loadImageResource("night/n6/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n5", "Repeat Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
-                    mmItems.add(new MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
-                    mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
-                    mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n5", "Repeat Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
             default -> {
                 background = "menu/backgroundCustom.jpg";
-                mmItems.add(new MenuItem("custom", "Custom Night", Resources.loadImageResource("night/custom/loading.jpg")));
+                mmItems.add(new MenuJC.MenuItem("custom", "Custom Night", Resources.loadImageResource("night/custom/loading.jpg")));
                 if (Main.DEBUG) {
-                    mmItems.add(new MenuItem("n6", "Repeat Night 6", Resources.loadImageResource("night/n6/loading.jpg")));
-                    mmItems.add(new MenuItem("n5", "Repeat Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
-                    mmItems.add(new MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
-                    mmItems.add(new MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
-                    mmItems.add(new MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
-                    mmItems.add(new MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
-                    mmItems.add(new MenuItem("tutorial", "Repeat Tutorial", null));
+                    mmItems.add(new MenuJC.MenuItem("n6", "Repeat Night 6", Resources.loadImageResource("night/n6/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n5", "Repeat Night 5", Resources.loadImageResource("night/n5/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n4", "Repeat Night 4", Resources.loadImageResource("night/n4/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n3", "Repeat Night 3", Resources.loadImageResource("night/n3/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n2", "Repeat Night 2", Resources.loadImageResource("night/n2/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("n1", "Repeat Night 1", Resources.loadImageResource("night/n1/loading.jpg")));
+                    mmItems.add(new MenuJC.MenuItem("tutorial", "Repeat Tutorial", null));
                 }
             }
         }
-        mmItems.add(new MenuItem("settings", "Settings", null));
-        mmItems.add(new MenuItem("exit", "Run away", null));
-        return new MenuData(mmItems, background);
+        mmItems.add(new MenuJC.MenuItem("settings", "Settings", null));
+        mmItems.add(new MenuJC.MenuItem("exit", "Run away", null));
+        return new MenuJC.MenuData(mmItems, background);
     }
 
     private void startTutorialNight() throws IOException {
@@ -289,7 +289,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -338,7 +338,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -391,7 +391,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -446,7 +446,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -504,7 +504,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -564,7 +564,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -628,7 +628,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
@@ -655,7 +655,7 @@ public class NightsJF extends JFrame {
                 saveFile.addCompletedNight(night.getNightName());
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuData menuData = getUpdatedMenuData();
+                    MenuJC.MenuData menuData = getUpdatedMenuData();
                     mainMenu.updateBackground(Resources.loadImageResource(menuData.background()));
                     mainMenu.updateMenuItems(menuData.menuItems());
                 } catch (IOException e) {
