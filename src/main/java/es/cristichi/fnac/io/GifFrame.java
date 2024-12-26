@@ -8,7 +8,7 @@ public record GifFrame(BufferedImage image, double delaySecs, GifDisposalMethod 
     @Override
     public String toString() {
         return "GifFrame{" +
-                "image=" + (image==null?"image":"null") +
+                "image=" + (image==null?"present":"null") +
                 ", delaySecs=" + delaySecs +
                 ", disposalMethod=" + disposalMethod +
                 ", offsetX=" + offsetX +
