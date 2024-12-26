@@ -15,7 +15,7 @@ import java.util.Random;
 
 @CustomNightAnimatronic(name = "Maria", portraitPath = "anims/maria/portrait.png",
         restStart = "offices", tutStart = "cam2",
-        restDesc = "Maria starts at the Storage, and moves randomly to any place except corridor 1.",
+        restDesc = "Maria starts at the Offices, and moves randomly to any place except corridor 1.",
         tutDesc = "Maria moves randomly, always avoiding cam1 and your left door.")
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     public RoamingMaria(CustomNightAnimatronicData data) throws ResourceException {
