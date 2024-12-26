@@ -28,5 +28,4 @@ Please keep in mind that a full release is not available, therefore bugs and art
 - Main developer: Cristichi
 - Art: Cristichi
 - Music: Cristichi
-- Sounds: Cristichi
-- Ambience Sounds: Cristichi and pixabay.com
+- Sounds: Cristichi and pixabay.com
