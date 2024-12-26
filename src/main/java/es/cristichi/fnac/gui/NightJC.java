@@ -1062,7 +1062,6 @@ public class NightJC extends ExitableJComponent {
 				// Calculate scaling factor for the full frame
 				double scaleJumpX = (double) getWidth() / fullWidth;
 				double scaleJumpY = (double) getHeight() / fullHeight;
-				//double scale = jumpscare.getVisualSetting() ? Math.max(scaleJumpX, scaleJumpY) : Math.min(scaleJumpX, scaleJumpY);
 				double scale = switch (jumpscare.getVisualSetting()){
 					case CENTERED -> Math.min(scaleJumpX, scaleJumpY);
 					case STRETCHED -> Math.max(scaleJumpX, scaleJumpY);
