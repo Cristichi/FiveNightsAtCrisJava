@@ -161,7 +161,7 @@ public abstract class AnimatronicDrawing {
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
-            itMoves = rng.nextInt(GENERIC_MAX_AI) < AI_FOR_LEAVING_DOOR;
+            itMoves = rng.nextInt(GENERIC_MAX_AI) < Math.max(AI_FOR_LEAVING_DOOR, aiLevel);
             if (!itMoves) {
                 failedMovesLeaving++;
                 if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING) {
