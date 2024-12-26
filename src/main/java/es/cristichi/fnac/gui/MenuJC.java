@@ -16,7 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class MenuJC extends JComponent {
-	private final List<MenuItem> menuItems;
+	private final List<Item> menuItems;
 	private Image backgroundImage;
 	private final Image defaultLoadingImg;
 	private Image currentLoadingImg;
@@ -34,12 +34,12 @@ public abstract class MenuJC extends JComponent {
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
 	 * @param backgroundImg Path to background image in the resources.
-	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link MenuItem}s
+	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link Item}s
 	 *                         that don't specify one.
-	 * @param menuItems List of {@link MenuItem}s. It must not be null or empty.
+	 * @param menuItems List of {@link Item}s. It must not be null or empty.
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public MenuJC(String backgroundImg, String defaultLoadingImg, List<MenuItem> menuItems) throws ResourceException {
+    public MenuJC(String backgroundImg, String defaultLoadingImg, List<Item> menuItems) throws ResourceException {
 		super();
 		this.menuItems = menuItems;
 		backgroundImage = Resources.loadImageResource(backgroundImg);
@@ -75,7 +75,7 @@ public abstract class MenuJC extends JComponent {
 	/**
 	 * @param newMenuItems New menu items. It can be used on the fly, and it will reload the new items.
 	 */
-	public synchronized void updateMenuItems(List<MenuItem> newMenuItems) {
+	public synchronized void updateMenuItems(List<Item> newMenuItems) {
 		this.menuItems.clear();
 		this.menuItems.addAll(newMenuItems);
 		initializeMenuItems();
@@ -114,7 +114,7 @@ public abstract class MenuJC extends JComponent {
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup()
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
-		for (MenuItem item : menuItems) {
+		for (Item item : menuItems) {
 			JButton button = createMenuButton(item);
 			horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(button);
@@ -126,7 +126,7 @@ public abstract class MenuJC extends JComponent {
 		layout.setVerticalGroup(verticalGroup);
 	}
 
-	private JButton createMenuButton(MenuItem item) {
+	private JButton createMenuButton(Item item) {
 		JButton button = new JButton("<html>" + item.display() + "</html>");
 		float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
 		button.setFont(btnFont.deriveFont(fontScale));
@@ -199,12 +199,12 @@ public abstract class MenuJC extends JComponent {
 	 * @param item String identifying the item clicked, or null if no Night should start.
 	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
 	 */
-	protected abstract void onMenuItemClick(MenuItem item) throws Exception;
+	protected abstract void onMenuItemClick(Item item) throws Exception;
 
 	private class MenuActionListener implements ActionListener {
-		private final MenuItem menuItem;
+		private final Item menuItem;
 
-		public MenuActionListener(MenuItem menuItem) {
+		public MenuActionListener(Item menuItem) {
 			this.menuItem = menuItem;
 		}
 
@@ -233,9 +233,9 @@ public abstract class MenuJC extends JComponent {
 		}
 	}
 
-	public record MenuItem(String id, String display, @Nullable BufferedImage loadingScreen){
+	public record Item(String id, String display, @Nullable BufferedImage loadingScreen){
 	}
 
-	public record MenuData(List<MenuItem> menuItems, String background) {
+	public record Info(List<Item> menuItems, String background) {
 	}
 }
