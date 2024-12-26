@@ -39,6 +39,7 @@ public abstract class AnimatronicDrawing {
     protected Integer startKillTick = null;
     protected double secsToKill;
     protected final Map<String, Sound> sounds;
+    protected final Map<String, Point2D.Float> camPos;
     protected final float fakeMovementSoundChance;
     protected int failedMovesLeaving = 0;
 
@@ -82,9 +83,10 @@ public abstract class AnimatronicDrawing {
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
         this.camImg = Resources.loadImageResource(camImgPath);
-        this.sounds = new HashMap<>(1);
         this.jumpscare = jumpscare;
+        this.sounds = new HashMap<>(1);
         this.fakeMovementSoundChance = fakeMovementSoundChance;
+        this.camPos = new HashMap<>(1);
         this.debugColor = debugColor;
 
         this.randomSecDelay = rng.nextDouble(MAX_DELAY_SECS);
@@ -197,7 +199,7 @@ public abstract class AnimatronicDrawing {
      * <code>null</code> if it should not even appear on the Camera.
      */
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return new ShowOnCamInfo(camImg, null);
+        return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getName(), null));
     }
 
     public Jumpscare getJumpscare() {

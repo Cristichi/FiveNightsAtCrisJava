@@ -8,6 +8,7 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,5 +33,6 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
                 forbiddenCams, fakeMovementSoundChance, Color.RED, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
+        this.camPos.put("main stage", new Point2D.Float(0.8f, 0.1f));
     }
 }

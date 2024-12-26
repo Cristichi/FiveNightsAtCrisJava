@@ -8,12 +8,13 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@CustomNightAnimatronic(name = "Maria", portraitPath = "anims/maria/portrait.png", restStart = "offices", tutStart =
-        "cam2",
+@CustomNightAnimatronic(name = "Maria", portraitPath = "anims/maria/portrait.png",
+        restStart = "offices", tutStart = "cam2",
         restDesc = "Maria starts at the Storage, and moves randomly to any place except corridor 1.",
         tutDesc = "Maria moves randomly, always avoiding cam1 and your left door.")
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
@@ -36,5 +37,6 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
                 forbiddenCams, fakeMovementSoundChance, Color.YELLOW, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
+        this.camPos.put("main stage", new Point2D.Float(0.7f, 0.1f));
     }
 }
