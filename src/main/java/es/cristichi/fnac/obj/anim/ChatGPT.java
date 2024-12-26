@@ -39,8 +39,8 @@ public class ChatGPT extends AnimatronicDrawing {
                             List.of("cam2", "cam1", "cam3", "leftDoor")
                     );
                     case RESTAURANT -> List.of(
-                            List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
-                            List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                            List.of("storage", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                            List.of("storage", "dining area", "corridor 2", "corridor 4", "rightDoor")
                     );
                 },
                 0f, data.rng());
@@ -88,7 +88,7 @@ public class ChatGPT extends AnimatronicDrawing {
 
     @Override
     public MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
-        if (usingPathedMove) {
+        if (usingPathedMove || currentLoc.isRightDoor() ||currentLoc.isLeftDoor()) {
             // We should be doing pathed move, or can't do roaming move
             usingPathedMove = false;
             Collections.shuffle(camPaths, rng);
