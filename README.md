@@ -25,8 +25,8 @@ Go into the [Wiki in this GitHub project](https://github.com/Cristichi/FiveNight
 Please keep in mind that a full release is not available, therefore bugs and art placeholders may be expected for the build you are playing. Nonetheless, the game should be playable without game-crashing error. In any case, if you playtest the game please feel more than free to share any issues or ideas with me through the [issues page](https://github.com/Cristichi/FiveNightsAtCrisJava/issues) on this GitHub. 
 
 ## Credits
-Main developer: Cristichi
-Art: Cristichi
-Music: Cristichi
-Sounds: Cristichi
-Ambience Sounds: Cristichi and pixabay.com
+- Main developer: Cristichi
+- Art: Cristichi
+- Music: Cristichi
+- Sounds: Cristichi
+- Ambience Sounds: Cristichi and pixabay.com
