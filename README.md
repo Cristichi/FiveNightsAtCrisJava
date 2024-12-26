@@ -20,9 +20,9 @@ This is still a work in progress. All Nights are playable, including a Custom Ni
 A Cataclysm made existence look like a drawing. `Cris' Restaurant for You` closes their doors after gruesome discovery that what were previously Animatronics are now Drawings that can move, like humans. The owner trapped as one of them. Shareholders need you to watch the place, like always, while they see what they can do now that the Restaurant is hostile and the owner gone.  
 
 ## How do I play?
-Go into the [Wiki in this GitHub project](https://github.com/Cristichi/FiveNightsAtCrisJava/wiki), and look for Installing in the menu. You will find the instructions to download and play the game there.
+Go into the [Installing/Updating Wiki page](https://github.com/Cristichi/FiveNightsAtCrisJava/wiki/Installing-Updating-FNAC) in this GitHub project. You will find the instructions to download and play the game there.
 
-Please keep in mind that a full release is not available, therefore bugs and art placeholders may be expected for the build you are playing. Nonetheless, the game should be playable without game-crashing error. In any case, if you playtest the game please feel more than free to share any issues or ideas with me through the [issues page](https://github.com/Cristichi/FiveNightsAtCrisJava/issues) on this GitHub. 
+Please keep in mind that a full release is not available, therefore bugs and art placeholders may be expected for the build you are playing. Nonetheless, the game should be playable without game-crashing error. In any case, if you playtest the game please feel more than free to share any issues or ideas with me through the [issues page](https://github.com/Cristichi/FiveNightsAtCrisJava/issues). 
 
 ## Credits
 - Main developer: Cristichi
