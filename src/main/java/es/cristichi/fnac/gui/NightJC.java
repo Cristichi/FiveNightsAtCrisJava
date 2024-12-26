@@ -833,10 +833,6 @@ public class NightJC extends ExitableJComponent {
 									// Calculate a random position within the bounds, ensuring it doesn't overflow
 									// Then, we determine if we reuse the last one generated or not depending on
 									// whether it is still in-bounds (window resizing) or not.
-
-
-
-
 									Point p;
 									if (info.preferredPoint() != null) {
 										p = new Point(
@@ -1047,8 +1043,8 @@ public class NightJC extends ExitableJComponent {
 			g2d.drawString(text, centerX, centerY);
         }
 
-		if (jumpscare != null && camsUpDownTransTicks == 0) {
-			if (camsUp && jumpscare.shouldCamsBeDown()){
+		if (jumpscare != null) {
+			if (camsUp && camsUpDownTransTicks == 0 && jumpscare.shouldCamsBeDown()){
 				Action closeCamsAction = getActionMap().get("camsAction");
 				if (closeCamsAction instanceof CamsAction camsAction) {
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "camsAction"));
