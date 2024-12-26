@@ -151,7 +151,7 @@ public abstract class AnimatronicDrawing {
      * @return <code>true</code> if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public MoveOppRet onMoveOppAttempt(
+    public MoveOppInfo onMoveOppAttempt(
             Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng) {
         boolean itMoves;
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
@@ -168,7 +168,7 @@ public abstract class AnimatronicDrawing {
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
-        return new MoveOppRet(itMoves,
+        return new MoveOppInfo(itMoves,
                 !itMoves && rng.nextFloat() < fakeMovementSoundChance ? sounds.getOrDefault("move", null) : null);
     }
 
@@ -183,8 +183,8 @@ public abstract class AnimatronicDrawing {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc,
-                                                    Random rng) throws AnimatronicException;
+    public abstract MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc,
+                                                     Random rng) throws AnimatronicException;
 
     /**
      * @param tick     Current tick, for accurately counting seconds.
@@ -242,7 +242,7 @@ public abstract class AnimatronicDrawing {
      * @param sound     Sound to play because of this movement on the destination Camera
      *                  , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
      */
-    public record MoveSuccessRet(String moveToCam, @Nullable Sound sound) {
+    public record MoveSuccessInfo(String moveToCam, @Nullable Sound sound) {
     }
 
     /**
@@ -255,6 +255,6 @@ public abstract class AnimatronicDrawing {
      *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
      *              movement Sounds.
      */
-    public record MoveOppRet(boolean move, @Nullable Sound sound) {
+    public record MoveOppInfo(boolean move, @Nullable Sound sound) {
     }
 }

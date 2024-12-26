@@ -75,18 +75,18 @@ public class ChatGPT extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveOppRet onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
+    public MoveOppInfo onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
                                        Random rng) {
-        MoveOppRet attempt = super.onMoveOppAttempt(currentCam, beingLookedAt, camsUp, isOpenDoor, rng);
+        MoveOppInfo attempt = super.onMoveOppAttempt(currentCam, beingLookedAt, camsUp, isOpenDoor, rng);
         if (building && attempt.move()) {
             building = false;
-            return new MoveOppRet(false, sounds.getOrDefault("building", null));
+            return new MoveOppInfo(false, sounds.getOrDefault("building", null));
         }
         return attempt;
     }
 
     @Override
-    public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
+    public MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
         if (usingPathedMove) {
             // We should be doing pathed move, or can't do roaming move
             usingPathedMove = false;
@@ -96,9 +96,9 @@ public class ChatGPT extends AnimatronicDrawing {
                     String cam = path.get(i);
                     if (currentLoc.getName().equals(cam)) {
                         if (path.size() > i + 1) {
-                            return new MoveSuccessRet(path.get(i + 1), sounds.getOrDefault("move", null));
+                            return new MoveSuccessInfo(path.get(i + 1), sounds.getOrDefault("move", null));
                         } else {
-                            return new MoveSuccessRet(path.get(0), sounds.getOrDefault("move", null));
+                            return new MoveSuccessInfo(path.get(0), sounds.getOrDefault("move", null));
                         }
                     }
                 }
@@ -111,7 +111,7 @@ public class ChatGPT extends AnimatronicDrawing {
             // We should be doing roaming move
             usingPathedMove = true;
             int random = rng.nextInt(connections.size());
-            return new MoveSuccessRet(connections.get(random),
+            return new MoveSuccessInfo(connections.get(random),
                     sounds.getOrDefault("moveRoam", sounds.getOrDefault("move", null)));
         }
 

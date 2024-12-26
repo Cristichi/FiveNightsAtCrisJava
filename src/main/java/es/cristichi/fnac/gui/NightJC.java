@@ -427,7 +427,7 @@ public class NightJC extends ExitableJComponent {
 
 				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
-					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveSuccessRet>> moves = new HashMap<>(5);
+					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo>> moves = new HashMap<>(5);
 					for(Camera cam : camerasMap.values()){
 						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
 							anim.updateIADuringNight(currentHour);
@@ -437,11 +437,11 @@ public class NightJC extends ExitableJComponent {
 							AnimatronicDrawing.AnimTickInfo animTickInfo =
 									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
 							if (animTickInfo.moveOpp()){
-								AnimatronicDrawing.MoveOppRet moveOppRet = anim.onMoveOppAttempt(cam,
+								AnimatronicDrawing.MoveOppInfo moveOppInfo = anim.onMoveOppAttempt(cam,
 										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
-								if (moveOppRet.move()){
+								if (moveOppInfo.move()){
 									try {
-										AnimatronicDrawing.MoveSuccessRet moveOpp = anim.onMoveOppSuccess(
+										AnimatronicDrawing.MoveSuccessInfo moveOpp = anim.onMoveOppSuccess(
 												camerasMap, cam, rng);
 										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())) {
 											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
@@ -451,8 +451,8 @@ public class NightJC extends ExitableJComponent {
 										e.printStackTrace();
 									}
 								}
-								if (moveOppRet.sound() != null){
-									cam.playSoundHere(moveOppRet.sound());
+								if (moveOppInfo.sound() != null){
+									cam.playSoundHere(moveOppInfo.sound());
 								}
 							}
 							if (animTickInfo.jumpscare()){
@@ -475,7 +475,7 @@ public class NightJC extends ExitableJComponent {
 						}
 					}
 					for (AnimatronicDrawing anim : moves.keySet()){
-						Map.Entry<Camera, AnimatronicDrawing.MoveSuccessRet> move = moves.get(anim);
+						Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo> move = moves.get(anim);
 
 						Camera fromCam = move.getKey();
 						Camera toCam = camerasMap.get(move.getValue().moveToCam());

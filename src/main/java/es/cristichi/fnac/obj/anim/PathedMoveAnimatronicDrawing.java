@@ -59,16 +59,16 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessRet onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException{
+    public MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException{
         Collections.shuffle(camPaths, rng);
         for (List<String> path : camPaths) {
             for (int i = 0; i < path.size(); i++) {
                 String cam = path.get(i);
                 if (currentLoc.getName().equals(cam)) {
                     if (path.size() > i + 1) {
-                        return new MoveSuccessRet(path.get(i + 1), sounds.getOrDefault("move", null));
+                        return new MoveSuccessInfo(path.get(i + 1), sounds.getOrDefault("move", null));
                     } else {
-                        return new MoveSuccessRet(path.get(0), sounds.getOrDefault("move", null));
+                        return new MoveSuccessInfo(path.get(0), sounds.getOrDefault("move", null));
                     }
                 }
             }
