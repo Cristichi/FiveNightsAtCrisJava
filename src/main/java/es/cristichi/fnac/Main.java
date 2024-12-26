@@ -47,6 +47,7 @@ public class Main {
         }
 
         // Save file
+        NightProgress.init();
         final NightProgress.SaveFile saveFile;
         if (DEBUG){
             ArrayList<String> nights = new ArrayList<>(6);

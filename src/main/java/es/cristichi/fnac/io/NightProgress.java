@@ -9,11 +9,9 @@ public class NightProgress {
     private static final String MAGIC_NUMBER = "FNACSV1"; // Unique magic number for FNAC save files. Version 1.
 
     private static String pathToFnacFolder = null;
-    private static void init(){
-        if (pathToFnacFolder == null){
-            pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
-            new File(pathToFnacFolder).mkdirs();
-        }
+    public static void init(){
+        pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
+        new File(pathToFnacFolder).mkdirs();
     }
 
     /**
@@ -25,7 +23,6 @@ public class NightProgress {
      * @throws IllegalArgumentException If the magic number is invalid.
      */
     public static SaveFile loadFromFile(String path) throws IOException {
-        init();
         try (DataInputStream in = new DataInputStream(new FileInputStream(pathToFnacFolder+path))) {
             // Verify the magic number
             String magic = new String(in.readNBytes(MAGIC_NUMBER.getBytes().length));
@@ -87,7 +84,6 @@ public class NightProgress {
              * @throws IOException If an error occurs while writing to the file.
              */
             public void saveToFile(String path) throws IOException {
-                init();
                 try (DataOutputStream out = new DataOutputStream(new FileOutputStream(pathToFnacFolder+path))) {
                     out.writeBytes(MAGIC_NUMBER);
                     out.writeInt(completedNights.size());
