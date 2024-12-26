@@ -10,6 +10,7 @@ import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -195,9 +196,8 @@ public abstract class AnimatronicDrawing {
      * @return {@link BufferedImage} of the image representing this Animatronic on the Camera on this tick.
      * <code>null</code> if it should not even appear on the Camera.
      */
-    @Nullable
-    public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return camImg;
+    public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        return new ShowOnCamInfo(camImg, null);
     }
 
     public Jumpscare getJumpscare() {
@@ -256,5 +256,18 @@ public abstract class AnimatronicDrawing {
      *              movement Sounds.
      */
     public record MoveOppInfo(boolean move, @Nullable Sound sound) {
+    }
+
+    /**
+     * Information given by each Animatronic when the Night wants to show them on Camera.
+     * @param camImg A {@link BufferedImage} of what the Animatronic must look like on the Camera on this tick. It
+     *               admits <code>null</code> to indicate that the Animatronic should not appear, then preferredPoint
+     *               is ignored.
+     * @param preferredPoint A {@link Point2D.Float} with the preferred position on this Camera and tick, or
+     *                       <code>null</code> if Night should handle it. Both <code>x</code> and <code>y</code>
+     *                       must be between 0 and 1, as a percentage in the available size to remain constant.
+     *                       These coordinates represent where the top-left corner of the image will be.
+     */
+    public record ShowOnCamInfo(@Nullable BufferedImage camImg, @Nullable Point2D.Float preferredPoint) {
     }
 }

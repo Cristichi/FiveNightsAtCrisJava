@@ -67,11 +67,12 @@ public class ChatGPT extends AnimatronicDrawing {
 
     @Nullable
     @Override
-    public BufferedImage showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+    public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
+        ShowOnCamInfo info = super.showOnCam(tick, fps, openDoor, cam, rng);
         if (building) {
-            return buildingCamImg;
+            return new ShowOnCamInfo(buildingCamImg, null);
         }
-        return super.showOnCam(tick, fps, openDoor, cam, rng);
+        return info;
     }
 
     @Override

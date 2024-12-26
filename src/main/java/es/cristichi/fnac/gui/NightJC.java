@@ -818,7 +818,8 @@ public class NightJC extends ExitableJComponent {
 							for (AnimatronicDrawing an : current.getAnimatronicsHere()){
 								boolean openDoor = current.isLeftDoor()&&!leftDoorClosed
 										|| current.isRightDoor()&&!rightDoorClosed;
-								BufferedImage anCamImg =an.showOnCam(currentTick, fps, openDoor, current, rng);
+								AnimatronicDrawing.ShowOnCamInfo info = an.showOnCam(currentTick, fps, openDoor, current, rng);
+								BufferedImage anCamImg = info.camImg();
 								if (anCamImg != null){
 									// Calculate scaling factors to fit the image inside camDrawWidth and camDrawHeight
 									double anScaleX = camDrawWidth / (double) anCamImg.getWidth();
@@ -832,12 +833,27 @@ public class NightJC extends ExitableJComponent {
 									// Calculate a random position within the bounds, ensuring it doesn't overflow
 									// Then, we determine if we reuse the last one generated or not depending on
 									// whether it is still in-bounds (window resizing) or not.
-									int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
-									int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
-									Point p = new Point(anRandomX, anRandomY);
-									p = animPosInCam.getOrDefault(an.getName(), p);
-									if (p.x<camDrawX || p.x > camDrawX+camDrawWidth-scaledWidth
-											|| p.y<camDrawY || p.y > camDrawY+camDrawHeight-scaledHeight){
+
+
+
+
+									Point p;
+									if (info.preferredPoint() != null) {
+										p = new Point(
+											(int) (camDrawX + info.preferredPoint().x * (camDrawWidth - scaledWidth)),
+											(int) (camDrawY + info.preferredPoint().y * (camDrawHeight - scaledHeight)));
+									} else if (animPosInCam.containsKey(an.getName())) {
+										p = animPosInCam.get(an.getName());
+									} else {
+										int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
+										int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
+										p = new Point(anRandomX, anRandomY);
+									}
+
+									if (p.x < camDrawX || p.x > camDrawX + camDrawWidth - scaledWidth
+											|| p.y < camDrawY || p.y > camDrawY + camDrawHeight - scaledHeight) {
+										int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
+										int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
 										p = new Point(anRandomX, anRandomY);
 									}
 									animPosInCam.put(an.getName(), p);
