@@ -8,14 +8,17 @@ import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Jumpscare {
     private final Sound sound;
     private final int soundStartFrame;
+    private boolean soundDone;
     private final int camsDownFrame;
     private final GifAnimation frames;
+    private final HashMap<Integer, List<GifFrame>> cacheFrames;
     private final JumpscareVisualSetting jumpscareVisual;
     private int currentFrame;
     private int currentFrameStartTick;
@@ -25,6 +28,7 @@ public class Jumpscare {
 
     public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame, JumpscareVisualSetting jumpscareVisual) throws ResourceException {
         this.frames = Resources.loadGif(filepath);
+        this.cacheFrames = new HashMap<>(frames.size());
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
@@ -36,9 +40,12 @@ public class Jumpscare {
 
         if (sound == null) {
             soundFinished = null;
+            soundDone = true;
         } else {
+            soundDone = false;
             soundFinished = false;
             sound.addOnEndListener(() -> {
+                soundDone = true;
                 soundFinished = true;
                 if (isFramesFinished()) {
                     for (Runnable onFinished : this.onFinish) {
@@ -79,11 +86,15 @@ public class Jumpscare {
         return currentFrame == frames.size();
     }
 
-    public Sound getSound() {
+    public Sound getSound(boolean markAsPlayed) {
+        soundDone = markAsPlayed;
         return sound;
     }
 
     public boolean isFrameToPlaySound() {
+        if (soundDone){
+            return false;
+        }
         return currentFrame == soundStartFrame;
     }
 
@@ -119,10 +130,14 @@ public class Jumpscare {
             frameIndex = frames.size() - 1; // Clamp to the last frame
         }
 
+        if (cacheFrames.containsKey(frameIndex)){
+            return cacheFrames.get(frameIndex);
+        }
+
         List<GifFrame> visibleFrames = new ArrayList<>();
         boolean resetVisibility = false;
 
-        for (int i = 0; i <= frameIndex; i++) {
+        for (int i = 0; i < frameIndex; i++) {
             GifFrame frame = frames.get(i);
 
             // Disposal methods
@@ -132,7 +147,9 @@ public class Jumpscare {
                 default -> throw new IllegalStateException("Unexpected or unsupported disposal method: " + frame.disposalMethod());
             }
         }
+        visibleFrames.add(frames.get(frameIndex));
 
+        cacheFrames.put(frameIndex, visibleFrames);
         return visibleFrames;
     }
 

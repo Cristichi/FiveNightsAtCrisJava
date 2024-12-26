@@ -1052,7 +1052,7 @@ public class NightJC extends ExitableJComponent {
 			} else {
 				List<GifFrame> frames = jumpscare.updateAndGetFrame(currentTick, fps);
 				if (jumpscare.isFrameToPlaySound()) {
-					jumpscare.getSound().play(JUMPSCARE_SOUND_MODIFIER);
+					jumpscare.getSound(true).play(JUMPSCARE_SOUND_MODIFIER);
 				}
 
 				// Full dimensions of the final full-sized frame
