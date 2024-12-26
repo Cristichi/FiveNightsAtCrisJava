@@ -55,6 +55,12 @@ public class Jumpscare {
                 }
             });
         }
+
+        // Preloading the stuff so they are in the cache
+        for (int i = 0; i <= this.frames.size(); i++){
+            int finalI = i;
+            new Thread(() -> getCombinedFrames(finalI), "preload-"+filepath+">"+i).start();
+        }
     }
 
     public void reset() {
