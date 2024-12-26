@@ -47,8 +47,6 @@ public class NightJC extends ExitableJComponent {
 	 * (Cameras, left door and right door)
 	 */
 	private final float powerPerTickPerResource;
-	/** String used to show how much power is being used by the player each tick. */
-	private static final String POWER_USAGE_CHAR = "█";
 	/** Jumpscare to play when the Player runs out of Power. */
 	private final Jumpscare powerOutageJumpscare;
 
@@ -987,47 +985,35 @@ public class NightJC extends ExitableJComponent {
         if (victoryScreen == null) {
 			int txtMarginX = getWidth()/100;
 			int txtMarginY = getHeight()/1000;
-            g.setFont(new Font("Arial", Font.BOLD, getWidth()/50));
-            String strTime = String.format("%02d:%02d AM", currentHour,
-					(int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
+			g.setFont(new Font("Eraser Dust", Font.BOLD, getWidth()/30));
 			FontMetrics fontMetrics = g.getFontMetrics();
+
+			String strTime = String.format("%02d:%02d AM", currentHour,
+					(int) (currentTick % hourTicksInterval / (double) hourTicksInterval * 60));
+			g.setColor(Color.WHITE);
+			g2d.drawString(strTime, getWidth() - fontMetrics.stringWidth(strTime) - txtMarginX, fontMetrics.getHeight() + txtMarginY);
+
+			g.setFont(new Font("Arial", Font.BOLD, getWidth()/30));
+			fontMetrics = g.getFontMetrics();
             int powerUsage = 0;
-            String powerUsageStr = POWER_USAGE_CHAR;
             if (camsUp) {
                 powerUsage++;
-                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
             }
             if (leftDoorClosed) {
                 powerUsage++;
-                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
             }
             if (rightDoorClosed) {
                 powerUsage++;
-                powerUsageStr = powerUsageStr.concat(POWER_USAGE_CHAR);
             }
             switch (powerUsage) {
-                case 0:
-                    g.setColor(Color.GREEN);
-                    break;
-                case 1:
-                    g.setColor(Color.ORANGE);
-                    break;
-                case 2:
-                    g.setColor(Color.RED);
-                    break;
-                case 3:
-                    g.setColor(Color.RED.darker());
-                    break;
+                case 0 -> g.setColor(Color.GREEN);
+                case 1 -> g.setColor(Color.ORANGE);
+                case 2 -> g.setColor(Color.RED.brighter());
+                default -> g.setColor(Color.RED.darker());
             }
-            String strPower1 = String.format("Power Usage: %s",  powerUsageStr);
-            String strPower2 = String.format("Left: %.0f%%", (powerLeft*100));
+            String strPower1 = String.format(Locale.US, "%.0f%%", (powerLeft*100));
             g2d.drawString(strPower1,
-                    txtMarginX, getHeight() - fontMetrics.getLeading()*2 - fontMetrics.getDescent() - fontMetrics.getAscent() - txtMarginY*2);
-            g2d.drawString(strPower2,
                     txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
-            g.setColor(Color.WHITE);
-            g2d.drawString(strTime, getWidth() - fontMetrics.stringWidth(strTime) - txtMarginX, fontMetrics.getHeight() + txtMarginY);
-
         } else {
             g.setFont(new Font("Arial", Font.BOLD, Math.min(getWidth(), getHeight())/5));
 			FontMetrics fm = g.getFontMetrics();
