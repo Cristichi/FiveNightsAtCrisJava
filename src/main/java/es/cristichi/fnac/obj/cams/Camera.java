@@ -102,7 +102,7 @@ public class Camera {
         if (animatronicsHere.remove(animatronicDrawing)){
             dest.animatronicsHere.add(animatronicDrawing);
         } else {
-            throw new AnimatronicException("Animatronic "+ animatronicDrawing.getName()+" not found in camera "+name+".");
+            throw new AnimatronicException("Animatronic "+ animatronicDrawing.getNameId()+" not found in camera "+name+".");
         }
     }
 

@@ -453,10 +453,8 @@ public class NightJC extends ExitableJComponent {
 									cam.playSoundHere(moveOppInfo.sound());
 								}
 							}
-							if (animTickInfo.jumpscare()){
-								jumpscare = anim.getJumpscare();
-								// In case I want phantom jumpscares in the future
-								// and the same phantom happens twice.
+							if (animTickInfo.jumpscare() != null){
+								jumpscare = animTickInfo.jumpscare();
 								jumpscare.reset();
 								jumpscare.addOnFinishedListener(() -> {
 									for(NightEndedListener onCompleted : onNightEndListeners){
@@ -484,13 +482,13 @@ public class NightJC extends ExitableJComponent {
 								if (move.getValue().sound() != null){
 									toCam.playSoundHere(move.getValue().sound());
 								}
-								animPosInCam.remove(anim.getName());
+								animPosInCam.remove(anim.getNameId());
 								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);
 								camsHidingMovementTicks.put(toCam.getName(), CAMS_STATIC_MOVE_TICKS);
 							} catch (Exception e){
 								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
 										" Perhaps there is a design flaw in the Animatronic.%n",
-										anim.getName(), fromCam, toCam);
+										anim.getNameId(), fromCam, toCam);
 								e.printStackTrace();
 							}
 						}
@@ -836,8 +834,8 @@ public class NightJC extends ExitableJComponent {
 										p = new Point(
 											(int) (camDrawX + info.preferredPoint().x * (camDrawWidth - scaledWidth)),
 											(int) (camDrawY + info.preferredPoint().y * (camDrawHeight - scaledHeight)));
-									} else if (animPosInCam.containsKey(an.getName())) {
-										p = animPosInCam.get(an.getName());
+									} else if (animPosInCam.containsKey(an.getNameId())) {
+										p = animPosInCam.get(an.getNameId());
 									} else {
 										int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
 										int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
@@ -850,7 +848,7 @@ public class NightJC extends ExitableJComponent {
 										int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
 										p = new Point(anRandomX, anRandomY);
 									}
-									animPosInCam.put(an.getName(), p);
+									animPosInCam.put(an.getNameId(), p);
 
 									// Draw the scaled image
 									g.drawImage(anCamImg, p.x, p.y,

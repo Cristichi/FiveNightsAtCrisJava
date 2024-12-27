@@ -14,68 +14,118 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Represents an Animatronic Drawing in this world, with all the information and code needed for its characteristics
+ * and behaviour.
+ * <br><br>
+ * At least the movement behaviour must be implemented in {@link #onMoveOppSuccess(CameraMap, Camera, Random)} on
+ * specific imlpementations of this abstract class. For an example implementation, feel free to check
+ * {@link AvoidCamsAnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}.
+ */
 public abstract class AnimatronicDrawing {
+    /** Maximum AI value for most Animatronics. Unless there is a reason to use another value, use this one. */
     public static final int GENERIC_MAX_AI = 20;
 
-    protected static final int AI_FOR_LEAVING_DOOR = 18;
+    /** Arbitrary AI value as a minimum AI all AnimatronicDrawings use when at closed doors.
+     *  This is used to avoid them from "sticking" onto the door at lower AI values. This makes
+     *  easy Nights easy as intended while keeping harder Nights unaffected.
+     */
+    protected static final int MIN_AI_FOR_LEAVING_DOOR = 18;
+    /** Arbitrary number of consecutive failed attempts that should guarantee a successful
+     *  Movement Opportunity to leave a closed office door.
+     */
     protected static final int MAX_FAILED_MOVES_FOR_LEAVING = 3;
-    protected static final double DOOR_OPENED_TOO_SOON_SECS = 0.5;
+    /** Arbitrary maximun delay, in seconds, that AnimatronicDrawings have by default. This is
+     *  used to make it harder to keep track of exactly when AnimatronicDrawings will move with
+     *  external programs. This is not to fully disencourage the use of external tools to keep
+     *  track of information, just to make it harder. Also so that sounds do not overlap too much.
+     */
     protected static final double MAX_DELAY_SECS = 11.5;
 
-    protected final String name;
+    /** Name of the Animatronic. This is used as an identifier during Nights, so it must be unique. */
+    protected final String nameId;
+    /** Debug color for keeping track of its movement on testing buildings when needed. */
     protected final Color debugColor;
+    /** Map with the (Hour -> AI Level) so that AnimatronicDrawings can be increasingly easier, or harder,
+     * during Nights. It also allows AnimatronicDrawings to be activated or deactivated at arbitrary hours. */
     protected final Map<Integer, Integer> iaDuringNight;
+    /** This value determines the chances of moving. On specific implementations it can be used to any
+     * other purpose to take into account the difficulty/aggresion of this AnimatronicDrawing. */
     protected int aiLevel;
+    /** Interval in seconds for the Movement Opportunities. */
     protected final double secInterval;
+    /** The delay, calcualted since the first tick of the Night, that all Movement Opportunities must have for
+     * this AnimatronicDrawing. See the implementation of
+     * {@link #onMoveOppAttempt(Camera, boolean, boolean, boolean, Random)}.*/
     protected final double randomSecDelay;
-    protected final boolean cameraStalled;
+    /** Whether this Animatronic is Camera-stalled. */
     protected final boolean globalCameraStalled;
+    /** Whether this Animatronic is globally Camera-stalled. */
+    protected final boolean cameraStalled;
+    /** Jumpscare used when this AnimatronicDrawing kills the player. */
     protected Jumpscare jumpscare;
+    /** Image normally shown when the Camera where this AnimatronicDrawing is is being watched.*/
     protected final BufferedImage camImg;
-    protected boolean kill = false;
-    protected Integer startKillTick = null;
-    protected double secsToKill;
+    /** Map used to store and access all Sounds. The default implementation only uses a "move" Sound. */
     protected final Map<String, Sound> sounds;
+    /** Map used to store and access any specific positions on specific Cameras. The default implementation
+     * does not make use of this, but it implements it in case any specuific implementation adds any values. */
     protected final Map<String, Point2D.Float> camPos;
-    protected final float fakeMovementSoundChance;
+    
+    /** Used on the default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)} to
+     *  determine whether the Animatronic should be killing the player or not. If so, it also makes it fail
+     *  Movement Opportunities to avoid them moving out of the door. */
+    protected boolean kill = false;
+    /** Used on the default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)} to
+     *  check how long has the AnimatronicDrawing being able to kill without doing so. */
+    protected Integer startKillTick = null;
+    /** Arbitrary number of seconds the AnimatronicDrawing must be at an open door to kill the player in the
+     * default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)}. */
+    protected double secsToKill;
+    /** Used to keep track of how many Movement Opportunities to leave a closed door are failed in a row. */
     protected int failedMovesLeaving = 0;
 
     /**
      * Creating an Animatronic.
      *
-     * @param name                    Name of the Animatronic. This is used as an identifier.
-     * @param secInterval             Seconds between each movement opportunity.
-     * @param secsToKill              Seconds the Animatronic needs to kill. Used by the default
-     *                                {@link #onTick(int, int, boolean, boolean, Camera, Random)} to determine
-     *                                Jumpscares.
-     * @param iaDuringNight           Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
-     *                                For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
-     *                                and has an AI of 1 during the last hour. If 0 is not specified, its value is
-     *                                defaulted to 0 at the start of the night.
-     * @param maxAiLevel              Maximum AI level. This should usually be 20 for consistency, but can be changed
-     *                                on weird Animatronics. By default, this is used to determine the chances of
-     *                                movement opportunities and also for Custom Nights.
-     * @param cameraStalled           Whether this Animatronic is Camera-stalled.
-     * @param globalCameraStalled     Whether this Animatronic is Camera-stalled.
-     * @param camImgPath              Path to the image used when the Animatronic is shown on a Camera.
-     * @param jumpscare               Jumpscare to play when this Animatronic kills the player.
-     * @param fakeMovementSoundChance It determines the chance of failed Movement Opportunities playing the "move"
-     *                                Sound regardless as a fake Movement Opportunity.
-     * @param debugColor              Color used for debugging. Not used during normal executions.
-     * @param rng                     Random for the Night. Used only to determine a random delay for each
-     *                                Animatronic each Night. Its Movement Opportunities will be delayed that much.
-     *                                Specific implementations may make use of this for any other thing they need to
-     *                                ranndomize at the time of creating the instance.
+     * @param nameId              Name of the Animatronic. This is used as an identifier, and not shown to the
+     *                            player in any way during gameplay. Two Animatronics with the same name leads to
+     *                            issues.
+     * @param secInterval         Seconds between each movement opportunity.
+     * @param secsToKill          Seconds the Animatronic needs to kill. Used by the default
+     *                            {@link #onTick(int, int, boolean, boolean, Camera, Random)} to determine
+     *                            Jumpscares.
+     * @param iaDuringNight       Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
+     *                            For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
+     *                            and has an AI of 1 during the last hour. If 0 is not specified, its value is
+     *                            defaulted to 0 at the start of the night.
+     * @param maxAiLevel          Maximum AI level. This should usually be 20 for consistency, but can be changed
+     *                            on weird Animatronics. By default, this is used to determine the chances of
+     *                            movement opportunities and also for limiting in Custom Nights.
+     * @param cameraStalled       Whether this Animatronic is Camera-stalled. This means that they fail Movement
+     *                            Opportunities while being looked at.
+     * @param globalCameraStalled Whether this Animatronic is globally Camera-stalled. Same as
+     *                            <code>cameraStalled</code>, except that this Animatronic would fail the Movement
+     *                            Opportunity regardless of which Camera the player is looking at. If this is true,
+     *                            then <code>cameraStalled</code> is ignored.
+     * @param camImgPath          Path to the image used when the Animatronic is shown on a Camera.
+     * @param jumpscare           Jumpscare to play when this Animatronic kills the player.
+     * @param debugColor          Color used for debugging. Not used during normal gameplay. This is used for
+     *                            developing purposes only in order to see where all Animatronics are at all
+     *                            times without having to switch Cameras.
+     * @param rng                 {@link Random} for the Night. Used by default to determine a random delay for each
+     *                            Animatronic each Night. Its Movement Opportunities will be delayed that much.
+     *                            Specific implementations may make use of this for any other thing they need to
+     *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String name, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
+    AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
                        int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
-                       Jumpscare jumpscare, float fakeMovementSoundChance, Color debugColor,
+                       Jumpscare jumpscare, Color debugColor,
                        Random rng) throws ResourceException {
-        this.name = name;
+        this.nameId = nameId;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
         this.aiLevel = iaDuringNight.getOrDefault(0, 0);
@@ -85,19 +135,26 @@ public abstract class AnimatronicDrawing {
         this.camImg = Resources.loadImageResource(camImgPath);
         this.jumpscare = jumpscare;
         this.sounds = new HashMap<>(1);
-        this.fakeMovementSoundChance = fakeMovementSoundChance;
         this.camPos = new HashMap<>(1);
         this.debugColor = debugColor;
 
         this.randomSecDelay = rng.nextDouble(MAX_DELAY_SECS);
     }
-
-    public String getName() {
-        return name;
+    
+    /**
+     * @return The name of this Animatronic, which can be used as an unique ID for gameplay and debugging purposes.
+     */
+    public String getNameId() {
+        return nameId;
     }
-
-    public void updateIADuringNight(int time) {
-        aiLevel = iaDuringNight.getOrDefault(time, aiLevel);
+    
+    /**
+     * It chances the current {@link #aiLevel}, but only if {@link #iaDuringNight} has a value for the current hour.
+     * It is most effective to call this method only once per hour, when the hour is changed.
+     * @param hour Current hour during a Night.
+     */
+    public void updateIADuringNight(int hour) {
+        aiLevel = iaDuringNight.getOrDefault(hour, aiLevel);
     }
 
     /**
@@ -127,9 +184,9 @@ public abstract class AnimatronicDrawing {
             } else if (tick - startKillTick >= Math.round(secsToKill * fps)) {
                 // Boo-arns
                 kill = true;
-                return new AnimTickInfo(false, true, null);
+                return new AnimTickInfo(false, jumpscare, null);
             }
-            return new AnimTickInfo(false, false, null);
+            return new AnimTickInfo(false, null, null);
         } else {
             boolean closedDoor = cam.isLeftDoor() || cam.isRightDoor();
             boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
@@ -138,7 +195,7 @@ public abstract class AnimatronicDrawing {
                 startKillTick = null;
             }
             // If door is closed but the Animatronic is still at the door, retain the count
-            return new AnimTickInfo(moveOpp, false, null);
+            return new AnimTickInfo(moveOpp, null, null);
         }
     }
 
@@ -161,7 +218,7 @@ public abstract class AnimatronicDrawing {
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
         } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
-            itMoves = rng.nextInt(GENERIC_MAX_AI) < Math.max(AI_FOR_LEAVING_DOOR, aiLevel);
+            itMoves = rng.nextInt(GENERIC_MAX_AI) < Math.max(MIN_AI_FOR_LEAVING_DOOR, aiLevel);
             if (!itMoves) {
                 failedMovesLeaving++;
                 if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING) {
@@ -171,8 +228,7 @@ public abstract class AnimatronicDrawing {
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
-        return new MoveOppInfo(itMoves,
-                !itMoves && rng.nextFloat() < fakeMovementSoundChance ? sounds.getOrDefault("move", null) : null);
+        return new MoveOppInfo(itMoves, null);
     }
 
     /**
@@ -201,38 +257,38 @@ public abstract class AnimatronicDrawing {
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
         return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getName(), null));
     }
-
-    public Jumpscare getJumpscare() {
-        return jumpscare;
-    }
-
+    
+    /**
+     * @return Debug color for this {@link AnimatronicDrawing}.
+     */
     public Color getDebugColor() {
         return debugColor;
     }
-
-    public Map<String, Sound> getSounds() {
-        return sounds;
-    }
-
+    
+    /**
+     * @param o Compared object
+     * @return <code>true</code> if <code>Object o</code> is an {@link AnimatronicDrawing}
+     * with the same name as this one. <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return name.equals(((AnimatronicDrawing) o).name);
+        return nameId.equals(((AnimatronicDrawing) o).nameId);
     }
-
+    
     @Override
-    public int hashCode() {
-        return Objects.hash(name, aiLevel, camImg);
+    public String toString() {
+        return "AnimatronicDrawing{'%s'}".formatted(nameId);
     }
-
+    
     /**
      * Information given by each Animatronic at the start of each tick.
      *
      * @param jumpscare Whether a Jumpscare is confirmed.
      * @param sound     <code>null</code> for no Sound to play on this tick, or the Sound to play.
      */
-    public record AnimTickInfo(boolean moveOpp, boolean jumpscare, @Nullable Sound sound) {
+    public record AnimTickInfo(boolean moveOpp, @Nullable Jumpscare jumpscare, @Nullable Sound sound) {
     }
 
     /**

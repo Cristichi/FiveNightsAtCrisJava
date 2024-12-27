@@ -54,7 +54,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
                                         List<List<String>> camPaths, float fakeMovementSoundChance, Color debugColor,
                                         Random rng) throws ResourceException {
         super(name, secInterval, secsToKill, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath,
-                jumpscare, fakeMovementSoundChance, debugColor, rng);
+                jumpscare, debugColor, rng);
         this.camPaths = new LinkedList<>(camPaths);
     }
 
@@ -73,6 +73,6 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
                 }
             }
         }
-        throw new AnimatronicException("Animatronic " + name + " is not at a Camera within any of its paths.");
+        throw new AnimatronicException("Animatronic " + nameId + " is not at a Camera within any of its paths.");
     }
 }

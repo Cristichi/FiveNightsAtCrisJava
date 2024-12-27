@@ -22,7 +22,7 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
                                        List<String> forbiddenCameras, float fakeMovementSoundChance, Color debugColor,
                                        Random rng) throws ResourceException {
         super(name, secInterval, secsToKill, iaDuringNight, maxIaLevel, cameraStalled, globalCameraStalled, camImgPath,
-                jumpscare, fakeMovementSoundChance, debugColor, rng);
+                jumpscare, debugColor, rng);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }
 

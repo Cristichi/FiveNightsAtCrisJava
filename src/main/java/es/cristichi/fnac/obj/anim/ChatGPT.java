@@ -52,7 +52,7 @@ public class ChatGPT extends AnimatronicDrawing {
         super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/chatgpt/camImg.png",
                 new Jumpscare("anims/chatgpt/jumpscare.gif", 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav", "chatGptJump.wav"), 2,
-                        JumpscareVisualSetting.STRETCHED), fakeMovementSoundChance, Color.BLUE, rng);
+                        JumpscareVisualSetting.STRETCHED), Color.BLUE, rng);
 
         this.forbiddenCameras = new ArrayList<>(forbiddenCameras);
         this.camPaths = new ArrayList<>(camPaths);
@@ -118,7 +118,7 @@ public class ChatGPT extends AnimatronicDrawing {
 
         // Oh no, we can't do either
         throw new AnimatronicException(
-                "Animatronic " + name + " is not at a Camera within any of its paths, and there are no connected " +
+                "Animatronic " + nameId + " is not at a Camera within any of its paths, and there are no connected " +
                         "Cameras they are not avoiding.");
     }
 }
