@@ -173,7 +173,7 @@ public abstract class AnimatronicDrawing {
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
      * @param cam      Current Camera where the Animatronic is.
      * @param rng      Random in charge of today's Night.
-     * @return An instance of {@link AnimTickInfo} with the information that the Night requires for this tick from
+     * @return An instance of {@link AnimTickInfo} with the information that the Night requires during this tick from
      * the Animatronic.
      */
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
@@ -233,7 +233,7 @@ public abstract class AnimatronicDrawing {
 
     /**
      * By default, Animatronics should only move to cameras connected with the current one.
-     * Animatronics must override this method.
+     * All implementations of {@link AnimatronicDrawing} must override this method.
      *
      * @param map         Entire map, with all Cams.
      * @param currentLoc, Cam where this Animatronic is.
@@ -261,9 +261,7 @@ public abstract class AnimatronicDrawing {
         return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getName(), null));
     }
     
-    /**
-     * @return Debug color for this {@link AnimatronicDrawing}.
-     */
+    /** @return Debug color for this {@link AnimatronicDrawing}. */
     public Color getDebugColor() {
         return debugColor;
     }
