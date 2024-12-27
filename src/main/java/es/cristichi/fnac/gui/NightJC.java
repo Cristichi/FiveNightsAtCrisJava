@@ -479,8 +479,8 @@ public class NightJC extends ExitableJComponent {
 						if (!fromCam.equals(toCam)){
 							try {
 								fromCam.move(anim, toCam);
-								if (move.getValue().sound() != null){
-									toCam.playSoundHere(move.getValue().sound());
+								if (move.getValue().moveSound() != null){
+									toCam.playSoundHere(move.getValue().moveSound());
 								}
 								animPosInCam.remove(anim.getNameId());
 								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);

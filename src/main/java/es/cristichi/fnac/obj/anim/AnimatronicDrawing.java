@@ -200,8 +200,8 @@ public abstract class AnimatronicDrawing {
     }
 
     /**
-     * This is only called at the moment of the defined internal during any given Night.
-     * AI = 0 will disable movement unless this method is overriten by an Animatronic to do so.
+     * This is only called at the moment of the defined internal during any given Night. AI = 0 will disable
+     * movement unless this method is overriten by an Animatronic to do otherwise.
      *
      * @param currentCam    Current camera from which the Animatronic is trying to move.
      * @param beingLookedAt Whether the player is looking at that Camera on this tick.
@@ -246,6 +246,9 @@ public abstract class AnimatronicDrawing {
             throws AnimatronicException;
 
     /**
+     * On the default implementation, it simply returns {@link #camImg} and <code>null</code> or the
+     * {@link Point2D.Float} saved in {@link #camPos} with the name of <code>cam</code>. All the other
+     * information available if for use on specific implementations to change this behaviour at will.
      * @param tick     Current tick, for accurately counting seconds.
      * @param fps      Current ticks per second, to convert from ticks to seconds for consistency with real time.
      * @param openDoor If there is a door to the Office from the current Camera and it is open.
@@ -283,25 +286,26 @@ public abstract class AnimatronicDrawing {
     }
     
     /**
-     * Information given by each Animatronic at the start of each tick.
+     * Information given by each Animatronic at each tick.
      *
-     * @param jumpscare Whether a Jumpscare is confirmed.
-     * @param sound     <code>null</code> for no Sound to play on this tick, or the Sound to play.
+     * @param moveOpp   Whether the Animatronic has succeeded a Movement Opportunity on this tick.
+     * @param jumpscare A Jumpscare if it must happen, or <code>null</code> otherwise.
+     * @param sound     Sound to play at the current Camera of this Animatronic on this tick,
+     *                  or <code>null</code> otherwise.
      */
-    public record AnimTickInfo(boolean moveOpp, @Nullable Jumpscare jumpscare, @Nullable Sound sound) {
-    }
+    public record AnimTickInfo(boolean moveOpp, @Nullable Jumpscare jumpscare, @Nullable Sound sound) {}
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
      *
-     * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. It should not be
+     * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. It should never be
      *                  <code>null</code>, as the Animatronic is forced to move. The only way to not move
-     *                  is to throw an {@link es.cristichi.fnac.exception.AnimatronicException}.
-     * @param sound     Sound to play because of this movement on the destination Camera
-     *                  , <code>null</code> if no Sound should play. This is ignored if moveToCam is <code>null</code>.
+     *                  is to throw an {@link AnimatronicException}, which should
+     *                  be done only for unexpected behaviours.
+     * @param moveSound Sound to play because of this movement on the destination Camera, or <code>null</code>
+     *                  if no Sound should play. This is ignored if moveToCam is <code>false</code>.
      */
-    public record MoveSuccessInfo(String moveToCam, @Nullable Sound sound) {
-    }
+    public record MoveSuccessInfo(String moveToCam, @Nullable Sound moveSound) {}
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
@@ -313,8 +317,7 @@ public abstract class AnimatronicDrawing {
      *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
      *              movement Sounds.
      */
-    public record MoveOppInfo(boolean move, @Nullable Sound sound) {
-    }
+    public record MoveOppInfo(boolean move, @Nullable Sound sound) {}
 
     /**
      * Information given by each Animatronic when the Night wants to show them on Camera.
@@ -326,6 +329,5 @@ public abstract class AnimatronicDrawing {
      *                       must be between 0 and 1, as a percentage in the available size to remain constant.
      *                       These coordinates represent where the top-left corner of the image will be.
      */
-    public record ShowOnCamInfo(@Nullable BufferedImage camImg, @Nullable Point2D.Float preferredPoint) {
-    }
+    public record ShowOnCamInfo(@Nullable BufferedImage camImg, @Nullable Point2D.Float preferredPoint) {}
 }
