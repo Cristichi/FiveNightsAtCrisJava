@@ -154,8 +154,8 @@ public abstract class AnimatronicDrawing {
      * @return <code>true</code> if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
-    public MoveOppInfo onMoveOppAttempt(
-            Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor, Random rng) {
+    public MoveOppInfo onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
+                                        Random rng) {
         boolean itMoves;
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
@@ -186,8 +186,8 @@ public abstract class AnimatronicDrawing {
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
      */
-    public abstract MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc,
-                                                     Random rng) throws AnimatronicException;
+    public abstract MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng)
+            throws AnimatronicException;
 
     /**
      * @param tick     Current tick, for accurately counting seconds.
