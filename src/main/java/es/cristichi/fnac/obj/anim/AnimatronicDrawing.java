@@ -236,7 +236,7 @@ public abstract class AnimatronicDrawing {
      * All implementations of {@link AnimatronicDrawing} must override this method.
      *
      * @param map         Entire map, with all Cams.
-     * @param currentLoc, Cam where this Animatronic is.
+     * @param currentLoc  Cam where this Animatronic is.
      * @param rng         Random in charge of today's night.
      * @return The name of the Camera it has to move to. The Night will be in charge of
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
