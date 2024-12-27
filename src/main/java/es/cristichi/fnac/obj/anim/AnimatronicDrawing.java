@@ -50,7 +50,7 @@ public abstract class AnimatronicDrawing {
     protected final Color debugColor;
     /** Map with the (Hour -> AI Level) so that AnimatronicDrawings can be increasingly easier, or harder,
      * during Nights. It also allows AnimatronicDrawings to be activated or deactivated at arbitrary hours. */
-    protected final Map<Integer, Integer> iaDuringNight;
+    protected final Map<Integer, Integer> aiDuringNight;
     /** This value determines the chances of moving. On specific implementations it can be used to any
      * other purpose to take into account the difficulty/aggresion of this AnimatronicDrawing. */
     protected int aiLevel;
@@ -97,7 +97,7 @@ public abstract class AnimatronicDrawing {
      * @param secsToKill          Seconds the Animatronic needs to kill. Used by the default
      *                            {@link #onTick(int, int, boolean, boolean, Camera, Random)} to determine
      *                            Jumpscares.
-     * @param iaDuringNight       Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
+     * @param aiDuringNight       Pairs (Hour, AILevel) that define how the Animatronic's AI changes over Night.
      *                            For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                            and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                            defaulted to 0 at the start of the night.
@@ -121,15 +121,15 @@ public abstract class AnimatronicDrawing {
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
      * @throws ResourceException If a resource is not found in the given paths.
      */
-    AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> iaDuringNight,
+    AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
                        int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
                        Jumpscare jumpscare, Color debugColor,
                        Random rng) throws ResourceException {
         this.nameId = nameId;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
-        this.aiLevel = iaDuringNight.getOrDefault(0, 0);
-        this.iaDuringNight = iaDuringNight;
+        this.aiLevel = aiDuringNight.getOrDefault(0, 0);
+        this.aiDuringNight = aiDuringNight;
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
         this.camImg = Resources.loadImageResource(camImgPath);
@@ -149,12 +149,12 @@ public abstract class AnimatronicDrawing {
     }
     
     /**
-     * It chances the current {@link #aiLevel}, but only if {@link #iaDuringNight} has a value for the current hour.
+     * It chances the current {@link #aiLevel}, but only if {@link #aiDuringNight} has a value for the current hour.
      * It is most effective to call this method only once per hour, when the hour is changed.
      * @param hour Current hour during a Night.
      */
     public void updateIADuringNight(int hour) {
-        aiLevel = iaDuringNight.getOrDefault(hour, aiLevel);
+        aiLevel = aiDuringNight.getOrDefault(hour, aiLevel);
     }
 
     /**
