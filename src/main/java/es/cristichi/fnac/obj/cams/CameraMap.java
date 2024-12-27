@@ -41,7 +41,7 @@ public class CameraMap extends HashMap<String, Camera> {
 
     public void addAll(Camera... cams) {
         for (Camera cam : cams) {
-            put(cam.getName(), cam);
+            put(cam.getNameId(), cam);
         }
     }
 

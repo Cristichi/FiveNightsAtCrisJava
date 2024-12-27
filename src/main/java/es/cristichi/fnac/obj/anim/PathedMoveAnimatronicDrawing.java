@@ -78,7 +78,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
         for (List<String> path : camPaths) {
             for (int i = 0; i < path.size(); i++) {
                 String cam = path.get(i);
-                if (currentLoc.getName().equals(cam)) {
+                if (currentLoc.getNameId().equals(cam)) {
                     if (path.size() > i + 1) {
                         return new MoveSuccessInfo(path.get(i + 1), sounds.getOrDefault("move", null));
                     } else {

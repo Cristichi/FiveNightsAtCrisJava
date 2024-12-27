@@ -258,7 +258,7 @@ public abstract class AnimatronicDrawing {
      * <code>null</code> if it should not even appear on the Camera.
      */
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getName(), null));
+        return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getNameId(), null));
     }
     
     /** @return Debug color for this {@link AnimatronicDrawing}. */

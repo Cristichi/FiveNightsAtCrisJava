@@ -343,10 +343,10 @@ public class NightJC extends ExitableJComponent {
 				if (camsUp){
 					Point click = e.getPoint();
 					for (Camera cam : camerasMap.values()) {
-						if (camsLocOnMapOnScreen.containsKey(cam.getName())) {
-							Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getName());
+						if (camsLocOnMapOnScreen.containsKey(cam.getNameId())) {
+							Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getNameId());
 							if (camLocScreen.contains(click)) {
-								camerasMap.setSelected(cam.getName());
+								camerasMap.setSelected(cam.getNameId());
 								changeCamsTransTicks = CHANGE_CAMS_TRANSITION_TICKS;
 								clickCamSound.play(camSoundsVolume);
 								break;
@@ -441,7 +441,7 @@ public class NightJC extends ExitableJComponent {
 									try {
 										AnimatronicDrawing.MoveSuccessInfo moveOpp = anim.onMoveOppSuccess(
 												camerasMap, cam, rng);
-										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getName())) {
+										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getNameId())) {
 											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 										}
 									} catch (AnimatronicException e){
@@ -483,8 +483,8 @@ public class NightJC extends ExitableJComponent {
 									toCam.playSoundHere(move.getValue().moveSound());
 								}
 								animPosInCam.remove(anim.getNameId());
-								camsHidingMovementTicks.put(fromCam.getName(), CAMS_STATIC_MOVE_TICKS);
-								camsHidingMovementTicks.put(toCam.getName(), CAMS_STATIC_MOVE_TICKS);
+								camsHidingMovementTicks.put(fromCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
+								camsHidingMovementTicks.put(toCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
 							} catch (Exception e){
 								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
 										" Perhaps there is a design flaw in the Animatronic.%n",
@@ -798,12 +798,12 @@ public class NightJC extends ExitableJComponent {
 						Camera current = camerasMap.getSelectedCam();
 						// On current camera, if an Animatronic moved from or to this camera recently, we show static instead
 						// Also if Camera is broken
-						int currentCamHidingTicks = camsHidingMovementTicks.getOrDefault(current.getName(), 0);
+						int currentCamHidingTicks = camsHidingMovementTicks.getOrDefault(current.getNameId(), 0);
 						if (currentCamHidingTicks>0 || current.isBroken()){
 							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
 							if (currentCamHidingTicks>0) {
-								camsHidingMovementTicks.put(current.getName(), currentCamHidingTicks - 1);
+								camsHidingMovementTicks.put(current.getNameId(), currentCamHidingTicks - 1);
 							}
 						} else {
 							// Here we draw the camera and the animatronics in there if no static is drawn
@@ -892,7 +892,7 @@ public class NightJC extends ExitableJComponent {
 							int scaledCamMapRecHeight = (int) (camMapRec.height * scaleRatioY);
 
 							// Draw rectangle
-							if (cam.getName().equals(camerasMap.getSelectedName())){
+							if (cam.getNameId().equals(camerasMap.getSelectedName())){
 								if (cam.isBroken()){
 									g.setColor(Color.PINK);
 								} else {
@@ -906,7 +906,7 @@ public class NightJC extends ExitableJComponent {
 							g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
 
 							// Name of cam in map
-                            String camName = cam.getName().toUpperCase();
+                            String camName = cam.getNameId().toUpperCase();
                             g.setColor(Color.BLACK);
                             int marginX = scaledCamMapRecX/500;
                             int marginY = scaledCamMapRecY/500;
@@ -937,18 +937,18 @@ public class NightJC extends ExitableJComponent {
 							}
 
 							// We update the location of the minimap's cams so that we can check on click if it clicked a camera.
-							camsLocOnMapOnScreen.put(cam.getName(),
+							camsLocOnMapOnScreen.put(cam.getNameId(),
 									new Rectangle(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight));
 						} else {
 							// If Camera is now invisible but it was previously visible, we remove this to make sure it's not clickable
-							camsLocOnMapOnScreen.remove(cam.getName());
+							camsLocOnMapOnScreen.remove(cam.getNameId());
 						}
                     }
 
 					// Cam name in top-left of monitor
 					g.setFont(new Font("Times New Roman", Font.PLAIN, 30));
 					g.setColor(Color.WHITE);
-					g2d.drawString(camerasMap.getSelectedCam().getName(), camDrawX + 30, camDrawY + 40);
+					g2d.drawString(camerasMap.getSelectedCam().getNameId(), camDrawX + 30, camDrawY + 40);
 				}
 			} else {
 				// Transition cams down
