@@ -51,14 +51,19 @@ public class Main {
         final NightProgress.SaveFile saveFile;
         if (DEBUG){
             ArrayList<String> nights = new ArrayList<>(6);
-            nights.add("tutorial");
-            nights.add("night1");
-            nights.add("night2");
-            nights.add("night3");
-            nights.add("night4");
-            nights.add("night5");
-            nights.add("night6");
+            nights.add("Tutorial");
+            nights.add("Night 1");
+            nights.add("Night 2");
+            nights.add("Night 3");
+            nights.add("Night 4");
+            nights.add("Night 5");
+            nights.add("Night 6");
             saveFile = new NightProgress.SaveFile(nights);
+//            try {
+//                saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
         } else {
             try {
                 saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
