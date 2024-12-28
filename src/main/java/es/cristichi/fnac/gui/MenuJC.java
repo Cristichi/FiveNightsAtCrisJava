@@ -139,7 +139,7 @@ public abstract class MenuJC extends JComponent {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				button.setText("<html><u>" + item.display() + "</u></html>");
+				button.setText("<html><u>" + item.hoverDisplay() + "</u></html>");
 			}
 
 			@Override
@@ -233,7 +233,7 @@ public abstract class MenuJC extends JComponent {
 		}
 	}
 
-	public record Item(String id, String display, @Nullable BufferedImage loadingScreen){
+	public record Item(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
 	}
 
 	public record Info(List<Item> menuItems, String background) {
