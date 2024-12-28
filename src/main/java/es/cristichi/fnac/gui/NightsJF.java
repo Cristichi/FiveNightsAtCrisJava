@@ -440,7 +440,7 @@ public class NightsJF extends JFrame {
         nightMap.addCamAnimatronics("dining area", crisRandomSideAllNight);
         nightMap.get("bathrooms").setBroken(true);
 
-        NightJC night = new NightJC("Night 3", settings.getFps(), nightMap, "night/n4/paper.png", powerOutage, rng,
+        NightJC night = new NightJC("Night 3", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 0.45f, "night/general/completed.wav");
         night.addOnNightEnd((completed) -> {
             if (completed){
