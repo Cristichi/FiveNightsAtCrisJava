@@ -1,6 +1,7 @@
 package es.cristichi.fnac.gui.cnight;
 
 import es.cristichi.fnac.exception.CustomNightException;
+import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.ExitableJComponent;
@@ -158,7 +159,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     nightsJF.startCustomNight(createCustomNight());
                 } catch (IOException e) {
                     new ExceptionDialog(e, false, false);
-                } catch (CustomNightException e) {
+                } catch (CustomNightException | NightException e) {
                     new ExceptionDialog(e, false, true);
                 }
                 panelSettings.setVisible(true);
@@ -258,7 +259,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         });
     }
 
-    private NightJC createCustomNight() throws IOException, CustomNightException {
+    private NightJC createCustomNight() throws IOException, CustomNightException, NightException {
         HashMap<String, AnimatronicDrawing> anims = new HashMap<>(customNightAnimatronicRegistry.size());
 
         CameraMap nightMap = switch (mapType){

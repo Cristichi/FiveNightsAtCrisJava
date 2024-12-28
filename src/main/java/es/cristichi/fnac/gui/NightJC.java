@@ -1,6 +1,7 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
+import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
@@ -220,7 +221,7 @@ public class NightJC extends ExitableJComponent {
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException {
+				   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException, NightException {
 		super();
 		this.rng = rng;
 		this.fps = fps;
@@ -228,6 +229,9 @@ public class NightJC extends ExitableJComponent {
 		this.camerasMap = camMap;
 		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (this.fps * secsPerHour);
+		if (hourTicksInterval == 0){
+			throw new NightException("Duration of Night is so low that there are 0 ticks per hour, leading to errors.");
+		}
 
 		onNightEndListeners = new LinkedList<>();
 		onExitListeners = new LinkedList<>();

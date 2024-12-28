@@ -2,6 +2,7 @@ package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.Main;
 import es.cristichi.fnac.exception.MenuItemNotFound;
+import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.cnight.CustomNightMenuJC;
 import es.cristichi.fnac.io.NightProgress;
@@ -69,7 +70,7 @@ public class NightsJF extends JFrame {
         powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
         mainMenu = new MenuJC(menuInfo.background(), "menu/loading.jpg", menuInfo.menuItems()) {
             @Override
-            protected void onMenuItemClick(Item item) throws IOException {
+            protected void onMenuItemClick(Item item) throws IOException, NightException {
                 switch (item.id()) {
                     case "tutorial" -> startTutorialNight();
                     case "n1" -> startNight1();
@@ -270,7 +271,7 @@ public class NightsJF extends JFrame {
         return new MenuJC.Info(mmItems, background);
     }
 
-    private void startTutorialNight() throws IOException {
+    private void startTutorialNight() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
@@ -310,7 +311,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight1() throws IOException {
+    private void startNight1() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -359,7 +360,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight2() throws IOException {
+    private void startNight2() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -413,7 +414,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight3() throws IOException {
+    private void startNight3() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -468,7 +469,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight4() throws IOException {
+    private void startNight4() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -525,7 +526,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight5() throws IOException {
+    private void startNight5() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 
@@ -585,7 +586,7 @@ public class NightsJF extends JFrame {
         night.startNight();
     }
 
-    private void startNight6() throws IOException {
+    private void startNight6() throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
 

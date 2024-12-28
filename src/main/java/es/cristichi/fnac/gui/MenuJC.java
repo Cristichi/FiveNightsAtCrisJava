@@ -75,12 +75,14 @@ public abstract class MenuJC extends JComponent {
 	/**
 	 * @param newMenuItems New menu items. It can be used on the fly, and it will reload the new items.
 	 */
-	public synchronized void updateMenuItems(List<Item> newMenuItems) {
-		this.menuItems.clear();
-		this.menuItems.addAll(newMenuItems);
-		initializeMenuItems();
-		revalidate();
-		repaint();
+	public void updateMenuItems(List<Item> newMenuItems) {
+		SwingUtilities.invokeLater(() -> {
+			this.menuItems.clear();
+			this.menuItems.addAll(newMenuItems);
+			initializeMenuItems();
+			revalidate();
+			repaint();
+		});
 	}
 
 	/**
@@ -105,8 +107,8 @@ public abstract class MenuJC extends JComponent {
 
 	private void initializeMenuItems() {
 		removeAll();
-		setLayout(new GroupLayout(this));
-		GroupLayout layout = (GroupLayout) getLayout();
+		GroupLayout layout = new GroupLayout(this);
+		setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
