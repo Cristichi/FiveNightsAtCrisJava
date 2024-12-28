@@ -273,7 +273,9 @@ public class NightJC extends ExitableJComponent {
 		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav", "openCams.wav");
 		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav", "keepCams.wav");
 		openedCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
+		addOnExitListener(openedCamsSound::stop);
 		backgroundCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
+		addOnExitListener(backgroundCamsSound::stop);
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav", "closeCams.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav", "clickCams.wav");
 
