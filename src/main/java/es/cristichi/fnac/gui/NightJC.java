@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -174,6 +175,7 @@ public class NightJC extends ExitableJComponent {
 	private final BufferedImage leftDoorClosedImg;
 	private final BufferedImage leftDoorTransImg;
 	private final BufferedImage leftDoorOpenImg;
+	
 	/** Whether the right door is effectively closed. */
 	private boolean rightDoorClosed;
 	/** Ticks left until right door is visually opened or closed. */
@@ -181,6 +183,26 @@ public class NightJC extends ExitableJComponent {
 	private final BufferedImage rightDoorClosedImg;
 	private final BufferedImage rightDoorTransImg;
 	private final BufferedImage rightDoorOpenImg;
+	
+	/** Position no the screen where the button of the left or right door was last drawn.
+	 *  Only one object is needed since both buttons cannot be visible at the same time. */
+	private Ellipse2D doorBtnOnScreen;
+	/** Percentage of the X coordinate in the source image of the top-left corner of the left door's button's hitbox. */
+	private static final float LEFT_DOOR_BTN_X = .038f;
+	/** Percentage of the Y coordinate in the source image of the top-left corner of the left door's button's hitbox. */
+	private static final float LEFT_DOOR_BTN_Y = .49f;
+	/** Percentage of the width in the source image of the top-left corner of the left door's button's hitbox. */
+	private static final float LEFT_DOOR_BTN_W = .155f;
+	/** Percentage of the height in the source image of the top-left corner of the left door's button's hitbox. */
+	private static final float LEFT_DOOR_BTN_H = .13f;
+	/** Percentage of the X coordinate in the source image of the top-left corner of the right door's button's hitbox. */
+	private static final float RIGHT_DOOR_BTN_X = .813f;
+	/** Percentage of the Y coordinate in the source image of the top-left corner of the right door's button's hitbox. */
+	private static final float RIGHT_DOOR_BTN_Y = .49f;
+	/** Percentage of the width in the source image of the top-left corner of the right door's button's hitbox. */
+	private static final float RIGHT_DOOR_BTN_W = .149f;
+	/** Percentage of the height in the source image of the top-left corner of the right door's button's hitbox. */
+	private static final float RIGHT_DOOR_BTN_H = .13f;
 
 	/** Active Jumpscare, or null if player is still alive or won. */
 	private Jumpscare jumpscare;
@@ -346,8 +368,8 @@ public class NightJC extends ExitableJComponent {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				Point click = e.getPoint();
 				if (camsUp){
-					Point click = e.getPoint();
 					for (Camera cam : camerasMap.values()) {
 						if (camsLocOnMapOnScreen.containsKey(cam.getNameId())) {
 							Rectangle camLocScreen = camsLocOnMapOnScreen.get(cam.getNameId());
@@ -359,6 +381,9 @@ public class NightJC extends ExitableJComponent {
 							}
 						}
 					}
+				} else if (camsUpDownTransTicks == 0 && doorBtnOnScreen != null && doorBtnOnScreen.contains(click)){
+					Action camsAction = getActionMap().get("doorAction");
+					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doorAction"));
 				}
 			}
 		});
@@ -596,6 +621,11 @@ public class NightJC extends ExitableJComponent {
 				// Left door when watching left door and no transition
 				g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(),
 						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+				doorBtnOnScreen = new Ellipse2D.Double(leftDoor.getWidth()*0.5, leftDoor.getHeight()*0.5,
+						50, 50);
+				doorBtnOnScreen = new Ellipse2D.Double(
+						leftDoorWidthScaled*LEFT_DOOR_BTN_X, getHeight()*LEFT_DOOR_BTN_Y,
+						leftDoorWidthScaled*LEFT_DOOR_BTN_W, getHeight()*LEFT_DOOR_BTN_H);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X_IN_SOURCE -
@@ -612,12 +642,13 @@ public class NightJC extends ExitableJComponent {
 							this);
 				}
 
-				// Left door when watching left door while transition from MONITOR to LEFTDOOR (center to left)
+				// Left door while transition from MONITOR to LEFTDOOR (center to left)
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
 				int visibleDoorWidthScaled = (int) (leftDoorWidthScaled * transitionProgress);
-				int doorImageStartX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
+				int offsetX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
 				g.drawImage(leftDoor, 0, 0, visibleDoorWidthScaled, getHeight(),
-						doorImageStartX, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+						offsetX, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+				doorBtnOnScreen = null;
 			}
 			break;
 
@@ -635,11 +666,11 @@ public class NightJC extends ExitableJComponent {
 				}
 
 				// Right door when no transition at RIGHTDOOR
-				g.drawImage(rightDoor,
-						getWidth()-rightDoorWidthScaled, 0,
-						getWidth(), getHeight(),
-						0, 0, rightDoor.getWidth(), rightDoor.getHeight(),
-						this);
+				g.drawImage(rightDoor, getWidth()-rightDoorWidthScaled, 0, getWidth(), getHeight(),
+						0, 0, rightDoor.getWidth(), rightDoor.getHeight(), this);
+				doorBtnOnScreen = new Ellipse2D.Double(
+						getWidth()-rightDoorWidthScaled+rightDoorWidthScaled*RIGHT_DOOR_BTN_X, getHeight()*RIGHT_DOOR_BTN_Y,
+						rightDoorWidthScaled*RIGHT_DOOR_BTN_W, getHeight()*RIGHT_DOOR_BTN_H);
 
 			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
 				int xPosition = MONITOR_X_IN_SOURCE +
@@ -663,9 +694,11 @@ public class NightJC extends ExitableJComponent {
 						0, 0,
 						rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
+				doorBtnOnScreen = null;
 			}
 			break;
 		default:
+			doorBtnOnScreen = null;
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
 						0, 0, getWidth(), getHeight(), this);
@@ -694,12 +727,10 @@ public class NightJC extends ExitableJComponent {
 				// Left door
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
 				int offsetX = (int) (leftDoorWidthScaled * transitionProgress);
-				g.drawImage(leftDoor,
-						-offsetX, 0,
-						leftDoorWidthScaled - offsetX, getHeight(),
-						0, 0,
-						leftDoor.getWidth(), leftDoor.getHeight(),
-						this);
+				g.drawImage(leftDoor, -offsetX, 0, leftDoorWidthScaled - offsetX, getHeight(),
+						0, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+				doorBtnOnScreen = new Ellipse2D.Double(offsetX+leftDoor.getWidth()*0.5, leftDoor.getHeight()*0.5,
+						50, 50);
 
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
 				int xPosition = RIGHTDOOR_X_IN_SOURCE -
@@ -716,15 +747,12 @@ public class NightJC extends ExitableJComponent {
 							this);
 				}
 
-				// Right door. PS: Idk why adding 1000 works on fullscreen, but it works, so I'l fix it with the fix below when it happens
+				// Right door.
 				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
 				int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
-				g.drawImage(rightDoor,
-						getWidth() - rightDoorWidthScaled + offsetX, 0,
-						getWidth() + offsetX, getHeight(),
-						0, 0,
-						rightDoor.getWidth(), rightDoor.getHeight(),
-						this);
+				g.drawImage(rightDoor, getWidth() - rightDoorWidthScaled + offsetX, 0,
+						getWidth() + offsetX, getHeight(), 0, 0,
+						rightDoor.getWidth(), rightDoor.getHeight(), this);
 			}
 			break;
 		}
