@@ -216,7 +216,7 @@ public class NightJC extends ExitableJComponent {
 	private final Sound closeCamsSound;
 	private final Sound clickCamSound;
 
-	private final double doorsSoundsVolume = 1;
+	private final double doorsSoundsVolume = 0.8;
 	private final Sound openDoorSound;
 	private final Sound closeDoorSound;
 
