@@ -425,7 +425,22 @@ public class NightJC extends ExitableJComponent {
 				// Time never stops. Well sometimes it does, when dying for instance.
 				currentTick++;
 				if (currentTick % hourTicksInterval == 0) {
-					advanceTime();
+					currentHour++;
+					if (currentHour == TOTAL_HOURS) {
+						jumpscare = null;
+						victoryScreen = true;
+						nightTicks.cancel();
+						soundOnCompleted.addOnEndListener(() -> {
+								for(NightEndedListener onCompleted : onNightEndListeners){
+									onCompleted.run(true);
+								}
+								for(Runnable onExit : onExitListeners){
+									onExit.run();
+								}
+							});
+						soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
+						soundOnCompleted.play();
+					}
 				}
 
 				// Power drain
@@ -555,25 +570,7 @@ public class NightJC extends ExitableJComponent {
 			}
 		}, 100, 1000 / fps);
 	}
-
-	private void advanceTime() {
-		if (++currentHour == TOTAL_HOURS) {
-			jumpscare = null;
-			victoryScreen = true;
-			nightTicks.cancel();
-			soundOnCompleted.addOnEndListener(() -> {
-					for(NightEndedListener onCompleted : onNightEndListeners){
-						onCompleted.run(true);
-					}
-                    for(Runnable onExit : onExitListeners){
-                        onExit.run();
-                    }
-				});
-			soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
-			soundOnCompleted.play();
-		}
-	}
-
+	
 	public void addOnNightEnd(NightEndedListener runnable) {
 		onNightEndListeners.add(runnable);
 	}
