@@ -97,6 +97,13 @@ public class NightJC extends ExitableJComponent {
 	private static final int PAPER_Y_IN_BACKGROUND_SOURCE = 595;
 	/** Width the paper must adjust to, on the screen. Height is calculated from this and the source image's values. */
 	private static final int PAPER_WIDTH = 246;
+	
+	/** Honk! */
+	private final Sound honkSound;
+	/** The hitbox of whatever does the funny sound in relation to the background's source image. */
+	private static final Ellipse2D HONK_IN_BACKGROUND_SOURCE = new Ellipse2D.Double(1728,295,36,30);
+	/** Where the honk's clickable location was last drawn on the screen. */
+	private Ellipse2D honkBtnOnScreen;
 
 	/** Current view of the player. */
 	private OfficeLocation officeLoc;
@@ -127,9 +134,7 @@ public class NightJC extends ExitableJComponent {
 
 	/** Image showing the area that detects the mouse in order to open/close Cams. */
 	private final BufferedImage camsUpDownBtnImg;
-	/** name of Camera -> Rectangle where that Camera was last drawn on the map.<br>
-	 * This is used for the mouse clicks to know if there is a clickable Camera where the mouse clicked.
-	 * Each frame, after the map is drawn, this is updated. */
+	/** On screen Rectangle where the camsUp/Down was last drawn. */
 	private Rectangle camsUpDownBtnOnScreen;
 	/** Usual number of ticks without showing the Cams Up/Down button. */
 	private final int CAMS_UPDOWN_BTN_DELAY_TICKS = 25;
@@ -297,6 +302,7 @@ public class NightJC extends ExitableJComponent {
 				new AmbientSound(0.4f, false, Resources.loadSound("office/ambient/deep-breath-247459.wav", "amBreath.wav"))
 		);
 		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav", "openCams.wav");
+		honkSound = Resources.loadSound("office/sounds/honk.wav", "funnyHonk.wav");
 		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav", "keepCams.wav");
 		openedCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
 		addOnExitListener(openedCamsSound::stop);
@@ -384,6 +390,8 @@ public class NightJC extends ExitableJComponent {
 				} else if (camsUpDownTransTicks == 0 && doorBtnOnScreen != null && doorBtnOnScreen.contains(click)){
 					Action camsAction = getActionMap().get("doorAction");
 					camsAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doorAction"));
+				} else if (honkBtnOnScreen != null && honkBtnOnScreen.contains(click)){
+					honkSound.play();
 				}
 			}
 		});
@@ -614,6 +622,10 @@ public class NightJC extends ExitableJComponent {
 				g.drawImage(
 						backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
 						0, 0, getWidth(), getHeight(), this);
+				honkBtnOnScreen = new Ellipse2D.Double((HONK_IN_BACKGROUND_SOURCE.getX()-LEFTDOOR_X_IN_SOURCE)*scaleX,
+														HONK_IN_BACKGROUND_SOURCE.getY()*scaleY,
+														HONK_IN_BACKGROUND_SOURCE.getWidth()*scaleX,
+														HONK_IN_BACKGROUND_SOURCE.getHeight()*scaleY);
 
 				// Left door when watching left door and no transition
 				g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(),
@@ -645,11 +657,14 @@ public class NightJC extends ExitableJComponent {
 				int offsetX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
 				g.drawImage(leftDoor, 0, 0, visibleDoorWidthScaled, getHeight(),
 						offsetX, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
+				
 				doorBtnOnScreen = null;
+				honkBtnOnScreen = null;
 			}
 			break;
 
 		case RIGHTDOOR:
+			honkBtnOnScreen = null;
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
 						getWidth(), getHeight(), this);
@@ -691,6 +706,7 @@ public class NightJC extends ExitableJComponent {
 						0, 0,
 						rightDoor.getWidth(), rightDoor.getHeight(),
 						this);
+				
 				doorBtnOnScreen = null;
 			}
 			break;
@@ -699,7 +715,12 @@ public class NightJC extends ExitableJComponent {
 			if (offTransFrom == null) {
 				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
 						0, 0, getWidth(), getHeight(), this);
-
+				
+				honkBtnOnScreen = new Ellipse2D.Double((HONK_IN_BACKGROUND_SOURCE.getX()-MONITOR_X_IN_SOURCE)*scaleX,
+														HONK_IN_BACKGROUND_SOURCE.getY()*scaleY,
+														HONK_IN_BACKGROUND_SOURCE.getWidth()*scaleX,
+														HONK_IN_BACKGROUND_SOURCE.getHeight()*scaleY);
+				
 				// Paper
 				if (paperImg != null){
 					g.drawImage(paperImg,
@@ -728,7 +749,8 @@ public class NightJC extends ExitableJComponent {
 						0, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
 				doorBtnOnScreen = new Ellipse2D.Double(offsetX+leftDoor.getWidth()*0.5, leftDoor.getHeight()*0.5,
 						50, 50);
-
+				
+				honkBtnOnScreen = null;
 			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
 				int xPosition = RIGHTDOOR_X_IN_SOURCE -
 						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
@@ -750,6 +772,8 @@ public class NightJC extends ExitableJComponent {
 				g.drawImage(rightDoor, getWidth() - rightDoorWidthScaled + offsetX, 0,
 						getWidth() + offsetX, getHeight(), 0, 0,
 						rightDoor.getWidth(), rightDoor.getHeight(), this);
+				
+				honkBtnOnScreen = null;
 			}
 			break;
 		}
@@ -1135,7 +1159,7 @@ public class NightJC extends ExitableJComponent {
 				}
 			}
 		}
-    }
+	}
 
 	public interface NightEndedListener {
 		/**
