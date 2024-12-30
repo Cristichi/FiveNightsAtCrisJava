@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>es.cristichi.fnac</groupId>
-    <artifactId>FiveNightsAtCris</artifactId>
+    <groupId>es.cristichi</groupId>
+    <artifactId>five-nights-at-cris</artifactId>
     <version>0.7.8</version>
 
     <properties>
@@ -13,6 +13,15 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Cristichi Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Cristichi/FiveNightsAtCrisJava</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
