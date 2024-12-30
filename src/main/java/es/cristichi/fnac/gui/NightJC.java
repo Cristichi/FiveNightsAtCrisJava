@@ -533,17 +533,17 @@ public class NightJC extends ExitableJComponent {
 				switch (officeLoc){
 					case LEFTDOOR -> {
 						if (leftDoorTransTicks == 1 && leftDoorClosed){
-							closeDoorSound.play(doorsSoundsVolume, -0.1);
+							closeDoorSound.play(doorsSoundsVolume, -0.7);
 						} else if (playDoorTransSound && !leftDoorClosed){
-							openDoorSound.play(doorsSoundsVolume, -0.1);
+							openDoorSound.play(doorsSoundsVolume, -0.7);
 						}
 						playDoorTransSound = false;
 					}
 					case RIGHTDOOR -> {
 						if (rightDoorTransTicks == 1 && rightDoorClosed){
-							closeDoorSound.play(doorsSoundsVolume, 0.1);
+							closeDoorSound.play(doorsSoundsVolume, 0.7);
 						} else if (playDoorTransSound && !rightDoorClosed){
-							openDoorSound.play(doorsSoundsVolume, 0.1);
+							openDoorSound.play(doorsSoundsVolume, 0.7);
 						}
 						playDoorTransSound = false;
 					}
