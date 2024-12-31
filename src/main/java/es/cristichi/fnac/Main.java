@@ -115,7 +115,7 @@ public class Main implements Runnable {
         NightRegistry.registerNight(0, new NightFactory() {
             @Override
             public MenuJC.Item getItem() {
-                return new MenuJC.Item("tutorial", "Play With Us!", "Tutorial Night", null);
+                return new MenuJC.Item("tutorial", "New Game", "Tutorial Night", null);
             }
             @Override
             public NightJC createNight(Settings settings, Jumpscare powerOutage,
