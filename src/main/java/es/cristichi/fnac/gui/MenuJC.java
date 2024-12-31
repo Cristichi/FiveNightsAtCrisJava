@@ -240,7 +240,16 @@ public abstract class MenuJC extends JComponent {
 			}, menuItem.id()).start();
 		}
 	}
-
+	
+	/**
+	 *
+	 * @param id Id of the element. Elements with the same ID will perform the same action, whose code is written in
+	 *           {@link NightsJF}.
+	 * @param display Text shown for the button when not hovered by the player's mouse.
+	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
+	 * @param loadingScreenPath Path to the resource where the Loading Screen is, or <code>null</code> to use the
+	 *                          default one.
+	 */
 	public record Item(String id, String display, String hoverDisplay, @Nullable String loadingScreenPath){
 	}
 

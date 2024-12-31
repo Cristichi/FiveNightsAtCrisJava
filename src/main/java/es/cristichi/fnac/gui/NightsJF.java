@@ -210,8 +210,7 @@ public class NightsJF extends JFrame {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         try {
-            NightJC night = nightFactory.createNight(settings, saveFile, cardLayout, powerOutage, cardPanel,
-                    nightPanel, mainMenu, rng);
+            NightJC night = nightFactory.createNight(settings, powerOutage, rng);
             night.addOnNightEnd((completed) -> {
                 if (completed) {
                     saveFile.addCompletedNight(night.getNightName());
