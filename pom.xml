@@ -6,7 +6,7 @@
 
     <groupId>es.cristichi</groupId>
     <artifactId>five-nights-at-cris</artifactId>
-    <version>0.7.8</version>
+    <version>0.8.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
