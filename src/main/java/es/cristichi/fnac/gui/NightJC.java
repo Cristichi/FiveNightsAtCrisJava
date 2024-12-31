@@ -36,7 +36,6 @@ public class NightJC extends ExitableJComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NightJC.class);
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
-	//private static final int FPS = 60;
 	private final int fps;
 	/** Objective hour. Reaching this hour results in a win. */
 	private static final int TOTAL_HOURS = 6;
