@@ -1,12 +1,12 @@
-package es.cristichi.fnac.gui.cnight;
+package es.cristichi.fnac.cnight;
 
 import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.ExitableJComponent;
+import es.cristichi.fnac.gui.NightJC;
 import es.cristichi.fnac.gui.NightsJF;
-import es.cristichi.fnac.gui.night.NightJC;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;

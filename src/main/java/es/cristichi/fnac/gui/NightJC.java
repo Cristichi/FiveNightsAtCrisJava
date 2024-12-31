@@ -1,9 +1,8 @@
-package es.cristichi.fnac.gui.night;
+package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.gui.ExitableJComponent;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.AmbientSound;

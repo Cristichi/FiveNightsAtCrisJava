@@ -1,4 +1,4 @@
-package es.cristichi.fnac.gui.cnight;
+package es.cristichi.fnac.cnight;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;

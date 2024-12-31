@@ -1,4 +1,4 @@
-package es.cristichi.fnac.gui.cnight;
+package es.cristichi.fnac.cnight;
 
 import java.awt.*;
 

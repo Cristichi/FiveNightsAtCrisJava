@@ -212,8 +212,14 @@ public abstract class MenuJC extends JComponent {
 
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
-			currentLoadingImg = menuItem.loadingScreen();
-			for (Component component : MenuJC.this.getComponents()) {
+			if (menuItem.loadingScreenPath() != null) {
+				try {
+					currentLoadingImg = Resources.loadImageResource(menuItem.loadingScreenPath());
+				} catch (ResourceException ex) {
+					ex.printStackTrace();
+				}
+			}
+            for (Component component : MenuJC.this.getComponents()) {
 				component.setVisible(false);
 			}
 			new Thread(() -> {
@@ -235,7 +241,7 @@ public abstract class MenuJC extends JComponent {
 		}
 	}
 
-	public record Item(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
+	public record Item(String id, String display, String hoverDisplay, @Nullable String loadingScreenPath){
 	}
 
 	public record Info(List<Item> menuItems, String background) {

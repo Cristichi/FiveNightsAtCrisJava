@@ -1,4 +1,4 @@
-package es.cristichi.fnac.gui.cnight;
+package es.cristichi.fnac.cnight;
 
 import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.gui.ExceptionDialog;

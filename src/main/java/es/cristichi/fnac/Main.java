@@ -1,12 +1,13 @@
 package es.cristichi.fnac;
 
+import es.cristichi.fnac.cnight.CustomNightRegistry;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.NightsJF;
-import es.cristichi.fnac.gui.cnight.CustomNightRegistry;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
+import es.cristichi.fnac.nights.*;
 import kuusisto.tinysound.TinySound;
 
 import javax.swing.*;
@@ -14,7 +15,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 public class Main implements Runnable {
     public static final boolean DEBUG = false;
@@ -55,30 +55,13 @@ public class Main implements Runnable {
         // Save file
         NightProgress.init();
         final NightProgress.SaveFile saveFile;
-        if (DEBUG){
-            ArrayList<String> nights = new ArrayList<>(6);
-            nights.add("Tutorial");
-            nights.add("Night 1");
-            nights.add("Night 2");
-            nights.add("Night 3");
-            nights.add("Night 4");
-            nights.add("Night 5");
-            nights.add("Night 6");
-            saveFile = new NightProgress.SaveFile(nights);
-//            try {
-//                saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-        } else {
-            try {
-                saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
-            } catch (Exception e) {
-                e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
-                throw error;
-            }
+        try {
+            saveFile = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
+        } catch (Exception e) {
+            e.printStackTrace();
+            RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
+            throw error;
         }
         
         // Settings
@@ -94,6 +77,15 @@ public class Main implements Runnable {
             SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
             throw error;
         }
+        
+        // Nights parametrized
+        NightRegistry.registerNight(0, new TutorialNight());
+        NightRegistry.registerNight(1, new Night1());
+        NightRegistry.registerNight(2, new Night2());
+        NightRegistry.registerNight(3, new Night3());
+        NightRegistry.registerNight(4, new Night4());
+        NightRegistry.registerNight(5, new Night5());
+        NightRegistry.registerNight(6, new Night6());
         
         // JFrame in correct Thread
         SwingUtilities.invokeLater(() -> {
