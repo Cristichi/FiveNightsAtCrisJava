@@ -5,6 +5,7 @@ import es.cristichi.fnac.exception.MenuItemNotFound;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.cnight.CustomNightMenuJC;
+import es.cristichi.fnac.gui.night.NightJC;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
