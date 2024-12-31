@@ -14,7 +14,7 @@
         <Root level="info">
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="es.cristichi.fnac" level="DEBUG" additivity="false">
+        <Logger name="es.cristichi.fnac" level="INFO" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.reflections" level="OFF" additivity="false">
