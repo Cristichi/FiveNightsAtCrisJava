@@ -109,7 +109,7 @@ public class Main implements Runnable {
         
         // Nights
         
-        /* This is an example of creating a NightFactory directly without having to create an object for it.
+        /* This is an example of creating a NightFactory inline here without having to create a new class for it.
          * This is the Tutorial Night, so it's the first one (it requires having 0 completed Nights).
          */
         NightRegistry.registerNight(0, new NightFactory() {
@@ -120,18 +120,17 @@ public class Main implements Runnable {
             @Override
             public NightJC createNight(Settings settings, Jumpscare powerOutage,
                                        Random rng) throws IOException, NightException {
-                Map<Integer, Integer> aiNightBob = Map.of(1,2, 2,3, 3,0);
-                
-                Map<Integer, Integer> aiNightMaria = Map.of(0,0, 2,2, 3,3, 4,4);
-                
                 TutorialMap tutorialMap = new TutorialMap();
-                tutorialMap.addCamAnimatronics("cam1", new RoamingBob("Bob", aiNightBob, false, false, java.util.List.of("cam4"), 0f, rng));
-                tutorialMap.addCamAnimatronics("cam2", new RoamingMaria("Maria", aiNightMaria, false, false, List.of("cam3"), 0f, rng));
+                tutorialMap.addCamAnimatronics("cam1",
+                        new RoamingBob("Bob", Map.of(1,2, 2,3, 3,0), false, false, java.util.List.of("cam4"), 0f, rng));
+                tutorialMap.addCamAnimatronics("cam2",
+                        new RoamingMaria("Maria", Map.of(0,0, 2,2, 3,3, 4,4), false, false, List.of("cam3"), 0f, rng));
                 
                 return new NightJC("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
                         powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
             }
         });
+        // Example on how to do them by organizing them in classes
         NightRegistry.registerNight(1, new Night1());
         NightRegistry.registerNight(2, new Night2());
         NightRegistry.registerNight(3, new Night3());
