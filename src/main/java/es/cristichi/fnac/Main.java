@@ -16,16 +16,21 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class Main {
+public class Main implements Runnable {
     public static final boolean DEBUG = false;
 
     public static void main(String[] args) {
+        new Main().run();
+    }
+    
+    @Override
+    public void run() {
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
-
+        
         // Sound system init
         TinySound.init();
-
+        
         // Making sure our EraserDust font is installed or registered for later use.
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -46,7 +51,7 @@ public class Main {
             new ExceptionDialog(e, true, true);
             throw new RuntimeException(e);
         }
-
+        
         // Save file
         NightProgress.init();
         final NightProgress.SaveFile saveFile;
@@ -75,7 +80,7 @@ public class Main {
                 throw error;
             }
         }
-
+        
         // Settings
         Settings.init();
         final Settings settings;
@@ -110,7 +115,7 @@ public class Main {
                     }
                 };
                 window.getRootPane().getActionMap().put("switchFull", action);
-
+                
                 window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                         .put(KeyStroke.getKeyStroke("F11"), "switchFull");
                 window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
