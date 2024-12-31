@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Main implements Runnable {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public static void main(String[] args) {
         new Main().run();

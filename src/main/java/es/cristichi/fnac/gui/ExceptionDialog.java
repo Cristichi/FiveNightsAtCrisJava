@@ -1,11 +1,15 @@
 package es.cristichi.fnac.gui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class ExceptionDialog extends JFrame {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionDialog.class);
 
     /**
      * Creates a new dialog with the info of a Exception and shows it as always on top.
@@ -15,7 +19,7 @@ public class ExceptionDialog extends JFrame {
      */
     public ExceptionDialog(Exception exception, boolean fatal, boolean clearMessage) {
         super("Exception Viewer");
-        exception.printStackTrace();
+        LOGGER.error("Error shown to player:", exception);
 
         if (fatal)
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

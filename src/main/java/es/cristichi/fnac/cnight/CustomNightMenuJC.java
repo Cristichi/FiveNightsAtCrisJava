@@ -17,6 +17,8 @@ import es.cristichi.fnac.obj.cams.TutorialMap;
 import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.obj.cnight.CustomNightMapType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +34,8 @@ import java.util.*;
 
 
 public class CustomNightMenuJC extends ExitableJComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightMenuJC.class);
+    
     protected static final int COLUMNS = 4;
     protected static BufferedImage backgroundImg;
 
@@ -110,7 +114,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
             updateAnimatronicGrid();
             new Thread(() -> {
                 try {
-                    nightsJF.startCustomNight(createCustomNight());
+                    NightJC night = createCustomNight();
+                    nightsJF.startCustomNight(night);
+                    LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
                 } catch (IOException e) {
                     new ExceptionDialog(e, false, false);
                 } catch (CustomNightException | NightException e) {

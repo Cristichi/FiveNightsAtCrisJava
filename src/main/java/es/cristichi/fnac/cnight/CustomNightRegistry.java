@@ -6,16 +6,17 @@ import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * A registry for managing custom {@link AnimatronicDrawing} for Custom Nights.
  */
 public class CustomNightRegistry {
-    private static final Logger LOGGER = Logger.getLogger(CustomNightRegistry.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightRegistry.class);
 
     /**
      * Map holding registered animatronic drawings by their class names.
@@ -39,15 +40,16 @@ public class CustomNightRegistry {
      */
     public static synchronized void registerPackage(String packageName) {
         if (packageNames.contains(packageName)) {
-            LOGGER.warning("Package already registered: " + packageName);
+            LOGGER.warn("Package already registered: {}", packageName);
             return;
         }
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CustomNightAnimatronic.class);
         if (classes.isEmpty()){
-            LOGGER.warning(("Package \"%s\" does not exist or contains no AnimatronicDrawings annotated with " +
-                    "@CustomNightAnimatronic.").formatted(packageName));
+            LOGGER.warn("Package \"{}\" does not exist or contains no AnimatronicDrawings annotated " +
+                            "with @CustomNightAnimatronic.", packageName);
         }
+        int count = 0;
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotationPresent(CustomNightAnimatronic.class)
                     && AnimatronicDrawing.class.isAssignableFrom(clazz)) {
@@ -56,6 +58,7 @@ public class CustomNightRegistry {
                     Class<? extends AnimatronicDrawing> animatronicClass = (Class<? extends AnimatronicDrawing>) clazz;
                     CustomNightAnimatronic annotation = clazz.getAnnotation(CustomNightAnimatronic.class);
                     animatronicRegistry.put(annotation, animatronicClass);
+                    count++;
                 } catch (ClassCastException e){
                     new ExceptionDialog(new CustomNightException(
                             "Error trying to get the Animatronic class %s with the annotation."
@@ -63,6 +66,7 @@ public class CustomNightRegistry {
                 }
             }
         }
+        LOGGER.debug("Package \"%s\" registered with \"%d\" found AnimatronicDrawings.".formatted(packageName,  count));
         packageNames.add(packageName);
     }
 

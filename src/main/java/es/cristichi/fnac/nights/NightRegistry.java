@@ -15,26 +15,27 @@ import java.util.List;
  * the requisite of completed Nights.
  */
 public class NightRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(NightRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NightRegistry.class);
     
     private static final ArrayList<NightFactory> registry = new ArrayList<>(7);
     
     /**
      * It registers athe {@link NightFactory} for the Night that is available with the given exact
      * number of completed Nights. If a Night with the same requirement of completed Nights exists, this does nothing.
+     *
      * @param requiredCompletedNights Exact number of completed Nights the player must have in their save file to
      *                                have this Night be the next one to play.
-     * @param nightFactory The NightFactory that can create the correct next Night for the player to play.
+     * @param nightFactory            The NightFactory that can create the correct next Night for the player to play.
      */
     public static void registerNight(int requiredCompletedNights, NightFactory nightFactory){
         if (requiredCompletedNights < 0){
             throw new IllegalArgumentException("There cannot be less than 0 completed Nights.");
         }
         if (requiredCompletedNights < registry.size()){
-            logger.info("Night for {} completed Nights has been registered.", requiredCompletedNights);
-            registry.add(requiredCompletedNights, nightFactory);
+            LOGGER.debug("Night for {} completed Nights was already set.", requiredCompletedNights);
         } else {
-            logger.info("Night for {} completed Nights was already set.", requiredCompletedNights);
+            LOGGER.debug("Night for {} completed Nights has been registered.", requiredCompletedNights);
+            registry.add(requiredCompletedNights, nightFactory);
         }
     }
     

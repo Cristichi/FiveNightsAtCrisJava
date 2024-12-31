@@ -14,6 +14,8 @@ import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import kuusisto.tinysound.TinySound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +29,8 @@ import java.util.Random;
  * Main window, it controls all the thingies.
  */
 public class NightsJF extends JFrame {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NightsJF.class);
+    
     public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
     private final SettingsJC settingsPanel;
@@ -85,7 +89,7 @@ public class NightsJF extends JFrame {
                         try {
                             startNightFromFactory(Objects.requireNonNull(NightRegistry.getNight(0)));
                         } catch (NullPointerException e){
-                            e.printStackTrace();
+                            LOGGER.error("Error trying to load Night: It does not exist.", e);
                         }
                     }
                 }
@@ -240,7 +244,7 @@ public class NightsJF extends JFrame {
             nightPanel.add(night);
             setTitle(getTitleForWindow(night.getNightName()));
             cardLayout.show(cardPanel, "night");
-            System.out.printf("Today's Tutorial is using the seed \"%d\". Have fun!%n", seed);
+            LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
             mainMenu.stopMusic();
             night.startNight();
         } catch (IOException e) {
