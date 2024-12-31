@@ -1,4 +1,4 @@
-package es.cristichi.fnac.nights;
+package es.cristichi.fnac.obj.nights;
 
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.gui.MenuJC;

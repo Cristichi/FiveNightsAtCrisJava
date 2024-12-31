@@ -10,11 +10,11 @@ import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
-import es.cristichi.fnac.nights.*;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.RoamingBob;
 import es.cristichi.fnac.obj.anim.RoamingMaria;
 import es.cristichi.fnac.obj.cams.TutorialMap;
+import es.cristichi.fnac.obj.nights.*;
 import kuusisto.tinysound.TinySound;
 
 import javax.swing.*;

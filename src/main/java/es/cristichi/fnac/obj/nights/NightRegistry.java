@@ -1,4 +1,4 @@
-package es.cristichi.fnac.nights;
+package es.cristichi.fnac.obj.nights;
 
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
