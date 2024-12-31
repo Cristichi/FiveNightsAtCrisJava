@@ -3,6 +3,9 @@ package es.cristichi.fnac.gui;
 import javax.swing.*;
 
 public abstract class ExitableJComponent extends JComponent {
+    public ExitableJComponent(){
+        super();
+    }
     /**
      * This method should ensure that the onExitListener is executed when the component "exists" to the main menu.
      * For instance, when a Night finishes.
