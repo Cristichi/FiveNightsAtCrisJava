@@ -13,7 +13,7 @@ import java.util.Random;
  * A {@link NightFactory} is simply an object capable of creating {@link NightJC} instances. This is needed since
  * creating a Night includes code to create the Animatronics and place them on the 
  * {@link es.cristichi.fnac.obj.cams.CameraMap} for their initial positions. For an example implementation, check
- * the source code of {@link TutorialNight#createNight(Settings, Jumpscare, Random)}.
+ * the source code of {@link Night1#createNight(Settings, Jumpscare, Random)}.
  */
 public interface NightFactory {
     /**
