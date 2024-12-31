@@ -14,6 +14,8 @@ import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +28,12 @@ import java.util.Timer;
 import java.util.*;
 
 public class NightJC extends ExitableJComponent {
-	private static final boolean DEBUG_MODE = false;
+	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
+	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
+	 * runs if you are bad at the game like me. */
+	public static final boolean DEBUG_MODE = false;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NightJC.class);
 
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
 	//private static final int FPS = 60;
@@ -250,6 +257,7 @@ public class NightJC extends ExitableJComponent {
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
 				   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException, NightException {
 		super();
+		LOGGER.debug("Loading {}.", nightName);
 		this.rng = rng;
 		this.fps = fps;
 		this.nightName = nightName;
@@ -414,6 +422,8 @@ public class NightJC extends ExitableJComponent {
 		});
 
 		nightTicks = new Timer("Night [" + nightName + "]");
+		
+		LOGGER.debug("Finished loading {}.", nightName);
 	}
 
 	/**
@@ -427,6 +437,7 @@ public class NightJC extends ExitableJComponent {
 	 * Make the Night start. It should never be called twice, even after a Night is finished.
 	 */
 	public void startNight(){
+		LOGGER.debug("Started {}.", nightName);
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
