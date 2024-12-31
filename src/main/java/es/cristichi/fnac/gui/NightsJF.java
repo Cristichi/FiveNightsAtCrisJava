@@ -193,7 +193,16 @@ public class NightsJF extends JFrame {
         List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
         
-        background = "menu/backgroundCustom.jpg";
+        background = switch (numCompleted) {
+            case 0 -> "menu/background0.jpg";
+            case 1 -> "menu/background1.jpg";
+            case 2 -> "menu/background2.jpg";
+            case 3 -> "menu/background3.jpg";
+            case 4 -> "menu/background4.jpg";
+            case 5 -> "menu/background5.jpg";
+            case 6 -> "menu/background6.jpg";
+            default -> "menu/backgroundCustom.jpg";
+        };
         if (Main.DEBUG) {
             mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
             for (NightFactory nightFactory : NightRegistry.getAllNights()){
