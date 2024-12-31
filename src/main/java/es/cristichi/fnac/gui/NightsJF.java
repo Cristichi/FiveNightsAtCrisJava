@@ -39,10 +39,10 @@ public class NightsJF extends JFrame {
     private Settings settings;
 
     /**
-     * Creates a new window for the game.
-     * @param saveFile Save file.
-     * @param settings Settings of the user.
-     * @throws ResourceException If an error occurs when loading a Resource.
+     * Creates a new window for the game, with a Main Menu and a Custom Night Menu.
+     * @param saveFile Save file. This will be modified and saved accordingly when the player completes any Night.
+     * @param settings Player's personalized settings.
+     * @throws ResourceException If an error occurs when loading any resource.
      */
     public NightsJF(NightProgress.SaveFile saveFile, Settings settings) throws ResourceException {
         super();
@@ -116,17 +116,19 @@ public class NightsJF extends JFrame {
 
     /**
      * @param subtitle Subtitle. Something like "Night 1" or "Settings menu", or null for nothing.
-     * @return A String of the form "{@link NightsJF#GAME_TITLE} - <code>subtitle</code>".
+     * @return A String of the form "{@link NightsJF#GAME_TITLE} - <code>subtitle</code>", or just the game title if
+     * there is no subtitle.
      */
     public String getTitleForWindow(@Nullable String subtitle) {
         if (subtitle == null){
-            return String.format("%s", GAME_TITLE);
+            return GAME_TITLE;
         }
         return String.format("%s - %s", GAME_TITLE, subtitle);
     }
 
     /**
-     * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to simply maximize the window.
+     * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to maximize the window without
+     *            Fullscreen.
      */
     public void setFullScreen(boolean set) {
         Rectangle windowBounds = getBounds();
@@ -206,6 +208,11 @@ public class NightsJF extends JFrame {
         return new MenuJC.Info(mmItems, background);
     }
     
+    /**
+     * Starts a Night from its Factory. It makes sure to attach everything needed so that the main menu is handled
+     * when the Night finishes.
+     * @param nightFactory Factory that can create the desired NightJC to play.
+     */
     private void startNightFromFactory(NightFactory nightFactory){
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
@@ -242,7 +249,12 @@ public class NightsJF extends JFrame {
             new ExceptionDialog(e, false, false);
         }
     }
-
+    
+    /**
+     * Starts a Custom Night, making sure that the menu music is handled and the player goes back to the main menu
+     * after dying. I mean after surely completing the Night successfully without incidents.
+     * @param night Custom Night to start.
+     */
     public void startCustomNight(NightJC night) {
         night.addOnNightEnd((completed) -> {
             if (completed){
