@@ -11,12 +11,12 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightMapType;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
 import es.cristichi.fnac.obj.cams.TutorialMap;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
+import es.cristichi.fnac.obj.cnight.CustomNightMapType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

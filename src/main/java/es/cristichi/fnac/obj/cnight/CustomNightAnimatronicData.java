@@ -1,4 +1,4 @@
-package es.cristichi.fnac.obj.anim.cnight;
+package es.cristichi.fnac.obj.cnight;
 
 import java.util.Random;
 

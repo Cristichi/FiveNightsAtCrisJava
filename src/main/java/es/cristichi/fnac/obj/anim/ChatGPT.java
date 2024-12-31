@@ -5,10 +5,10 @@ import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;

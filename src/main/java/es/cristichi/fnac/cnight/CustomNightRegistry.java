@@ -3,8 +3,8 @@ package es.cristichi.fnac.cnight;
 import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.anim.cnight.CustomNightAnimatronicData;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
