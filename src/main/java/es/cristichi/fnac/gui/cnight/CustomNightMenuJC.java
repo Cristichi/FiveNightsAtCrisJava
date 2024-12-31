@@ -17,7 +17,6 @@ import es.cristichi.fnac.obj.anim.cnight.CustomNightMapType;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
 import es.cristichi.fnac.obj.cams.TutorialMap;
-import org.reflections.Reflections;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,51 +32,6 @@ import java.util.*;
 
 
 public class CustomNightMenuJC extends ExitableJComponent {
-    protected static final Map<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> customNightAnimatronicRegistry;
-    static {
-        Set<Class<?>> classes = getClasses("es.cristichi.fnac.obj.anim");
-        customNightAnimatronicRegistry = new HashMap<>(classes.size());
-        for (Class<?> clazz : classes) {
-            if (clazz.isAnnotationPresent(CustomNightAnimatronic.class)
-                    && AnimatronicDrawing.class.isAssignableFrom(clazz)) {
-                try {
-                    @SuppressWarnings("unchecked")
-                    Class<? extends AnimatronicDrawing> animatronicClass = (Class<? extends AnimatronicDrawing>) clazz;
-                    CustomNightAnimatronic annotation = clazz.getAnnotation(CustomNightAnimatronic.class);
-                    customNightAnimatronicRegistry.put(annotation, animatronicClass);
-                } catch (ClassCastException e){
-                    new ExceptionDialog(new CustomNightException(
-                            "Error trying to get the Animatronic class %s with the Annotation."
-                                    .formatted(clazz.getName()), e), true, false);
-                }
-            }
-        }
-    }
-
-    // Create an instance of a specific animatronic
-    protected static AnimatronicDrawing createInstance(CustomNightAnimatronic selected, CustomNightAnimatronicData data) throws Exception {
-        Class<? extends AnimatronicDrawing> animatronicClass = customNightAnimatronicRegistry.get(selected);
-        if (animatronicClass != null) {
-            try {
-                return animatronicClass.getDeclaredConstructor(CustomNightAnimatronicData.class).newInstance(data);
-            }catch (NoSuchMethodException e){
-                new ExceptionDialog(new CustomNightException(("Animatronic %s could not be created because it's missing " +
-                        "a constructor with only CustomNightAnimatronicData.").formatted(animatronicClass.getName()), e),
-                        true, false);
-                return null;
-            }
-        }
-        throw new IllegalArgumentException("No Animatronic found in Registry with the given data: " +
-                selected.name()+" ("+ (selected.variant().isEmpty()?"default":selected.variant())+")");
-    }
-
-    protected static Set<Class<?>> getClasses(String packageName) {
-        Reflections reflections = new Reflections(packageName);
-        return reflections.getTypesAnnotatedWith(CustomNightAnimatronic.class);
-    }
-
-
-    // GUI
     protected static final int COLUMNS = 4;
     protected static BufferedImage backgroundImg;
 
@@ -109,7 +63,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         Random seedRng = new Random();
         seed = seedRng.nextLong();
         rng = new Random(seed);
-        customInputs = new HashMap<>(customNightAnimatronicRegistry.size());
+        customInputs = new HashMap<>();
         customAnimJPs = new LinkedList<>();
 
         onExitListeners = new ArrayList<>(1);
@@ -153,7 +107,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         createSettingButton("Start Custom Night", event -> {
             panelSettings.setVisible(false);
             enabledEditing = false;
-            updateComponents();
+            updateAnimatronicGrid();
             new Thread(() -> {
                 try {
                     nightsJF.startCustomNight(createCustomNight());
@@ -164,14 +118,14 @@ public class CustomNightMenuJC extends ExitableJComponent {
                 }
                 panelSettings.setVisible(true);
                 enabledEditing = true;
-                updateComponents();
+                updateAnimatronicGrid();
             }, "cnight_t").start();
         });
 
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                updateComponents();
+                updateAnimatronicGrid();
             }
         });
     }
@@ -195,7 +149,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         onExitListeners.add(onExitListener);
     }
 
-    protected void updateComponents() {
+    protected void updateAnimatronicGrid() {
         if (resizingInProgress) return;
         resizingInProgress = true;
 
@@ -210,7 +164,8 @@ public class CustomNightMenuJC extends ExitableJComponent {
             viewportPanel.setOpaque(false);
 
             customAnimJPs.clear();
-            for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : customNightAnimatronicRegistry.entrySet()) {
+            for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry
+                    : CustomNightRegistry.getAnimatronics()) {
                 int AI = 0;
                 if (customInputs.containsKey(entry.getValue())){
                     CustomNightAnimatronicData previous = customInputs.get(entry.getValue());
@@ -260,7 +215,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
     }
 
     private NightJC createCustomNight() throws IOException, CustomNightException, NightException {
-        HashMap<String, AnimatronicDrawing> anims = new HashMap<>(customNightAnimatronicRegistry.size());
+        HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
 
         CameraMap nightMap = switch (mapType){
             case TUTORIAL -> new TutorialMap();
@@ -268,7 +223,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         };
 
         boolean ok = false;
-        for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : customNightAnimatronicRegistry.entrySet()) {
+        for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
                 CustomNightAnimatronicData data = customInputs.get(entry.getValue());
             if (data.ai() > 0){
                 ok = true;

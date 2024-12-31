@@ -3,6 +3,7 @@ package es.cristichi.fnac;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.NightsJF;
+import es.cristichi.fnac.gui.cnight.CustomNightRegistry;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
@@ -88,7 +89,7 @@ public class Main {
             SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
             throw error;
         }
-
+        
         // JFrame in correct Thread
         SwingUtilities.invokeLater(() -> {
             try {
@@ -118,6 +119,9 @@ public class Main {
                 new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false);
             }
         });
+        
+        // Custom Night's Animatronic registering
+        CustomNightRegistry.registerPackage("es.cristichi.fnac.obj.anim");
     }
 }
 
