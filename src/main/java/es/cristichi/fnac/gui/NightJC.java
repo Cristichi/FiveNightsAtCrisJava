@@ -256,7 +256,8 @@ public class NightJC extends ExitableJComponent {
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
 				   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException, NightException {
 		super();
-		LOGGER.debug("Loading {}.", nightName);
+		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
+				nightName, fps, secsPerHour, passivePowerUsage*100);
 		this.rng = rng;
 		this.fps = fps;
 		this.nightName = nightName;
