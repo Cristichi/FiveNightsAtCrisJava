@@ -303,7 +303,7 @@ public class NightJC extends ExitableJComponent {
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
 		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath, "nightPassed.wav");
-		ambientSounds = new AmbientSoundSystem((int) (this.fps *7.2),
+		ambientSounds = new AmbientSoundSystem((int) (this.fps *1.15), 0.2f,
 				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/weird1.wav", "weird1.wav")),
 				new AmbientSound(0.3f, true, Resources.loadSound("office/ambient/waterLeak.wav", "waterLeak.wav")),
 				new AmbientSound(0.1f, true, Resources.loadSound("office/ambient/fakeSteps1.wav", "fakeSteps.wav")),
