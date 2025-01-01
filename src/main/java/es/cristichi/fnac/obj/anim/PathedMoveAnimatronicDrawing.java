@@ -65,7 +65,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
     public PathedMoveAnimatronicDrawing(String nameId, double secInterval, double secsToKill,
                                         Map<Integer, Integer> aiDuringNight, int maxAiLevel, boolean cameraStalled,
                                         boolean globalCameraStalled, String camImgPath, Jumpscare jumpscare,
-                                        List<List<String>> camPaths, float fakeMovementSoundChance, Color debugColor,
+                                        List<List<String>> camPaths, Color debugColor,
                                         Random rng) throws ResourceException {
         super(nameId, secInterval, secsToKill, aiDuringNight, maxAiLevel, cameraStalled, globalCameraStalled, camImgPath,
                 jumpscare, debugColor, rng);

@@ -39,15 +39,15 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                             List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
                             List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
                     );
-                }, 0f, data.rng());
+                }, data.rng());
         this.camPos.put("main stage", new Point2D.Float(0.6f, 0f));
     }
 
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,
-                    boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths,
-                    float fakeMovementSoundChance, Random rng) throws ResourceException {
+                    boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths, Random rng)
+            throws ResourceException {
         super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
-                null, camPaths, fakeMovementSoundChance, Color.PINK, rng);
+                null, camPaths, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,

@@ -33,17 +33,16 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                             List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                             List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
                     );
-                },
-                0f, data.rng());
+                }, data.rng());
     }
 
     public Paco(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
-                List<List<String>> camPaths, float fakeMovementSoundChance, Random rng) throws ResourceException {
+                List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 4,
                         JumpscareVisualSetting.CENTERED),
-                camPaths, fakeMovementSoundChance, Color.BLUE, rng);
+                camPaths, Color.BLUE, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav"));
     }
