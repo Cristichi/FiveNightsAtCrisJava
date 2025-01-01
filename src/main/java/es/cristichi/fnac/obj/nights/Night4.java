@@ -33,13 +33,12 @@ public class Night4 implements NightFactory{
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 0f, rng);
+                ), rng);
         
         AnimatronicDrawing crisChoosesPathAndTeleports = new PathCris("Cris", Map.of(0,1, 4,2, 5,4), true, false, List.of(
                 List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
                 List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor")
-        ),
-                0f, rng);
+        ), rng);
         
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);

@@ -13,6 +13,33 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Jumpscare {
+    /**
+     * Default Jumpscare commonly used for when the player runs out of power.
+     */
+    private static Jumpscare powerOutage;
+    
+    /**
+     * @return The default Jumpscare commonly used for when the player runs out of power.
+     * @throws ResourceException If the Jumpscare uses resources that cannot be loaded from the resources.
+     */
+    public static Jumpscare getPowerOutageJumpscare() throws ResourceException {
+        if (powerOutage == null){
+            return setPowerOutageJumpscare(
+                    new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED));
+        }
+        return powerOutage;
+    }
+    
+    /**
+     * Sets a new default Jumpscare that will be used by default.
+     * @param jumpscare New default Jumpscare, already loaded.
+     * @return The same Jumpscare for chaining.
+     */
+    public static Jumpscare setPowerOutageJumpscare(Jumpscare jumpscare){
+        powerOutage = jumpscare;
+        return jumpscare;
+    }
+    
     private final Sound sound;
     private final int soundStartFrame;
     private boolean soundDone;

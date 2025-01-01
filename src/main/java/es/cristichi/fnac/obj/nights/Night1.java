@@ -34,7 +34,7 @@ public class Night1 implements NightFactory {
         
         AnimatronicDrawing paco = new Paco("Paco", Map.of(0, 2, 4, 3), false, true,
                 List.of(List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
-                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")), 0f, rng);
+                        List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")), rng);
         
         CrisRestaurantMap nightMap = new CrisRestaurantMap();
         nightMap.addCamAnimatronics("kitchen", paco);

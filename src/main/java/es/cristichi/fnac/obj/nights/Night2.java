@@ -33,7 +33,7 @@ public class Night2 implements NightFactory{
                 List.of(
                         List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                ), 0f, rng);
+                ), rng);
         
         AnimatronicDrawing crisIsClose = new RoamingCris("Cris", Map.of(0,1, 4,2, 5,3), true, false,
                 List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), 0f, rng);

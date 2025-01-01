@@ -8,7 +8,6 @@ import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.nights.NightFactory;
 import es.cristichi.fnac.obj.nights.NightRegistry;
 import kuusisto.tinysound.TinySound;
@@ -36,7 +35,6 @@ public class NightsJF extends JFrame {
     private final SettingsJC settingsPanel;
     private final JPanel nightPanel;
     private final MenuJC mainMenu;
-    private final Jumpscare powerOutage;
 
     private final NightProgress.SaveFile saveFile;
     private final CardLayout cardLayout;
@@ -69,13 +67,13 @@ public class NightsJF extends JFrame {
 
         MenuJC.Info menuInfo = getUpdatedMenuData();
 
-        powerOutage = new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED);
         mainMenu = new MenuJC(menuInfo.background(), "menu/loading.jpg", menuInfo.menuItems()) {
             @Override
             protected void onMenuItemClick(Item item) throws IOException {
                 switch (item.id()) {
                     case "custom" -> {
-                        CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings, powerOutage, NightsJF.this);
+                        CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings,
+                                Jumpscare.getPowerOutageJumpscare(), NightsJF.this);
                         customNightMenu.addOnExitListener(() -> cardLayout.show(cardPanel, "menu"));
                         cardPanel.add(customNightMenu, "customNightMenu");
                         cardLayout.show(cardPanel, "customNightMenu");
@@ -230,7 +228,7 @@ public class NightsJF extends JFrame {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         try {
-            NightJC night = nightFactory.createNight(settings, powerOutage, rng);
+            NightJC night = nightFactory.createNight(settings, Jumpscare.getPowerOutageJumpscare(), rng);
             night.addOnNightEnd((completed) -> {
                 if (completed) {
                     saveFile.addCompletedNight(night.getNightName());
