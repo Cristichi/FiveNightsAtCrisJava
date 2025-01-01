@@ -205,7 +205,7 @@ public class NightsJF extends JFrame {
         };
         if (Main.DEBUG) {
             mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
-            for (NightFactory nightFactory : NightRegistry.getAllNights()){
+            for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
                 mmItems.add(nightFactory.getItem());
             }
         } else {

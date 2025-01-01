@@ -4,9 +4,10 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This registry registers each Night in the order they must appear. The index of each Night represents the number of
@@ -17,7 +18,7 @@ import java.util.List;
 public class NightRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(NightRegistry.class);
     
-    private static final ArrayList<NightFactory> registry = new ArrayList<>(7);
+    private static final TreeMap<Integer, NightFactory> registry = new TreeMap<>();
     
     /**
      * It registers athe {@link NightFactory} for the Night that is available with the given exact
@@ -31,11 +32,11 @@ public class NightRegistry {
         if (requiredCompletedNights < 0){
             throw new IllegalArgumentException("There cannot be less than 0 completed Nights.");
         }
-        if (requiredCompletedNights < registry.size()){
+        if (registry.containsKey(requiredCompletedNights)){
             LOGGER.debug("Night for {} completed Nights was already set.", requiredCompletedNights);
         } else {
             LOGGER.debug("Night for {} completed Nights has been registered.", requiredCompletedNights);
-            registry.add(requiredCompletedNights, nightFactory);
+            registry.put(requiredCompletedNights, nightFactory);
         }
     }
     
@@ -53,7 +54,7 @@ public class NightRegistry {
     /**
      * @return An ordered, unmodifiable {@link List<NightFactory>} of all Nights registered.
      */
-    public static List<NightFactory> getAllNights(){
-        return Collections.unmodifiableList(registry);
+    public static Map<Integer, NightFactory> getAllNights(){
+        return Collections.unmodifiableMap(registry);
     }
 }
