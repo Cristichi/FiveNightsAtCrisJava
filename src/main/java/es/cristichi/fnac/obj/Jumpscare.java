@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Represents a Jumpscare, which is a combination of a GIF file and a Sound, alongside some parameters.
+ */
 public class Jumpscare {
     /**
      * Default Jumpscare commonly used for when the player runs out of power.
@@ -23,7 +26,7 @@ public class Jumpscare {
      * @throws ResourceException If the Jumpscare uses resources that cannot be loaded from the resources.
      */
     public static Jumpscare getPowerOutageJumpscare() throws ResourceException {
-        if (powerOutage == null){
+        if (powerOutage == null) {
             return setPowerOutageJumpscare(
                     new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED));
         }
@@ -32,10 +35,11 @@ public class Jumpscare {
     
     /**
      * Sets a new default Jumpscare that will be used by default.
+     *
      * @param jumpscare New default Jumpscare, already loaded.
      * @return The same Jumpscare for chaining.
      */
-    public static Jumpscare setPowerOutageJumpscare(Jumpscare jumpscare){
+    public static Jumpscare setPowerOutageJumpscare(Jumpscare jumpscare) {
         powerOutage = jumpscare;
         return jumpscare;
     }
@@ -49,22 +53,35 @@ public class Jumpscare {
     private final JumpscareVisualSetting jumpscareVisual;
     private int currentFrame;
     private int currentFrameStartTick;
-
+    
     private final LinkedList<Runnable> onFinish;
     private Boolean soundFinished;
-
-    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame, JumpscareVisualSetting jumpscareVisual) throws ResourceException {
+    
+    /**
+     * Creates a new {@link Jumpscare} with the given data. This loads the resources specified.
+     *
+     * @param filepath        Path in resources where the GIF file is.
+     * @param camsDownFrame   Index of the frame of the GIF which will force the player to put cams down if they are up.
+     *                        In case of doubt, put 0 so the first frame will force cams down for immersion.
+     * @param sound           Sound to play during this Jumpscare.
+     * @param soundStartFrame Index of the frame of the GIF which will start playing the sound. Use for dramatic effect!
+     * @param jumpscareVisual Different ways the Night knows how to draw the GIF on the screen. In case of doubt just
+     *                        use {@link JumpscareVisualSetting#STRETCHED}.
+     * @throws ResourceException If any of the specified resources do not exist.
+     */
+    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame,
+                     JumpscareVisualSetting jumpscareVisual) throws ResourceException {
         this.frames = Resources.loadGif(filepath);
         this.cacheFrames = new HashMap<>(frames.size());
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
         this.jumpscareVisual = jumpscareVisual;
-
+        
         this.currentFrame = 0;
         this.currentFrameStartTick = 0;
         this.onFinish = new LinkedList<>();
-
+        
         if (sound == null) {
             soundFinished = null;
             soundDone = true;
@@ -82,61 +99,91 @@ public class Jumpscare {
                 }
             });
         }
-
+        
         // Preloading the stuff so they are in the cache
-        for (int i = 0; i <= this.frames.size(); i++){
+        for (int i = 0; i <= this.frames.size(); i++) {
             int finalI = i;
-            new Thread(() -> getCombinedFrames(finalI), "preload-"+filepath+">"+i).start();
+            new Thread(() -> getCombinedFrames(finalI), "preload-" + filepath + ">" + i).start();
         }
     }
-
-    public void reset() {
-        this.currentFrame = 0;
-        this.currentFrameStartTick = 0;
+    
+    /**
+     * Adds a {@link Runnable} to run when the Jumpscare is done, like finishing a Night.
+     * @param onFinished Code to run when this Jumpscare finishes.
+     */
+    public void addOnFinishedListener(Runnable onFinished) {
+        this.onFinish.add(onFinished);
     }
-
-    public JumpscareVisualSetting getVisualSetting(){
+    
+    /**
+     * @return The preferred way to draw this Jumpscare's GIF on the screen.
+     */
+    public JumpscareVisualSetting getVisualSetting() {
         return jumpscareVisual;
     }
-
-    public List<GifFrame> getCurrentFrame() {
+    
+    private List<GifFrame> getCurrentFrame() {
         return getCombinedFrames(currentFrame);
     }
-
-    public List<GifFrame> getSetFrameDEBUG(int frame) {
-        return getCombinedFrames(frame);
+    
+    /**
+     * @return The full width of the GIF. For reasons, I'm supposing the last frame is full-sized.
+     */
+    public int getFullWidth() {
+        return frames.get(frames.size() - 1).image().getWidth();
     }
-
-    public int getFullWidth(){
-        return frames.get(frames.size()-1).image().getWidth();
+    
+    /**
+     * @return The full height of the GIF. For reasons, I'm supposing the last frame is full-sized.
+     */
+    public int getFullHeight() {
+        return frames.get(frames.size() - 1).image().getHeight();
     }
-
-    public int getFullHeight(){
-        return frames.get(frames.size()-1).image().getHeight();
-    }
-
+    
+    /**
+     * @return <code>true</code> if this Jumpscare's last frame has already passed (with its delay included).
+     */
     public boolean isFramesFinished() {
         return currentFrame == frames.size();
     }
-
+    
+    /**
+     * @param markAsPlayed Whether or not to mark this Sound as played.
+     * @return The Sound that this Jumpscare wants played during it.
+     */
     public Sound getSound(boolean markAsPlayed) {
         soundDone = markAsPlayed;
         return sound;
     }
-
+    
+    /**
+     * @return <code>true</code> if this is the exact frame when the Sound should be played and that Sound has not
+     * been played for this Jumpscare previously.
+     */
     public boolean isFrameToPlaySound() {
-        if (soundDone){
+        if (soundDone) {
             return false;
         }
         return currentFrame == soundStartFrame;
     }
-
+    
+    /**
+     * @return <code>true</code> if the player should not be watching Cameras during this frame of the Jumpscare.
+     */
     public boolean shouldCamsBeDown() {
         return currentFrame >= camsDownFrame;
     }
-
+    
+    /**
+     * This method updates the current state of the Jumpscare, such as whether cams should be down or the Sound
+     * should be played, then gets the information to draw on the screen.
+     * @param tick This Night's current in-game tick.
+     * @param fps This Night's current FPS, used to convert seconds to in-game ticks.
+     * @return Ordered {@link List<GifFrame>} of images that must be printed on the screen, one on
+     *      * top of the previous on the List that must be printed on this tick of the Night.
+     */
     public List<GifFrame> updateAndGetFrame(int tick, int fps) {
-        GifFrame frame = frames.get(currentFrame>=frames.size()?frames.size()-1:currentFrame);
+        GifFrame frame = frames.get(currentFrame >= frames.size() ? frames.size() - 1 : currentFrame);
         if (currentFrameStartTick == 0) {
             currentFrameStartTick = tick;
         } else if (tick >= currentFrameStartTick + frame.delaySecs() * fps) {
@@ -149,44 +196,41 @@ public class Jumpscare {
                 onFinish.clear();
             }
         }
-
+        
         return getCombinedFrames(currentFrame);
     }
-
+    
     /**
      * @param frameIndex Current frame.
      * @return Current frame (or the last one if frameIndex is out of the upper bound) plus any frames that should be
-     * visible according to the frame's disposal methods.
+     * visible according to the frames' disposal method.
      */
     private List<GifFrame> getCombinedFrames(int frameIndex) {
         if (frameIndex >= frames.size()) {
             frameIndex = frames.size() - 1; // Clamp to the last frame
         }
-
-        if (cacheFrames.containsKey(frameIndex)){
+        
+        if (cacheFrames.containsKey(frameIndex)) {
             return cacheFrames.get(frameIndex);
         }
-
+        
         List<GifFrame> visibleFrames = new ArrayList<>();
         boolean resetVisibility = false;
-
+        
         for (int i = 0; i < frameIndex; i++) {
             GifFrame frame = frames.get(i);
-
+            
             // Disposal methods
             switch (frame.disposalMethod()) {
                 case RESTORE_TO_BACKGROUND_COLOR -> visibleFrames.clear();
                 case UNSPECIFIED, DO_NOT_DISPOSE -> visibleFrames.add(frame);
-                default -> throw new IllegalStateException("Unexpected or unsupported disposal method: " + frame.disposalMethod());
+                default -> throw new IllegalStateException(
+                        "Unexpected or unsupported disposal method: " + frame.disposalMethod());
             }
         }
         visibleFrames.add(frames.get(frameIndex));
-
+        
         cacheFrames.put(frameIndex, visibleFrames);
         return visibleFrames;
-    }
-
-    public void addOnFinishedListener(Runnable onFinished) {
-        this.onFinish.add(onFinished);
     }
 }

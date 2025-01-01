@@ -520,7 +520,6 @@ public class NightJC extends ExitableJComponent {
 							}
 							if (animTickInfo.jumpscare() != null){
 								jumpscare = animTickInfo.jumpscare();
-								jumpscare.reset();
 								jumpscare.addOnFinishedListener(() -> {
 									for(NightEndedListener onCompleted : onNightEndListeners){
 										onCompleted.run(false);
