@@ -31,7 +31,7 @@ import java.util.Arrays;
 /**
  * The ByteList class is a dynamically sized array of primitive bytes.  This
  * allows the use of a dynamically sized array without the extra overhead that
- * comes with List\<Byte\>.  ByteList is an internal class of the TinySound
+ * comes with List&lt;Byte&gt;.  ByteList is an internal class of the TinySound
  * system and should be of no real concern to the average user of TinySound.
  * 
  * @author Finn Kuusisto

@@ -28,13 +28,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Main implements Runnable {
+/**
+ * Entry point for the main unmodified game. This can be created more than once, which will result in several instances
+ * of the game, but please avoid doing so since some windows "exit" the runtime VM which will destroy all windows.
+ */
+public class FnacMain implements Runnable {
     public static final boolean DEBUG = false;
 
     public static void main(String[] args) {
-        new Main().run();
+        new FnacMain().run();
     }
     
+    /**
+     * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
+     * method you may also want to register your custom {@link es.cristichi.fnac.obj.anim.AnimatronicDrawing} classes
+     * for the Custom Night by adding the {@link es.cristichi.fnac.obj.cnight.CustomNightAnimatronic} annotation and
+     * making a constructor that requests {@link es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData}.
+     */
     @Override
     public void run() {
         // Hardware acceleration op

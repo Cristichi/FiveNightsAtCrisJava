@@ -241,6 +241,8 @@ public abstract class AnimatronicDrawing {
      * @return The name of the Camera it has to move to. The Night will be in charge of
      * trying to move the Animatronic to the indicated Camera, connected or not. If movement
      * must be cancelled at this step, just return null.
+     * @throws AnimatronicException If the Animatronic's logic cannot determine the movement. In this case the movement
+     * should be canceled without errors to the player.
      */
     public abstract MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng)
             throws AnimatronicException;
@@ -308,7 +310,7 @@ public abstract class AnimatronicDrawing {
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
      *
-     * @param move  <true>true</true> if this Animatronic should move on this Movement Opportunity.
+     * @param move  <code>true</code> if this Animatronic should move on this Movement Opportunity.
      * @param sound Sound to play because of this movement on the origin Camera, <code>null</code> if no Sound
      *              should play. WARNING regular movement Sounds are implemented on the method
      *              {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}, playing

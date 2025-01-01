@@ -1,6 +1,6 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.Main;
+import es.cristichi.fnac.FnacMain;
 import es.cristichi.fnac.cnight.CustomNightMenuJC;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
@@ -201,7 +201,7 @@ public class NightsJF extends JFrame {
             case 6 -> "menu/background6.jpg";
             default -> "menu/backgroundCustom.jpg";
         };
-        if (Main.DEBUG) {
+        if (FnacMain.DEBUG) {
             mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
             for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
                 mmItems.add(nightFactory.getItem());

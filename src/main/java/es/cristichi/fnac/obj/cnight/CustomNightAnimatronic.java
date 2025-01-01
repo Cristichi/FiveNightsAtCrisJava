@@ -15,16 +15,20 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomNightAnimatronic {
+    /** @return Name of the AnimatronicDrawing. */
     String name();
+    /** @return Variant of the AnimatronicDrawing. This is to differenciate two Animatronics with the same name
+     * but different behaviours. Also for simple clones so their name doesn't match the original or other clones. */
     String variant() default "";
+    /** @return Max AI the player should be allowed to configure for this AnimatronicDrawing. */
     int maxAi() default AnimatronicDrawing.GENERIC_MAX_AI;
     String portraitPath();
-    /** Name of the Tutorial's Camera where this Animatronic starts in Custom Nights. */
+    /** @return Name of the Tutorial's Camera where this Animatronic starts in Custom Nights. */
     String tutStart() default "cam1";
-    /** Name of the Restaurant's Camera where this Animatronic starts in Custom Nights. */
+    /** @return Name of the Restaurant's Camera where this Animatronic starts in Custom Nights. */
     String restStart() default "dining area";
-    /** Description of how this Animatronic behaves at the Tutorial. */
+    /** @return Description of how this Animatronic behaves at the Tutorial. */
     String restDesc();
-    /** Description of how this Animatronic behaves at the Restaurant. */
+    /** @return Description of how this Animatronic behaves at the Restaurant. */
     String tutDesc();
 }

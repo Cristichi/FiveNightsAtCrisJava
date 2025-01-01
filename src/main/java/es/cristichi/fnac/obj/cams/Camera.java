@@ -168,6 +168,7 @@ public class Camera {
      *
      * @param animatronicDrawing Animatronic that is on this Camera and has to move.
      * @param dest               Camera to move to.
+     * @throws AnimatronicException If the Animatronic does not exist in this origin Camera.
      */
     public void move(AnimatronicDrawing animatronicDrawing, Camera dest) throws AnimatronicException {
         if (animatronicsHere.remove(animatronicDrawing)) {
