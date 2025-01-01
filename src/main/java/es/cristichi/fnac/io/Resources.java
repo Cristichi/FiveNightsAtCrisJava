@@ -26,7 +26,9 @@ public class Resources {
     public static InputStream loadInputStream(String path) throws ResourceException {
         InputStream in = Resources.class.getClassLoader().getResourceAsStream(path);
         if (in == null) {
-            throw new ResourceException("Resource not found at \"" + path + "\". Probably Cristichi forgot to add it.");
+            throw new ResourceException(
+                    "Resource not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(path));
         }
         return in;
     }
@@ -44,7 +46,9 @@ public class Resources {
             loadedImgs.put(path, img);
             return img;
         } catch (IOException | NullPointerException e) {
-            throw new ResourceException("Image not found at \"" + path + "\". Probably Cristichi forgot to add it.", e);
+            throw new ResourceException(
+                    "Resource not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(path), e);
         }
     }
 
@@ -136,7 +140,7 @@ public class Resources {
             reader.dispose();
             return new GifAnimation(frames);
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
-            throw new ResourceException("Error when reading \"" + resourcePath + "\".", e);
+            throw new ResourceException("Error when reading \"" + resourcePath + "\". Perhaps its missing.", e);
         }
     }
 
@@ -153,7 +157,9 @@ public class Resources {
 
             return TinySound.loadMusic(tempFile.toFile(), false);
         } catch (IOException | NullPointerException notFoundE) {
-            throw new ResourceException("Audio resource not found at \"" + path + "\". Probably Cristichi forgot to add it.", notFoundE);
+            throw new ResourceException(
+                    "Music file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(path), notFoundE);
         } catch (Exception e){
             throw new ResourceException("Error when trying to load audio at \"" + path + "\".", e);
         }
@@ -171,7 +177,9 @@ public class Resources {
 
             return TinySound.loadSound(tempFile.toFile());
         } catch (IOException | NullPointerException notFoundE) {
-            throw new ResourceException("Audio resource not found at \"" + path + "\". Probably Cristichi forgot to add it.", notFoundE);
+            throw new ResourceException(
+                    "Sound file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(path), notFoundE);
         } catch (Exception e){
             throw new ResourceException("Error when trying to load audio at \"" + path + "\".", e);
         }
@@ -179,11 +187,16 @@ public class Resources {
 
     public static Font loadCustomFont(String path) throws ResourceException {
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(path)) {
-            if (in == null){
+            if (in == null) {
                 throw new NullPointerException("Resource not found.");
             }
             return Font.createFont(Font.TRUETYPE_FONT, in);
-        } catch (IOException | FontFormatException | NullPointerException e) {
+            
+        } catch (NullPointerException notFoundE) {
+            throw new ResourceException(
+                    "Font file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(path), notFoundE);
+        } catch (IOException | FontFormatException e) {
             throw new ResourceException("Error when trying to load Font "+path, e);
         }
     }
