@@ -239,7 +239,7 @@ public class NightsJF extends JFrame {
                         mainMenu.updateMenuItems(menuInfo.menuItems());
                     } catch (IOException e) {
                         new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e),
-                                true, false);
+                                true, false, LOGGER);
                     }
                 }
                 cardLayout.show(cardPanel, "menu");
@@ -255,9 +255,9 @@ public class NightsJF extends JFrame {
             mainMenu.stopMusic();
             night.startNight();
         } catch (IOException e) {
-            new ExceptionDialog(new NightException("Error creating Night.", e), false, false);
+            new ExceptionDialog(new NightException("Error creating Night.", e), false, false, LOGGER);
         } catch (NightException e) {
-            new ExceptionDialog(e, false, false);
+            new ExceptionDialog(e, false, false, LOGGER);
         }
     }
     
@@ -276,7 +276,8 @@ public class NightsJF extends JFrame {
                     mainMenu.updateBackground(Resources.loadImageResource(menuInfo.background()));
                     mainMenu.updateMenuItems(menuInfo.menuItems());
                 } catch (IOException e) {
-                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e), true, false);
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e), true, false,
+                            LOGGER);
                 }
             }
             cardLayout.show(cardPanel, "menu");

@@ -4,12 +4,10 @@ import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -59,15 +57,23 @@ public class CustomNightRegistry {
                     CustomNightAnimatronic annotation = clazz.getAnnotation(CustomNightAnimatronic.class);
                     animatronicRegistry.put(annotation, animatronicClass);
                     count++;
-                } catch (ClassCastException e){
-                    new ExceptionDialog(new CustomNightException(
-                            "Error trying to get the Animatronic class %s with the annotation."
-                                    .formatted(clazz.getName()), e), true, false);
+                } catch (Exception e){
+                    new ExceptionDialog(new CustomNightException("Oops! Error trying to create the Animatronic.", e),
+                            false, true, null);
+                    LOGGER.error("Class {} has an issue with the @CustomNightAnimatronic annotation.",
+                            clazz.getName(), e);
                 }
             }
         }
         LOGGER.debug("Package \"%s\" registered with \"%d\" found AnimatronicDrawings.".formatted(packageName,  count));
         packageNames.add(packageName);
+    }
+    
+    /**
+     * @return Amount of registered {@link AnimatronicDrawing} classes.
+     */
+    public static int size() {
+        return animatronicRegistry.size();
     }
 
     /**
@@ -76,27 +82,5 @@ public class CustomNightRegistry {
      */
     public static synchronized Collection<Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>>> getAnimatronics() {
         return Collections.unmodifiableCollection(animatronicRegistry.entrySet());
-    }
-    
-    // Create an instance of a specific animatronic
-    protected static AnimatronicDrawing createInstance(CustomNightAnimatronic selected, CustomNightAnimatronicData data)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class<? extends AnimatronicDrawing> animatronicClass = animatronicRegistry.get(selected);
-        if (animatronicClass != null) {
-            try {
-                return animatronicClass.getDeclaredConstructor(CustomNightAnimatronicData.class).newInstance(data);
-            }catch (NoSuchMethodException e){
-                new ExceptionDialog(new CustomNightException(("AnimatronicDrawing %s could not be created because it's " +
-                        "missing a constructor with only CustomNightAnimatronicData.").formatted(animatronicClass.getName()), e),
-                        true, false);
-                return null;
-            }
-        }
-        throw new IllegalArgumentException("No AnimatronicDrawing was found in Registry with the given data: %s (%s)"
-                        .formatted(selected.name(), selected.variant().isEmpty() ? "default" : selected.variant()));
-    }
-    
-    public static int size() {
-        return animatronicRegistry.size();
     }
 }

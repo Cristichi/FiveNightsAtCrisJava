@@ -1,6 +1,8 @@
 package es.cristichi.fnac.io;
 
 import es.cristichi.fnac.gui.ExceptionDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -12,6 +14,8 @@ import java.util.Map;
 public class Settings {
     private static String pathToFnacFolder;
     private static Yaml yaml;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
+    
     public static void init(){
 
         pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
@@ -129,7 +133,7 @@ public class Settings {
             ));
             yaml.dump(config, writer);
         } catch (IOException e) {
-            new ExceptionDialog(new IOException("Settings save filePath could not be saved.", e), false, false);
+            new ExceptionDialog(new IOException("Settings save filePath could not be saved.", e), false, false, LOGGER);
         }
     }
 }

@@ -16,6 +16,8 @@ import es.cristichi.fnac.obj.anim.RoamingMaria;
 import es.cristichi.fnac.obj.cams.TutorialMap;
 import es.cristichi.fnac.obj.nights.*;
 import kuusisto.tinysound.TinySound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,7 @@ import java.util.Random;
  * of the game, but please avoid doing so since some windows "exit" the runtime VM which will destroy all windows.
  */
 public class FnacMain implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FnacMain.class);
     public static final boolean DEBUG = false;
 
     public static void main(String[] args) {
@@ -65,13 +68,12 @@ public class FnacMain implements Runnable {
                 }
             }
             if (!fontIsLoaded) {
-                throw new ResourceException(
-                        "EraserDust Font, which this game uses everywhere, is not installed and could not be " +
-                                "registered.");
+                throw new ResourceException("EraserDust Font, which this game uses everywhere, is not installed " +
+                        "and could not be registered.");
             }
         } catch (ResourceException e) {
-            new ExceptionDialog(e, true, true);
-            throw new RuntimeException(e);
+            new ExceptionDialog(e, true, true, LOGGER);
+            return;
         }
         
         // Save file
@@ -98,7 +100,7 @@ public class FnacMain implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 RuntimeException error = new RuntimeException("Failed to load save file: " + e.getMessage(), e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
+                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
                 throw error;
             }
         }
@@ -113,8 +115,8 @@ public class FnacMain implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
-            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true));
-            throw error;
+            SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
+            return;
         }
         
         // Nights
@@ -162,8 +164,8 @@ public class FnacMain implements Runnable {
                             window.setFullScreen(settings.isFullscreen());
                             settings.saveToFile(Settings.SETTINGS_FILE);
                         } catch (Exception error) {
+                            new ExceptionDialog(error, true, false, LOGGER);
                             window.dispose();
-                            new ExceptionDialog(error, true, false);
                         }
                     }
                 };
@@ -174,7 +176,8 @@ public class FnacMain implements Runnable {
                 window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
             } catch (Exception e) {
-                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false);
+                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
+                        LOGGER);
             }
         });
         

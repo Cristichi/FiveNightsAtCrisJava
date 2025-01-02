@@ -118,9 +118,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     nightsJF.startCustomNight(night);
                     LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
                 } catch (IOException e) {
-                    new ExceptionDialog(e, false, false);
+                    new ExceptionDialog(e, false, false, LOGGER);
                 } catch (CustomNightException | NightException e) {
-                    new ExceptionDialog(e, false, true);
+                    new ExceptionDialog(e, false, true, LOGGER);
                 }
                 panelSettings.setVisible(true);
                 enabledEditing = true;
@@ -196,7 +196,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     customAnimJPs.add(animComponent);
                 } catch (ResourceException e) {
                     new ExceptionDialog(new CustomNightException("Error trying to create panel for %s (%s). Skipping it."
-                            .formatted(entry.getKey().name(), entry.getKey().variant()), e), false, false);
+                            .formatted(entry.getKey().name(), entry.getKey().variant()), e), false, false, LOGGER);
                 }
             }
 
@@ -243,13 +243,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
                             case RESTAURANT-> entry.getKey().restStart();
                         }).getAnimatronicsHere().add(anim);
                 } catch (InvocationTargetException e){
-                    CustomNightException ex = new CustomNightException("Error trying to create the Animatronic.", e);
-                    new ExceptionDialog(ex, false, false);
-                    throw ex;
+                    throw new CustomNightException("Error trying to create the Animatronic.", e);
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e){
-                    CustomNightException ex = new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
-                    new ExceptionDialog(ex, false, false);
-                    throw ex;
+                    throw new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
                 }
             }
         }
