@@ -31,7 +31,7 @@ public class NightJC extends ExitableJComponent {
 	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
 	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
 	 * runs if you are bad at the game like me. */
-	public static final boolean DEBUG_MODE = false;
+	public static boolean DEBUG_MODE = false;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NightJC.class);
 
@@ -60,7 +60,10 @@ public class NightJC extends ExitableJComponent {
 	private final float powerPerTickPerResource;
 	/** Jumpscare to play when the Player runs out of Power. */
 	private final Jumpscare powerOutageJumpscare;
-
+	
+	/**
+	 * An {@link AmbientSoundSystem} object that checks for the ambient Sounds to play during the Night at times.
+	 */
 	private final AmbientSoundSystem ambientSounds;
 
     /**
