@@ -42,6 +42,9 @@ public class NightJC extends ExitableJComponent {
 
 	/** Night identifier, used to save the Night after completion and also for the window title. */
 	private final String nightName;
+	/** It keeps track of whether this Night was already started when starting it, to throw an error and
+	 * avoid issues. */
+	private boolean nightStarted = false;
 	/** RNG for the Night. All randomness must use this object exclusively. */
 	private final Random rng;
 	/**
@@ -219,16 +222,23 @@ public class NightJC extends ExitableJComponent {
 	private Jumpscare jumpscare;
 	/** For controlling how load Jumpscares are. */
 	private static final float JUMPSCARE_SOUND_MODIFIER = 1.5f;
-
-
+	
+	/** Volume for both the Sound when opening/closing cams and the static Sound while watching cams. */
 	private final double camSoundsVolume = 0.3;
+	/** Sound to play when cams are opened. */
 	private final Sound openedCamsSound;
+	/** Static Sound that repeats while watching cams. */
 	private final Sound backgroundCamsSound;
+	/** Sound to play when cams are closed. */
 	private final Sound closeCamsSound;
+	/** Sound to play when another camera is closed while watching cams. */
 	private final Sound clickCamSound;
-
+	
+	/** Volume of the door Sounds when opening and closing. */
 	private final double doorsSoundsVolume = 0.8;
+	/** Sound to play when a door are opened. */
 	private final Sound openDoorSound;
+	/** Sound to play when a door are closed. */
 	private final Sound closeDoorSound;
 
 	/**
@@ -437,7 +447,12 @@ public class NightJC extends ExitableJComponent {
 	 * Make the Night start. It should never be called twice, even after a Night is finished.
 	 */
 	public void startNight(){
+		if (nightStarted){
+			LOGGER.error("Nights should never be started twice.");
+			return;
+		}
 		LOGGER.debug("Started {}.", nightName);
+		nightStarted = true;
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
