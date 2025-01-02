@@ -13,10 +13,6 @@ import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
-import es.cristichi.fnac.obj.cams.TutorialMap;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
-import es.cristichi.fnac.obj.cnight.CustomNightMapType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +28,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
 
-
+/**
+ * JComponent of the Menu that allows players to customize their own Night.
+ */
 public class CustomNightMenuJC extends ExitableJComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightMenuJC.class);
     
@@ -52,11 +50,16 @@ public class CustomNightMenuJC extends ExitableJComponent {
     protected HashMap<Class<? extends AnimatronicDrawing>, CustomNightAnimatronicData> customInputs;
     protected LinkedList<CustomAnimJP> customAnimJPs;
 
-    protected CustomNightMapType mapType;
-
     protected JScrollPane scrollPaneAnims;
     protected JPanel panelSettings;
-
+    
+    /**
+     * Creates a new CustomNightMenuJC.
+     * @param settings User Settings, used to create the Custom Night.
+     * @param powerOutage Jumpscare that the generated Custom {@link NightJC} will use for the power outage.
+     * @param nightsJF Main frame, used to start the custom Night and handling the menu music.
+     * @throws ResourceException If any images or sounds could not load from disk.
+     */
     public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightsJF nightsJF) throws ResourceException {
         super();
         if (backgroundImg == null){
@@ -71,8 +74,6 @@ public class CustomNightMenuJC extends ExitableJComponent {
         customAnimJPs = new LinkedList<>();
 
         onExitListeners = new ArrayList<>(1);
-
-        mapType = CustomNightMapType.RESTAURANT;
 
         setLayout(new BorderLayout());
         setFont(new Font("Eraser", Font.PLAIN, 50));
@@ -178,7 +179,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     AI = previous.ai();
                 }
                 CustomNightAnimatronicData data =
-                        new CustomNightAnimatronicData(null, entry.getKey().name(), entry.getKey().variant(), AI, rng);
+                        new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(), AI, rng);
                 customInputs.put(entry.getValue(), data);
 
                 try {
@@ -186,7 +187,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                         @Override
                         public void onAiChanged(int ai) {
                             customInputs.computeIfPresent(entry.getValue(),
-                                    (k, cNightData) -> new CustomNightAnimatronicData(mapType, cNightData.name(),
+                                    (k, cNightData) -> new CustomNightAnimatronicData(cNightData.name(),
                                             cNightData.variant(), ai, cNightData.rng()));
                         }
                     };
@@ -223,10 +224,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
     private NightJC createCustomNight() throws IOException, CustomNightException, NightException {
         HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
 
-        CameraMap nightMap = switch (mapType){
-            case TUTORIAL -> new TutorialMap();
-            case RESTAURANT -> new CrisRestaurantMap();
-        };
+        CameraMap nightMap = new CrisRestaurantMap();
 
         boolean ok = false;
         for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
@@ -235,13 +233,10 @@ public class CustomNightMenuJC extends ExitableJComponent {
                 ok = true;
                 try{
                     AnimatronicDrawing anim = entry.getValue().getConstructor(CustomNightAnimatronicData.class).newInstance(
-                            new CustomNightAnimatronicData(mapType, entry.getKey().name(), entry.getKey().variant(),
+                            new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(),
                                     data.ai(), rng));
 
-                    nightMap.get(switch (mapType){
-                            case TUTORIAL -> entry.getKey().tutStart();
-                            case RESTAURANT-> entry.getKey().restStart();
-                        }).getAnimatronicsHere().add(anim);
+                    nightMap.get(entry.getKey().description()).getAnimatronicsHere().add(anim);
                 } catch (InvocationTargetException e){
                     throw new CustomNightException("Error trying to create the Animatronic.", e);
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e){

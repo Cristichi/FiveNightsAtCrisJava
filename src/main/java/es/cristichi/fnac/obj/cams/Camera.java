@@ -109,46 +109,81 @@ public class Camera {
         this.invisible = invisible;
     }
     
+    /**
+     * @return Name of the Camera. It should be treated as unique for each instance.
+     */
     public String getNameId() {
         return nameId;
     }
     
+    /**
+     * @return Image that shows "what the Camera is seeing" (but without Animatronics or any additional images added
+     * by {@link es.cristichi.fnac.gui.NightJC}).
+     */
     public BufferedImage getCamBackground() {
         return camBackground;
     }
     
+    /**
+     * @return Rectangle relative to the source image of the minimap where this Camera has the button to switch
+     * to this one.
+     */
     public Rectangle getMapLoc() {
         return onMapLoc;
     }
     
+    /**
+     * @return Names of the Cameras that this Camera is "physically" connected to (by a door/entrance).
+     */
     public LinkedList<String> getConnections() {
         return new LinkedList<>(connections);
     }
     
+    /**
+     * @return {@code true} if this door is connected to the Office (which is not a Camera itself) by the left door.
+     */
     public boolean isLeftDoor() {
         return isLeftDoorOfOffice;
     }
     
+    /**
+     * @return {@code true} if this door is connected to the Office (which is not a Camera itself) by the right door.
+     */
     public boolean isRightDoor() {
         return isRightDoorOfOffice;
     }
     
+    /**
+     * @return List of all {@link AnimatronicDrawing} instances that are at this Camera at the moment.
+     */
     public LinkedList<AnimatronicDrawing> getAnimatronicsHere() {
         return animatronicsHere;
     }
     
+    /**
+     * @return {@code true} if this Camera should be clickable but show nothing.
+     */
     public boolean isBroken() {
         return broken;
     }
     
+    /**
+     * @param broken {@code true} if this Camera should be clickable but show nothing.
+     */
     public void setBroken(boolean broken) {
         this.broken = broken;
     }
     
+    /**
+     * @return {@code true} if this Camera should not be visible at all, even in the minimap.
+     */
     public boolean isInvisible() {
         return invisible;
     }
     
+    /**
+     * @param invisible {@code true} if this Camera should not be visible at all, even in the minimap.
+     */
     public void setInvisible(boolean invisible) {
         if (!invisible) {
             if (camBackground == null) {
@@ -179,6 +214,10 @@ public class Camera {
         }
     }
     
+    /**
+     * Plays the given Sound at this Camera, meaning that the volume and pan are taken from this Camera.
+     * @param sound Sound to play here.
+     */
     public void playSoundHere(Sound sound) {
         sound.play(soundVolume, soundPan);
     }

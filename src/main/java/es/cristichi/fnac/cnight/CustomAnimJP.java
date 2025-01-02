@@ -3,7 +3,6 @@ package es.cristichi.fnac.cnight;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,15 +12,30 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * JPanel that contains everything needed to show the information about one {@link AnimatronicDrawing}, as well as
+ * allow the player to change its AI.
+ */
 public abstract class CustomAnimJP extends JPanel {
-    public static Dimension SIZE = new Dimension(150, 175);
+    /**
+     * Size all instances of {@link CustomAnimJP} should have on the screen normally.
+     */
+    public static final Dimension SIZE = new Dimension(150, 175);
     private static final Border border = new LineBorder(Color.BLACK, 1);
 
     private final JLabel aiInputLbl;
 
     protected BufferedImage portraitBackgroundImg;
     protected BufferedImage portraitImg;
-
+    
+    /**
+     * Creates a new CustomAnimJP.
+     * @param font Font to use. The size will be overwritten.
+     * @param annotationInfo Annotation that the class of this Animatronic has.
+     * @param classInfo Class of this Animatronic.
+     * @param AI Initial AI level that this panel must show.
+     * @throws ResourceException If any images or sounds cannot be read from disk.
+     */
     public CustomAnimJP(Font font, CustomNightAnimatronic annotationInfo, Class<? extends AnimatronicDrawing> classInfo,
                         int AI) throws ResourceException {
         super();
@@ -36,7 +50,7 @@ public abstract class CustomAnimJP extends JPanel {
         setForeground(Color.YELLOW);
         setBorder(border);
 
-        setToolTipText("<html>"+annotationInfo.restDesc()+"</html>");
+        setToolTipText("<html>"+annotationInfo.description()+"</html>");
 
         setLayout(new BorderLayout());
         JLabel nameLbl = new JLabel("<html>" +
@@ -109,12 +123,20 @@ public abstract class CustomAnimJP extends JPanel {
         tt.setPreferredSize(new Dimension(tooltipWidth, tooltipHeight));
         return tt;
     }
-
+    
+    /**
+     * Changes AI and calls {@link #onAiChanged(int)}.
+     * @param ai New AI to set.
+     */
     public void setAi(int ai) {
         aiInputLbl.setText(Integer.toString(ai));
         onAiChanged(ai);
     }
-
+    
+    /**
+     * Method to be called when the AI changes by user input or {@link #setAi(int)}
+     * @param ai New AI.
+     */
     public abstract void onAiChanged(int ai);
 
     @Override

@@ -29,7 +29,8 @@ public class AmbientSoundSystem extends ArrayList<AmbientSound> {
      * Creates a new System that manages the list of Sounds and checks when one should be played.
      * @param tickInterval Interval between checks. It should keep in mind the FPS for the Night so that different
      *                     FPSs do not result in different real-time intervals.
-     * @param sounds List of ambient Sounds.
+     * @param chancePerOpp Float in the range [0,1] with the probability of each interval triggering an ambient Sound.
+     * @param sounds       List of ambient Sounds.
      */
     public AmbientSoundSystem(int tickInterval, float chancePerOpp, AmbientSound... sounds){
         super(List.of(sounds));

@@ -1,5 +1,7 @@
 package es.cristichi.fnac.obj.anim;
 
+import es.cristichi.fnac.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
@@ -7,8 +9,6 @@ import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -16,12 +16,15 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 
+/**
+ * Fun AnimatronicDrawing that ChatGPT designed (based on my questions on how it should behave). The bot had a lot of
+ * impossible additions like making the Animatronic change your controls and such. Maybe in the future, but for now
+ * they simply choose alternatively between moving towards the Office and moving randomly.
+ */
 @CustomNightAnimatronic(name = "ChatGPT", portraitPath = "anims/chatgpt/portrait.png",
-        restStart = "storage", tutStart = "cam2",
-        restDesc = "ChatGPT starts at the Storage, and decides alternatively whether they want to move randomly or " +
-                "using a chosen path to either your left or right door.",
-        tutDesc = "ChatGPT starts at cam2, and decides alternatively whether they want to move randomly or " +
-                "using a chosen path to either your left or right door."
+        starts = {"storage", "cam2"},
+        description = "ChatGPT starts at the Storage or cam2, and decides alternatively whether they want to" +
+                " move randomly or using a chosen path to either your left or right door."
 )
 public class ChatGPT extends AnimatronicDrawing {
     protected final List<String> forbiddenCameras;
@@ -29,26 +32,35 @@ public class ChatGPT extends AnimatronicDrawing {
     protected boolean usingPathedMove;
     protected BufferedImage buildingCamImg;
     protected boolean building;
-
+    
+    /**
+     * Creates a copy of ChatGPT for Custom Night.
+     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
+     * @throws ResourceException If any resources cannot be loaded from disk.
+     */
     public ChatGPT(CustomNightAnimatronicData data) throws ResourceException {
         this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-                false, false, List.of(),
-                switch (data.mapType()) {
-                    case TUTORIAL -> List.of(
-                            List.of("cam1", "cam2", "cam4", "rightDoor"),
-                            List.of("cam2", "cam1", "cam3", "leftDoor")
-                    );
-                    case RESTAURANT -> List.of(
-                            List.of("storage", "dining area", "corridor 1", "corridor 3", "leftDoor"),
-                            List.of("storage", "dining area", "corridor 2", "corridor 4", "rightDoor")
-                    );
-                },
-                0f, data.rng());
+            false, false, List.of(), List.of(
+                List.of("storage", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                List.of("storage", "dining area", "corridor 2", "corridor 4", "rightDoor")
+            ), data.rng());
     }
-
+    
+    /**
+     * Creates a new copy of ChatGPT for use in normal Nights.
+     * @param name Unique name. If several copies of ChatGPT will appear, make sure they have different names.
+     * @param aiDuringNight Map with the list of AI values. For example: {@code Map.of(0,0, 4,1)} would leave
+     *                      ChatGPT unactivated until hour 4.
+     * @param cameraStalled Whether ChatGPT should never moved while directly under surveillance.
+     * @param globalCameraStalled Whether ChatGPT should never moved while any Camera of this Night is
+     *                           under surveillance.
+     * @param forbiddenCameras Cameras ChatGPT will avoid when moving randomly.
+     * @param camPaths Paths that ChatGPT will follow when not moving randomly.
+     * @param rng Random for the Night.
+     * @throws ResourceException If any images or sounds could not be loaded from disk.
+     */
     public ChatGPT(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
-                   List<String> forbiddenCameras, List<List<String>> camPaths, float fakeMovementSoundChance,
-                   Random rng) throws ResourceException {
+                   List<String> forbiddenCameras, List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/chatgpt/camImg.png",
                 new Jumpscare("anims/chatgpt/jumpscare.gif", 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav", "chatGptJump.wav"), 2,

@@ -13,6 +13,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+/**
+ * Edit for {@link PropertyUtils} that makes sure that properties are ordered so that the save file is always the same.
+ */
 public class OrderedPropertyUtils extends PropertyUtils {
 
     private final Map<Class<?>, Map<String, Property>> propertiesCache = new HashMap<>();
@@ -22,7 +25,10 @@ public class OrderedPropertyUtils extends PropertyUtils {
     private boolean skipMissingProperties = false;
 
     private final PlatformFeatureDetector platformFeatureDetector;
-
+    
+    /**
+     * Creates the {@link PropertyUtils} with a new instance of {@link PlatformFeatureDetector}.
+     */
     public OrderedPropertyUtils() {
         this(new PlatformFeatureDetector());
     }

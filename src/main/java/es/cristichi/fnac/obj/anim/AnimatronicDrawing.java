@@ -56,6 +56,9 @@ public abstract class AnimatronicDrawing {
     protected int aiLevel;
     /** Interval in seconds for the Movement Opportunities. */
     protected final double secInterval;
+    /** Arbitrary number of seconds the AnimatronicDrawing must be at an open door to kill the player in the
+     * default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)}. */
+    protected final double secsToKill;
     /** The delay, calcualted since the first tick of the Night, that all Movement Opportunities must have for
      * this AnimatronicDrawing. See the implementation of
      * {@link #onMoveOppAttempt(Camera, boolean, boolean, boolean, Random)}.*/
@@ -81,9 +84,6 @@ public abstract class AnimatronicDrawing {
     /** Used on the default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)} to
      *  check how long has the AnimatronicDrawing being able to kill without doing so. */
     protected Integer startKillTick = null;
-    /** Arbitrary number of seconds the AnimatronicDrawing must be at an open door to kill the player in the
-     * default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)}. */
-    protected double secsToKill;
     /** Used to keep track of how many Movement Opportunities to leave a closed door are failed in a row. */
     protected int failedMovesLeaving = 0;
 
@@ -107,9 +107,9 @@ public abstract class AnimatronicDrawing {
      * @param cameraStalled       Whether this Animatronic is Camera-stalled. This means that they fail Movement
      *                            Opportunities while being looked at.
      * @param globalCameraStalled Whether this Animatronic is globally Camera-stalled. Same as
-     *                            <code>cameraStalled</code>, except that this Animatronic would fail the Movement
+     *                            {@code cameraStalled}, except that this Animatronic would fail the Movement
      *                            Opportunity regardless of which Camera the player is looking at. If this is true,
-     *                            then <code>cameraStalled</code> is ignored.
+     *                            then {@code cameraStalled} is ignored.
      * @param camImgPath          Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare           Jumpscare to play when this Animatronic kills the player.
      * @param debugColor          Color used for debugging. Not used during normal gameplay. This is used for
@@ -208,7 +208,7 @@ public abstract class AnimatronicDrawing {
      * @param camsUp        Whether the player is looking at any Camera.
      * @param isOpenDoor    If there is a door to the Office from the current Camera and it is open.
      * @param rng           Random in charge of today's night.
-     * @return <code>true</code> if Animatronic should move on this tick. In that case,
+     * @return {@code true} if Animatronic should move on this tick. In that case,
      * {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)} is called afterwards.
      */
     public MoveOppInfo onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
@@ -248,8 +248,8 @@ public abstract class AnimatronicDrawing {
             throws AnimatronicException;
 
     /**
-     * On the default implementation, it simply returns {@link #camImg} and <code>null</code> or the
-     * {@link Point2D.Float} saved in {@link #camPos} with the name of <code>cam</code>. All the other
+     * On the default implementation, it simply returns {@link #camImg} and {@code null} or the
+     * {@link Point2D.Float} saved in {@link #camPos} with the name of {@code cam}. All the other
      * information available if for use on specific implementations to change this behaviour at will.
      * @param tick     Current tick, for accurately counting seconds.
      * @param fps      Current ticks per second, to convert from ticks to seconds for consistency with real time.
@@ -257,7 +257,7 @@ public abstract class AnimatronicDrawing {
      * @param cam      Current Camera where the Animatronic is and the player is watching.
      * @param rng      Random in charge of today's night.
      * @return {@link BufferedImage} of the image representing this Animatronic on the Camera on this tick.
-     * <code>null</code> if it should not even appear on the Camera.
+     * {@code null} if it should not even appear on the Camera.
      */
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
         return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getNameId(), null));
@@ -270,8 +270,8 @@ public abstract class AnimatronicDrawing {
     
     /**
      * @param o Compared object
-     * @return <code>true</code> if <code>Object o</code> is an {@link AnimatronicDrawing}
-     * with the same name as this one. <code>false</code> otherwise.
+     * @return {@code true} if {@code Object o} is an {@link AnimatronicDrawing}
+     * with the same name as this one. {@code false} otherwise.
      */
     @Override
     public boolean equals(Object o) {
@@ -289,9 +289,9 @@ public abstract class AnimatronicDrawing {
      * Information given by each Animatronic at each tick.
      *
      * @param moveOpp   Whether the Animatronic has succeeded a Movement Opportunity on this tick.
-     * @param jumpscare A Jumpscare if it must happen, or <code>null</code> otherwise.
+     * @param jumpscare A Jumpscare if it must happen, or {@code null} otherwise.
      * @param sound     Sound to play at the current Camera of this Animatronic on this tick,
-     *                  or <code>null</code> otherwise.
+     *                  or {@code null} otherwise.
      */
     public record AnimTickInfo(boolean moveOpp, @Nullable Jumpscare jumpscare, @Nullable Sound sound) {}
 
@@ -299,22 +299,22 @@ public abstract class AnimatronicDrawing {
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
      *
      * @param moveToCam Name of the Camera to move to. Teleporting allowed if desired. It should never be
-     *                  <code>null</code>, as the Animatronic is forced to move. The only way to not move
+     *                  {@code null}, as the Animatronic is forced to move. The only way to not move
      *                  is to throw an {@link AnimatronicException}, which should
      *                  be done only for unexpected behaviours.
-     * @param moveSound Sound to play because of this movement on the destination Camera, or <code>null</code>
-     *                  if no Sound should play. This is ignored if moveToCam is <code>false</code>.
+     * @param moveSound Sound to play because of this movement on the destination Camera, or {@code null}
+     *                  if no Sound should play. This is ignored if moveToCam is {@code false}.
      */
     public record MoveSuccessInfo(String moveToCam, @Nullable Sound moveSound) {}
 
     /**
      * Information given by each Animatronic when the Night gives them a chance to move and they succeed it.
      *
-     * @param move  <code>true</code> if this Animatronic should move on this Movement Opportunity.
-     * @param sound Sound to play because of this movement on the origin Camera, <code>null</code> if no Sound
+     * @param move  {@code true} if this Animatronic should move on this Movement Opportunity.
+     * @param sound Sound to play because of this movement on the origin Camera, {@code null} if no Sound
      *              should play. WARNING regular movement Sounds are implemented on the method
      *              {@link AnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}, playing
-     *              Sound on the Movement Opportunity is usually for when <code>move</code> is false for fake
+     *              Sound on the Movement Opportunity is usually for when {@code move} is false for fake
      *              movement Sounds.
      */
     public record MoveOppInfo(boolean move, @Nullable Sound sound) {}
@@ -322,10 +322,10 @@ public abstract class AnimatronicDrawing {
     /**
      * Information given by each Animatronic when the Night wants to show them on Camera.
      * @param camImg A {@link BufferedImage} of what the Animatronic must look like on the Camera on this tick. It
-     *               admits <code>null</code> to indicate that the Animatronic should not appear, then preferredPoint
+     *               admits {@code null} to indicate that the Animatronic should not appear, then preferredPoint
      *               is ignored.
      * @param preferredPoint A {@link Point2D.Float} with the preferred position on this Camera and tick, or
-     *                       <code>null</code> if Night should handle it. Both <code>x</code> and <code>y</code>
+     *                       {@code null} if Night should handle it. Both {@code x} and {@code y}
      *                       must be between 0 and 1, as a percentage in the available size to remain constant.
      *                       These coordinates represent where the top-left corner of the image will be.
      */

@@ -42,7 +42,7 @@ public class NightRegistry {
     
     /**
      * @param completedNights Number of completed Nights.
-     * @return The factory for this number of completed Nights, or <code>null</code> if the player completed all Nights.
+     * @return The factory for this number of completed Nights, or {@code null} if the player completed all Nights.
      */
     public static @Nullable NightFactory getNight(int completedNights){
         if (completedNights < 0 || completedNights>= registry.size()){

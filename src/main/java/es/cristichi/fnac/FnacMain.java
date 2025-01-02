@@ -1,5 +1,7 @@
 package es.cristichi.fnac;
 
+import es.cristichi.fnac.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.cnight.CustomNightRegistry;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
@@ -36,8 +38,20 @@ import java.util.Random;
  */
 public class FnacMain implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(FnacMain.class);
-    public static final boolean DEBUG = false;
-
+    /**
+     * When enabled, all Nights are available in the menu.
+     */
+    public static final boolean NIGHTS_DEBUG = false;
+    /**
+     * Name of the game.
+     */
+    @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
+    public static String GAME_TITLE = "Five Nights at Cris'";
+    
+    /**
+     * Entry point.
+     * @param args Arguments, but they are ignored.
+     */
     public static void main(String[] args) {
         new FnacMain().run();
     }
@@ -45,8 +59,8 @@ public class FnacMain implements Runnable {
     /**
      * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
      * method you may also want to register your custom {@link es.cristichi.fnac.obj.anim.AnimatronicDrawing} classes
-     * for the Custom Night by adding the {@link es.cristichi.fnac.obj.cnight.CustomNightAnimatronic} annotation and
-     * making a constructor that requests {@link es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData}.
+     * for the Custom Night by adding the {@link CustomNightAnimatronic} annotation and
+     * making a constructor that requests {@link CustomNightAnimatronicData}.
      */
     @Override
     public void run() {
@@ -79,7 +93,7 @@ public class FnacMain implements Runnable {
         // Save file
         NightProgress.init();
         final NightProgress.SaveFile saveFile;
-        if (DEBUG){
+        if (NIGHTS_DEBUG){
             ArrayList<String> nights = new ArrayList<>(6);
             nights.add("Tutorial");
             nights.add("Night 1");
@@ -134,9 +148,9 @@ public class FnacMain implements Runnable {
                                        Random rng) throws IOException, NightException {
                 TutorialMap tutorialMap = new TutorialMap();
                 tutorialMap.addCamAnimatronics("cam1",
-                        new RoamingBob("Bob", Map.of(1,2, 2,3, 3,0), false, false, java.util.List.of("cam4"), 0f, rng));
+                        new RoamingBob("Bob", Map.of(1,2, 2,3, 3,0), false, false, java.util.List.of("cam4"), rng));
                 tutorialMap.addCamAnimatronics("cam2",
-                        new RoamingMaria("Maria", Map.of(0,0, 2,2, 3,3, 4,4), false, false, List.of("cam3"), 0f, rng));
+                        new RoamingMaria("Maria", Map.of(0,0, 2,2, 3,3, 4,4), false, false, List.of("cam3"), rng));
                 
                 return new NightJC("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
                         powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");

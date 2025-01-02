@@ -30,7 +30,6 @@ import java.util.Random;
 public class NightsJF extends JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(NightsJF.class);
     
-    public final String GAME_TITLE = "Five Nights at Cris'";
     private final JPanel cardPanel;
     private final SettingsJC settingsPanel;
     private final JPanel nightPanel;
@@ -67,7 +66,7 @@ public class NightsJF extends JFrame {
 
         MenuJC.Info menuInfo = getUpdatedMenuData();
 
-        mainMenu = new MenuJC(menuInfo.background(), "menu/loading.jpg", menuInfo.menuItems()) {
+        mainMenu = new MenuJC(menuInfo, "menu/loading.jpg") {
             @Override
             protected void onMenuItemClick(Item item) throws IOException {
                 switch (item.id()) {
@@ -118,18 +117,18 @@ public class NightsJF extends JFrame {
 
     /**
      * @param subtitle Subtitle. Something like "Night 1" or "Settings menu", or null for nothing.
-     * @return A String of the form "{@link NightsJF#GAME_TITLE} - <code>subtitle</code>", or just the game title if
+     * @return A String of the form "{@link FnacMain#GAME_TITLE} - {@code subtitle}", or just the game title if
      * there is no subtitle.
      */
     public String getTitleForWindow(@Nullable String subtitle) {
         if (subtitle == null){
-            return GAME_TITLE;
+            return FnacMain.GAME_TITLE;
         }
-        return String.format("%s - %s", GAME_TITLE, subtitle);
+        return String.format("%s - %s", FnacMain.GAME_TITLE, subtitle);
     }
 
     /**
-     * @param set <code>true</code> to set window to Fullscreen. <code>false</code> to maximize the window without
+     * @param set {@code true} to set window to Fullscreen. {@code false} to maximize the window without
      *            Fullscreen.
      */
     public void setFullScreen(boolean set) {
@@ -183,9 +182,8 @@ public class NightsJF extends JFrame {
      * Simply a method that updates the Menu, useful for when the player unlocked a new Night
      * after completing one.
      * @return A {@link MenuJC.Info} object with the information needed to build a Menu (items, background, etc).
-     * @throws ResourceException If any of the loading screens could not be loaded.
      */
-    private @NotNull MenuJC.Info getUpdatedMenuData() throws ResourceException {
+    private @NotNull MenuJC.Info getUpdatedMenuData() {
         ArrayList<MenuJC.Item> mmItems = new ArrayList<>(2);
         String background;
         List<String> completed = saveFile.completedNights();
@@ -201,7 +199,7 @@ public class NightsJF extends JFrame {
             case 6 -> "menu/background6.jpg";
             default -> "menu/backgroundCustom.jpg";
         };
-        if (FnacMain.DEBUG) {
+        if (FnacMain.NIGHTS_DEBUG) {
             mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
             for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
                 mmItems.add(nightFactory.getItem());

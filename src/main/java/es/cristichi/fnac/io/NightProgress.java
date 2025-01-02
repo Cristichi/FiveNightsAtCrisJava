@@ -4,11 +4,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controls the save file that has the Nights the player has completed.
+ */
 public class NightProgress {
+    /**
+     * Usual name of the save file.
+     */
     public static final String SAVE_FILE_NAME = "save.fnac"; // Save file's name
     private static final String MAGIC_NUMBER = "FNACSV1"; // Unique magic number for FNAC save files. Version 1.
 
     private static String pathToFnacFolder = null;
+    
+    /**
+     * It gets the Documents folder of the computer's user that runs the game, and creates a new folder inside it
+     * for save files to use.
+     */
     public static void init(){
         pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
         new File(pathToFnacFolder).mkdirs();
@@ -44,7 +55,11 @@ public class NightProgress {
             return new SaveFile(List.of());
         }
     }
-
+    
+    /**
+     * Information saved on a saved file.
+     * @param completedNights
+     */
     public record SaveFile(List<String> completedNights) {
             /**
              * Constructs a SaveFile object with the given completed Nights.

@@ -36,9 +36,9 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
      * @param cameraStalled       Whether this Animatronic is Camera-stalled. This means that they fail Movement
      *                            Opportunities while being looked at.
      * @param globalCameraStalled Whether this Animatronic is globally Camera-stalled. Same as
-     *                            <code>cameraStalled</code>, except that this Animatronic would fail the Movement
+     *                            {@code cameraStalled}, except that this Animatronic would fail the Movement
      *                            Opportunity regardless of which Camera the player is looking at. If this is true,
-     *                            then <code>cameraStalled</code> is ignored.
+     *                            then {@code cameraStalled} is ignored.
      * @param camImgPath          Path to the image used when the Animatronic is shown on a Camera.
      * @param jumpscare           Jumpscare to play when this Animatronic kills the player.
      * @param forbiddenCameras    List of the names of Cameras this Animatronic should not go to.

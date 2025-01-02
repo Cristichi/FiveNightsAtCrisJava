@@ -27,11 +27,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.*;
 
+/**
+ * JComponent that runs a Night. This is the most important part of the gameplay.
+ */
 public class NightJC extends ExitableJComponent {
 	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
 	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
 	 * runs if you are bad at the game like me. */
-	public static boolean DEBUG_MODE = false;
+	@SuppressWarnings("CanBeFinal") //DEBUG_MODE is to be modified by mods that depend on this code during development.
+    public static boolean DEBUG_MODE = false;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NightJC.class);
 
@@ -87,8 +91,8 @@ public class NightJC extends ExitableJComponent {
 	private final Timer nightTicks;
 
 	/** Boolean object that is null when the game is running:
-	 * <br><code>true</code> when Night is won
-	 * <br><code>false</code> when Jumpscared. */
+	 * <br>{@code true} when Night is won
+	 * <br>{@code false} when Jumpscared. */
 	private Boolean victoryScreen;
 
 	private final BufferedImage backgroundImg;
@@ -247,6 +251,7 @@ public class NightJC extends ExitableJComponent {
 	/**
 	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
+	 * @param fps FPS for the Night. This is used as a target FPS and also to convert seconds to FPS.
 	 * @param camMap Map of the place. Animatronics present in the Night must start inside
 	 *                              their starting Cameras, they are only stored there.
 	 * @param paperImgPath Path to the Image that has the paper to put at the office. The paper should be
@@ -255,7 +260,7 @@ public class NightJC extends ExitableJComponent {
 	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
 	 *                    the human aspect of the difficulty like keeping concentration.
 	 *                    The recommended baseline value is 90 seconds per hour.
-	 * @param rng Random for the night. Use <code>new Random()</code> unless you want a specific seed.
+	 * @param rng Random for the night. Use {@code new Random()} unless you want a specific seed.
 	 * @param powerOutageJumpscare Jumpscare that will happen when the player runs out of power.
 	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you have both doors closed at all time),
@@ -264,6 +269,7 @@ public class NightJC extends ExitableJComponent {
 	 * @param soundOnNightCompletedPath Path to the sound played when Night is completed. Can be null for dev
 	 *                                     purposes but having one is encouraged.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
+     * @throws NightException If the Night is not properly set.
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
@@ -607,6 +613,10 @@ public class NightJC extends ExitableJComponent {
 		}, 100, 1000 / fps);
 	}
 	
+	/**
+	 * Adds a Runnable to run when the Night ends, with information of whether the Night was successful or not.
+	 * @param runnable Code to run, with information of whether the player passed the Night.
+	 */
 	public void addOnNightEnd(NightEndedListener runnable) {
 		onNightEndListeners.add(runnable);
 	}
@@ -975,7 +985,7 @@ public class NightJC extends ExitableJComponent {
 							int scaledCamMapRecHeight = (int) (camMapRec.height * scaleRatioY);
 
 							// Draw rectangle
-							if (cam.getNameId().equals(camerasMap.getSelectedName())){
+							if (cam.equals(camerasMap.getSelectedCam())){
 								if (cam.isBroken()){
 									g.setColor(Color.PINK);
 								} else {
@@ -1188,10 +1198,14 @@ public class NightJC extends ExitableJComponent {
 			}
 		}
 	}
-
+	
+	/**
+	 * Listener that runs when the Nights end, and carries the information of whether the Night was a success or not
+	 * for the player.
+	 */
 	public interface NightEndedListener {
 		/**
-		 * @param completed <code>true</code> if player won, <code>false</code> otherwise.
+		 * @param completed {@code true} if player won, {@code false} otherwise.
 		 */
 		void run(boolean completed);
 	}

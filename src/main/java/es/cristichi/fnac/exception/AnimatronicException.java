@@ -1,9 +1,13 @@
 package es.cristichi.fnac.exception;
 
 /**
- * Error thrown by an Animatronic. Animatronics should be prepared to not throw errors in normal circumstances.
+ * Error thrown by {@link es.cristichi.fnac.obj.anim.AnimatronicDrawing} related to the behaviour during Nights
+ * or loading.
  */
 public class AnimatronicException extends Exception {
+	/**
+	 * @param message Informative human-friendly short description of the error.
+	 */
 	public AnimatronicException(String message) {
 		super(message);
 	}

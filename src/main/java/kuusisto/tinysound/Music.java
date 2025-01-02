@@ -28,7 +28,7 @@ package kuusisto.tinysound;
 
 /**
  * The Music interface is an abstraction for music.  Music objects should only
- * be loaded via the TinySound <code>loadMusic()</code> functions.  Music can be
+ * be loaded via the TinySound {@code loadMusic()} functions.  Music can be
  * played, paused, resumed, stopped and looped from specified positions.
  * 
  * @author Finn Kuusisto

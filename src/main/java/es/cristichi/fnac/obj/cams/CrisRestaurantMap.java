@@ -5,9 +5,16 @@ import es.cristichi.fnac.io.Resources;
 
 import java.awt.*;
 
+/**
+ * Map of Cris' Restaurant! It must be used except for the Tutorial on the first Night or any customized maps.
+ */
 public class CrisRestaurantMap extends CameraMap {
     private static final Point OFFICE_LOC_ON_MAP = new Point(497, 843);
-
+    
+    /**
+     * Creates a new copy of this map for use on a Night. A new one must be created for each new Night.
+     * @throws ResourceException If any images or sounds cannot be read from disk.
+     */
     public CrisRestaurantMap() throws ResourceException {
         super(Resources.loadImageResource("night/general/map.png"), "dining area");
         addAll(

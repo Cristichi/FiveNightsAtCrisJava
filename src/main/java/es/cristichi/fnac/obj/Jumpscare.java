@@ -141,7 +141,7 @@ public class Jumpscare {
     }
     
     /**
-     * @return <code>true</code> if this Jumpscare's last frame has already passed (with its delay included).
+     * @return {@code true} if this Jumpscare's last frame has already passed (with its delay included).
      */
     public boolean isFramesFinished() {
         return currentFrame == frames.size();
@@ -157,7 +157,7 @@ public class Jumpscare {
     }
     
     /**
-     * @return <code>true</code> if this is the exact frame when the Sound should be played and that Sound has not
+     * @return {@code true} if this is the exact frame when the Sound should be played and that Sound has not
      * been played for this Jumpscare previously.
      */
     public boolean isFrameToPlaySound() {
@@ -168,7 +168,7 @@ public class Jumpscare {
     }
     
     /**
-     * @return <code>true</code> if the player should not be watching Cameras during this frame of the Jumpscare.
+     * @return {@code true} if the player should not be watching Cameras during this frame of the Jumpscare.
      */
     public boolean shouldCamsBeDown() {
         return currentFrame >= camsDownFrame;

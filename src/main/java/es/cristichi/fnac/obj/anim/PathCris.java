@@ -1,11 +1,11 @@
 package es.cristichi.fnac.obj.anim;
 
+import es.cristichi.fnac.cnight.CustomNightAnimatronic;
+import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.JumpscareVisualSetting;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.obj.cnight.CustomNightAnimatronicData;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -13,36 +13,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@CustomNightAnimatronic(name = "Cris", variant = "final form", portraitPath = "anims/cris/portrait.png", restStart =
-        "storage",
-        restDesc = "Cris (final form) starts at the Storage, then goes to the Dining Area. From there, he teleports to " +
+/**
+ * Cris is a representation of myself, Cristichi, inside the game. He used to be the owner of the restaurant, but
+ * after the Cataclysm he "merged" with the suit he was wearing, that is also now alive. Cris has different
+ * implementations with different behaviours during Nights.
+ */
+@CustomNightAnimatronic(name = "Cris", variant = "final form", portraitPath = "anims/cris/portrait.png", starts =
+        {"storage", "cam1"},
+        description = "Cris (final form) starts at the Storage, then goes to the Dining Area. From there, he teleports to " +
                 "either the Staff Lounge or the Offices. When at the Staff Lounge, he teleports to corridor 3" +
                 " or 4 and then he goes to the closest Office door. If at the Offices, he first teleports to " +
                 "the Bathrooms, and then from there he goes to corridor 3 or 4 and then goes to the closest " +
-                "Office door.",
-        tutDesc = "Cris (final form) moves from cam1 to cam2 and vice-versa until he decides to move to cam4 or 3. " +
-                "Nonetheless, he teleports to the opposite side when moving to cam4 or 3. Then he heads to " +
-                "your closest Office door and restarts to the same side if he leaves the door.")
+                "Office door.")
 public class PathCris extends PathedMoveAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
-
+    
+    /**
+     * Creates a copy of Cris for Custom Night.
+     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
+     * @throws ResourceException If any resources cannot be loaded from disk.
+     */
     public PathCris(CustomNightAnimatronicData data) throws ResourceException {
         this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-                true, false, switch (data.mapType()) {
-                    case TUTORIAL -> List.of(
-                            List.of("cam2", "cam1", "cam4", "rightDoor"),
-                            List.of("cam1", "cam2", "cam3", "leftDoor")
-                    );
-                    case RESTAURANT -> List.of(
-                            List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
-                            List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor"),
-                            List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
-                            List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
-                    );
-                }, data.rng());
+            true, false, List.of(
+                List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
+                List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor"),
+                List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
+                List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
+            ), data.rng());
         this.camPos.put("main stage", new Point2D.Float(0.6f, 0f));
     }
-
+    
+    /**
+     * Creates a new copy of Cris for use in normal Nights.
+     * @param name Unique name. If several copies of Cris will appear, make sure they have different names.
+     * @param aiDuringNight Map with the list of AI values. For example: {@code Map.of(0,0, 4,1)} would leave
+     *                      Cris unactivated until hour 4.
+     * @param cameraStalled Whether Cris should never moved while directly under surveillance.
+     * @param globalCameraStalled Whether Cris should never moved while any Camera of this Night is
+     *                           under surveillance.
+     * @param camPaths Paths that Cris will always follow.
+     * @param rng Random for the Night.
+     * @throws ResourceException If any images or sounds could not be loaded from disk.
+     */
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths, Random rng)
             throws ResourceException {

@@ -2,12 +2,20 @@ package es.cristichi.fnac.cnight;
 
 import java.awt.*;
 
+/**
+ * Implementation of {@link LayoutManager} that orders everything in a Grid on the fly, prioritizing top and left.
+ */
 public class CustomGridLayout implements LayoutManager {
     /** Horizontal spacing between components. */
     private final int hGap;
     /** Vertical spacing between components. */
     private final int vGap;
-
+    
+    /**
+     * Creates a new CustomGridLayout.
+     * @param hGap Horizontal gap.
+     * @param vGap Vertical gap.
+     */
     public CustomGridLayout(int hGap, int vGap) {
         this.hGap = hGap;
         this.vGap = vGap;

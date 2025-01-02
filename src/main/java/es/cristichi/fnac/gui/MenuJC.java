@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * JComponent that represents the main menu of the game. It displays the available next Night, as well as buttons
+ * for Settings and exitting the game.
+ */
 public abstract class MenuJC extends JComponent {
 	private final List<Item> menuItems;
 	private Image backgroundImage;
@@ -33,16 +37,15 @@ public abstract class MenuJC extends JComponent {
 
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
-	 * @param backgroundImg Path to background image in the resources.
+	 * @param info Information of the menu items and background at the moment.
 	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link Item}s
 	 *                         that don't specify one.
-	 * @param menuItems List of {@link Item}s. It must not be null or empty.
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public MenuJC(String backgroundImg, String defaultLoadingImg, List<Item> menuItems) throws ResourceException {
+    public MenuJC(Info info, String defaultLoadingImg) throws ResourceException {
 		super();
-		this.menuItems = menuItems;
-		backgroundImage = Resources.loadImageResource(backgroundImg);
+		this.menuItems = info.menuItems();
+		backgroundImage = Resources.loadImageResource(info.background());
 		this.defaultLoadingImg = Resources.loadImageResource(defaultLoadingImg);
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
@@ -247,12 +250,17 @@ public abstract class MenuJC extends JComponent {
 	 *           {@link NightsJF}.
 	 * @param display Text shown for the button when not hovered by the player's mouse.
 	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
-	 * @param loadingScreenPath Path to the resource where the Loading Screen is, or <code>null</code> to use the
+	 * @param loadingScreenPath Path to the resource where the Loading Screen is, or {@code null} to use the
 	 *                          default one.
 	 */
 	public record Item(String id, String display, String hoverDisplay, @Nullable String loadingScreenPath){
 	}
-
+	
+	/**
+	 * Information this menu needs in order to create or update the buttons and background.
+	 * @param menuItems List of {@link Item}s. It must not be null or empty.
+	 * @param background Path to background image in the resources.
+	 */
 	public record Info(List<Item> menuItems, String background) {
 	}
 }

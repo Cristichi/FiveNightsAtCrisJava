@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * {@link NightFactory} for Night 4.
+ */
 public class Night4 implements NightFactory{
     
     @Override
@@ -24,10 +27,10 @@ public class Night4 implements NightFactory{
     public NightJC createNight(Settings settings, Jumpscare powerOutage,
                                Random rng) throws IOException, NightException {
         AnimatronicDrawing bob = new RoamingBob("Bob", Map.of(0,8, 4,9), false, false,
-                List.of("corridor 2", "corridor 4", "bathrooms", "offices", "storage", "kitchen"), 0f, rng);
+                List.of("corridor 2", "corridor 4", "bathrooms", "offices", "storage", "kitchen"), rng);
         
         AnimatronicDrawing maria = new RoamingMaria("Maria", Map.of(0,3, 2,5, 4,6), false, false,
-                List.of("corridor 1", "corridor 3", "staff lounge", "storage", "kitchen"), 0f, rng);
+                List.of("corridor 1", "corridor 3", "staff lounge", "storage", "kitchen"), rng);
         
         AnimatronicDrawing paco = new Paco("Paco", Map.of(0,7, 5,8), false, true,
                 List.of(

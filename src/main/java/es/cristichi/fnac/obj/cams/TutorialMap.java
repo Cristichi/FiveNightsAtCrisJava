@@ -5,9 +5,17 @@ import es.cristichi.fnac.io.Resources;
 
 import java.awt.*;
 
+/**
+ * Map of the Tutorial, which features less cameras. It must be used only for the Tutorial.
+ */
 public class TutorialMap extends CameraMap {
     private static final Point OFFICE_LOC_ON_MAP = new Point(497, 804);
-
+    
+    /**
+     * Creates a new copy of this map for use on a Night. A new one must be created for each new Night if used on
+     * more than one.
+     * @throws ResourceException If any images or sounds cannot be read from disk.
+     */
     public TutorialMap() throws ResourceException {
         super(Resources.loadImageResource("night/tutorial/map.png"), "cam1");
         addAll(
