@@ -2,31 +2,51 @@ package es.cristichi.fnac.obj;
 
 import es.cristichi.fnac.obj.cams.Camera;
 import kuusisto.tinysound.Sound;
-
-import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This represents a Sound, with a chance to being played.
  */
 public class AmbientSound {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AmbientSound.class);
     /** Sound of this AmbientSound. */
     private final Sound sound;
-    /** When this Sound is selected, chance it will play. */
-    private final float chance;
+    /** Weight of this Sound, which is the chances this Sound is picked when an AmbientSound is to play. */
+    private final int weight;
     /** Whether this Sound should play on a Camera. Otherwise, it's played at the Office (where the player is). */
     private final boolean playOnCams;
     
-     /**
+    /**
      * Creates an Ambient Sound.
-     * @param chance When this Sound is selected, chance it will play.
+     *
+     * @param sound      The Sound.
+     * @param weight     Weight of this Sound, which is the chances this Sound is picked when an AmbientSound is to play.
      * @param playOnCams Whether this Sound should play on a Camera. Otherwise, it's played at the Office
-      *                   (where the player is).
-     * @param sound The Sound.
+     *                   (where the player is).
      */
-    public AmbientSound(float chance, boolean playOnCams, Sound sound){
-        this.chance = chance;
+    public AmbientSound(Sound sound, int weight, boolean playOnCams){
         this.sound = sound;
+        this.weight = weight;
         this.playOnCams = playOnCams;
+        if (weight <= 0){
+            LOGGER.warn("A Sound was registered with a weight ({}) that results in it being never used. " +
+                    "If the Sound should be removed, try removing it from the AmbientSoundSystem in use.", weight);
+        }
+    }
+    
+    /**
+     * @return The Sound.
+     */
+    public Sound getSound() {
+        return sound;
+    }
+    
+    /**
+     * @return The weight of this Sound, which should determine the chances of being picked.
+     */
+    public int getWeight() {
+        return weight;
     }
     
     /**
@@ -37,29 +57,19 @@ public class AmbientSound {
     }
     
     /**
-     * Checks the chance and plays the Sound if so. This does not check if this {@link AmbientSound} should be
+     * Plays the sound normally. This does not check if this {@link AmbientSound} should be
      * played on a Camera.
-     * @param rng Random for the Night.
      */
-    public void attemptPlay(Random rng){
-        if (rng.nextFloat() < chance){
-            sound.play();
-        }
+    public void play(){
+        sound.play();
     }
     
     /**
-     * Checks the chance and plays the Sound at the given Camera if so. This does not check if this
+     * Plays this Sound at the given Camera. This does not check if this
      * {@link AmbientSound} should be played on a Camera.
-     * @param rng Random for the Night.
      * @param camera Camera to play the Sound.
      */
-    public void attemptPlay(Random rng, Camera camera){
-        if (rng.nextFloat() < chance){
-            if (playOnCams){
-                camera.playSoundHere(sound);
-            } else {
-                sound.play();
-            }
-        }
+    public void play(Camera camera){
+        camera.playSoundHere(sound);
     }
 }
