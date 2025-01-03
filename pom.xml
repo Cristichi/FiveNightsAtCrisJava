@@ -12,6 +12,7 @@
         modify Nights in order to make their own version of the game while keeping the main mechanics. In order to
         do so, please check this prepared example in https://github.com/Cristichi/FNACModTest.
     </description>
+    <url>https://github.com/Cristichi/FiveNightsAtCrisJava</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
