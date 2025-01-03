@@ -28,11 +28,20 @@ package kuusisto.tinysound.internal;
 
 import java.net.URL;
 
+/**
+ * Information of a Stream to keep track of it.
+ */
 public class StreamInfo {
-
+	/** URL to the resource. */
 	public final URL URL;
+	/** Number of bytes per channel. */
 	public final long NUM_BYTES_PER_CHANNEL;
 	
+	/**
+	 * Creates a new instance.
+	 * @param url URL to the resource.
+	 * @param numBytesPerChannel Number of bytes per channel.
+	 */
 	public StreamInfo(URL url, long numBytesPerChannel) {
 		this.URL = url;
 		this.NUM_BYTES_PER_CHANNEL = numBytesPerChannel;

@@ -11,13 +11,20 @@ import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * An instance of Settings has all the player preferences that are required by the game.
+ */
 public class Settings {
     private static String pathToFnacFolder;
     private static Yaml yaml;
     private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
     
+    /**
+     * This method must be called in order to find the Documents folder of the computer's user.
+     * Also, it sets some options to make the generated YAML files pretty and ordered for humans to
+     * look and modify manually if needed.
+     */
     public static void init(){
-
         pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
         new File(pathToFnacFolder).mkdirs();
 
@@ -28,7 +35,10 @@ public class Settings {
         orderedRepresenter.setPropertyUtils(new OrderedPropertyUtils());
         yaml = new Yaml(orderedRepresenter, options);
     }
-
+    
+    /**
+     * Usual name for Settings files.
+     */
     public static final String SETTINGS_FILE = "settings.yaml";
 
     /**
@@ -67,6 +77,7 @@ public class Settings {
 
     /**
      * Creates a new {@link Settings} copying the values of another one.
+     * @param copy Instance to copy.
      */
     public Settings(Settings copy) {
         this();

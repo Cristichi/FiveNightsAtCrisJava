@@ -15,6 +15,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
+/**
+ * JComponent that allows the user to modify Settings.
+ */
 public abstract class SettingsJC extends JComponent {
     private static final Color foreground = Color.YELLOW;
 
@@ -34,7 +37,12 @@ public abstract class SettingsJC extends JComponent {
     private final JSlider volumeSlider;
     private final JButton saveButton;
     private final JButton returnButton;
-
+    
+    /**
+     * Creates a new SettingsJC with the given Settings. The object referenced is modified by the player's actions.
+     * @param settings Player's personal settings.
+     * @throws ResourceException If any images or sonuds could not be loaded from disk.
+     */
     public SettingsJC(Settings settings) throws ResourceException {
         super();
         this.background = Resources.loadImageResource("settings/background.jpg");
@@ -230,8 +238,15 @@ public abstract class SettingsJC extends JComponent {
         super.paintComponent(g);
         g.drawImage(background, 0,0, getWidth(),getHeight(), this);
     }
-
+    
+    /**
+     * Method to execute when the Settings are saved.
+     * @param saved Saved settings.
+     */
     public abstract void onSettingsSaved(Settings saved);
-
+    
+    /**
+     * Method to indicate to the main menu that the player wants to return to the menu.
+     */
     public abstract void onReturnToMenu();
 }
