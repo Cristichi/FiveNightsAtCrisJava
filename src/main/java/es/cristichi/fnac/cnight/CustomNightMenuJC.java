@@ -193,7 +193,11 @@ public class CustomNightMenuJC extends ExitableJComponent {
     public void addOnExitListener(Runnable onExitListener) {
         onExitListeners.add(onExitListener);
     }
-
+    
+    /**
+     * It updates the grid of AnimatronicDrawings to fit the current size and the currently available
+     * AnimatronicDrawing classes.
+     */
     protected void updateAnimatronicGrid() {
         if (resizingInProgress) return;
         resizingInProgress = true;
