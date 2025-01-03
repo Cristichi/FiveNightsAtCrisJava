@@ -53,8 +53,8 @@ public abstract class CustomAnimJP extends JPanel {
         super();
         if (portraitBackgroundImg == null) {
             portraitBackgroundImg = Resources.loadImageResource("cnight/portraitBackground.jpg");
-            portraitImg = Resources.loadImageResource(annotationInfo.portraitPath());
         }
+        portraitImg = Resources.loadImageResource(annotationInfo.portraitPath());
         setPreferredSize(SIZE);
 
         font = font.deriveFont(25f);

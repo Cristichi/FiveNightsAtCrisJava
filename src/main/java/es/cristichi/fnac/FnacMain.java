@@ -41,7 +41,8 @@ public class FnacMain implements Runnable {
     /**
      * When enabled, all Nights are available in the menu.
      */
-    public static final boolean NIGHTS_DEBUG = false;
+    @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
+    public static boolean NIGHTS_DEBUG = false;
     /**
      * Name of the game.
      */
