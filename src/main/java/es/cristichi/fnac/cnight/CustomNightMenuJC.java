@@ -34,23 +34,61 @@ import java.util.*;
 public class CustomNightMenuJC extends ExitableJComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightMenuJC.class);
     
-    protected static final int COLUMNS = 4;
+    /**
+     * Background image for the viewpoer of the scroll panel.
+     */
     protected static BufferedImage backgroundImg;
-
+    
+    /**
+     * Current Settings for the player.
+     */
     protected Settings settings;
+    /**
+     * Configured power outage Jumpscare for the Custom NightJC that the player is creating.
+     */
     protected Jumpscare powerOutage;
-
+    
+    /**
+     * List of Runnables to run when the player wishes to return to the main menu.
+     */
     protected final List<Runnable> onExitListeners;
-
-    private boolean resizingInProgress = false;
-    private boolean enabledEditing = true;
-
+    
+    /**
+     * {@code true} while resizing is already in progress, to avoid doing the work twice when the player resizes the
+     * window for a long time.
+     */
+    protected boolean resizingInProgress = false;
+    /**
+     * {@code false} while the Custom Night is being created, since it takes some time to load the resources. This
+     * disallows the player from editing the AI values during this time.
+     */
+    protected boolean enabledEditing = true;
+    
+    /**
+     * Seed of the Random for the Custom Night.
+     */
     protected final long seed;
+    /**
+     * Random for the Custom Night.
+     */
     protected final Random rng;
+    /**
+     * Map of AnimatronicDrawing classes and their CustomNightAnimatronicData needed to call their
+     * Custom Night constructor.
+     */
     protected HashMap<Class<? extends AnimatronicDrawing>, CustomNightAnimatronicData> customInputs;
+    /**
+     * List of CustomAnimJP components so that they can be mass edited.
+     */
     protected LinkedList<CustomAnimJP> customAnimJPs;
-
+    
+    /**
+     * Scroll panel. Its viewport contains the CustomAnimJPs.
+     */
     protected JScrollPane scrollPaneAnims;
+    /**
+     * Panel for the buttons to set-up diferent things or exit to main menu.
+     */
     protected JPanel panelSettings;
     
     /**

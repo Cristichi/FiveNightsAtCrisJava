@@ -30,13 +30,34 @@ import java.util.Random;
 public class NightsJF extends JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(NightsJF.class);
     
+    /**
+     * Card Panel that holds what can be on screen at any time (main menu, submenu, or NightJC).
+     */
     private final JPanel cardPanel;
-    private final SettingsJC settingsPanel;
-    private final JPanel nightPanel;
-    private final MenuJC mainMenu;
-
-    private final NightProgress.SaveFile saveFile;
+    /**
+     * Card layout that controls which panel inside {@link #cardPanel} is on screen.
+     */
     private final CardLayout cardLayout;
+    /**
+     * Settings panel that allows the player to customize settings.
+     */
+    private final SettingsJC settingsPanel;
+    /**
+     * Panel where the NightJC is.
+     */
+    private final JPanel nightPanel;
+    /**
+     * Main menu panel.
+     */
+    private final MenuJC mainMenu;
+    
+    /**
+     * Save file currently in use.
+     */
+    private final NightProgress.SaveFile saveFile;
+    /**
+     * Player's settings.
+     */
     private Settings settings;
 
     /**

@@ -14,6 +14,9 @@ import java.util.*;
  * movement that avoids a list of Camera names. From the possible Cameras, movement is completely random.
  */
 public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
+    /**
+     * List with the names of all Cameras this AnimatronicDrawing should never go to.
+     */
     protected final List<String> forbiddenCameras;
 
     /**

@@ -19,23 +19,64 @@ import java.util.Hashtable;
  * JComponent that allows the user to modify Settings.
  */
 public abstract class SettingsJC extends JComponent {
+    /**
+     * Color of all text.
+     */
     private static final Color foreground = Color.YELLOW;
-
+    
+    /**
+     * Settings with he changes done by the player.
+     */
     private Settings editingSettings;
+    /**
+     * Previous Settings in case the player wants to cancel.
+     */
     private Settings ogSettings;
-
-    private final Font font;
+    
+    /**
+     * Background image.
+     */
     private final BufferedImage background;
-    private final BufferedImage checkSel;
-    private final BufferedImage checkNotSel;
-
+    
+    /**
+     * Label for the Fullscreen text.
+     */
     private final JLabel fullscreenLabel;
+    /**
+     * Fullscreen checkbox.
+     */
     private final JCheckBox fullscreenCheckbox;
+    /**
+     * Image for the icon to mark something as "checked".
+     */
+    private final BufferedImage checkSel;
+    /**
+     * Image for the icon to mark something as "unchecked".
+     */
+    private final BufferedImage checkNotSel;
+    /**
+     * Label for the FPS text.
+     */
     private final JLabel fpsLabel;
+    /**
+     * FPS Spinner.
+     */
     private final JSpinner fpsSpinner;
+    /**
+     * Label for the Volume text.
+     */
     private final JLabel volumeLabel;
+    /**
+     * Volume slider.
+     */
     private final JSlider volumeSlider;
+    /**
+     * Button to save the edited settings and return to main menu.
+     */
     private final JButton saveButton;
+    /**
+     * Button to discard the edited settings and return to main menu with the previous settings on place.
+     */
     private final JButton returnButton;
     
     /**
@@ -50,7 +91,7 @@ public abstract class SettingsJC extends JComponent {
         this.checkNotSel = Resources.loadImageResource("settings/checkNot.jpg");
         this.editingSettings = new Settings(settings);
         this.ogSettings = new Settings(settings);
-        font = new Font("Eraser Dust", Font.PLAIN, 100);
+        setFont(new Font("Eraser Dust", Font.PLAIN, 100));
 
         BufferedImage btnUp = Resources.loadImageResource("settings/spinnerUp.jpg");
         BufferedImage btnDown = Resources.loadImageResource("settings/spinnerDown.jpg");
@@ -75,7 +116,7 @@ public abstract class SettingsJC extends JComponent {
         fullscreenCheckbox.setIcon(new ImageIcon(checkNotSel));
         fullscreenCheckbox.setSelectedIcon(new ImageIcon(checkSel));
         fullscreenCheckbox.setSelected(editingSettings.isFullscreen());
-        fullscreenCheckbox.setFont(font);
+        fullscreenCheckbox.setFont(getFont());
         fullscreenCheckbox.setForeground(foreground);
         fullscreenCheckbox.setOpaque(true);
         fullscreenCheckbox.setBorderPainted(false);
@@ -116,7 +157,7 @@ public abstract class SettingsJC extends JComponent {
                 spinner.setBorder(new EmptyBorder(0, 0, 0, 0)); // Remove default border
             }
         });
-        fpsSpinner.setFont(font);
+        fpsSpinner.setFont(getFont());
         fpsSpinner.setOpaque(false);
         JSpinner.NumberEditor editor = ((JSpinner.NumberEditor)(fpsSpinner.getEditor()));
         editor.setOpaque(false);
@@ -197,7 +238,7 @@ public abstract class SettingsJC extends JComponent {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                Font font = SettingsJC.this.font.deriveFont((float)(getWidth()*0.05));
+                Font font = getFont().deriveFont((float)(getWidth()*0.05));
 
                 fullscreenLabel.setFont(font);
                 fullscreenCheckbox.setFont(font);
@@ -213,17 +254,27 @@ public abstract class SettingsJC extends JComponent {
             }
         });
     }
-
+    
+    /**
+     * Creates a button with the correct styling.
+     * @param text Display text for the button.
+     * @return The JButton instance properly styled.
+     */
     private JButton createCustomButton(String text) {
         JButton btn = new JButton("<html><u>" + text + "</u></html>");
-        btn.setFont(font);
+        btn.setFont(getFont());
         btn.setForeground(foreground);
         btn.setOpaque(false);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         return btn;
     }
-
+    
+    /**
+     * Creates a Spinner Button with the given image as an icon.
+     * @param img Icon.
+     * @return The JButton to be used on the spinner.
+     */
     private JButton createCustomSpinnerButton(BufferedImage img) {
         JButton button = new JButton(new ImageIcon(img));
         button.setOpaque(false);

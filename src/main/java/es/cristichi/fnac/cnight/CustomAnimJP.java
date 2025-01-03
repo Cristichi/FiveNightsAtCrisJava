@@ -21,11 +21,23 @@ public abstract class CustomAnimJP extends JPanel {
      * Size all instances of {@link CustomAnimJP} should have on the screen normally.
      */
     public static final Dimension SIZE = new Dimension(150, 175);
-    private static final Border border = new LineBorder(Color.BLACK, 1);
-
-    private final JLabel aiInputLbl;
-
-    protected BufferedImage portraitBackgroundImg;
+    /**
+     * Border for this CustomAnimJP.
+     */
+    protected static final Border border = new LineBorder(Color.BLACK, 1);
+    
+    /**
+     * JLabel that has the current AI value and displays it.
+     */
+    protected final JLabel aiInputLbl;
+    
+    /**
+     * Background image for the portrait. It is the same for everyone.
+     */
+    protected static BufferedImage portraitBackgroundImg;
+    /**
+     * Portrait of the AnimatronicDrawing represented here.
+     */
     protected BufferedImage portraitImg;
     
     /**

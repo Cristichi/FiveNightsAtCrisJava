@@ -56,6 +56,9 @@ public class NightJC extends ExitableJComponent {
 	 * configured IRL seconds.
 	 */
 	private final int hourTicksInterval;
+	/**
+	 * Amount of power left, where 1 is 100% and exactly 0 is a power outage.
+	 */
 	private float powerLeft;
 	/**
 	 * This represents the amount of Power lost each second passively, and is multiplied for each resource in use
@@ -95,6 +98,7 @@ public class NightJC extends ExitableJComponent {
 	 * <br>{@code false} when Jumpscared. */
 	private Boolean victoryScreen;
 
+	/** Background image showing the office! */
 	private final BufferedImage backgroundImg;
 	/** In the source image of the background, the X for where the left-side of the screen is while at LEFTDOOR. */
 	private static final int LEFTDOOR_X_IN_SOURCE = 200;
@@ -106,6 +110,7 @@ public class NightJC extends ExitableJComponent {
 	 * this is exactly 2000. Modifying this results in de-centered and stretch things, but it won't crash. */
 	private static final int OFFICEWIDTH_OF_SOURCE = 2000;
 
+	/** Image of a paper with information for the night guard. */
 	private final BufferedImage paperImg;
 	/** In the source image of the background, the X for the top-left Point where the paper must be drawn (if any). */
 	private static final int PAPER_X_IN_BACKGROUND_SOURCE = 2405;
@@ -188,21 +193,29 @@ public class NightJC extends ExitableJComponent {
 	// Doors
 	/** Usual number of ticks it takes for doors to fully open or close. */
 	private final int DOOR_TRANSITION_TICKS;
+	/** Marks the next tick to play the door transition sound (either open or close depending on whether the door
+	 * of the current side is open or closed. */
 	private boolean playDoorTransSound;
 	/** Whether the left door is effectively closed. */
 	private boolean leftDoorClosed;
 	/** Ticks left until left door is visually opened or closed. */
 	private int leftDoorTransTicks;
+	/** Image of the left door closed. */
 	private final BufferedImage leftDoorClosedImg;
+	/** Image of the left door half closed/open. */
 	private final BufferedImage leftDoorTransImg;
+	/** Image of the left door open. */
 	private final BufferedImage leftDoorOpenImg;
 	
 	/** Whether the right door is effectively closed. */
 	private boolean rightDoorClosed;
 	/** Ticks left until right door is visually opened or closed. */
 	private int rightDoorTransTicks;
+	/** Image of the right door closed. */
 	private final BufferedImage rightDoorClosedImg;
+	/** Image of the right door half closed/open. */
 	private final BufferedImage rightDoorTransImg;
+	/** Image of the right door open. */
 	private final BufferedImage rightDoorOpenImg;
 	
 	/** Position no the screen where the button of the left or right door was last drawn.
@@ -1209,7 +1222,10 @@ public class NightJC extends ExitableJComponent {
 		 */
 		void run(boolean completed);
 	}
-
+	
+	/**
+	 * Move to the left.
+	 */
     private class LeftAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1231,7 +1247,10 @@ public class NightJC extends ExitableJComponent {
 		}
 
 	}
-
+	
+	/**
+	 * Move to the right.
+	 */
 	private class RightAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1252,7 +1271,10 @@ public class NightJC extends ExitableJComponent {
 			}
 		}
 	}
-
+	
+	/**
+	 * Open/close the Camera monitor.
+	 */
 	private class CamsAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1273,7 +1295,10 @@ public class NightJC extends ExitableJComponent {
 			}
 		}
 	}
-
+	
+	/**
+	 * Open/close current door on screen.
+	 */
 	private class DoorAction extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {

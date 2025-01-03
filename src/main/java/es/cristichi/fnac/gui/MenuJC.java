@@ -20,20 +20,60 @@ import java.util.TimerTask;
  * for Settings and exitting the game.
  */
 public abstract class MenuJC extends JComponent {
-	private final List<Item> menuItems;
-	private Image backgroundImage;
-	private final Image defaultLoadingImg;
-	private Image currentLoadingImg;
-	private boolean loading;
-	private final Font btnFont;
-
-	private int errorTicks = 0;
-	private String[] error = null;
-
-	private final Music backgroundMusic;
-	private int musicCreditsTicks;
-	private static final int MUSIC_CREDITS_TICKS = 160;
-	private final String[] musicCreditsMsg;
+	/**
+	 * List of Items the menu has, which determines the buttons to show.
+	 */
+	protected final List<Item> menuItems;
+	/**
+	 * Background Image.
+	 */
+	protected Image backgroundImage;
+	/**
+	 * Default loading image, so that not all menu items need a custom background.
+	 */
+	protected final Image defaultLoadingImg;
+	/**
+	 * Current loading image to have on display. {@code null} when no loading image should be visible at this time.
+	 */
+	protected Image currentLoadingImg;
+	/**
+	 * Whether the game is loading or not.
+	 */
+	protected boolean loading;
+	/**
+	 * Font used for the buttons.
+	 */
+	protected final Font btnFont;
+	
+	/**
+	 * Amount of ticks left that the current on-screen error must be shown for. {@code 0} for no error.
+	 */
+	protected int errorTicks = 0;
+	/**
+	 * Usual number of ticks errors must be shown in total.
+	 */
+	protected static final int ERROR_TICKS = 60;
+	/**
+	 * Array with each line of the error to display on-screen. {@code null} for no error.
+	 */
+	protected String[] error = null;
+	
+	/**
+	 * Background Music.
+	 */
+	protected final Music backgroundMusic;
+	/**
+	 * Amount of ticks left that the music credits must be shown for. {@code 0} for no credits.
+	 */
+	protected int musicCreditsTicks;
+	/**
+	 * Usual number of ticks the Music's credits must be shown in total.
+	 */
+	protected static final int MUSIC_CREDITS_TICKS = 160;
+	/**
+	 * Array with each line that the Music's credits must be shown for. {@code null} for no credits.
+	 */
+	protected final String[] musicCreditsMsg;
 
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
@@ -234,7 +274,7 @@ public abstract class MenuJC extends JComponent {
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					error = new String[] {"Error trying to load "+ menuItem, e1.getMessage(), "Check console for full stack trace."};
-					errorTicks = 60;
+					errorTicks = ERROR_TICKS;
 				}
 				for (Component component : MenuJC.this.getComponents()) {
 					component.setVisible(true);

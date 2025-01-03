@@ -11,8 +11,17 @@ import java.util.List;
  * Represents the list of Cameras, marked by their name.
  */
 public class CameraMap extends HashMap<String, Camera> {
+    /**
+     * Minimap image.
+     */
     protected final BufferedImage mapImage;
+    /**
+     * Name of the Camera selected by default.
+     */
     protected final String defaultSelected;
+    /**
+     * Name of the Camera currently selected.
+     */
     protected String selected;
     
     /**

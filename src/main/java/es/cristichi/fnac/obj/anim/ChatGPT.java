@@ -27,10 +27,27 @@ import java.util.*;
                 " move randomly or using a chosen path to either your left or right door."
 )
 public class ChatGPT extends AnimatronicDrawing {
+    /**
+     * List with the names of all Cameras that ChatGPT will avoid when moving randomly.
+     */
     protected final List<String> forbiddenCameras;
+    /**
+     * List of paths (which are Lists of Camera names) that ChatGPT will follow when not moving randomly.
+     */
     protected final List<List<String>> camPaths;
+    /**
+     * {@code true} if ChatGPT will follow a path on the next move (if possible). {@code false} if they will move
+     * randomly.
+     */
     protected boolean usingPathedMove;
+    /**
+     * Image to show on Cameras when ChatGPT has not built themselves yet.
+     */
     protected BufferedImage buildingCamImg;
+    /**
+     * {@code true} if ChatGPT has not built themselves yet. When ChatGPT succeeds a Movement Oppotunity, this
+     * becomes {@code false} and the movement is canceled. Then ChatGPT is built and can move.
+     */
     protected boolean building;
     
     /**

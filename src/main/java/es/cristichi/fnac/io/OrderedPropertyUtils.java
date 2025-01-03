@@ -17,7 +17,6 @@ import java.util.*;
  * Edit for {@link PropertyUtils} that makes sure that properties are ordered so that the save file is always the same.
  */
 public class OrderedPropertyUtils extends PropertyUtils {
-
     private final Map<Class<?>, Map<String, Property>> propertiesCache = new HashMap<>();
     private final Map<Class<?>, Set<Property>> readableProperties = new HashMap<>();
     private BeanAccess beanAccess = BeanAccess.DEFAULT;

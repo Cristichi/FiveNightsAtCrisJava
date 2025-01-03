@@ -12,8 +12,14 @@ public class NightProgress {
      * Usual name of the save file.
      */
     public static final String SAVE_FILE_NAME = "save.fnac"; // Save file's name
-    private static final String MAGIC_NUMBER = "FNACSV1"; // Unique magic number for FNAC save files. Version 1.
-
+    /**
+     * Magic number of the file format, version 1. See
+     * <a href="https://en.wikipedia.org/wiki/List_of_file_signatures">List of file signatures (Wikipedia)</a>.
+     */
+    private static final String MAGIC_NUMBER = "FNACSV1";
+    /**
+     * Path to the folder inside documents where the FNAC things are saved to preserve.
+     */
     private static String pathToFnacFolder = null;
     
     /**
@@ -58,7 +64,7 @@ public class NightProgress {
     
     /**
      * Information saved on a saved file.
-     * @param completedNights
+     * @param completedNights List with the names of all completed Nights.
      */
     public record SaveFile(List<String> completedNights) {
             /**
