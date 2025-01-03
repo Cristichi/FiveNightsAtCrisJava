@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
@@ -156,9 +155,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     NightJC night = createCustomNight();
                     nightsJF.startCustomNight(night);
                     LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
-                } catch (IOException e) {
+                } catch (CustomNightException | NightException | ResourceException e) {
                     new ExceptionDialog(e, false, false, LOGGER);
-                } catch (CustomNightException | NightException e) {
+                } catch (NullPointerException e) {
                     new ExceptionDialog(e, false, true, LOGGER);
                 }
                 panelSettings.setVisible(true);
@@ -262,23 +261,44 @@ public class CustomNightMenuJC extends ExitableJComponent {
             resizingInProgress = false;
         });
     }
-
-    private NightJC createCustomNight() throws IOException, CustomNightException, NightException {
+    
+    /**
+     * Creates and loads the Custom Night with the Animatronics selected by the user.
+     * @return The created instance of NightJC.
+     * @throws CustomNightException If the AnimatronicDrawing classes are not correctly set up for Custom Night.
+     * @throws ResourceException If any resources could not be loaded from disk.
+     * @throws NightException If the Night could not be correctly configured.
+     * @throws NullPointerException If the player attempted to play with no Animatronics with {@code AI > 0}.
+     */
+    private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException,
+            NullPointerException {
         HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
 
         CameraMap nightMap = new CrisRestaurantMap();
 
-        boolean ok = false;
+        boolean atLeastOneAnim = false;
         for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
                 CustomNightAnimatronicData data = customInputs.get(entry.getValue());
             if (data.ai() > 0){
-                ok = true;
+                atLeastOneAnim = true;
                 try{
                     AnimatronicDrawing anim = entry.getValue().getConstructor(CustomNightAnimatronicData.class).newInstance(
                             new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(),
                                     data.ai(), rng));
 
-                    nightMap.get(entry.getKey().description()).getAnimatronicsHere().add(anim);
+                    boolean okStart = false;
+                    for(String start : entry.getKey().starts()){
+                        if (nightMap.containsKey(start)){
+                            nightMap.get(start).getAnimatronicsHere().add(anim);
+                            okStart = true;
+                            break;
+                        }
+                    }
+                    if (!okStart){
+                        throw new CustomNightException(
+                                "The Animatronic %s does not have a valid starting point on the map."
+                                        .formatted(anim.getNameId()));
+                    }
                 } catch (InvocationTargetException e){
                     throw new CustomNightException("Error trying to create the Animatronic.", e);
                 } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e){
@@ -287,8 +307,8 @@ public class CustomNightMenuJC extends ExitableJComponent {
             }
         }
 
-        if (!ok){
-            throw new CustomNightException("This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
+        if (!atLeastOneAnim){
+            throw new NullPointerException("This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
         }
         return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
                 "night/general/completed.wav");
