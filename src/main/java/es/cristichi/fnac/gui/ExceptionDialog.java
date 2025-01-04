@@ -14,7 +14,7 @@ public class ExceptionDialog extends JFrame {
     /**
      * Creates a new dialog with the info of a Exception and shows it as always on top.
      *
-     * @param exception    Exception that must be informed to user.
+     * @param exception    Exception that must be informed to the player.
      * @param fatal        Whether closing this window should close the Java application entirely.
      * @param clearMessage Whether it shows only the message of the error, or otherwise the entire stacktrace.
      * @param logger       Logger to be used to log the error, or {@code null} to not log the error.
