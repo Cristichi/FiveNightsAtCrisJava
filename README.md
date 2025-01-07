@@ -10,14 +10,6 @@ This is a game of memory, quick actions, listening with all your attention, and 
 ## Work in Progress
 This is still a work in progress. All Nights are playable, including a Custom Night as a reward with unique Animatronic Drawings that are not present throughout the game! Nonetheless, there is still some work to do for the game's art, so stay tuned!
 
-### Work to do
-- Remake all Animatronic Drawings' art and Jumpscares.
-- Remake all Cameras' backgrounds so they are actually interesting.
-- Remake the doors' art.
-- Add more details and items to the background, or remake it entirely.
-- Add "states" for Animatronics. For instance, like how Foxy works while at Pirate Cove in the original FNAF.
-- Keep improving things internally to make them as clear as possible, for any dev who may want to add more Animatronics in the future (or myself of course, it's always good to make it easy for future-Cristichi as well).
-
 ## The Lore
 A Cataclysm made existence look like a drawing. `Cris' Restaurant for You` closes their doors after gruesome discovery that what were previously Animatronics are now Drawings that can move, like humans. The owner trapped as one of them. Shareholders need you to watch the place, like always, while they see what they can do now that the Restaurant is hostile and the owner gone.  
 
