@@ -59,16 +59,16 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths, Random rng)
             throws ResourceException {
-        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, Resources.loadImage("anims/cris/camImg.png"),
-                null, camPaths, Color.PINK, rng);
+        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+                Resources.loadImage("anims/cris/camImg.png"), null, camPaths, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
-                    JumpscareVisualSetting.STRETCHED);
+                    JumpscareVisualSetting.FILL_SCREEN);
             jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
-                    JumpscareVisualSetting.CENTERED);
+                    JumpscareVisualSetting.MIDDLE_DOWN);
         }
         jumpscare = rng.nextFloat() < .9 ? jumpscareNormal : jumpscareItsMe;
 

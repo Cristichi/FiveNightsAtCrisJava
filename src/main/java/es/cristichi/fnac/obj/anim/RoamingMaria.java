@@ -49,7 +49,7 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
                 globalCameraStalled, Resources.loadImage("anims/maria/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/maria/jumpscare.gif"), 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav"),
-                        0, JumpscareVisualSetting.CENTERED),
+                        0, JumpscareVisualSetting.MIDDLE_DOWN),
                 forbiddenCams, Color.YELLOW, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav"));

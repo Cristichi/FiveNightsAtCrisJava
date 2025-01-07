@@ -53,7 +53,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                 Resources.loadImage("anims/paco/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/paco/jumpscare.gif"), 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav"), 4,
-                        JumpscareVisualSetting.CENTERED),
+                        JumpscareVisualSetting.MIDDLE_DOWN),
                 camPaths, Color.BLUE, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav"));

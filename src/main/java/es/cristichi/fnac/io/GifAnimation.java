@@ -37,4 +37,10 @@ public class GifAnimation extends ArrayList<GifFrame> {
         return filePath;
     }
     
+    /**
+     * @return The dimension of the logical screen.
+     */
+    public Dimension getLogicalScreen() {
+        return logicalScreen;
+    }
 }

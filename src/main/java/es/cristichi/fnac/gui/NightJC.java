@@ -1143,20 +1143,19 @@ public class NightJC extends ExitableJComponent {
 				}
 
 				// Full dimensions of the final full-sized frame
-				int fullWidth = jumpscare.getFullWidth();
-				int fullHeight = jumpscare.getFullHeight();
+				Dimension fullSize = jumpscare.getLogicalScreen();
 
 				// Calculate scaling factor for the full frame
-				double scaleJumpX = (double) getWidth() / fullWidth;
-				double scaleJumpY = (double) getHeight() / fullHeight;
-				double scale = switch (jumpscare.getVisualSetting()){
-					case CENTERED -> Math.min(scaleJumpX, scaleJumpY);
-					case STRETCHED -> Math.max(scaleJumpX, scaleJumpY);
+				double scale = switch (jumpscare.getVisualSetting()) {
+					case CENTERED, MIDDLE_DOWN, MIDDLE_UP
+							-> Math.min((double) getWidth() / fullSize.width, (double) getHeight() / fullSize.height);
+                    case FILL_SCREEN
+							-> Math.max((double) getWidth() / fullSize.width, (double) getHeight() / fullSize.height);
 				};
 
 				// Calculate the size of the scaled full frame
-				int scaledFullWidth = (int) (fullWidth * scale);
-				int scaledFullHeight = (int) (fullHeight * scale);
+				int scaledFullWidth = (int) (fullSize.width * scale);
+				int scaledFullHeight = (int) (fullSize.height * scale);
 
 				// Calculate the top-left corner for the full frame
 				int fullDrawX = (getWidth() - scaledFullWidth) / 2;
@@ -1169,35 +1168,31 @@ public class NightJC extends ExitableJComponent {
 					int frameHeight = frame.image().getHeight();
 
 					// Frame's offset relative to the full image
-					int frameOffsetX = frame.offsetX();
-					int frameOffsetY = frame.offsetY();
+                    int scaledFrameWidth = (int) (frameWidth * scale);
+					int scaledFrameHeight = (int) (frameHeight * scale);
+					int scaledOffsetX = (int) (frame.offsetX() * scale);
+					int scaledOffsetY = (int) (frame.offsetY() * scale);
 
 					switch (jumpscare.getVisualSetting()){
-						case CENTERED -> {
-							// Standard logic: center frames with offsets and scaling
-							int scaledFrameWidth = (int) (frameWidth * scale);
-							int scaledFrameHeight = (int) (frameHeight * scale);
-							int scaledOffsetX = (int) (frameOffsetX * scale);
-							int scaledOffsetY = (int) (frameOffsetY * scale);
-
-							// Position the frame relative to the scaled full frame
-							int frameDrawX = fullDrawX + scaledOffsetX;
-							int frameDrawY = fullDrawY + scaledOffsetY;
-
-							// Draw the frame without stretching it
-							g.drawImage(frame.image(), frameDrawX, frameDrawY, frameDrawX + scaledFrameWidth, frameDrawY + scaledFrameHeight,
-									0, 0, frameWidth, frameHeight, this);
-						}
-						case STRETCHED -> {
-							// Stretching logic: scale entire frame to fill the screen
-							int stretchFrameWidth = (int) (frameWidth * scaleX);
-							int stretchFrameHeight = (int) (frameHeight * scaleY);
-							int stretchDrawX = (int) (frameOffsetX * scaleX);
-							int stretchDrawY = (int) (frameOffsetY * scaleY);
-
-							g.drawImage(frame.image(), stretchDrawX, stretchDrawY, stretchDrawX + stretchFrameWidth, stretchDrawY + stretchFrameHeight,
-									0, 0, frameWidth, frameHeight, this);
-						}
+						case CENTERED ->
+                                g.drawImage(frame.image(), fullDrawX + scaledOffsetX, fullDrawY + scaledOffsetY,
+                                        fullDrawX + scaledOffsetX + scaledFrameWidth, fullDrawY + scaledOffsetY + scaledFrameHeight,
+                                        0, 0, frameWidth, frameHeight, this);
+						case MIDDLE_UP ->
+                                g.drawImage(frame.image(),
+                                        fullDrawX + scaledOffsetX, scaledOffsetY,
+                                        fullDrawX + scaledOffsetX + scaledFrameWidth, scaledOffsetY+fullDrawY,
+                                        0, 0, frameWidth, frameHeight, this);
+						case MIDDLE_DOWN ->
+								g.drawImage(frame.image(),
+										fullDrawX + scaledOffsetX, getHeight()-fullDrawY-scaledOffsetY,
+										fullDrawX + scaledOffsetX + scaledFrameWidth, getHeight(),
+										0, 0, frameWidth, frameHeight, this);
+						case FILL_SCREEN -> g.drawImage(frame.image(),
+								(int) (frame.offsetX() * scaleX), (int) (frame.offsetY() * scaleY),
+                                (int) (frame.offsetX() * scaleX) + (int) (frameWidth * scaleX),
+								(int) (frame.offsetY() * scaleY) + (int) (frameHeight * scaleY),
+                                0, 0, frameWidth, frameHeight, this);
 					}
 				}
 

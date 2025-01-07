@@ -82,7 +82,7 @@ public class ChatGPT extends AnimatronicDrawing {
                 Resources.loadImage("anims/chatgpt/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/chatgpt/jumpscare.gif"), 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav"), 2,
-                        JumpscareVisualSetting.STRETCHED), Color.BLUE, rng);
+                        JumpscareVisualSetting.FILL_SCREEN), Color.BLUE, rng);
 
         this.forbiddenCameras = new ArrayList<>(forbiddenCameras);
         this.camPaths = new ArrayList<>(camPaths);

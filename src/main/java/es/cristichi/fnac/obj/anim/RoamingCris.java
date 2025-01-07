@@ -54,7 +54,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
         if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
-                    JumpscareVisualSetting.STRETCHED);
+                    JumpscareVisualSetting.FILL_SCREEN);
             jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
                     JumpscareVisualSetting.CENTERED);

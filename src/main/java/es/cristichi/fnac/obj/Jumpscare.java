@@ -7,6 +7,7 @@ import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,7 +29,7 @@ public class Jumpscare {
     public static Jumpscare getPowerOutageJumpscare() throws ResourceException {
         if (powerOutage == null) {
             return setPowerOutageJumpscare(
-                    new Jumpscare(Resources.loadGif("office/powerOutage.gif"), 0, null, -1, JumpscareVisualSetting.STRETCHED));
+                    new Jumpscare(Resources.loadGif("office/powerOutage.gif"), 0, null, -1, JumpscareVisualSetting.FILL_SCREEN));
         }
         return powerOutage;
     }
@@ -67,7 +68,7 @@ public class Jumpscare {
      * @param sound           Sound to play during this Jumpscare.
      * @param soundStartFrame Index of the frame of the GIF which will start playing the sound. Use for dramatic effect!
      * @param jumpscareVisual Different ways the Night knows how to draw the GIF on the screen. In case of doubt just
-     *                        use {@link JumpscareVisualSetting#STRETCHED}.
+     *                        use {@link JumpscareVisualSetting#FILL_SCREEN}.
      */
     public Jumpscare(GifAnimation gifAnimation, int camsDownFrame, @Nullable Sound sound, int soundStartFrame,
                      JumpscareVisualSetting jumpscareVisual) {
@@ -127,19 +128,11 @@ public class Jumpscare {
     }
     
     /**
-     * @return The full width of the GIF. For reasons, I'm supposing the last frame is full-sized.
+     * @return The full width and height of the GIF as defined in its logical screen.
      */
-    public int getFullWidth() {
-        return gifAnimation.get(gifAnimation.size() - 1).image().getWidth();
+    public Dimension getLogicalScreen() {
+        return gifAnimation.getLogicalScreen();
     }
-    
-    /**
-     * @return The full height of the GIF. For reasons, I'm supposing the last frame is full-sized.
-     */
-    public int getFullHeight() {
-        return gifAnimation.get(gifAnimation.size() - 1).image().getHeight();
-    }
-    
     /**
      * @return {@code true} if this Jumpscare's last frame has already passed (with its delay included).
      */
