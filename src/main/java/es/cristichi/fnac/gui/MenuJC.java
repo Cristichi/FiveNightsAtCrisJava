@@ -1,6 +1,5 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.exception.ResourceException;
 import kuusisto.tinysound.Music;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,9 +79,8 @@ public abstract class MenuJC extends JComponent {
 	 * @param defaultLoadingImg Default loading image in the resources. It is used for {@link Item}s
 	 *                         that don't specify one.
 	 * @param backgroundMusic Background music.
-	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public MenuJC(Info info, BufferedImage defaultLoadingImg, Music backgroundMusic) throws ResourceException {
+    public MenuJC(Info info, BufferedImage defaultLoadingImg, Music backgroundMusic) {
 		super();
 		this.menuItems = info.menuItems();
 		this.backgroundMusic = backgroundMusic;
@@ -90,8 +88,6 @@ public abstract class MenuJC extends JComponent {
 		this.defaultLoadingImg = defaultLoadingImg;
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
-		
-		//backgroundMusic = Resources.loadMusic("menu/main.wav");
 
 		initializeMenuItems();
 
