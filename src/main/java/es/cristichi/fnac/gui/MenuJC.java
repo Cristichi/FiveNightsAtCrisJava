@@ -90,7 +90,7 @@ public abstract class MenuJC extends JComponent {
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
 
-		backgroundMusic = Resources.loadMusic("menu/main.wav", "menuBack.wav");
+		backgroundMusic = Resources.loadMusic("menu/main.wav");
 
 		initializeMenuItems();
 

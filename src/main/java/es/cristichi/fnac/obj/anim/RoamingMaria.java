@@ -48,11 +48,11 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
         super(name, 5, 6, aiDuringNight, 20, cameraStalled,
                 globalCameraStalled, "anims/maria/camImg.png",
                 new Jumpscare("anims/maria/jumpscare.gif", 0,
-                        Resources.loadSound("anims/maria/sounds/jumpscare.wav", "mariaJump.wav"),
+                        Resources.loadSound("anims/maria/sounds/jumpscare.wav"),
                         0, JumpscareVisualSetting.CENTERED),
                 forbiddenCams, Color.YELLOW, rng);
 
-        this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav", "mariaMove.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/maria/sounds/move.wav"));
         this.camPos.put("main stage", new Point2D.Float(0.8f, 0.1f));
     }
 }

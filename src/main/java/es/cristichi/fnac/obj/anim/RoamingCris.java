@@ -53,15 +53,15 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump1.wav"), 1,
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.STRETCHED);
             jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
-                    Resources.loadSound("anims/cris/sounds/jumpscare.wav", "crisJump2.wav"), 12,
+                    Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
                     JumpscareVisualSetting.CENTERED);
         }
         jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 
-        this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav", "crisMove.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav"));
         this.camPos.put("main stage", new Point2D.Float(0.7f, 0.05f));
     }
 }

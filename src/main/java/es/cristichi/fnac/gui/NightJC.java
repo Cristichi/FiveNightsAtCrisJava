@@ -334,25 +334,26 @@ public class NightJC extends ExitableJComponent {
 		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
-		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath, "nightPassed.wav");
+		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath);
 		ambientSounds = new AmbientSoundSystem((int) (this.fps *3.115), 0.3f,
-				new AmbientSound(Resources.loadSound("office/ambient/weird1.wav", "weird1.wav"), 1, true),
-				new AmbientSound(Resources.loadSound("office/ambient/waterLeak.wav", "waterLeak.wav"), 3, true),
-				new AmbientSound(Resources.loadSound("office/ambient/fakeSteps1.wav", "fakeSteps.wav"), 1, true),
-				new AmbientSound(Resources.loadSound("office/ambient/deep-breath-247459.wav", "amBreath.wav"), 4, true)
+				new AmbientSound(Resources.loadSound("office/ambient/heavySteps.wav"), 1, true),
+				new AmbientSound(Resources.loadSound("office/ambient/weird1.wav"), 1, true),
+				new AmbientSound(Resources.loadSound("office/ambient/waterLeak.wav"), 3, true),
+				new AmbientSound(Resources.loadSound("office/ambient/fakeSteps1.wav"), 1, true),
+				new AmbientSound(Resources.loadSound("office/ambient/deep-breath-247459.wav"), 4, true)
 		);
-		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav", "openCams.wav");
-		honkSound = Resources.loadSound("office/sounds/honk.wav", "funnyHonk.wav");
-		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav", "keepCams.wav");
+		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav");
+		honkSound = Resources.loadSound("office/sounds/honk.wav");
+		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
 		openedCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
 		addOnExitListener(openedCamsSound::stop);
 		backgroundCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
 		addOnExitListener(backgroundCamsSound::stop);
-		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav", "closeCams.wav");
-		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav", "clickCams.wav");
+		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav");
+		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav");
 
-		openDoorSound = Resources.loadSound("office/sounds/opening-metal-door-199581.wav", "openDoor.wav");
-		closeDoorSound = Resources.loadSound("office/sounds/metal-door-slam-172172.wav", "closeDoor.wav");
+		openDoorSound = Resources.loadSound("office/sounds/opening-metal-door-199581.wav");
+		closeDoorSound = Resources.loadSound("office/sounds/metal-door-slam-172172.wav");
 
 		offTransTicks = 0;
 		camsUpDownTransTicks = 0;

@@ -51,10 +51,10 @@ public class Paco extends PathedMoveAnimatronicDrawing {
                 List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/paco/camImg.png",
                 new Jumpscare("anims/paco/jumpscare.gif", 0,
-                        Resources.loadSound("anims/paco/sounds/jumpscare.wav", "pacoJump.wav"), 4,
+                        Resources.loadSound("anims/paco/sounds/jumpscare.wav"), 4,
                         JumpscareVisualSetting.CENTERED),
                 camPaths, Color.BLUE, rng);
 
-        this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav", "pacoMove.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/paco/sounds/move.wav"));
     }
 }

@@ -47,10 +47,10 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
                       boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/bob/camImg.png",
                 new Jumpscare("anims/bob/jumpscare.gif", 0,
-                        Resources.loadSound("anims/bob/sounds/jumpscare.wav", "bobJump.wav"), 0, JumpscareVisualSetting.CENTERED),
+                        Resources.loadSound("anims/bob/sounds/jumpscare.wav"), 0, JumpscareVisualSetting.CENTERED),
                 forbiddenCams, Color.RED, rng);
 
-        this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav", "bobMove.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/bob/sounds/move.wav"));
         this.camPos.put("main stage", new Point2D.Float(0.9f, 0.1f));
     }
 }

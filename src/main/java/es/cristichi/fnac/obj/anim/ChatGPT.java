@@ -80,14 +80,14 @@ public class ChatGPT extends AnimatronicDrawing {
                    List<String> forbiddenCameras, List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/chatgpt/camImg.png",
                 new Jumpscare("anims/chatgpt/jumpscare.gif", 0,
-                        Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav", "chatGptJump.wav"), 2,
+                        Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav"), 2,
                         JumpscareVisualSetting.STRETCHED), Color.BLUE, rng);
 
         this.forbiddenCameras = new ArrayList<>(forbiddenCameras);
         this.camPaths = new ArrayList<>(camPaths);
-        this.sounds.put("move", Resources.loadSound("anims/chatgpt/sounds/move.wav", "chatGptMove.wav"));
-        this.sounds.put("moveRoam", Resources.loadSound("anims/chatgpt/sounds/moveRoam.wav", "chatGptMoveRoam.wav"));
-        this.sounds.put("building", Resources.loadSound("anims/chatgpt/sounds/building.wav", "chatGptBuild.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/chatgpt/sounds/move.wav"));
+        this.sounds.put("moveRoam", Resources.loadSound("anims/chatgpt/sounds/moveRoam.wav"));
+        this.sounds.put("building", Resources.loadSound("anims/chatgpt/sounds/building.wav"));
         this.buildingCamImg = Resources.loadImageResource("anims/chatgpt/camImgOnlyBody.png");
 
         this.usingPathedMove = false;

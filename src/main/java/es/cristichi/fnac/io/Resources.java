@@ -13,10 +13,12 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,30 @@ import java.util.Iterator;
  * same path.
  */
 public class Resources {
+    /**
+     * This is the folder inside the computer user's temp folder that is created for all the resources
+     * that must be kept in temporary files (like Music and Sounds).
+     */
+    public static String TEMP_FOLDER_NAME = "FNAC";
+    private static File TEMP_FOLDER = null;
+    
+    /**
+     * Provides a folder inside the temporary folder of the user.
+     * @return An instance of File that represents a folder that is already created and will be deleted on exit.
+     * @throws IOException If any issues happen when creating the folder.
+     */
+    private static File getTempFolder() throws IOException {
+        if (TEMP_FOLDER != null && TEMP_FOLDER.exists()){
+            return TEMP_FOLDER;
+        }
+        
+        
+        TEMP_FOLDER = Files.createTempDirectory(TEMP_FOLDER_NAME).toFile();
+        TEMP_FOLDER.mkdirs();
+        TEMP_FOLDER.deleteOnExit();
+        return TEMP_FOLDER;
+    }
+    
     private static final HashMap<String, BufferedImage> loadedImgs = new HashMap<>(50);
     
     /**
@@ -163,21 +189,29 @@ public class Resources {
      * Loads a {@link Music} file from the resources. It stores it in the temp folder of the computer's user
      * in order to load it better, since Music instances are constantly read the file.
      * @param resourcePath Path inside the resources folder.
-     * @param tmpFile Name of the temp file. Must be unique.
      * @return The Music.
      * @throws ResourceException If the Music does not exist.
      */
-    public static Music loadMusic(String resourcePath, String tmpFile) throws ResourceException {
+    public static Music loadMusic(String resourcePath) throws ResourceException {
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null){
                 throw new NullPointerException("Resource not found.");
             }
-            String[] tempSplit = tmpFile.split("\\.");
-            Path tempFile = Files.createTempFile(tempSplit[0], ".".concat(tempSplit[1]));
-            tempFile.toFile().deleteOnExit();
-            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            File tempFolder = getTempFolder();
+            
+            Path normalizedPath = Paths.get(resourcePath).normalize();
+            String tempFileName = normalizedPath.toString().replace(File.separatorChar, '_').replace('/', '_');
+            File tempFile = new File(tempFolder, tempFileName);
+            tempFile.deleteOnExit();
+            if (!tempFile.exists()){
+                Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
 
-            return TinySound.loadMusic(tempFile.toFile(), false);
+            Music music = TinySound.loadMusic(tempFile, false);
+            if (music == null){
+                throw new NullPointerException("Music file %s could not be loaded from disk.".formatted(resourcePath));
+            }
+            return music;
         } catch (IOException | NullPointerException notFoundE) {
             throw new ResourceException(
                     "Music file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
@@ -190,28 +224,37 @@ public class Resources {
     /**
      * Loads a {@link Sound} file from the resources. It stores it in the temp folder of the computer's user
      * in order to load it better, since Sounds are constantly read the file.
+     *
      * @param resourcePath Path inside the resources folder.
-     * @param tmpFile Name of the temp file. Must be unique.
      * @return The Sound.
      * @throws ResourceException If the Sound does not exist.
      */
-    public static Sound loadSound(String resourcePath, String tmpFile) throws ResourceException {
+    public static Sound loadSound(String resourcePath) throws ResourceException {
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null){
-                throw new NullPointerException("Resource not found.");
+                throw new NullPointerException("Resource %s not found.".formatted(resourcePath));
             }
-            String[] tempSplit = tmpFile.split("\\.");
-            Path tempFile = Files.createTempFile(tempSplit[0], ".".concat(tempSplit[1]));
-            tempFile.toFile().deleteOnExit();
-            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            File tempFolder = getTempFolder();
+            
+            Path normalizedPath = Paths.get(resourcePath).normalize();
+            String tempFileName = normalizedPath.toString().replace(File.separatorChar, '_').replace('/', '_');
+            File tempFile = new File(tempFolder, tempFileName);
+            tempFile.deleteOnExit();
+            if (!tempFile.exists()){
+                Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
 
-            return TinySound.loadSound(tempFile.toFile());
+            Sound sound = TinySound.loadSound(tempFile);
+            if (sound == null){
+                throw new NullPointerException("Sound file %s could not be loaded from disk.".formatted(resourcePath));
+            }
+            return sound;
         } catch (IOException | NullPointerException notFoundE) {
             throw new ResourceException(
                     "Sound file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
                             .formatted(resourcePath), notFoundE);
         } catch (Exception e){
-            throw new ResourceException("Error when trying to load audio at \"" + resourcePath + "\".", e);
+            throw new ResourceException("Error when trying to load audio at \"%s\".".formatted(resourcePath), e);
         }
     }
     

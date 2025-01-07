@@ -186,7 +186,7 @@ public abstract class SettingsJC extends JComponent {
         volumeSlider.setPaintTrack(false);
         volumeSlider.setPaintTicks(true);
         volumeSlider.setPaintLabels(true);
-        Sound volumeTest = Resources.loadSound("settings/sounds/volumetest.wav", "volTest.wav");
+        Sound volumeTest = Resources.loadSound("settings/sounds/volumetest.wav");
         volumeSlider.addChangeListener(e -> {
             TinySound.setGlobalVolume((double) volumeSlider.getValue() /100);
             volumeTest.stop();
