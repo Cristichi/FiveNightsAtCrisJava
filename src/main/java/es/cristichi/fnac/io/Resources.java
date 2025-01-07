@@ -108,7 +108,7 @@ public class Resources {
     
                 int numFrames = reader.getNumImages(true);
                 ArrayList<GifFrame> frames = new ArrayList<>(numFrames);
-    
+                
                 for (int i = 0; i < numFrames; i++) {
                     Integer delay = null;
                     GifFrameDisposalMethod disposalMethod = null;
@@ -126,49 +126,46 @@ public class Resources {
                     }
     
                     Node root = metadata.getAsTree(metaFormatName);
-                    NodeList children = root.getChildNodes();
-    
-                    for (int i1 = 0; i1 < children.getLength(); i1++) {
-                        Node child = children.item(i1);
-    
-                        if (child.getNodeName().equals("GraphicControlExtension")) {
-                            Node delayNode = child.getAttributes().getNamedItem("delayTime");
+                    NodeList metaKids = root.getChildNodes();
+                    
+                    for (int i1 = 0; i1 < metaKids.getLength(); i1++) {
+                        Node metadataKid = metaKids.item(i1);
+                        
+                        if (metadataKid.getNodeName().equals("GraphicControlExtension")) {
+                            Node delayNode = metadataKid.getAttributes().getNamedItem("delayTime");
                             if (delayNode != null) {
                                 delay = Integer.parseInt(delayNode.getNodeValue());
                             }
-    
-                            Node disposalNode = child.getAttributes().getNamedItem("disposalMethod");
+                            
+                            Node disposalNode = metadataKid.getAttributes().getNamedItem("disposalMethod");
                             if (disposalNode != null) {
                                 String method = disposalNode.getNodeValue();
                                 disposalMethod = switch (method) {
-                                    case "restoreToBackgroundColor" -> GifFrameDisposalMethod.RESTORE_TO_BACKGROUND_COLOR;
+                                    case "restoreToBackgroundColor" ->
+                                            GifFrameDisposalMethod.RESTORE_TO_BACKGROUND_COLOR;
                                     case "restoreToPrevious" -> GifFrameDisposalMethod.RESTORE_TO_PREVIOUS;
                                     case "doNotDispose" -> GifFrameDisposalMethod.DO_NOT_DISPOSE;
                                     default -> GifFrameDisposalMethod.UNSPECIFIED;
                                 };
                             }
-                            if (delay != null && disposalMethod != null){
-                                break;
-                            }
-                        } else if (child.getNodeName().equals("ImageDescriptor")){
-                            Node offsetXNode = child.getAttributes().getNamedItem("imageLeftPosition");
-                            Node offsetYNode = child.getAttributes().getNamedItem("imageTopPosition");
-                            Node wNode = child.getAttributes().getNamedItem("imageWidth");
-                            Node hNode = child.getAttributes().getNamedItem("imageHeight");
-                            Node interlace = child.getAttributes().getNamedItem("interlaceFlag");
-                            if (offsetXNode != null){
+                        } else if (metadataKid.getNodeName().equals("ImageDescriptor")) {
+                            Node offsetXNode = metadataKid.getAttributes().getNamedItem("imageLeftPosition");
+                            Node offsetYNode = metadataKid.getAttributes().getNamedItem("imageTopPosition");
+                            Node wNode = metadataKid.getAttributes().getNamedItem("imageWidth");
+                            Node hNode = metadataKid.getAttributes().getNamedItem("imageHeight");
+                            Node interlace = metadataKid.getAttributes().getNamedItem("interlaceFlag");
+                            if (offsetXNode != null) {
                                 offsetX = Integer.parseInt(offsetXNode.getNodeValue());
                             }
-                            if (offsetYNode != null){
+                            if (offsetYNode != null) {
                                 offsetY = Integer.parseInt(offsetYNode.getNodeValue());
                             }
-                            if (wNode != null){
+                            if (wNode != null) {
                                 width = Integer.parseInt(wNode.getNodeValue());
                             }
-                            if (hNode != null){
+                            if (hNode != null) {
                                 height = Integer.parseInt(hNode.getNodeValue());
                             }
-    
                         }
                     }
                     if (delay == null){
@@ -177,9 +174,32 @@ public class Resources {
     
                     frames.add(new GifFrame(frame, (double) delay /100, disposalMethod, offsetX, offsetY, width, height));
                 }
-    
+                
+                IIOMetadata streamMetadata = reader.getStreamMetadata();
+                int width = -1;
+                int height = -1;
+                if (streamMetadata != null) {
+                    String formatName = streamMetadata.getNativeMetadataFormatName();
+                    if (formatName.equals("javax_imageio_gif_stream_1.0")) {
+                        Node root = streamMetadata.getAsTree(formatName);
+                        NodeList children = root.getChildNodes();
+                        for (int i = 0; i < children.getLength(); i++) {
+                            Node child = children.item(i);
+                            if (child.getNodeName().equals("LogicalScreenDescriptor")) {
+                                width = Integer.parseInt(child.getAttributes()
+                                        .getNamedItem("logicalScreenWidth").getNodeValue());
+                                height = Integer.parseInt(child.getAttributes()
+                                        .getNamedItem("logicalScreenHeight").getNodeValue());
+                            }
+                        }
+                    }
+                }
                 reader.dispose();
-                return new GifAnimation(resourcePath, frames);
+                if (width<0 || height<0){
+                    throw new ResourceException("GIF %s has an invalid width (%d) or height (%d).%n"
+                            .formatted(resourcePath, width, height));
+                }
+                return new GifAnimation(resourcePath, frames, width, height);
             }
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new ResourceException("Error when reading \"" + resourcePath + "\". Perhaps its missing.", e);
