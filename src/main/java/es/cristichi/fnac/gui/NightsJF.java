@@ -99,13 +99,11 @@ public class NightsJF extends JFrame {
                         cardLayout.show(cardPanel, "customNightMenu");
                     }
                     case "settings" -> cardLayout.show(cardPanel, "settings");
-                    case "exit" -> {
-                        /* We doing it this way since disposing this window and shutting TinySound down does not stop
-                           the Java VM. Also this way I make sure that it finishes even if I add stuff, the same
-                           way this JFrame uses JFrame.EXIT_ON_CLOSE.
-                         */
-                        System.exit(1);
-                    }
+                    /* We are doing the closin this way since disposing this window and shutting TinySound down does
+                        not stop the Java VM. Also this way I make sure that it finishes even if I add stuff,
+                        the same way this JFrame uses JFrame.EXIT_ON_CLOSE.
+                     */
+                    case "exit" ->  System.exit(1);
                     default -> {
                         try {
                             startNightFromFactory(Objects.requireNonNull(NightRegistry.getNight(0)));
