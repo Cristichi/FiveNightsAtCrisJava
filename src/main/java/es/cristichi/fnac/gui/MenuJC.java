@@ -206,9 +206,7 @@ public abstract class MenuJC extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int fontScale = Math.min(getWidth(), getHeight())/1000;
-
-		int fontSize = 40*fontScale;
+        int fontSize = 40 * Math.min(getWidth(), getHeight()) / 935;
 
 		// Draw the background image, scaled to fit the component's dimensions
 		g.drawImage((loading
@@ -227,7 +225,7 @@ public abstract class MenuJC extends JComponent {
 		}
 
 		if (musicCreditsTicks-- > 0) {
-			g.setFont(new Font("Arial", Font.BOLD, fontSize));
+			g.setFont(new Font("Eraser Dust", Font.BOLD, fontSize));
 			g.setColor(Color.WHITE);
 			int y = fontSize* musicCreditsMsg.length;
 			int x = (int)(getWidth()*0.99);
