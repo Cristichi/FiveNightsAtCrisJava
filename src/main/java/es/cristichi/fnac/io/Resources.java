@@ -33,6 +33,7 @@ public class Resources {
      * This is the folder inside the computer user's temp folder that is created for all the resources
      * that must be kept in temporary files (like Music and Sounds).
      */
+    @SuppressWarnings("CanBeFinal") //To allow dependants to modify it if they want.
     public static String TEMP_FOLDER_NAME = "FNAC";
     private static File TEMP_FOLDER = null;
     

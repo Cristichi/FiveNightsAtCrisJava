@@ -68,10 +68,9 @@ public class Jumpscare {
      * @param soundStartFrame Index of the frame of the GIF which will start playing the sound. Use for dramatic effect!
      * @param jumpscareVisual Different ways the Night knows how to draw the GIF on the screen. In case of doubt just
      *                        use {@link JumpscareVisualSetting#STRETCHED}.
-     * @throws ResourceException If any of the specified resources do not exist.
      */
     public Jumpscare(GifAnimation gifAnimation, int camsDownFrame, @Nullable Sound sound, int soundStartFrame,
-                     JumpscareVisualSetting jumpscareVisual) throws ResourceException {
+                     JumpscareVisualSetting jumpscareVisual) {
         this.gifAnimation = gifAnimation;
         this.cacheFrames = new HashMap<>(gifAnimation.size());
         this.camsDownFrame = camsDownFrame;
