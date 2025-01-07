@@ -68,7 +68,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                     JumpscareVisualSetting.FILL_SCREEN);
             jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
-                    JumpscareVisualSetting.MIDDLE_DOWN);
+                    JumpscareVisualSetting.MIDDLE_UP);
         }
         jumpscare = rng.nextFloat() < .9 ? jumpscareNormal : jumpscareItsMe;
 

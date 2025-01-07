@@ -57,7 +57,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
                     JumpscareVisualSetting.FILL_SCREEN);
             jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
-                    JumpscareVisualSetting.CENTERED);
+                    JumpscareVisualSetting.MIDDLE_UP);
         }
         jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 
