@@ -59,7 +59,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
     public PathCris(String name, Map<Integer, Integer> aiDuringNight,
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths, Random rng)
             throws ResourceException {
-        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, "anims/cris/camImg.png",
+        super(name, 5, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled, Resources.loadImageResource("anims/cris/camImg.png"),
                 null, camPaths, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {

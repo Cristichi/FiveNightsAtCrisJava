@@ -1,8 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.AnimatronicException;
-import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
@@ -110,7 +108,7 @@ public abstract class AnimatronicDrawing {
      *                            {@code cameraStalled}, except that this Animatronic would fail the Movement
      *                            Opportunity regardless of which Camera the player is looking at. If this is true,
      *                            then {@code cameraStalled} is ignored.
-     * @param camImgPath          Path to the image used when the Animatronic is shown on a Camera.
+     * @param camImg              Image used when the Animatronic is shown on a Camera.
      * @param jumpscare           Jumpscare to play when this Animatronic kills the player.
      * @param debugColor          Color used for debugging. Not used during normal gameplay. This is used for
      *                            developing purposes only in order to see where all Animatronics are at all
@@ -119,12 +117,10 @@ public abstract class AnimatronicDrawing {
      *                            Animatronic each Night. Its Movement Opportunities will be delayed that much.
      *                            Specific implementations may make use of this for any other thing they need to
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
-     * @throws ResourceException If a resource is not found in the given paths.
      */
     AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
-                       int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, String camImgPath,
-                       Jumpscare jumpscare, Color debugColor,
-                       Random rng) throws ResourceException {
+                       int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, BufferedImage camImg,
+                       Jumpscare jumpscare, Color debugColor, Random rng) {
         this.nameId = nameId;
         this.secInterval = secInterval;
         this.secsToKill = secsToKill;
@@ -132,7 +128,7 @@ public abstract class AnimatronicDrawing {
         this.aiDuringNight = aiDuringNight;
         this.cameraStalled = cameraStalled;
         this.globalCameraStalled = globalCameraStalled;
-        this.camImg = Resources.loadImageResource(camImgPath);
+        this.camImg = camImg;
         this.jumpscare = jumpscare;
         this.sounds = new HashMap<>(1);
         this.camPos = new HashMap<>(1);

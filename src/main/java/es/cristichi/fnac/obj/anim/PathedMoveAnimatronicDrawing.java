@@ -1,12 +1,12 @@
 package es.cristichi.fnac.obj.anim;
 
 import es.cristichi.fnac.exception.AnimatronicException;
-import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 
@@ -48,7 +48,7 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      *                            {@code cameraStalled}, except that this Animatronic would fail the Movement
      *                            Opportunity regardless of which Camera the player is looking at. If this is true,
      *                            then {@code cameraStalled} is ignored.
-     * @param camImgPath          Path to the image used when the Animatronic is shown on a Camera.
+     * @param camImg              Image used when the Animatronic is shown on a Camera.
      * @param jumpscare           Jumpscare to play when this Animatronic kills the player.
      * @param camPaths            List of the paths, each one being a List of Camera names, that this Animatronic
      *                            should stick to when trying to move. Usually they start far from the office and
@@ -60,14 +60,13 @@ public abstract class PathedMoveAnimatronicDrawing extends AnimatronicDrawing {
      *                            Animatronic each Night. Its Movement Opportunities will be delayed that much.
      *                            Specific implementations may make use of this for any other thing they need to
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
-     * @throws ResourceException If a resource is not found in the given paths.
      */
     public PathedMoveAnimatronicDrawing(String nameId, double secInterval, double secsToKill,
                                         Map<Integer, Integer> aiDuringNight, int maxAiLevel, boolean cameraStalled,
-                                        boolean globalCameraStalled, String camImgPath, Jumpscare jumpscare,
+                                        boolean globalCameraStalled, BufferedImage camImg, Jumpscare jumpscare,
                                         List<List<String>> camPaths, Color debugColor,
-                                        Random rng) throws ResourceException {
-        super(nameId, secInterval, secsToKill, aiDuringNight, maxAiLevel, cameraStalled, globalCameraStalled, camImgPath,
+                                        Random rng) {
+        super(nameId, secInterval, secsToKill, aiDuringNight, maxAiLevel, cameraStalled, globalCameraStalled, camImg,
                 jumpscare, debugColor, rng);
         this.camPaths = new LinkedList<>(camPaths);
     }
