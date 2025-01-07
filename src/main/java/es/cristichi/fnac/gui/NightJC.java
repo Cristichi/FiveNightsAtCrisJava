@@ -267,8 +267,8 @@ public class NightJC extends ExitableJComponent {
 	 * @param fps FPS for the Night. This is used as a target FPS and also to convert seconds to FPS.
 	 * @param camMap Map of the place. Animatronics present in the Night must start inside
 	 *                              their starting Cameras, they are only stored there.
-	 * @param paperImgPath Path to the Image that has the paper to put at the office. The paper should be
-	 *                     2480x4193px, or keep that same aspect ratio to be printed correctly.
+	 * @param paperImg 	   Image of the paper to put at the office. The paper should be 2480x4193px, or keep that same
+	 *                     aspect ratio to be printed correctly. Use {@code null} for no paper.
 	 * @param secsPerHour Number of seconds per in-game hour. It significantly affects difficulty, as
 	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
 	 *                    the human aspect of the difficulty like keeping concentration.
@@ -279,14 +279,13 @@ public class NightJC extends ExitableJComponent {
 	 *                             a power outage (even if you have both doors closed at all time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 *                             It must be kept in mind that Cameras also use power.
-	 * @param soundOnNightCompletedPath Path to the sound played when Night is completed. Can be null for dev
-	 *                                     purposes but having one is encouraged.
+	 * @param nightCompletedSound Sound played when Night is completed successfully (the player did not die).
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
      * @throws NightException If the Night is not properly set.
 	 */
-	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable String paperImgPath,
+	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable BufferedImage paperImg,
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				   float passivePowerUsage, @Nullable String soundOnNightCompletedPath) throws ResourceException, NightException {
+				   float passivePowerUsage, Sound nightCompletedSound) throws ResourceException, NightException {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
 				nightName, fps, secsPerHour, passivePowerUsage*100);
@@ -317,12 +316,9 @@ public class NightJC extends ExitableJComponent {
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
 
 		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
+		this.paperImg = paperImg;
+		// Images that are used every Night and cannot be personalized are always loaded from the same resources.
 		backgroundImg = Resources.loadImageResource("office/background.jpg");
-		if (paperImgPath == null){
-			paperImg = null;
-		} else {
-			paperImg = Resources.loadImageResource(paperImgPath);
-		}
 		camsUpDownBtnImg = Resources.loadImageResource("office/camsButton.png");
 		camMonitorImg = Resources.loadImageResource("office/monitor.png");
 		camMonitorStaticImg = Resources.loadImageResource("office/monitorStatic.png");
@@ -334,7 +330,7 @@ public class NightJC extends ExitableJComponent {
 		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
 		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
 
-		this.soundOnCompleted = Resources.loadSound(soundOnNightCompletedPath);
+		this.soundOnCompleted = nightCompletedSound;
 		ambientSounds = new AmbientSoundSystem((int) (this.fps *3.115), 0.3f,
 				new AmbientSound(Resources.loadSound("office/ambient/heavySteps.wav"), 1, true),
 				new AmbientSound(Resources.loadSound("office/ambient/weird1.wav"), 1, true),

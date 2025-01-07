@@ -311,6 +311,6 @@ public class CustomNightMenuJC extends ExitableJComponent {
             throw new NullPointerException("This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
         }
         return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
-                "night/general/completed.wav");
+                Resources.loadSound("night/general/completed.wav"));
     }
 }

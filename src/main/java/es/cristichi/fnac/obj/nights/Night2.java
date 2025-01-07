@@ -49,7 +49,7 @@ public class Night2 implements NightFactory{
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
         
-        return new NightJC("Night 2", settings.getFps(), nightMap, "night/n2/paper.png",
-                powerOutage, rng, 90, 0.45f, "night/general/completed.wav");
+        return new NightJC("Night 2", settings.getFps(), nightMap, Resources.loadImageResource("night/n2/paper.png"),
+                powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"));
     }
 }

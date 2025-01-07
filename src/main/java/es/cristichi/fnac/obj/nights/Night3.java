@@ -51,6 +51,6 @@ public class Night3 implements NightFactory{
         nightMap.get("bathrooms").setBroken(true);
         
         return new NightJC("Night 3", settings.getFps(), nightMap, null, powerOutage, rng,
-                90, 0.45f, "night/general/completed.wav");
+                90, 0.45f, Resources.loadSound("night/general/completed.wav"));
     }
 }

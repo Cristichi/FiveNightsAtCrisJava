@@ -46,7 +46,7 @@ public class Night1 implements NightFactory {
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
         
-        return new NightJC("Night 1", settings.getFps(), nightMap, "night/n1/paper.png", powerOutage, rng, 90, 0.45f,
-                "night/general/completed.wav");
+        return new NightJC("Night 1", settings.getFps(), nightMap, Resources.loadImageResource("night/n1/paper.png"), powerOutage, rng, 90, 0.45f,
+                Resources.loadSound("night/general/completed.wav"));
     }
 }

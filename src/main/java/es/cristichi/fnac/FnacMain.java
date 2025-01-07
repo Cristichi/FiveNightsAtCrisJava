@@ -153,8 +153,9 @@ public class FnacMain implements Runnable {
                 tutorialMap.addCamAnimatronics("cam2",
                         new RoamingMaria("Maria", Map.of(0,0, 2,2, 3,3, 4,4), false, false, List.of("cam3"), rng));
                 
-                return new NightJC("Tutorial", settings.getFps(), tutorialMap, "night/tutorial/paper.png",
-                        powerOutage, rng, 60, 0.45f, "night/tutorial/completed.wav");
+                return new NightJC("Tutorial", settings.getFps(), tutorialMap,
+                        Resources.loadImageResource("night/tutorial/paper.png"), powerOutage, rng, 60, 0.45f,
+                        Resources.loadSound("night/tutorial/completed.wav"));
             }
         });
         // Example on how to do them by organizing them in classes
