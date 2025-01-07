@@ -28,7 +28,7 @@ public class Jumpscare {
     public static Jumpscare getPowerOutageJumpscare() throws ResourceException {
         if (powerOutage == null) {
             return setPowerOutageJumpscare(
-                    new Jumpscare("office/powerOutage.gif", 0, null, -1, JumpscareVisualSetting.STRETCHED));
+                    new Jumpscare(Resources.loadGif("office/powerOutage.gif"), 0, null, -1, JumpscareVisualSetting.STRETCHED));
         }
         return powerOutage;
     }
@@ -48,7 +48,7 @@ public class Jumpscare {
     private final int soundStartFrame;
     private boolean soundDone;
     private final int camsDownFrame;
-    private final GifAnimation frames;
+    private final GifAnimation gifAnimation;
     private final HashMap<Integer, List<GifFrame>> cacheFrames;
     private final JumpscareVisualSetting jumpscareVisual;
     private int currentFrame;
@@ -60,7 +60,8 @@ public class Jumpscare {
     /**
      * Creates a new {@link Jumpscare} with the given data. This loads the resources specified.
      *
-     * @param filepath        Path in resources where the GIF file is.
+     * @param gifAnimation    Gifanimation. You can use {@link es.cristichi.fnac.io.Resources#loadGif(String)} if the
+     *                        GIF file is in the resources.
      * @param camsDownFrame   Index of the frame of the GIF which will force the player to put cams down if they are up.
      *                        In case of doubt, put 0 so the first frame will force cams down for immersion.
      * @param sound           Sound to play during this Jumpscare.
@@ -69,10 +70,10 @@ public class Jumpscare {
      *                        use {@link JumpscareVisualSetting#STRETCHED}.
      * @throws ResourceException If any of the specified resources do not exist.
      */
-    public Jumpscare(String filepath, int camsDownFrame, @Nullable Sound sound, int soundStartFrame,
+    public Jumpscare(GifAnimation gifAnimation, int camsDownFrame, @Nullable Sound sound, int soundStartFrame,
                      JumpscareVisualSetting jumpscareVisual) throws ResourceException {
-        this.frames = Resources.loadGif(filepath);
-        this.cacheFrames = new HashMap<>(frames.size());
+        this.gifAnimation = gifAnimation;
+        this.cacheFrames = new HashMap<>(gifAnimation.size());
         this.camsDownFrame = camsDownFrame;
         this.sound = sound;
         this.soundStartFrame = soundStartFrame;
@@ -101,9 +102,9 @@ public class Jumpscare {
         }
         
         // Preloading the stuff so they are in the cache
-        for (int i = 0; i <= this.frames.size(); i++) {
+        for (int i = 0; i <= this.gifAnimation.size(); i++) {
             int finalI = i;
-            new Thread(() -> getCombinedFrames(finalI), "preload-" + filepath + ">" + i).start();
+            new Thread(() -> getCombinedFrames(finalI), "preload-" + gifAnimation.getFilePath() + ">" + i).start();
         }
     }
     
@@ -130,21 +131,21 @@ public class Jumpscare {
      * @return The full width of the GIF. For reasons, I'm supposing the last frame is full-sized.
      */
     public int getFullWidth() {
-        return frames.get(frames.size() - 1).image().getWidth();
+        return gifAnimation.get(gifAnimation.size() - 1).image().getWidth();
     }
     
     /**
      * @return The full height of the GIF. For reasons, I'm supposing the last frame is full-sized.
      */
     public int getFullHeight() {
-        return frames.get(frames.size() - 1).image().getHeight();
+        return gifAnimation.get(gifAnimation.size() - 1).image().getHeight();
     }
     
     /**
      * @return {@code true} if this Jumpscare's last frame has already passed (with its delay included).
      */
     public boolean isFramesFinished() {
-        return currentFrame == frames.size();
+        return currentFrame == gifAnimation.size();
     }
     
     /**
@@ -183,7 +184,7 @@ public class Jumpscare {
      *      * top of the previous on the List that must be printed on this tick of the Night.
      */
     public List<GifFrame> updateAndGetFrame(int tick, int fps) {
-        GifFrame frame = frames.get(currentFrame >= frames.size() ? frames.size() - 1 : currentFrame);
+        GifFrame frame = gifAnimation.get(currentFrame >= gifAnimation.size() ? gifAnimation.size() - 1 : currentFrame);
         if (currentFrameStartTick == 0) {
             currentFrameStartTick = tick;
         } else if (tick >= currentFrameStartTick + frame.delaySecs() * fps) {
@@ -206,8 +207,8 @@ public class Jumpscare {
      * visible according to the frames' disposal method.
      */
     private List<GifFrame> getCombinedFrames(int frameIndex) {
-        if (frameIndex >= frames.size()) {
-            frameIndex = frames.size() - 1; // Clamp to the last frame
+        if (frameIndex >= gifAnimation.size()) {
+            frameIndex = gifAnimation.size() - 1; // Clamp to the last frame
         }
         
         if (cacheFrames.containsKey(frameIndex)) {
@@ -218,7 +219,7 @@ public class Jumpscare {
         boolean resetVisibility = false;
         
         for (int i = 0; i < frameIndex; i++) {
-            GifFrame frame = frames.get(i);
+            GifFrame frame = gifAnimation.get(i);
             
             // Disposal methods
             switch (frame.disposalMethod()) {
@@ -228,7 +229,7 @@ public class Jumpscare {
                         "Unexpected or unsupported disposal method: " + frame.disposalMethod());
             }
         }
-        visibleFrames.add(frames.get(frameIndex));
+        visibleFrames.add(gifAnimation.get(frameIndex));
         
         cacheFrames.put(frameIndex, visibleFrames);
         return visibleFrames;

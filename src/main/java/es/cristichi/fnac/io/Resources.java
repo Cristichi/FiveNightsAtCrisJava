@@ -178,7 +178,7 @@ public class Resources {
                 }
     
                 reader.dispose();
-                return new GifAnimation(frames);
+                return new GifAnimation(resourcePath, frames);
             }
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new ResourceException("Error when reading \"" + resourcePath + "\". Perhaps its missing.", e);

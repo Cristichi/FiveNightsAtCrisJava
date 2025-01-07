@@ -52,10 +52,10 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
                 "anims/cris/camImg.png", null, forbiddenCams, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {
-            jumpscareNormal = new Jumpscare("anims/cris/jumpscareNormal.gif", 0,
+            jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.STRETCHED);
-            jumpscareItsMe = new Jumpscare("anims/cris/jumpscareItsMe.gif", 7,
+            jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
                     JumpscareVisualSetting.CENTERED);
         }
