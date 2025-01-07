@@ -1,7 +1,6 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.io.Resources;
 import kuusisto.tinysound.Music;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,19 +77,21 @@ public abstract class MenuJC extends JComponent {
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
 	 * @param info Information of the menu items and background at the moment.
-	 * @param defaultLoadingImg Path to default loading image in the resources. It is used for {@link Item}s
+	 * @param defaultLoadingImg Default loading image in the resources. It is used for {@link Item}s
 	 *                         that don't specify one.
+	 * @param backgroundMusic Background music.
 	 * @throws ResourceException If there are any errors loading the images from the resources.
 	 */
-    public MenuJC(Info info, String defaultLoadingImg) throws ResourceException {
+    public MenuJC(Info info, BufferedImage defaultLoadingImg, Music backgroundMusic) throws ResourceException {
 		super();
 		this.menuItems = info.menuItems();
-		backgroundImage = Resources.loadImage(info.background());
-		this.defaultLoadingImg = Resources.loadImage(defaultLoadingImg);
+		this.backgroundMusic = backgroundMusic;
+		backgroundImage = info.background();
+		this.defaultLoadingImg = defaultLoadingImg;
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
-
-		backgroundMusic = Resources.loadMusic("menu/main.wav");
+		
+		//backgroundMusic = Resources.loadMusic("menu/main.wav");
 
 		initializeMenuItems();
 
@@ -281,6 +282,14 @@ public abstract class MenuJC extends JComponent {
 	}
 	
 	/**
+	 * Information this menu needs in order to create or update the buttons and background.
+	 * @param menuItems List of {@link Item}s. It must not be null or empty.
+	 * @param background Path to background image in the resources.
+	 */
+	public record Info(List<Item> menuItems, BufferedImage background) {
+	}
+	
+	/**
 	 *
 	 * @param id Id of the element. Elements with the same ID will perform the same action, whose code is written in
 	 *           {@link NightsJF}.
@@ -289,13 +298,5 @@ public abstract class MenuJC extends JComponent {
 	 * @param loadingScreen BufferedImage of the loading screen, or {@code null} to use the default one.
 	 */
 	public record Item(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
-	}
-	
-	/**
-	 * Information this menu needs in order to create or update the buttons and background.
-	 * @param menuItems List of {@link Item}s. It must not be null or empty.
-	 * @param background Path to background image in the resources.
-	 */
-	public record Info(List<Item> menuItems, String background) {
 	}
 }

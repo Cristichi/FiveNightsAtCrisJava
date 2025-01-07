@@ -87,7 +87,7 @@ public class NightsJF extends JFrame {
 
         MenuJC.Info menuInfo = getUpdatedMenuData();
 
-        mainMenu = new MenuJC(menuInfo, "menu/loading.jpg") {
+        mainMenu = new MenuJC(menuInfo, Resources.loadImage("menu/loading.jpg"), Resources.loadMusic("menu/main.wav")) {
             @Override
             protected void onMenuItemClick(Item item) throws IOException {
                 switch (item.id()) {
@@ -206,11 +206,11 @@ public class NightsJF extends JFrame {
      */
     private @NotNull MenuJC.Info getUpdatedMenuData() throws ResourceException {
         ArrayList<MenuJC.Item> mmItems = new ArrayList<>(2);
-        String background;
+        String backgrResPath;
         List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
         
-        background = switch (numCompleted) {
+        backgrResPath = switch (numCompleted) {
             case 0 -> "menu/background0.jpg";
             case 1 -> "menu/background1.jpg";
             case 2 -> "menu/background2.jpg";
@@ -237,7 +237,7 @@ public class NightsJF extends JFrame {
         }
         mmItems.add(new MenuJC.Item("settings", "Settings", "Settings", null));
         mmItems.add(new MenuJC.Item("exit", "Run Away", "I'm Sorry", null));
-        return new MenuJC.Info(mmItems, background);
+        return new MenuJC.Info(mmItems, Resources.loadImage(backgrResPath));
     }
     
     /**
@@ -256,7 +256,7 @@ public class NightsJF extends JFrame {
                     try {
                         saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                         MenuJC.Info menuInfo = getUpdatedMenuData();
-                        mainMenu.updateBackground(Resources.loadImage(menuInfo.background()));
+                        mainMenu.updateBackground(menuInfo.background());
                         mainMenu.updateMenuItems(menuInfo.menuItems());
                     } catch (IOException e) {
                         new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e),
@@ -294,7 +294,7 @@ public class NightsJF extends JFrame {
                 try {
                     saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
                     MenuJC.Info menuInfo = getUpdatedMenuData();
-                    mainMenu.updateBackground(Resources.loadImage(menuInfo.background()));
+                    mainMenu.updateBackground(menuInfo.background());
                     mainMenu.updateMenuItems(menuInfo.menuItems());
                 } catch (IOException e) {
                     new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e), true, false,
