@@ -40,7 +40,8 @@ public class Night5 implements NightFactory{
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
                 ), rng);
         
-        AnimatronicDrawing crisChoosesPathAndTeleports = new PathCris("Cris", Map.of(0,3, 1,4, 2,5, 3,6, 5,7), true, false, List.of(
+        AnimatronicDrawing crisChoosesPathAndTeleports =
+                new PathCris("Cris", Map.of(0,3, 1,4, 2,5, 3,6, 5,7), true, false, List.of(
                 List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
                 List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor"),
                 List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
