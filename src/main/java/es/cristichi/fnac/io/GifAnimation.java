@@ -7,7 +7,10 @@ import java.util.List;
  * Represents the data of a GIF file that the game needs.
  */
 public class GifAnimation extends ArrayList<GifFrame> {
-    private final String filePath;
+    /**
+     * Information of the path to the file, for debugging purposes.
+     */
+    protected final String filePath;
     /**
      * Creates a new GifAnimation with the given frames.
      * @param filePath File path, for debugging purposes only.
