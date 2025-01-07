@@ -1,6 +1,7 @@
 package es.cristichi.fnac.obj.nights;
 
 import es.cristichi.fnac.exception.NightException;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.MenuJC;
 import es.cristichi.fnac.gui.NightJC;
 import es.cristichi.fnac.io.Settings;
@@ -20,7 +21,7 @@ public interface NightFactory {
      * @return All the information the instance of {@link MenuJC} must use for the button. Its only requirement is
      * that the ID is not one of the default ones written in the source code of the constructor for
      * {@link es.cristichi.fnac.gui.NightsJF}.*/
-    MenuJC.Item getItem();
+    MenuJC.Item getItem() throws ResourceException;
     
     /**
      *

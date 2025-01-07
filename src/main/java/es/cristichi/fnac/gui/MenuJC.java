@@ -255,12 +255,8 @@ public abstract class MenuJC extends JComponent {
 
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
-			if (menuItem.loadingScreenPath() != null) {
-				try {
-					currentLoadingImg = Resources.loadImageResource(menuItem.loadingScreenPath());
-				} catch (ResourceException ex) {
-					ex.printStackTrace();
-				}
+			if (menuItem.loadingScreen() != null) {
+				currentLoadingImg = menuItem.loadingScreen();
 			}
             for (Component component : MenuJC.this.getComponents()) {
 				component.setVisible(false);
@@ -290,10 +286,9 @@ public abstract class MenuJC extends JComponent {
 	 *           {@link NightsJF}.
 	 * @param display Text shown for the button when not hovered by the player's mouse.
 	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
-	 * @param loadingScreenPath Path to the resource where the Loading Screen is, or {@code null} to use the
-	 *                          default one.
+	 * @param loadingScreen BufferedImage of the loading screen, or {@code null} to use the default one.
 	 */
-	public record Item(String id, String display, String hoverDisplay, @Nullable String loadingScreenPath){
+	public record Item(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
 	}
 	
 	/**

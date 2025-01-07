@@ -204,7 +204,7 @@ public class NightsJF extends JFrame {
      * after completing one.
      * @return A {@link MenuJC.Info} object with the information needed to build a Menu (items, background, etc).
      */
-    private @NotNull MenuJC.Info getUpdatedMenuData() {
+    private @NotNull MenuJC.Info getUpdatedMenuData() throws ResourceException {
         ArrayList<MenuJC.Item> mmItems = new ArrayList<>(2);
         String background;
         List<String> completed = saveFile.completedNights();
@@ -221,14 +221,16 @@ public class NightsJF extends JFrame {
             default -> "menu/backgroundCustom.jpg";
         };
         if (FnacMain.NIGHTS_DEBUG) {
-            mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
+            mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night",
+                    Resources.loadImageResource("night/custom/loading.jpg")));
             for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
                 mmItems.add(nightFactory.getItem());
             }
         } else {
             NightFactory nightFactory = NightRegistry.getNight(numCompleted);
             if (nightFactory == null) {
-                mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night", "night/custom/loading.jpg"));
+                mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night",
+                        Resources.loadImageResource("night/custom/loading.jpg")));
             } else {
                 mmItems.add(nightFactory.getItem());
             }

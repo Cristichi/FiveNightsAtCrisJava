@@ -1,8 +1,10 @@
 package es.cristichi.fnac.obj.nights;
 
 import es.cristichi.fnac.exception.NightException;
+import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.MenuJC;
 import es.cristichi.fnac.gui.NightJC;
+import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.*;
@@ -19,8 +21,8 @@ import java.util.Random;
 public class Night4 implements NightFactory{
     
     @Override
-    public MenuJC.Item getItem() {
-        return new MenuJC.Item("n4", "Continue", "Night 4", "night/n4/loading.jpg");
+    public MenuJC.Item getItem() throws ResourceException {
+        return new MenuJC.Item("n4", "Continue", "Night 4", Resources.loadImageResource("night/n4/loading.jpg"));
     }
     
     @Override
