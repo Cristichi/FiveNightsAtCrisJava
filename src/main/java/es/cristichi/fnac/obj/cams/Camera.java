@@ -274,7 +274,20 @@ public class Camera {
         }
         
         /**
-         * @param pathCamBackgResource Background that the Camera has while being watched by the player.
+         * @param camBackground        Background that the Camera has while being watched by the player.
+         *                             This is mandatory unless the Camera is marked as invisible
+         *                             {@link #isInvisible()}.
+         * @return This Builder so that you can configure the Camera on one line.
+         * @throws ResourceException If the image specified is not found in the resources during execution.
+         */
+        public Builder setCamBackground(BufferedImage camBackground) throws ResourceException {
+            this.camBackground = camBackground;
+            return this;
+        }
+        
+        /**
+         * @param pathCamBackgResource Path in the resources to the image for the background that the Camera has
+         *                             while being watched by the player.
          *                             This is mandatory unless the Camera is marked as invisible
          *                             {@link #isInvisible()}.
          * @return This Builder so that you can configure the Camera on one line.
