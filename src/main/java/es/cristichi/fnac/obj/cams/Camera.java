@@ -278,9 +278,8 @@ public class Camera {
          *                             This is mandatory unless the Camera is marked as invisible
          *                             {@link #isInvisible()}.
          * @return This Builder so that you can configure the Camera on one line.
-         * @throws ResourceException If the image specified is not found in the resources during execution.
          */
-        public Builder setCamBackground(BufferedImage camBackground) throws ResourceException {
+        public Builder setCamBackground(BufferedImage camBackground) {
             this.camBackground = camBackground;
             return this;
         }
