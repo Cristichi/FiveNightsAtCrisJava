@@ -62,7 +62,7 @@ public class Resources {
      * @return The image.
      * @throws ResourceException If the image does not exist.
      */
-    public static BufferedImage loadImageResource(String resourcePath) throws ResourceException {
+    public static BufferedImage loadImage(String resourcePath) throws ResourceException {
         if (loadedImgs.containsKey(resourcePath)){
             return loadedImgs.get(resourcePath);
         }

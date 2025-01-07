@@ -22,7 +22,7 @@ public class Night2 implements NightFactory{
     
     @Override
     public MenuJC.Item getItem() throws ResourceException {
-        return new MenuJC.Item("n2", "Continue", "Night 2", Resources.loadImageResource("night/n2/loading.jpg"));
+        return new MenuJC.Item("n2", "Continue", "Night 2", Resources.loadImage("night/n2/loading.jpg"));
     }
     
     @Override
@@ -49,7 +49,7 @@ public class Night2 implements NightFactory{
         nightMap.addCamAnimatronics("offices", maria);
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
         
-        return new NightJC("Night 2", settings.getFps(), nightMap, Resources.loadImageResource("night/n2/paper.png"),
+        return new NightJC("Night 2", settings.getFps(), nightMap, Resources.loadImage("night/n2/paper.png"),
                 powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"));
     }
 }

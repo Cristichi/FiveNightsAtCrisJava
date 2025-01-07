@@ -86,15 +86,15 @@ public abstract class SettingsJC extends JComponent {
      */
     public SettingsJC(Settings settings) throws ResourceException {
         super();
-        this.background = Resources.loadImageResource("settings/background.jpg");
-        this.checkSel = Resources.loadImageResource("settings/checkSel.jpg");
-        this.checkNotSel = Resources.loadImageResource("settings/checkNot.jpg");
+        this.background = Resources.loadImage("settings/background.jpg");
+        this.checkSel = Resources.loadImage("settings/checkSel.jpg");
+        this.checkNotSel = Resources.loadImage("settings/checkNot.jpg");
         this.editingSettings = new Settings(settings);
         this.ogSettings = new Settings(settings);
         setFont(new Font("Eraser Dust", Font.PLAIN, 100));
 
-        BufferedImage btnUp = Resources.loadImageResource("settings/spinnerUp.jpg");
-        BufferedImage btnDown = Resources.loadImageResource("settings/spinnerDown.jpg");
+        BufferedImage btnUp = Resources.loadImage("settings/spinnerUp.jpg");
+        BufferedImage btnDown = Resources.loadImage("settings/spinnerDown.jpg");
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

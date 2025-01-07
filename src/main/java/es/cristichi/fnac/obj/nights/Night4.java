@@ -22,7 +22,7 @@ public class Night4 implements NightFactory{
     
     @Override
     public MenuJC.Item getItem() throws ResourceException {
-        return new MenuJC.Item("n4", "Continue", "Night 4", Resources.loadImageResource("night/n4/loading.jpg"));
+        return new MenuJC.Item("n4", "Continue", "Night 4", Resources.loadImage("night/n4/loading.jpg"));
     }
     
     @Override

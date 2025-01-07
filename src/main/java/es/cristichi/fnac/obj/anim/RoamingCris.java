@@ -49,7 +49,7 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     public RoamingCris(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                        boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 7, aiDuringNight, 20, cameraStalled, globalCameraStalled,
-                Resources.loadImageResource("anims/cris/camImg.png"), null, forbiddenCams, Color.PINK, rng);
+                Resources.loadImage("anims/cris/camImg.png"), null, forbiddenCams, Color.PINK, rng);
 
         if (jumpscareNormal == null || jumpscareItsMe == null) {
             jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,

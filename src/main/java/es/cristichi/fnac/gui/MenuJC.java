@@ -85,8 +85,8 @@ public abstract class MenuJC extends JComponent {
     public MenuJC(Info info, String defaultLoadingImg) throws ResourceException {
 		super();
 		this.menuItems = info.menuItems();
-		backgroundImage = Resources.loadImageResource(info.background());
-		this.defaultLoadingImg = Resources.loadImageResource(defaultLoadingImg);
+		backgroundImage = Resources.loadImage(info.background());
+		this.defaultLoadingImg = Resources.loadImage(defaultLoadingImg);
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
 

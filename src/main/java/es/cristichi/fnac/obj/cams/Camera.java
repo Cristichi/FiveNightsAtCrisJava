@@ -293,7 +293,7 @@ public class Camera {
          * @throws ResourceException If the image specified is not found in the resources during execution.
          */
         public Builder setCamBackground(String pathCamBackgResource) throws ResourceException {
-            this.camBackground = Resources.loadImageResource(pathCamBackgResource);
+            this.camBackground = Resources.loadImage(pathCamBackgResource);
             return this;
         }
         

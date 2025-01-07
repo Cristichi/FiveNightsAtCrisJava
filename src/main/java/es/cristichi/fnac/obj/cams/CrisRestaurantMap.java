@@ -16,7 +16,7 @@ public class CrisRestaurantMap extends CameraMap {
      * @throws ResourceException If any images or sounds cannot be read from disk.
      */
     public CrisRestaurantMap() throws ResourceException {
-        super(Resources.loadImageResource("night/general/map.png"), "dining area");
+        super(Resources.loadImage("night/general/map.png"), "dining area");
         addAll(
                 new Camera.Builder()
                         .setName("kitchen")

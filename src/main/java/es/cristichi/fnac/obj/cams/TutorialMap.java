@@ -17,7 +17,7 @@ public class TutorialMap extends CameraMap {
      * @throws ResourceException If any images or sounds cannot be read from disk.
      */
     public TutorialMap() throws ResourceException {
-        super(Resources.loadImageResource("night/tutorial/map.png"), "cam1");
+        super(Resources.loadImage("night/tutorial/map.png"), "cam1");
         addAll(
                 new Camera.Builder()
                     .setName("cam1")

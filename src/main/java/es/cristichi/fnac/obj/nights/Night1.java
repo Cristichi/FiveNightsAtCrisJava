@@ -25,7 +25,7 @@ public class Night1 implements NightFactory {
     
     @Override
     public MenuJC.Item getItem() throws ResourceException {
-        return new MenuJC.Item("n1", "Continue", "Night 1", Resources.loadImageResource("night/n1/loading.jpg"));
+        return new MenuJC.Item("n1", "Continue", "Night 1", Resources.loadImage("night/n1/loading.jpg"));
     }
     
     @Override
@@ -46,7 +46,7 @@ public class Night1 implements NightFactory {
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);
         
-        return new NightJC("Night 1", settings.getFps(), nightMap, Resources.loadImageResource("night/n1/paper.png"),
+        return new NightJC("Night 1", settings.getFps(), nightMap, Resources.loadImage("night/n1/paper.png"),
                 powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"));
     }
 }

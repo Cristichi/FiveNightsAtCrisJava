@@ -100,7 +100,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
     public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightsJF nightsJF) throws ResourceException {
         super();
         if (backgroundImg == null){
-            backgroundImg = Resources.loadImageResource("cnight/menuBackground.jpg");
+            backgroundImg = Resources.loadImage("cnight/menuBackground.jpg");
         }
         this.settings = settings;
         this.powerOutage = powerOutage;

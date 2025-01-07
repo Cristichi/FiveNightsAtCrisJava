@@ -318,17 +318,17 @@ public class NightJC extends ExitableJComponent {
 		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		this.paperImg = paperImg;
 		// Images that are used every Night and cannot be personalized are always loaded from the same resources.
-		backgroundImg = Resources.loadImageResource("office/background.jpg");
-		camsUpDownBtnImg = Resources.loadImageResource("office/camsButton.png");
-		camMonitorImg = Resources.loadImageResource("office/monitor.png");
-		camMonitorStaticImg = Resources.loadImageResource("office/monitorStatic.png");
-		camStaticImg = Resources.loadImageResource("office/camTrans.jpg");
-		leftDoorOpenImg = Resources.loadImageResource("office/leftDoorOpen.png");
-		leftDoorTransImg = Resources.loadImageResource("office/leftDoorTrans.png");
-		leftDoorClosedImg = Resources.loadImageResource("office/leftDoorClosed.png");
-		rightDoorOpenImg = Resources.loadImageResource("office/rightDoorOpen.png");
-		rightDoorTransImg = Resources.loadImageResource("office/rightDoorTrans.png");
-		rightDoorClosedImg = Resources.loadImageResource("office/rightDoorClosed.png");
+		backgroundImg = Resources.loadImage("office/background.jpg");
+		camsUpDownBtnImg = Resources.loadImage("office/camsButton.png");
+		camMonitorImg = Resources.loadImage("office/monitor.png");
+		camMonitorStaticImg = Resources.loadImage("office/monitorStatic.png");
+		camStaticImg = Resources.loadImage("office/camTrans.jpg");
+		leftDoorOpenImg = Resources.loadImage("office/leftDoorOpen.png");
+		leftDoorTransImg = Resources.loadImage("office/leftDoorTrans.png");
+		leftDoorClosedImg = Resources.loadImage("office/leftDoorClosed.png");
+		rightDoorOpenImg = Resources.loadImage("office/rightDoorOpen.png");
+		rightDoorTransImg = Resources.loadImage("office/rightDoorTrans.png");
+		rightDoorClosedImg = Resources.loadImage("office/rightDoorClosed.png");
 
 		this.soundOnCompleted = nightCompletedSound;
 		ambientSounds = new AmbientSoundSystem((int) (this.fps *3.115), 0.3f,

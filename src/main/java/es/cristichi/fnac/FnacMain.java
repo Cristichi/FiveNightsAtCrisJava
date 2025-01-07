@@ -154,7 +154,7 @@ public class FnacMain implements Runnable {
                         new RoamingMaria("Maria", Map.of(0,0, 2,2, 3,3, 4,4), false, false, List.of("cam3"), rng));
                 
                 return new NightJC("Tutorial", settings.getFps(), tutorialMap,
-                        Resources.loadImageResource("night/tutorial/paper.png"), powerOutage, rng, 60, 0.45f,
+                        Resources.loadImage("night/tutorial/paper.png"), powerOutage, rng, 60, 0.45f,
                         Resources.loadSound("night/tutorial/completed.wav"));
             }
         });
