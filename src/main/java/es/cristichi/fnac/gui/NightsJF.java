@@ -106,7 +106,7 @@ public class NightsJF extends JFrame {
                     case "exit" ->  System.exit(1);
                     default -> {
                         try {
-                            startNightFromFactory(Objects.requireNonNull(NightRegistry.getNight(0)));
+                            startNightFromFactory(Objects.requireNonNull(NightRegistry.getNight(saveFile.completedNights().size())));
                         } catch (NullPointerException e){
                             LOGGER.error("Error trying to load Night: It does not exist.", e);
                         }
