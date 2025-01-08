@@ -933,12 +933,12 @@ public class NightJC extends ExitableJComponent {
 									// Then, we determine if we reuse the last one generated or not depending on
 									// whether it is still in-bounds (window resizing) or not.
 									Point p;
-									if (info.preferredPoint() != null) {
+									if (animPosInCam.containsKey(an.getNameId())) {
+										p = animPosInCam.get(an.getNameId());
+									} else if (info.preferredPoint() != null) {
 										p = new Point(
 											(int) (camDrawX + info.preferredPoint().x * (camDrawWidth - scaledWidth)),
 											(int) (camDrawY + info.preferredPoint().y * (camDrawHeight - scaledHeight)));
-									} else if (animPosInCam.containsKey(an.getNameId())) {
-										p = animPosInCam.get(an.getNameId());
 									} else {
 										int anRandomX = camDrawX + rng.nextInt(camDrawWidth - scaledWidth);
 										int anRandomY = camDrawY + rng.nextInt(camDrawHeight - scaledHeight);
@@ -984,7 +984,6 @@ public class NightJC extends ExitableJComponent {
 					// Draw the scaled map
 					g.drawImage(camerasMap.getMapImage(), mapX, mapY, scaledMapWidth, scaledMapHeight, this);
 
-                    //for (int i = 0; i < camerasMap.size(); i++) {
                     for (Camera cam : camerasMap.values()) {
 						if (!cam.isInvisible()){
 							// Scale the current camera’s rectangle position
@@ -1008,7 +1007,7 @@ public class NightJC extends ExitableJComponent {
 							}
 							g.fillRoundRect(scaledCamMapRecX, scaledCamMapRecY, scaledCamMapRecWidth, scaledCamMapRecHeight, 5, 5);
 
-							// Name of cam in map
+							// Button with name of cam in map
                             String camName = cam.getNameId().toUpperCase();
                             g.setColor(Color.BLACK);
                             int marginX = scaledCamMapRecX/500;
@@ -1017,7 +1016,8 @@ public class NightJC extends ExitableJComponent {
                             Font font = new Font("Tahoma", Font.BOLD, (int) fontSize);
                             FontMetrics metrics = g2d.getFontMetrics(font);
                             Rectangle2D lineBounds = g2d.getFontMetrics(font).getStringBounds(camName, g);
-                            while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth || lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
+                            while (lineBounds.getWidth()+(marginX*2) >= scaledCamMapRecWidth
+									|| lineBounds.getHeight()+(marginY*2) >= scaledCamMapRecHeight) {
                                 font = font.deriveFont(--fontSize);
                                 metrics = g2d.getFontMetrics(font);
                                 lineBounds = metrics.getStringBounds(camName, g);
