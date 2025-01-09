@@ -21,7 +21,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -106,7 +105,12 @@ public class NightsJF extends JFrame {
                     case "exit" ->  System.exit(1);
                     default -> {
                         try {
-                            startNightFromFactory(Objects.requireNonNull(NightRegistry.getNight(saveFile.completedNights().size())));
+                            NightFactory nightFactory = NightRegistry.getNight(saveFile.completedNights().size());
+                            if (nightFactory != null){
+                                startNightFromFactory(nightFactory);
+                            } else {
+                                LOGGER.error("Item {} is null but was not a Custom Night.", saveFile.completedNights());
+                            }
                         } catch (NullPointerException e){
                             LOGGER.error("Error trying to load Night: It does not exist.", e);
                         }
