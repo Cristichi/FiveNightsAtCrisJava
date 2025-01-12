@@ -6,6 +6,8 @@ import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -23,18 +25,10 @@ import java.util.Random;
  * {@link AvoidCamsAnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}.
  */
 public abstract class AnimatronicDrawing {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnimatronicDrawing.class);
     /** Maximum AI value for most Animatronics. Unless there is a reason to use another value, use this one. */
     public static final int GENERIC_MAX_AI = 20;
 
-    /** Arbitrary AI value as a minimum AI all AnimatronicDrawings use when at closed doors.
-     *  This is used to avoid them from "sticking" onto the door at lower AI values. This makes
-     *  easy Nights easy as intended while keeping harder Nights unaffected.
-     */
-    protected static final int MIN_AI_FOR_LEAVING_DOOR = 18;
-    /** Arbitrary number of consecutive failed attempts that should guarantee a successful
-     *  Movement Opportunity to leave a closed office door.
-     */
-    protected static final int MAX_FAILED_MOVES_FOR_LEAVING = 3;
     /** Arbitrary maximun delay, in seconds, that AnimatronicDrawings have by default. This is
      *  used to make it harder to keep track of exactly when AnimatronicDrawings will move with
      *  external programs. This is not to fully disencourage the use of external tools to keep
@@ -82,8 +76,6 @@ public abstract class AnimatronicDrawing {
     /** Used on the default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)} to
      *  check how long has the AnimatronicDrawing being able to kill without doing so. */
     protected Integer startKillTick = null;
-    /** Used to keep track of how many Movement Opportunities to leave a closed door are failed in a row. */
-    protected int failedMovesLeaving = 0;
 
     /**
      * Creating an Animatronic.
@@ -186,10 +178,7 @@ public abstract class AnimatronicDrawing {
         } else {
             boolean closedDoor = cam.isLeftDoor() || cam.isRightDoor();
             boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
-            if (!closedDoor) {
-                // Not at door
-                startKillTick = null;
-            }
+            startKillTick = null;
             // If door is closed but the Animatronic is still at the door, retain the count
             return new AnimTickInfo(moveOpp, null, null);
         }
@@ -213,14 +202,15 @@ public abstract class AnimatronicDrawing {
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
-        } else if ((currentCam.isLeftDoor() || currentCam.isRightDoor())) {
-            itMoves = rng.nextInt(GENERIC_MAX_AI) < Math.max(MIN_AI_FOR_LEAVING_DOOR, aiLevel);
-            if (!itMoves) {
-                failedMovesLeaving++;
-                if (failedMovesLeaving > MAX_FAILED_MOVES_FOR_LEAVING) {
-                    itMoves = true;
-                }
-            }
+            LOGGER.info("kill={} startKillTick={} isOpenDoor={} camStall={} beingLookedAt={} leftDoor={} rightDoor={} camsUp={} globalStall={} ",
+                    kill,startKillTick, false, cameraStalled, beingLookedAt,
+                    currentCam.isLeftDoor(), currentCam.isRightDoor(), camsUp, globalCameraStalled);
+            LOGGER.info("({} || {} != null || {} || {} && {} || !{} && !{} && {} && {})",
+                    kill,startKillTick, false, cameraStalled, beingLookedAt,
+                    currentCam.isLeftDoor(), currentCam.isRightDoor(), camsUp, globalCameraStalled);
+        } else if (currentCam.isLeftDoor() || currentCam.isRightDoor()) {
+            // isOpenDoor = false here, therefore this is a closed door.
+            itMoves = true;
         } else {
             itMoves = rng.nextInt(GENERIC_MAX_AI) < aiLevel;
         }
