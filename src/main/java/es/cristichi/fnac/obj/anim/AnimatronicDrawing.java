@@ -202,12 +202,6 @@ public abstract class AnimatronicDrawing {
         if (kill || startKillTick != null || isOpenDoor || cameraStalled && beingLookedAt
                 || !currentCam.isLeftDoor() && !currentCam.isRightDoor() && camsUp && globalCameraStalled) {
             itMoves = false;
-            LOGGER.info("kill={} startKillTick={} isOpenDoor={} camStall={} beingLookedAt={} leftDoor={} rightDoor={} camsUp={} globalStall={} ",
-                    kill,startKillTick, false, cameraStalled, beingLookedAt,
-                    currentCam.isLeftDoor(), currentCam.isRightDoor(), camsUp, globalCameraStalled);
-            LOGGER.info("({} || {} != null || {} || {} && {} || !{} && !{} && {} && {})",
-                    kill,startKillTick, false, cameraStalled, beingLookedAt,
-                    currentCam.isLeftDoor(), currentCam.isRightDoor(), camsUp, globalCameraStalled);
         } else if (currentCam.isLeftDoor() || currentCam.isRightDoor()) {
             // isOpenDoor = false here, therefore this is a closed door.
             itMoves = true;
