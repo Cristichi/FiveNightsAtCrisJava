@@ -1,6 +1,5 @@
 package es.cristichi.fnac.gui;
 
-import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
@@ -543,9 +542,10 @@ public class NightJC extends ExitableJComponent {
 										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getNameId())) {
 											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
 										}
-									} catch (AnimatronicException e){
-										System.err.println("Animatronic needs refinement. This should be avoided.");
-										e.printStackTrace();
+									} catch (Exception e){
+										// Avoiding errors when Animatronics are faulty, instead movement is cancelled.
+										LOGGER.error("Error thrown by Animatronic {} when trying to move.",
+												anim.getNameId(), e);
 									}
 								}
 								if (moveOppInfo.sound() != null){

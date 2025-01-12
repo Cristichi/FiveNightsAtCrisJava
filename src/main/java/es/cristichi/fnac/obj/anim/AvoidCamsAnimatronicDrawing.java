@@ -1,5 +1,6 @@
 package es.cristichi.fnac.obj.anim;
 
+import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
@@ -64,9 +65,13 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
     }
 
     @Override
-    public MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) {
+    public MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng) throws AnimatronicException {
         LinkedList<String> connections = currentLoc.getConnections();
         connections.removeIf(forbiddenCameras::contains);
+        if (connections.isEmpty()){
+            throw new AnimatronicException(
+                    "There are no possible movements for %s on Camera \"%s\".".formatted(nameId, currentLoc));
+        }
         int random = rng.nextInt(connections.size());
         return new MoveSuccessInfo(connections.get(random), sounds.getOrDefault("move", null));
     }
