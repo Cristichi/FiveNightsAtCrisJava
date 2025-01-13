@@ -27,7 +27,6 @@
 package kuusisto.tinysound.internal;
 
 import kuusisto.tinysound.Music;
-import kuusisto.tinysound.TinySound;
 
 /**
  * The MemMusic class is an implementation of the Music interface that stores
@@ -37,10 +36,10 @@ import kuusisto.tinysound.TinySound;
  */
 public class MemMusic implements Music {
 	
-	private byte[] left;
-	private byte[] right;
-	private Mixer mixer;
-	private MusicReference reference;
+	private final byte[] left;
+	private final byte[] right;
+	private final Mixer mixer;
+	private final MusicReference reference;
 	
 	/**
 	 * Construct a new MemMusic with the given music data and the Mixer with
@@ -69,34 +68,6 @@ public class MemMusic implements Music {
 	}
 	
 	/**
-	 * Play this MemMusic at the specified volume and loop if specified.
-	 * @param loop if this MemMusic should loop
-	 * @param volume the volume to play the this Music
-	 */
-	@Override
-	public void play(boolean loop, double volume) {
-		this.setLoop(loop);
-		this.setVolume(volume);
-		this.reference.setPlaying(true);
-	}
-	
-	/**
-	 * Play this MemMusic at the specified volume and pan, and loop if specified
-	 * .
-	 * @param loop if this MemMusic should loop
-	 * @param volume the volume to play the this MemMusic
-	 * @param pan the pan at which to play this MemMusic [-1.0,1.0], values
-	 * outside the valid range will be ignored
-	 */
-	@Override
-	public void play(boolean loop, double volume, double pan) {
-		this.setLoop(loop);
-		this.setVolume(volume);
-		this.setPan(pan);
-		this.reference.setPlaying(true);
-	}
-	
-	/**
 	 * Stop playing this MemMusic and set its position to the beginning.
 	 */
 	@Override
@@ -106,36 +77,10 @@ public class MemMusic implements Music {
 	}
 	
 	/**
-	 * Stop playing this MemMusic and keep its current position.
-	 */
-	@Override
-	public void pause() {
-		this.reference.setPlaying(false);
-	}
-	
-	/**
-	 * Play this MemMusic from its current position.
-	 */
-	@Override
-	public void resume() {
-		this.reference.setPlaying(true);
-	}
-	
-	/**
 	 * Set this MemMusic's position to the beginning.
 	 */
-	@Override
-	public void rewind() {
+	private void rewind() {
 		this.reference.setPosition(0);
-	}
-	
-	/**
-	 * Set this MemMusic's position to the loop position.
-	 */
-	@Override
-	public void rewindToLoopPosition() {
-		long byteIndex = this.reference.getLoopPosition();
-		this.reference.setPosition(byteIndex);
 	}
 	
 	/**
@@ -145,141 +90,6 @@ public class MemMusic implements Music {
 	@Override
 	public boolean playing() {
 		return this.reference.getPlaying();
-	}
-	
-	/**
-	 * Determine if this MemMusic has reached its end and is done playing.
-	 * @return true if this MemMusic has reached the end and is done playing
-	 */
-	@Override
-	public boolean done() {
-		return this.reference.done();
-	}
-	
-	/**
-	 * Determine if this MemMusic will loop.
-	 * @return true if this MemMusic will loop
-	 */
-	@Override
-	public boolean loop() {
-		return this.reference.getLoop();
-	}
-	
-	/**
-	 * Set whether this MemMusic will loop.
-	 * @param loop whether this MemMusic will loop
-	 */
-	@Override
-	public void setLoop(boolean loop) {
-		this.reference.setLoop(loop);
-	}
-	
-	/**
-	 * Get the loop position of this MemMusic by sample frame.
-	 * @return loop position by sample frame
-	 */
-	@Override
-	public int getLoopPositionByFrame() {
-		int bytesPerChannelForFrame = TinySound.FORMAT.getFrameSize() /
-			TinySound.FORMAT.getChannels();
-		long byteIndex = this.reference.getLoopPosition();
-		return (int)(byteIndex / bytesPerChannelForFrame);
-	}
-	
-	/**
-	 * Get the loop position of this MemMusic by seconds.
-	 * @return loop position by seconds
-	 */
-	@Override
-	public double getLoopPositionBySeconds() {
-		int bytesPerChannelForFrame = TinySound.FORMAT.getFrameSize() /
-			TinySound.FORMAT.getChannels();
-		long byteIndex = this.reference.getLoopPosition();
-		return (byteIndex / (TinySound.FORMAT.getFrameRate() *
-				bytesPerChannelForFrame));
-	}
-	
-	/**
-	 * Set the loop position of this MemMusic by sample frame.
-	 * @param frameIndex sample frame loop position to set
-	 */
-	@Override
-	public void setLoopPositionByFrame(int frameIndex) {
-		//get the byte index for a channel
-		int bytesPerChannelForFrame = TinySound.FORMAT.getFrameSize() /
-			TinySound.FORMAT.getChannels();
-		long byteIndex = (long) frameIndex * bytesPerChannelForFrame;
-		this.reference.setLoopPosition(byteIndex);
-	}
-	
-	/**
-	 * Set the loop position of this MemMusic by seconds.
-	 * @param seconds loop position to set by seconds
-	 */
-	@Override
-	public void setLoopPositionBySeconds(double seconds) {
-		//get the byte index for a channel
-		int bytesPerChannelForFrame = TinySound.FORMAT.getFrameSize() /
-			TinySound.FORMAT.getChannels();
-		long byteIndex = (long)(seconds * TinySound.FORMAT.getFrameRate()) *
-			bytesPerChannelForFrame;
-		this.reference.setLoopPosition(byteIndex);
-	}
-	
-	/**
-	 * Get the volume of this MemMusic.
-	 * @return volume of this MemMusic
-	 */
-	@Override
-	public double getVolume() {
-		return this.reference.getVolume();
-	}
-	
-	/**
-	 * Set the volume of this MemMusic.
-	 * @param volume the desired volume of this MemMusic
-	 */
-	@Override
-	public void setVolume(double volume) {
-		if (volume >= 0.0) {
-			this.reference.setVolume(volume);
-		}
-	}
-
-	/**
-	 * Get the pan of this MemMusic.
-	 * @return pan of this MemMusic
-	 */
-	@Override
-	public double getPan() {
-		return this.reference.getPan();
-	}
-
-	/**
-	 * Set the pan of this MemMusic.  Must be between -1.0 (full pan left) and
-	 * 1.0 (full pan right).  Values outside the valid range will be ignored.
-	 * @param pan the desired pan of this MemMusic
-	 */
-	@Override
-	public void setPan(double pan) {
-		if (pan >= -1.0 && pan <= 1.0) {
-			this.reference.setPan(pan);
-		}
-	}
-	
-	/**
-	 * Unload this MemMusic from the system.  Attempts to use this MemMusic
-	 * after unloading will result in error.
-	 */
-	@Override
-	public void unload() {
-		//unregister the reference
-		this.mixer.unRegisterMusicReference(this.reference);
-		this.reference.dispose();
-		this.mixer = null;
-		this.left = null;
-		this.right = null;
-		this.reference = null;
 	}
 	
 	/////////////
@@ -294,14 +104,14 @@ public class MemMusic implements Music {
 	 */
 	private static class MemMusicReference implements MusicReference {
 
-		private byte[] left;
-		private byte[] right;
+		private final byte[] left;
+		private final byte[] right;
 		private boolean playing;
 		private boolean loop;
-		private int loopPosition;
+		private final int loopPosition;
 		private int position;
-		private double volume;
-		private double pan;
+		private final double volume;
+		private final double pan;
 		
 		/**
 		 * Construct a new MemMusicReference with the given audio data and
@@ -335,33 +145,6 @@ public class MemMusic implements Music {
 		@Override
 		public synchronized boolean getPlaying() {
 			return this.playing;
-		}
-		
-		/**
-		 * Get the loop setting of this MemMusicReference.
-		 * @return true if this MemMusicReference is set to loop
-		 */
-		@Override
-		public synchronized boolean getLoop() {
-			return this.loop;
-		}
-		
-		/**
-		 * Get the byte index of this MemMusicReference.
-		 * @return byte index of this MemMusicReference
-		 */
-		@Override
-		public synchronized long getPosition() {
-			return this.position;
-		}
-		
-		/**
-		 * Get the loop-position byte index of this MemMusicReference.
-		 * @return loop-position byte index of this MemMusicReference
-		 */
-		@Override
-		public synchronized long getLoopPosition() {
-			return this.loopPosition;
 		}
 		
 		/**
@@ -412,36 +195,6 @@ public class MemMusic implements Music {
 		}
 		
 		/**
-		 * Set the loop-position byte index of this MemMusicReference.
-		 * @param loopPosition the loop-position byte index to set
-		 */
-		@Override
-		public synchronized void setLoopPosition(long loopPosition) {
-			if (loopPosition >= 0 && loopPosition < this.left.length) {
-				this.loopPosition = (int)loopPosition;
-			}
-		}
-		
-		/**
-		 * Set the volume of this MemMusicReference.
-		 * @param volume the desired volume of this MemMusicReference
-		 */
-		@Override
-		public synchronized void setVolume(double volume) {
-			this.volume = volume;
-		}
-
-		/**
-		 * Set the pan of this MemMusicReference.  Must be between -1.0 (full
-		 * pan left) and 1.0 (full pan right).
-		 * @param pan the desired pan of this MemMusicReference
-		 */
-		@Override
-		public synchronized void setPan(double pan) {
-			this.pan = pan;
-		}
-		
-		/**
 		 * Get the number of bytes remaining for each channel until the end of
 		 * this MemMusicReference.
 		 * @return number of bytes remaining for each channel
@@ -449,17 +202,6 @@ public class MemMusic implements Music {
 		@Override
 		public synchronized long bytesAvailable() {
 			return this.left.length - this.position;
-		}
-		
-		/**
-		 * Determine if there are no bytes remaining and play has stopped.
-		 * @return true if there are no bytes remaining and the reference is no
-		 * longer playing
-		 */
-		@Override
-		public synchronized boolean done() {
-			long available = this.left.length - this.position;
-			return available <= 0 && !this.playing;
 		}
 		
 		/**
@@ -517,18 +259,6 @@ public class MemMusic implements Music {
 					this.playing = false;
 				}
 			}
-		}
-
-		/**
-		 * Does any cleanup necessary to dispose of resources in use by this
-		 * MemMusicReference.
-		 */
-		@Override
-		public synchronized void dispose() {
-			this.playing = false;
-			this.position = this.left.length + 1;
-			this.left = null;
-			this.right = null;
 		}
 		
 	}

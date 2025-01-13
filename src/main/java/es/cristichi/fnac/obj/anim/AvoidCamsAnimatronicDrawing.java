@@ -34,9 +34,6 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
      *                            For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                            and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                            defaulted to 0 at the start of the night.
-     * @param maxAiLevel          Maximum AI level. This should usually be 20 for consistency, but can be changed
-     *                            on weird Animatronics. By default, this is used to determine the chances of
-     *                            movement opportunities and also for limiting in Custom Nights.
      * @param cameraStalled       Whether this Animatronic is Camera-stalled. This means that they fail Movement
      *                            Opportunities while being looked at.
      * @param globalCameraStalled Whether this Animatronic is globally Camera-stalled. Same as
@@ -55,11 +52,11 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
      */
     public AvoidCamsAnimatronicDrawing(String nameId, double secInterval, double secsToKill,
-                                       Map<Integer, Integer> aiDuringNight, int maxAiLevel, boolean cameraStalled,
+                                       Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                                        boolean globalCameraStalled, BufferedImage camImg, Jumpscare jumpscare,
                                        List<String> forbiddenCameras, Color debugColor,
                                        Random rng) {
-        super(nameId, secInterval, secsToKill, aiDuringNight, maxAiLevel, cameraStalled, globalCameraStalled, camImg,
+        super(nameId, secInterval, secsToKill, aiDuringNight, cameraStalled, globalCameraStalled, camImg,
                 jumpscare, debugColor, rng);
         this.forbiddenCameras = Objects.requireNonNullElseGet(forbiddenCameras, () -> new ArrayList<>(0));
     }

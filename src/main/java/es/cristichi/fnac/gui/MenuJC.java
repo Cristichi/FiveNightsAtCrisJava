@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -227,7 +226,6 @@ public abstract class MenuJC extends JComponent {
 			int x = (int)(getWidth()*0.99);
 			for (String line : musicCreditsMsg) {
 				FontMetrics fm = g.getFontMetrics();
-				LineMetrics lm = fm.getLineMetrics(line, g);
 				g.drawString(line, x-fm.stringWidth(line), getHeight()-y);
 				y-=fontSize;
 			}

@@ -55,15 +55,8 @@ public class UpdateRunner implements Runnable {
 			this.mixer = mixer;
 			this.outLine = outLine;
 		}
-		
-		/**
-		 * Stop this UpdateRunner from updating the TinySound system.
-		 */
-		public void stop() {
-			this.running.set(false);
-		}
-
-		@Override
+	
+	@Override
 		public void run() {
 			//mark the updater as running
 			this.running.set(true);

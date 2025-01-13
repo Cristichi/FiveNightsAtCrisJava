@@ -66,7 +66,7 @@ public class Camera {
      * This indicates if this Camera should not be visible. Usually, the Cameras at left and right to the Office are
      * invisible for gameplay purposes. These Cameras do not need a {@link #camBackground} or an {@link #onMapLoc}.
      */
-    private boolean invisible;
+    private final boolean invisible;
     
     /**
      * Creates a new Camera. This method is private as to use {@link Camera.Builder} instead.
@@ -182,22 +182,6 @@ public class Camera {
     }
     
     /**
-     * @param invisible {@code true} if this Camera should not be visible at all, even in the minimap.
-     */
-    public void setInvisible(boolean invisible) {
-        if (!invisible) {
-            if (camBackground == null) {
-                throw new CameraException("Cameras must have a background or be invisible.");
-            }
-            if (onMapLoc == null) {
-                throw new CameraException(
-                        "Cameras must have a Location on the map image. It's needed to " + "click on them with the " + "mouse and also highlight when selected.");
-            }
-        }
-        this.invisible = invisible;
-    }
-    
-    /**
      * This method does not check whether the Cameras are connected, but it will fail if
      * {@link LinkedList#remove(Object)} on the List of Animatronics here returns false.
      *
@@ -279,6 +263,7 @@ public class Camera {
          *                             {@link #isInvisible()}.
          * @return This Builder so that you can configure the Camera on one line.
          */
+        @SuppressWarnings("unused") // For Custom Cameras in case they load the image from elsewhere.
         public Builder setCamBackground(BufferedImage camBackground) {
             this.camBackground = camBackground;
             return this;
@@ -376,16 +361,6 @@ public class Camera {
         }
         
         /**
-         * @param animatronicDrawings List of Animatronics that should start at this Camera. Try avoiding duplicates!
-         *                            By default there are, of course, no Animatronics here.
-         * @return This Builder so that you can configure the Camera on one line.
-         */
-        public Builder addAnimatronics(AnimatronicDrawing... animatronicDrawings) {
-            Collections.addAll(animatronicsHere, animatronicDrawings);
-            return this;
-        }
-        
-        /**
          * @param camNames List of names of the other Cameras this Camera is connected. Usually used by Animatronics
          *                 to check where to move. Default is an empty list, but it is encouraged that the Camera is
          *                 not disconnected as it may lead to useless Cameras.
@@ -419,6 +394,7 @@ public class Camera {
          * be visible by the player. This still allows the player to see that there is a Camera there and click it.
          * @return This Builder so that you can configure the Camera on one line.
          */
+        @SuppressWarnings("unused") // For custom maps to use.
         public Builder isBroken() {
             this.broken = true;
             return this;

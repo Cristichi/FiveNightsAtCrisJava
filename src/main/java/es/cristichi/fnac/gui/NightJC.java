@@ -631,8 +631,7 @@ public class NightJC extends ExitableJComponent {
 		onNightEndListeners.add(runnable);
 	}
 
-	@Override
-	public void addOnExitListener(Runnable onExitListener) {
+	private void addOnExitListener(Runnable onExitListener) {
 		onExitListeners.add(onExitListener);
 	}
 

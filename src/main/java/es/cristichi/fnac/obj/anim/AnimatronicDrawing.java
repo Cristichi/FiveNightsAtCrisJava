@@ -6,8 +6,6 @@ import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -25,7 +23,6 @@ import java.util.Random;
  * {@link AvoidCamsAnimatronicDrawing#onMoveOppSuccess(CameraMap, Camera, Random)}.
  */
 public abstract class AnimatronicDrawing {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnimatronicDrawing.class);
     /** Maximum AI value for most Animatronics. Unless there is a reason to use another value, use this one. */
     public static final int GENERIC_MAX_AI = 20;
 
@@ -91,9 +88,6 @@ public abstract class AnimatronicDrawing {
      *                            For instance, [(0,0), (5,1)] means that the Animatronic is inactive until 5 AM
      *                            and has an AI of 1 during the last hour. If 0 is not specified, its value is
      *                            defaulted to 0 at the start of the night.
-     * @param maxAiLevel          Maximum AI level. This should usually be 20 for consistency, but can be changed
-     *                            on weird Animatronics. By default, this is used to determine the chances of
-     *                            movement opportunities and also for limiting in Custom Nights.
      * @param cameraStalled       Whether this Animatronic is Camera-stalled. This means that they fail Movement
      *                            Opportunities while being looked at.
      * @param globalCameraStalled Whether this Animatronic is globally Camera-stalled. Same as
@@ -111,7 +105,7 @@ public abstract class AnimatronicDrawing {
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
      */
     AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
-                       int maxAiLevel, boolean cameraStalled, boolean globalCameraStalled, BufferedImage camImg,
+                       boolean cameraStalled, boolean globalCameraStalled, BufferedImage camImg,
                        Jumpscare jumpscare, Color debugColor, Random rng) {
         this.nameId = nameId;
         this.secInterval = secInterval;
@@ -164,6 +158,7 @@ public abstract class AnimatronicDrawing {
      * @return An instance of {@link AnimTickInfo} with the information that the Night requires during this tick from
      * the Animatronic.
      */
+    @SuppressWarnings("unused") // In case custom Animatronics want to know more information.
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
         if (openDoor) {
             // Door is open, start counting (doing nothing means we are counting up)
@@ -176,7 +171,6 @@ public abstract class AnimatronicDrawing {
             }
             return new AnimTickInfo(false, null, null);
         } else {
-            boolean closedDoor = cam.isLeftDoor() || cam.isRightDoor();
             boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
             startKillTick = null;
             // If door is closed but the Animatronic is still at the door, retain the count
@@ -224,6 +218,7 @@ public abstract class AnimatronicDrawing {
      * @throws AnimatronicException If the Animatronic's logic cannot determine the movement. In this case the movement
      * should be canceled without errors to the player.
      */
+    @SuppressWarnings("unused") // In case custom Animatronics want to know more information like CameraMap.
     public abstract MoveSuccessInfo onMoveOppSuccess(CameraMap map, Camera currentLoc, Random rng)
             throws AnimatronicException;
 

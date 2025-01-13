@@ -153,7 +153,7 @@ public class Resources {
                             Node offsetYNode = metadataKid.getAttributes().getNamedItem("imageTopPosition");
                             Node wNode = metadataKid.getAttributes().getNamedItem("imageWidth");
                             Node hNode = metadataKid.getAttributes().getNamedItem("imageHeight");
-                            Node interlace = metadataKid.getAttributes().getNamedItem("interlaceFlag");
+                            //Node interlace = metadataKid.getAttributes().getNamedItem("interlaceFlag");
                             if (offsetXNode != null) {
                                 offsetX = Integer.parseInt(offsetXNode.getNodeValue());
                             }

@@ -46,7 +46,7 @@ public class StreamSound implements Sound {
 	private Mixer mixer;
 	private final int ID;
 
-	private LinkedList<Runnable> onFinished;
+	private final LinkedList<Runnable> onFinished;
 	
 	/**
 	 * Construct a new StreamSound with the given data and Mixer which will
@@ -64,6 +64,7 @@ public class StreamSound implements Sound {
 		this.numBytesPerChannel = numBytesPerChannel;
 		this.mixer = mixer;
 		this.ID = id;
+		onFinished = new LinkedList<>();
 		//open and close a stream to check for immediate issues
 		InputStream temp = this.dataURL.openStream();
 		temp.close();

@@ -123,10 +123,6 @@ public class Jumpscare {
         return jumpscareVisual;
     }
     
-    private List<GifFrame> getCurrentFrame() {
-        return getCombinedFrames(currentFrame);
-    }
-    
     /**
      * @return The full width and height of the GIF as defined in its logical screen.
      */
@@ -208,7 +204,6 @@ public class Jumpscare {
         }
         
         List<GifFrame> visibleFrames = new ArrayList<>();
-        boolean resetVisibility = false;
         
         for (int i = 0; i < frameIndex; i++) {
             GifFrame frame = gifAnimation.get(i);

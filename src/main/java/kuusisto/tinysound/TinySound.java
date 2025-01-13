@@ -45,11 +45,6 @@ import java.net.URL;
 public class TinySound {
 	
 	/**
-	 * Version.
-	 */
-	public static final String VERSION = "1.1.1";
-
-	/**
 	 * The internal format used by TinySound.
 	 */
 	public static final AudioFormat FORMAT = new AudioFormat(
@@ -98,35 +93,6 @@ public class TinySound {
 	}
 	
 	/**
-	 * Alternative function to initialize TinySound which should only be used by
-	 * those very familiar with the Java Sound API.  This function allows the
-	 * line that is used for audio playback to be opened on a specific Mixer.
-	 * @param info the Mixer.Info representing the desired Mixer
-	 * @throws LineUnavailableException if a Line is not available from the
-	 * specified Mixer
-	 * @throws SecurityException if the specified Mixer or Line are unavailable
-	 * due to security restrictions
-	 * @throws IllegalArgumentException if the specified Mixer is not installed
-	 * on the system
-	 */
-	public static void init(javax.sound.sampled.Mixer.Info info) 
-			throws LineUnavailableException, SecurityException,
-			IllegalArgumentException {
-		if (TinySound.inited) {
-			return;
-		}
-		//try to open a line to the speakers
-		javax.sound.sampled.Mixer mixer = AudioSystem.getMixer(info);
-		DataLine.Info lineInfo = new DataLine.Info(SourceDataLine.class,
-				TinySound.FORMAT);
-		TinySound.outLine = (SourceDataLine)mixer.getLine(lineInfo);
-		TinySound.outLine.open(TinySound.FORMAT);
-		//start the line and finish initialization
-		TinySound.outLine.start();
-		TinySound.finishInit();
-	}
-	
-	/**
 	 * Initializes the mixer and updater, and marks TinySound as initialized.
 	 */
 	private static void finishInit() {
@@ -147,45 +113,6 @@ public class TinySound {
 	}
 	
 	/**
-	 * Shutdown TinySound.
-	 */
-	public static void shutdown() {
-		if (!TinySound.inited) {
-			return;
-		}
-		TinySound.inited = false;
-		//stop the auto-updater if running
-		TinySound.autoUpdater.stop();
-		TinySound.autoUpdater = null;
-		TinySound.outLine.stop();
-		TinySound.outLine.flush();
-		TinySound.mixer.clearMusic();
-		TinySound.mixer.clearSounds();
-		TinySound.mixer = null;
-	}
-	
-	/**
-	 * Determine if TinySound is initialized and ready for use.
-	 * @return true if TinySound is initialized, false if TinySound has not been
-	 * initialized or has subsequently been shutdown
-	 */
-	public static boolean isInitialized() {
-		return TinySound.inited;
-	}
-	
-	/**
-	 * Get the global volume for all audio.
-	 * @return the global volume for all audio, -1.0 if TinySound has not been
-	 * initialized or has subsequently been shutdown
-	 */
-	public static double getGlobalVolume() {
-		if (!TinySound.inited) {
-			return -1.0;
-		}
-		return TinySound.mixer.getVolume();
-	}
-	
-	/**
 	 * Set the global volume.  This is an extra multiplier, not a replacement,
 	 * for all Music and Sound volume settings.  It starts at 1.0.
 	 * @param volume the global volume to set
@@ -195,56 +122,6 @@ public class TinySound {
 			return;
 		}
 		TinySound.mixer.setVolume(volume);
-	}
-	
-	/**
-	 * Load a Music by a resource name.  The resource must be on the classpath
-	 * for this to work.  This will store audio data in memory.
-	 * @param name name of the Music resource
-	 * @return Music resource as specified, null if not found/loaded
-	 */
-	public static Music loadMusic(String name) {
-		return TinySound.loadMusic(name, false);
-	}
-	
-	/**
-	 * Load a Music by a resource name.  The resource must be on the classpath
-	 * for this to work.
-	 * @param name name of the Music resource
-	 * @param streamFromFile true if this Music should be streamed from a
-	 * temporary file to reduce memory overhead
-	 * @return Music resource as specified, null if not found/loaded
-	 */
-	public static Music loadMusic(String name, boolean streamFromFile) {
-		//check if the system is initialized
-		if (!TinySound.inited) {
-			System.err.println("TinySound not initialized!");
-			return null;
-		}
-		//check for failure
-		if (name == null) {
-			return null;
-		}
-		//check for correct naming
-		if (!name.startsWith("/")) {
-			name = "/" + name;
-		}
-		URL url = TinySound.class.getResource(name);
-		//check for failure to find resource
-		if (url == null) {
-			System.err.println("Unable to find resource " + name + "!");
-			return null;
-		}
-		return TinySound.loadMusic(url, streamFromFile);
-	}
-	
-	/**
-	 * Load a Music by a File.  This will store audio data in memory.
-	 * @param file the Music file to load
-	 * @return Music from file as specified, null if not found/loaded
-	 */
-	public static Music loadMusic(File file) {
-		return TinySound.loadMusic(file, false);
 	}
 	
 	/**
@@ -272,15 +149,6 @@ public class TinySound {
 			return null;
 		}
 		return TinySound.loadMusic(url, streamFromFile);
-	}
-	
-	/**
-	 * Load a Music by a URL.  This will store audio data in memory.
-	 * @param url the URL of the Music
-	 * @return Music from URL as specified, null if not found/loaded
-	 */
-	public static Music loadMusic(URL url) {
-		return TinySound.loadMusic(url, false);
 	}
 	
 	/**
@@ -334,48 +202,6 @@ public class TinySound {
 	}
 	
 	/**
-	 * Load a Sound by a resource name.  The resource must be on the classpath
-	 * for this to work.  This will store audio data in memory.
-	 * @param name name of the Sound resource
-	 * @return Sound resource as specified, null if not found/loaded
-	 */
-	public static Sound loadSound(String name) {
-		return TinySound.loadSound(name, false);
-	}
-	
-	/**
-	 * Load a Sound by a resource name.  The resource must be on the classpath
-	 * for this to work.
-	 * @param name name of the Sound resource
-	 * @param streamFromFile true if this Music should be streamed from a
-	 * temporary file to reduce memory overhead
-	 * @return Sound resource as specified, null if not found/loaded
-	 */
-	public static Sound loadSound(String name, boolean streamFromFile) {
-		//check if the system is initialized
-		if (!TinySound.inited) {
-			System.err.println("TinySound not initialized!");
-			return null;
-		}
-		//check for failure
-		if (name == null) {
-			return null;
-		}
-		//check for correct naming
-		if (!name.startsWith("/")) {
-			name = "/" + name;
-		}
-		URL url = TinySound.class.getResource(name);
-		//check for failure to find resource
-		if (url == null) {
-			System.err.println("Unable to find resource " + name + "!");
-			return null;
-		}
-		return TinySound.loadSound(url, streamFromFile);
-
-	}
-	
-	/**
 	 * Load a Sound by a File.  This will store audio data in memory.
 	 * @param file the Sound file to load
 	 * @return Sound from file as specified, null if not found/loaded
@@ -409,15 +235,6 @@ public class TinySound {
 			return null;
 		}
 		return TinySound.loadSound(url, streamFromFile);
-	}
-	
-	/**
-	 * Load a Sound by a URL.  This will store audio data in memory.
-	 * @param url the URL of the Sound
-	 * @return Sound from URL as specified, null if not found/loaded
-	 */
-	public static Sound loadSound(URL url) {
-		return TinySound.loadSound(url, false);
 	}
 	
 	/**

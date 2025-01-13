@@ -54,14 +54,6 @@ public class Mixer {
 	}
 	
 	/**
-	 * Get the global volume for this Mixer.
-	 * @return the global volume
-	 */
-	public synchronized double getVolume() {
-		return this.globalVolume;
-	}
-	
-	/**
 	 * Set the global volume for this Mixer.
 	 * @param volume the global volume to set
 	 */
@@ -88,14 +80,6 @@ public class Mixer {
 	}
 	
 	/**
-	 * Unregisters a MusicReference with this Mixer.
-	 * @param music MusicReference to be unregistered
-	 */
-	public synchronized void unRegisterMusicReference(MusicReference music) {
-		this.musics.remove(music);
-	}
-	
-	/**
 	 * Unregisters all SoundReferences with a given soundID.
 	 * @param soundID ID of SoundReferences to be unregistered
 	 */
@@ -106,23 +90,6 @@ public class Mixer {
 				this.sounds.remove(i).dispose();
 			}
 		}
-	}
-	
-	/**
-	 * Unregister all Music registered with this Mixer.
-	 */
-	public synchronized void clearMusic() {
-		this.musics.clear();
-	}
-	
-	/**
-	 * Unregister all Sounds registered with this Mixer.
-	 */
-	public synchronized void clearSounds() {
-		for (SoundReference s : this.sounds) {
-			s.dispose();
-		}
-		this.sounds.clear();
 	}
 	
 	/**

@@ -27,17 +27,6 @@ public class CameraMap extends HashMap<String, Camera> {
     /**
      * @param mapImage        Minimap image, where the buttons to switch Cameras are drawn.
      * @param defaultSelected The name of the first Camera to be selected on this map.
-     */
-    public CameraMap(BufferedImage mapImage, String defaultSelected) {
-        super();
-        this.mapImage = mapImage;
-        this.defaultSelected = defaultSelected;
-        this.selected = defaultSelected;
-    }
-    
-    /**
-     * @param mapImage        Minimap image, where the buttons to switch Cameras are drawn.
-     * @param defaultSelected The name of the first Camera to be selected on this map.
      * @param cameras         List of Cameras that make this map.
      */
     public CameraMap(BufferedImage mapImage, String defaultSelected, Camera... cameras) {

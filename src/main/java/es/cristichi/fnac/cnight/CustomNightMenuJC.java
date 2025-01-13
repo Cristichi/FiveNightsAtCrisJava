@@ -212,7 +212,10 @@ public class CustomNightMenuJC extends ExitableJComponent {
         panelSettings.add(btn);
     }
     
-    @Override
+    /**
+     * Adds a Runnable that runs when the Custom Menu exits.
+     * @param onExitListener Runnable to add.
+     */
     public void addOnExitListener(Runnable onExitListener) {
         onExitListeners.add(onExitListener);
     }
@@ -290,8 +293,6 @@ public class CustomNightMenuJC extends ExitableJComponent {
      */
     private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException {
         List<CustomNightAnimFactory<? extends AnimatronicDrawing>> entries = CustomNightAnimRegistry.getEntries();
-        HashMap<String, AnimatronicDrawing> anims = new HashMap<>(entries.size());
-        
         CameraMap nightMap = cameraMapFactory.generate();
         
         boolean atLeastOneAnim = false;
