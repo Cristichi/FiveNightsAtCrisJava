@@ -298,7 +298,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
         boolean atLeastOneAnim = false;
         for (CustomNightAnimFactory<? extends AnimatronicDrawing> entry : entries) {
             CustomNightAnimData data = customInputs.get(entry);
-            if (data.ai() > 0) {
+            if (data != null && data.ai() > 0) {
                 atLeastOneAnim = true;
                 AnimatronicDrawing anim = entry.generate(data, rng);
                 
