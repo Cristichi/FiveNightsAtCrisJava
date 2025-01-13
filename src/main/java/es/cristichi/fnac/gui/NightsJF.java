@@ -225,7 +225,7 @@ public class NightsJF extends JFrame {
             case 6 -> "menu/background6.jpg";
             default -> "menu/backgroundCustom.jpg";
         };
-        if (FnacMain.NIGHTS_DEBUG) {
+        if (FnacMain.DEBUG_ALLNIGHTS) {
             mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night",
                     Resources.loadImage("night/custom/loading.jpg")));
             for (NightFactory nightFactory : NightRegistry.getAllNights().values()){

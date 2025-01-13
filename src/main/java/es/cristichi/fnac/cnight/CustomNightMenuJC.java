@@ -12,7 +12,7 @@ import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cams.CameraMap;
-import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
+import es.cristichi.fnac.obj.cams.CameraMapFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +80,10 @@ public class CustomNightMenuJC extends ExitableJComponent {
      * List of CustomAnimJP components so that they can be mass edited.
      */
     protected LinkedList<CustomAnimJP> customAnimJPs;
+    /**
+     * A copy of the CameraMapFactory representing the map where the player wants to play on.
+     */
+    protected CameraMapFactory cameraMapFactory;
     
     /**
      * Scroll panel. Its viewport contains the CustomAnimJPs.
@@ -127,7 +131,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
                 onExit.run();
             }
         });
-
+        
         createSettingButton("Set all to 0", event -> {
             for (CustomAnimJP customAnimJP : customAnimJPs) {
                 customAnimJP.setAi(0);
@@ -145,6 +149,19 @@ public class CustomNightMenuJC extends ExitableJComponent {
                 customAnimJP.setAi(20);
             }
         });
+        
+        JComboBox<CameraMapFactory> comboBoxMapSelector = new JComboBox<>();
+        comboBoxMapSelector.setModel(new DefaultComboBoxModel<>(CustomNightMapRegistry.getCustomNightMapRegistry().toArray(new CameraMapFactory[0])));
+        comboBoxMapSelector.setFont(getFont());
+        comboBoxMapSelector.setForeground(Color.YELLOW);
+        comboBoxMapSelector.setBackground(panelSettings.getBackground());
+        comboBoxMapSelector.addItemListener(e -> cameraMapFactory = (CameraMapFactory) e.getItem());
+        comboBoxMapSelector.setSelectedIndex(0);
+        cameraMapFactory = (CameraMapFactory) comboBoxMapSelector.getSelectedItem();
+        comboBoxMapSelector.setPrototypeDisplayValue(cameraMapFactory);
+        
+        panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelSettings.add(comboBoxMapSelector);
 
         createSettingButton("Start Custom Night", event -> {
             panelSettings.setVisible(false);
@@ -165,15 +182,23 @@ public class CustomNightMenuJC extends ExitableJComponent {
                 updateAnimatronicGrid();
             }, "cnight_t").start();
         });
-
+        
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 updateAnimatronicGrid();
+                
+                FontMetrics fontMetrics = getFontMetrics(getFont());
+                Dimension comboBoxSize = new Dimension((int) Math.max(panelSettings.getWidth() * 0.7,
+                        fontMetrics.stringWidth(cameraMapFactory.toString().concat("XXX"))), fontMetrics.getHeight());
+                comboBoxMapSelector.setPreferredSize(comboBoxSize);
+                comboBoxMapSelector.setMinimumSize(comboBoxSize);
+                comboBoxMapSelector.setMaximumSize(comboBoxSize);
+                comboBoxMapSelector.setSize(comboBoxSize);
             }
         });
     }
-
+    
     private void createSettingButton(String txt, ActionListener action){
         JButton btn = new JButton(txt);
         btn.setFont(getFont());
@@ -183,11 +208,11 @@ public class CustomNightMenuJC extends ExitableJComponent {
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.addActionListener(action);
-
+        
         panelSettings.add(Box.createRigidArea(new Dimension(0, 10)));
         panelSettings.add(btn);
     }
-
+    
     @Override
     public void addOnExitListener(Runnable onExitListener) {
         onExitListeners.add(onExitListener);
@@ -254,10 +279,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
             scrollPaneAnims.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
             add(scrollPaneAnims, BorderLayout.CENTER);
-
+            
             revalidate();
             repaint();
-
             resizingInProgress = false;
         });
     }
@@ -272,45 +296,52 @@ public class CustomNightMenuJC extends ExitableJComponent {
      */
     private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException,
             NullPointerException {
-        HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
-
-        CameraMap nightMap = new CrisRestaurantMap();
-
-        boolean atLeastOneAnim = false;
-        for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
+        try {
+            HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
+            
+            CameraMap nightMap = cameraMapFactory.generate();
+            
+            boolean atLeastOneAnim = false;
+            for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
                 CustomNightAnimatronicData data = customInputs.get(entry.getValue());
-            if (data.ai() > 0){
-                atLeastOneAnim = true;
-                try{
-                    AnimatronicDrawing anim = entry.getValue().getConstructor(CustomNightAnimatronicData.class).newInstance(
-                            new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(),
-                                    data.ai(), rng));
-
-                    boolean okStart = false;
-                    for(String start : entry.getKey().starts()){
-                        if (nightMap.containsKey(start)){
-                            nightMap.get(start).getAnimatronicsHere().add(anim);
-                            okStart = true;
-                            break;
+                if (data.ai() > 0) {
+                    atLeastOneAnim = true;
+                    try {
+                        AnimatronicDrawing anim = entry.getValue().getConstructor(CustomNightAnimatronicData.class)
+                                .newInstance(
+                                        new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(),
+                                                data.ai(), rng));
+                        
+                        boolean okStart = false;
+                        for (String start : entry.getKey().starts()) {
+                            if (nightMap.containsKey(start)) {
+                                nightMap.get(start).getAnimatronicsHere().add(anim);
+                                okStart = true;
+                                break;
+                            }
                         }
+                        if (!okStart) {
+                            throw new CustomNightException(
+                                    "The Animatronic %s does not have a valid starting point on the map %s.".formatted(
+                                            data.variant().isEmpty() ? data.name() : "%s (%s)".formatted(data.name(),
+                                                    data.variant()), cameraMapFactory.name()));
+                        }
+                    } catch (InvocationTargetException e) {
+                        throw new CustomNightException("Error trying to create the Animatronic.", e);
+                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                        throw new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
                     }
-                    if (!okStart){
-                        throw new CustomNightException(
-                                "The Animatronic %s does not have a valid starting point on the map."
-                                        .formatted(anim.getNameId()));
-                    }
-                } catch (InvocationTargetException e){
-                    throw new CustomNightException("Error trying to create the Animatronic.", e);
-                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e){
-                    throw new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
                 }
             }
+            
+            if (!atLeastOneAnim) {
+                throw new NullPointerException(
+                        "This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
+            }
+            return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
+                    Resources.loadSound("night/general/completed.wav"));
+        } catch (Exception e){
+            throw new CustomNightException("Unexpected error ocurred when creating the Custom Night.", e);
         }
-
-        if (!atLeastOneAnim){
-            throw new NullPointerException("This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
-        }
-        return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav"));
     }
 }

@@ -8,7 +8,8 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.*;
-import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
+import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +49,7 @@ public class Night5 implements NightFactory{
                 List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
         ), rng);
         
-        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        CameraMap nightMap = new RestaurantCamMapFactory().generate();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);

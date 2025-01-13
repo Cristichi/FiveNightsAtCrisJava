@@ -11,7 +11,8 @@ import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.anim.Paco;
 import es.cristichi.fnac.obj.anim.RoamingBob;
 import es.cristichi.fnac.obj.anim.RoamingMaria;
-import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
+import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +42,7 @@ public class Night1 implements NightFactory {
                 List.of(List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")), rng);
         
-        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        CameraMap nightMap = new RestaurantCamMapFactory().generate();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);

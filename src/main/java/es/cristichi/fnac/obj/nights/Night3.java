@@ -8,7 +8,8 @@ import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.*;
-import es.cristichi.fnac.obj.cams.CrisRestaurantMap;
+import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +44,7 @@ public class Night3 implements NightFactory{
         AnimatronicDrawing crisRandomSideAllNight = new RoamingCris("Cris", Map.of(0,1, 4,2, 5,3), true, false,
                 List.of("kitchen", "storage", "dining area", "main stage"), rng);
         
-        CrisRestaurantMap nightMap = new CrisRestaurantMap();
+        CameraMap nightMap = new RestaurantCamMapFactory().generate();
         nightMap.addCamAnimatronics("kitchen", paco);
         nightMap.addCamAnimatronics("storage", bob);
         nightMap.addCamAnimatronics("offices", maria);

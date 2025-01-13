@@ -36,6 +36,22 @@ public class CameraMap extends HashMap<String, Camera> {
     }
     
     /**
+     * @param mapImage        Minimap image, where the buttons to switch Cameras are drawn.
+     * @param defaultSelected The name of the first Camera to be selected on this map.
+     * @param cameras         List of Cameras that make this map.
+     */
+    public CameraMap(BufferedImage mapImage, String defaultSelected, Camera... cameras) {
+        super();
+        this.mapImage = mapImage;
+        this.defaultSelected = defaultSelected;
+        this.selected = defaultSelected;
+        addAll(cameras);
+        if (!containsKey(selected)){
+            throw new CameraException("This new CameraMap does not contain the default selected %s.".formatted(selected));
+        }
+    }
+    
+    /**
      * @return Minimap image.
      */
     public BufferedImage getMapImage() {

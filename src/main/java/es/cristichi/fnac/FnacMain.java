@@ -2,6 +2,7 @@ package es.cristichi.fnac;
 
 import es.cristichi.fnac.cnight.CustomNightAnimatronic;
 import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
+import es.cristichi.fnac.cnight.CustomNightMapRegistry;
 import es.cristichi.fnac.cnight.CustomNightRegistry;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
@@ -15,7 +16,9 @@ import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.RoamingBob;
 import es.cristichi.fnac.obj.anim.RoamingMaria;
-import es.cristichi.fnac.obj.cams.TutorialMap;
+import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
+import es.cristichi.fnac.obj.cams.TutorialCamMapFactory;
 import es.cristichi.fnac.obj.nights.*;
 import kuusisto.tinysound.TinySound;
 import org.slf4j.Logger;
@@ -42,7 +45,7 @@ public class FnacMain implements Runnable {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean NIGHTS_DEBUG = false;
+    public static boolean DEBUG_ALLNIGHTS = true;
     /**
      * Name of the game.
      */
@@ -94,7 +97,7 @@ public class FnacMain implements Runnable {
         // Save file
         NightProgress.init();
         final NightProgress.SaveFile saveFile;
-        if (NIGHTS_DEBUG){
+        if (DEBUG_ALLNIGHTS){
             ArrayList<String> nights = new ArrayList<>(6);
             nights.add("Tutorial");
             nights.add("Night 1");
@@ -134,6 +137,11 @@ public class FnacMain implements Runnable {
             return;
         }
         
+        // Maps for Custom Night
+        TutorialCamMapFactory tutorialCamMapFactory = new TutorialCamMapFactory();
+        CustomNightMapRegistry.registerMap(new RestaurantCamMapFactory());
+        CustomNightMapRegistry.registerMap(tutorialCamMapFactory);
+        
         // Nights
         
         /* This is an example of creating a NightFactory inline here without having to create a new class for it.
@@ -147,7 +155,7 @@ public class FnacMain implements Runnable {
             @Override
             public NightJC createNight(Settings settings, Jumpscare powerOutage,
                                        Random rng) throws IOException, NightException {
-                TutorialMap tutorialMap = new TutorialMap();
+                CameraMap tutorialMap = tutorialCamMapFactory.generate();
                 tutorialMap.addCamAnimatronics("cam1",
                         new RoamingBob("Bob", Map.of(1,2, 2,3, 3,0), false, false, java.util.List.of("cam4"), rng));
                 tutorialMap.addCamAnimatronics("cam2",

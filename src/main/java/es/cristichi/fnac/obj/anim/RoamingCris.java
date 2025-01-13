@@ -18,7 +18,7 @@ import java.util.Random;
  * after the Cataclysm he "merged" with the suit he was wearing, that is also now alive. Cris has different
  * implementations with different behaviours during Nights.
  */
-@CustomNightAnimatronic(name = "Cris", portraitPath = "anims/cris/portrait.png", starts = {"dining area"},
+@CustomNightAnimatronic(name = "Cris", portraitPath = "anims/cris/portrait.png", starts = {"dining area", "cam2"},
         description = "Cris starts at the Dining Area and moves randomly, avoiding distractions. He cannot go to the " +
                 "Kitchen, the Storage, the Main Stage, the Staff Lounge, the Bathrooms or the Office.")
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
