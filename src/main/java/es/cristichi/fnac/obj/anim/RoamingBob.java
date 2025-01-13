@@ -1,7 +1,5 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
@@ -18,19 +16,7 @@ import java.util.Random;
  * task to be the walking schedule that tells human employees what they had to do (like going on lunch, their breaks,
  * and any programmed tasks like animatronic maintenance). He moves randomly except towards the right door.
  */
-@CustomNightAnimatronic(name = "Bob", portraitPath = "anims/bob/portrait.png", starts = {"storage", "cam1"},
-        description = "Bob starts at the Storage, and moves randomly to any place except corridor 2.")
 public class RoamingBob extends AvoidCamsAnimatronicDrawing {
-    /**
-     * Creates a copy of Bob for Custom Night.
-     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
-     * @throws ResourceException If any resources cannot be loaded from disk.
-     */
-    public RoamingBob(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty()?data.name(): data.name()+" ("+data.variant()+")", Map.of(0, data.ai()),
-                true, false, List.of("corridor 2", "corridor 4", "bathrooms", "offices"), data.rng());
-    }
-    
     /**
      * Creates a new copy of Bob for use in normal Nights.
      * @param name Unique name. If several copies of Bob will appear, make sure they have different names.

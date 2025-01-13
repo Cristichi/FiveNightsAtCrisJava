@@ -1,7 +1,5 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
@@ -17,19 +15,7 @@ import java.util.Random;
  * Maria used to be one of the waiters for the restaurant, that also formed a musical group. She had an additional
  * task to forward any complains to the offices or the kitchen. She moves randomly except towards the left door.
  */
-@CustomNightAnimatronic(name = "Maria", portraitPath = "anims/maria/portrait.png",
-        starts = {"offices", "cam2"},
-        description = "Maria starts at the Offices, and moves randomly to any place except corridor 1.")
 public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
-    /**
-     * Creates a copy of Maria for Custom Night.
-     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
-     * @throws ResourceException If any resources cannot be loaded from disk.
-     */
-    public RoamingMaria(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-                true, false, List.of("corridor 1", "corridor 3", "staff lounge"), data.rng());
-    }
     
     /**
      * Creates a new copy of Maria for use in normal Nights.

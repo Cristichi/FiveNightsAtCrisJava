@@ -43,18 +43,17 @@ public abstract class CustomAnimJP extends JPanel {
     /**
      * Creates a new CustomAnimJP.
      * @param font Font to use. The size will be overwritten.
-     * @param annotationInfo Annotation that the class of this Animatronic has.
-     * @param classInfo Class of this Animatronic.
+     * @param animFactory Factory for this Animatronic.
      * @param AI Initial AI level that this panel must show.
      * @throws ResourceException If any images or sounds cannot be read from disk.
      */
-    public CustomAnimJP(Font font, CustomNightAnimatronic annotationInfo, Class<? extends AnimatronicDrawing> classInfo,
+    public CustomAnimJP(Font font, CustomNightAnimFactory<? extends AnimatronicDrawing> animFactory,
                         int AI) throws ResourceException {
         super();
         if (portraitBackgroundImg == null) {
             portraitBackgroundImg = Resources.loadImage("cnight/portraitBackground.jpg");
         }
-        portraitImg = Resources.loadImage(annotationInfo.portraitPath());
+        portraitImg = animFactory.getPortrait();
         setPreferredSize(SIZE);
 
         font = font.deriveFont(25f);
@@ -62,14 +61,10 @@ public abstract class CustomAnimJP extends JPanel {
         setForeground(Color.YELLOW);
         setBorder(border);
 
-        setToolTipText("<html>"+annotationInfo.description()+"</html>");
+        setToolTipText("<html>"+animFactory.getDescription()+"</html>");
 
         setLayout(new BorderLayout());
-        JLabel nameLbl = new JLabel("<html>" +
-                (annotationInfo.variant().isBlank()
-                        ? "<b>%s</b>".formatted(annotationInfo.name())
-                        : "<b>%s</b> (%s)".formatted(annotationInfo.name(), annotationInfo.variant()))
-                + "</html>");
+        JLabel nameLbl = new JLabel("<html><b>%s</b></html>".formatted(animFactory.getNameId()));
         nameLbl.setFont(font);
         nameLbl.setForeground(getForeground());
         nameLbl.setHorizontalAlignment(SwingConstants.CENTER);
@@ -87,7 +82,7 @@ public abstract class CustomAnimJP extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (isEnabled()){
                     if (e.getButton() == MouseEvent.BUTTON1) {
-                        int newAI = Math.min(annotationInfo.maxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
+                        int newAI = Math.min(animFactory.getMaxAi(), Integer.parseInt(aiInputLbl.getText()) + 1);
                         aiInputLbl.setText(Integer.toString(newAI));
                         onAiChanged(newAI);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -106,7 +101,7 @@ public abstract class CustomAnimJP extends JPanel {
                 } else {
                     newAI--;
                 }
-                if (newAI >= 0 && newAI <= annotationInfo.maxAi()) {
+                if (newAI >= 0 && newAI <= animFactory.getMaxAi()) {
                     aiInputLbl.setText(Integer.toString(newAI));
                     onAiChanged(newAI);
                 }

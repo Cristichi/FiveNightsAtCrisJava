@@ -1,9 +1,9 @@
 package es.cristichi.fnac;
 
-import es.cristichi.fnac.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
+import es.cristichi.fnac.cnight.CustomNightAnimData;
+import es.cristichi.fnac.cnight.CustomNightAnimFactory;
+import es.cristichi.fnac.cnight.CustomNightAnimRegistry;
 import es.cristichi.fnac.cnight.CustomNightMapRegistry;
-import es.cristichi.fnac.cnight.CustomNightRegistry;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
@@ -14,8 +14,7 @@ import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.anim.RoamingBob;
-import es.cristichi.fnac.obj.anim.RoamingMaria;
+import es.cristichi.fnac.obj.anim.*;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
 import es.cristichi.fnac.obj.cams.TutorialCamMapFactory;
@@ -62,9 +61,7 @@ public class FnacMain implements Runnable {
     
     /**
      * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
-     * method you may also want to register your custom {@link es.cristichi.fnac.obj.anim.AnimatronicDrawing} classes
-     * for the Custom Night by adding the {@link CustomNightAnimatronic} annotation and
-     * making a constructor that requests {@link CustomNightAnimatronicData}.
+     * method you may also want to register anything you need on the registries.
      */
     @Override
     public void run() {
@@ -137,10 +134,143 @@ public class FnacMain implements Runnable {
             return;
         }
         
+        // JFrame in correct Thread
+        SwingUtilities.invokeLater(() -> {
+            try {
+                NightsJF window = new NightsJF(saveFile, settings);
+                window.setFullScreen(settings.isFullscreen());
+                window.setVisible(true);
+                AbstractAction action = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            settings.setFullscreen(!settings.isFullscreen());
+                            window.setFullScreen(settings.isFullscreen());
+                            settings.saveToFile(Settings.SETTINGS_FILE);
+                        } catch (Exception error) {
+                            new ExceptionDialog(error, true, false, LOGGER);
+                            window.dispose();
+                        }
+                    }
+                };
+                window.getRootPane().getActionMap().put("switchFull", action);
+                
+                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke("F11"), "switchFull");
+                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
+            } catch (Exception e) {
+                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
+                        LOGGER);
+            }
+        });
+        
         // Maps for Custom Night
         TutorialCamMapFactory tutorialCamMapFactory = new TutorialCamMapFactory();
         CustomNightMapRegistry.registerMap(new RestaurantCamMapFactory());
         CustomNightMapRegistry.registerMap(tutorialCamMapFactory);
+        
+        // Animatronics for Custom Night
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<ChatGPT>("ChatGPT", """
+                    ChatGPT starts at the Storage or cam2, and decides alternatively whether they want to \
+                    move randomly or using a chosen path to either your left or right door.""",
+                    20, Resources.loadImage("anims/chatgpt/portrait.png"), new String[]{"storage", "cam1"}) {
+                @Override
+                public ChatGPT generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new ChatGPT(nameId, Map.of(0, data.ai()), false, false, List.of(),
+                            List.of(List.of("storage", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                                    List.of("storage", "dining area", "corridor 2", "corridor 4", "rightDoor")),
+                            rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering ChatGPT for Custom Night.", e);
+        }
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<Paco>("Paco", """
+                    Paco starts his cycle at the kitchen, then moves to the Dining Area, and then chooses whether he \
+                    goes to your left side or right side. After waiting at your closed door, he teleports back \
+                    to the Kitchen. He never goes into the Staff Lounge, the Bathrooms, the Storage or the Main \
+                    Stage.""",
+                    20, Resources.loadImage("anims/paco/portrait.png"), new String[]{"kitchen", "cam1"}) {
+                @Override
+                public Paco generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new Paco(nameId, Map.of(0, data.ai()), false, true,
+                            List.of(
+                                    List.of("cam1", "cam2", "cam4", "rightDoor"),
+                                    List.of("cam2", "cam1", "cam3", "leftDoor"),
+                                    List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                                    List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                            ), rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering Paco for Custom Night.", e);
+        }
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<RoamingMaria>("Maria",
+                    "Maria roams looking for the right door to the office.",
+                    20, Resources.loadImage("anims/maria/portrait.png"), new String[]{"main stage", "cam1"}) {
+                @Override
+                public RoamingMaria generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new RoamingMaria(nameId, Map.of(0, data.ai()), false, true,
+                            List.of("corridor 1", "corridor 3", "staff lounge", "cam3"), rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering Maria for Custom Night.", e);
+        }
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<RoamingBob>("Bob",
+                    "Bob roams looking for the left door to the office.",
+                    20, Resources.loadImage("anims/bob/portrait.png"), new String[]{"main stage", "cam1"}) {
+                @Override
+                public RoamingBob generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new RoamingBob(nameId, Map.of(0, data.ai()), false, true,
+                            List.of("corridor 2", "corridor 4", "bathrooms", "offices", "cam4"), rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering Bob for Custom Night.", e);
+        }
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<RoamingCris>("Cris",
+                    "Cris roams the entire place to either door, but avoiding roaming too far from the office.",
+                    20, Resources.loadImage("anims/cris/portrait.png"), new String[]{"dining area", "cam2"}) {
+                @Override
+                public RoamingCris generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new RoamingCris(nameId, Map.of(0, data.ai()), false, true,
+                            List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering Cris (final form) for Custom Night.", e);
+        }
+        try {
+            CustomNightAnimRegistry.registerAnimatronic(new CustomNightAnimFactory<PathCris>("Cris (final form)", """
+                    Cris (final form) starts at the Storage, then goes to the Dining Area. From there, he teleports to \
+                    either the Staff Lounge or the Offices. When at the Staff Lounge, he teleports to corridor 3\
+                     or 4 and then he goes to the closest Office door. If at the Offices, he first teleports to \
+                    the Bathrooms, and then from there he goes to corridor 3 or 4 and then goes to the closest \
+                    Office door.""",
+                    20, Resources.loadImage("anims/cris/portrait.png"), new String[]{"storage", "cam1"}) {
+                @Override
+                public PathCris generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                    return new PathCris(nameId, Map.of(0, data.ai()), false, true,
+                            List.of(
+                                    List.of("cam2", "cam4", "rightDoor"),
+                                    List.of("cam1", "cam3", "leftDoor"),
+                                    List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
+                                    List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor"),
+                                    List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
+                                    List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
+                            ), rng);
+                }
+            });
+        } catch (ResourceException e){
+            LOGGER.error("Error registering Cris for Custom Night.", e);
+        }
         
         // Nights
         
@@ -173,40 +303,6 @@ public class FnacMain implements Runnable {
         NightRegistry.registerNight(4, new Night4());
         NightRegistry.registerNight(5, new Night5());
         NightRegistry.registerNight(6, new Night6());
-        
-        // JFrame in correct Thread
-        SwingUtilities.invokeLater(() -> {
-            try {
-                NightsJF window = new NightsJF(saveFile, settings);
-                window.setFullScreen(settings.isFullscreen());
-                window.setVisible(true);
-                AbstractAction action = new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            settings.setFullscreen(!settings.isFullscreen());
-                            window.setFullScreen(settings.isFullscreen());
-                            settings.saveToFile(Settings.SETTINGS_FILE);
-                        } catch (Exception error) {
-                            new ExceptionDialog(error, true, false, LOGGER);
-                            window.dispose();
-                        }
-                    }
-                };
-                window.getRootPane().getActionMap().put("switchFull", action);
-                
-                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                        .put(KeyStroke.getKeyStroke("F11"), "switchFull");
-                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
-            } catch (Exception e) {
-                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
-                        LOGGER);
-            }
-        });
-        
-        // Custom Night's Animatronic registering
-        CustomNightRegistry.registerPackage("es.cristichi.fnac.obj.anim");
     }
 }
 

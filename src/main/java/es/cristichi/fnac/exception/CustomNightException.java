@@ -1,8 +1,7 @@
 package es.cristichi.fnac.exception;
 
 /**
- * Exception thrown by Custom Night to indicate issues with {@link es.cristichi.fnac.obj.anim.AnimatronicDrawing},
- * {@link es.cristichi.fnac.cnight.CustomNightAnimatronic}, or the player's configuration of the Custom Night.
+ * Exception thrown by Custom Night to indicate issues with creating a Custom Night.
  */
 public class CustomNightException extends Exception {
 	/**

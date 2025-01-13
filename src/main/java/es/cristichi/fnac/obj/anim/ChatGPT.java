@@ -1,7 +1,5 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
@@ -21,11 +19,6 @@ import java.util.*;
  * impossible additions like making the Animatronic change your controls and such. Maybe in the future, but for now
  * they simply choose alternatively between moving towards the Office and moving randomly.
  */
-@CustomNightAnimatronic(name = "ChatGPT", portraitPath = "anims/chatgpt/portrait.png",
-        starts = {"storage", "cam2"},
-        description = "ChatGPT starts at the Storage or cam2, and decides alternatively whether they want to" +
-                " move randomly or using a chosen path to either your left or right door."
-)
 public class ChatGPT extends AnimatronicDrawing {
     /**
      * List with the names of all Cameras that ChatGPT will avoid when moving randomly.
@@ -51,19 +44,6 @@ public class ChatGPT extends AnimatronicDrawing {
     protected boolean building;
     
     /**
-     * Creates a copy of ChatGPT for Custom Night.
-     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
-     * @throws ResourceException If any resources cannot be loaded from disk.
-     */
-    public ChatGPT(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-            false, false, List.of(), List.of(
-                List.of("storage", "dining area", "corridor 1", "corridor 3", "leftDoor"),
-                List.of("storage", "dining area", "corridor 2", "corridor 4", "rightDoor")
-            ), data.rng());
-    }
-    
-    /**
      * Creates a new copy of ChatGPT for use in normal Nights.
      * @param name Unique name. If several copies of ChatGPT will appear, make sure they have different names.
      * @param aiDuringNight Map with the list of AI values. For example: {@code Map.of(0,0, 4,1)} would leave
@@ -78,7 +58,7 @@ public class ChatGPT extends AnimatronicDrawing {
      */
     public ChatGPT(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
                    List<String> forbiddenCameras, List<List<String>> camPaths, Random rng) throws ResourceException {
-        super(name, 6, 4, aiDuringNight, 20, cameraStalled, globalCameraStalled,
+        super(name, 6, 4, aiDuringNight, cameraStalled, globalCameraStalled,
                 Resources.loadImage("anims/chatgpt/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/chatgpt/jumpscare.gif"), 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav"), 2,

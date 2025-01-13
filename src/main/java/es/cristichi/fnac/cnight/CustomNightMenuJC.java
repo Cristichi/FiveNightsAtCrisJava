@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
 
@@ -75,7 +74,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
      * Map of AnimatronicDrawing classes and their CustomNightAnimatronicData needed to call their
      * Custom Night constructor.
      */
-    protected HashMap<Class<? extends AnimatronicDrawing>, CustomNightAnimatronicData> customInputs;
+    protected HashMap<CustomNightAnimFactory<? extends AnimatronicDrawing>, CustomNightAnimData> customInputs;
     /**
      * List of CustomAnimJP components so that they can be mass edited.
      */
@@ -237,24 +236,19 @@ public class CustomNightMenuJC extends ExitableJComponent {
             viewportPanel.setOpaque(false);
 
             customAnimJPs.clear();
-            for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry
-                    : CustomNightRegistry.getAnimatronics()) {
-                int AI = 0;
-                if (customInputs.containsKey(entry.getValue())){
-                    CustomNightAnimatronicData previous = customInputs.get(entry.getValue());
-                    AI = previous.ai();
+            for (CustomNightAnimFactory<? extends AnimatronicDrawing> animFactory : CustomNightAnimRegistry.getEntries()) {
+                
+                CustomNightAnimData data;
+                if (customInputs.containsKey(animFactory)){
+                    data = customInputs.get(animFactory);
+                } else {
+                    data = new CustomNightAnimData(0);
                 }
-                CustomNightAnimatronicData data =
-                        new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(), AI, rng);
-                customInputs.put(entry.getValue(), data);
-
                 try {
-                    CustomAnimJP animComponent = new CustomAnimJP(getFont(), entry.getKey(), entry.getValue(), AI){
+                    CustomAnimJP animComponent = new CustomAnimJP(getFont(), animFactory, data.ai()){
                         @Override
                         public void onAiChanged(int ai) {
-                            customInputs.computeIfPresent(entry.getValue(),
-                                    (k, cNightData) -> new CustomNightAnimatronicData(cNightData.name(),
-                                            cNightData.variant(), ai, cNightData.rng()));
+                            customInputs.put(animFactory, new CustomNightAnimData(ai));
                         }
                     };
                     animComponent.setEnabled(enabledEditing);
@@ -262,8 +256,8 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     viewportPanel.add(animComponent);
                     customAnimJPs.add(animComponent);
                 } catch (ResourceException e) {
-                    new ExceptionDialog(new CustomNightException("Error trying to create panel for %s (%s). Skipping it."
-                            .formatted(entry.getKey().name(), entry.getKey().variant()), e), false, false, LOGGER);
+                    new ExceptionDialog(new CustomNightException("Error trying to create panel for %s. Skipping it."
+                            .formatted(animFactory.nameId), e), false, false, LOGGER);
                 }
             }
 
@@ -294,54 +288,40 @@ public class CustomNightMenuJC extends ExitableJComponent {
      * @throws NightException If the Night could not be correctly configured.
      * @throws NullPointerException If the player attempted to play with no Animatronics with {@code AI > 0}.
      */
-    private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException,
-            NullPointerException {
-        try {
-            HashMap<String, AnimatronicDrawing> anims = new HashMap<>(CustomNightRegistry.size());
-            
-            CameraMap nightMap = cameraMapFactory.generate();
-            
-            boolean atLeastOneAnim = false;
-            for (Map.Entry<CustomNightAnimatronic, Class<? extends AnimatronicDrawing>> entry : CustomNightRegistry.getAnimatronics()) {
-                CustomNightAnimatronicData data = customInputs.get(entry.getValue());
-                if (data.ai() > 0) {
-                    atLeastOneAnim = true;
-                    try {
-                        AnimatronicDrawing anim = entry.getValue().getConstructor(CustomNightAnimatronicData.class)
-                                .newInstance(
-                                        new CustomNightAnimatronicData(entry.getKey().name(), entry.getKey().variant(),
-                                                data.ai(), rng));
-                        
-                        boolean okStart = false;
-                        for (String start : entry.getKey().starts()) {
-                            if (nightMap.containsKey(start)) {
-                                nightMap.get(start).getAnimatronicsHere().add(anim);
-                                okStart = true;
-                                break;
-                            }
-                        }
-                        if (!okStart) {
-                            throw new CustomNightException(
-                                    "The Animatronic %s does not have a valid starting point on the map %s.".formatted(
-                                            data.variant().isEmpty() ? data.name() : "%s (%s)".formatted(data.name(),
-                                                    data.variant()), cameraMapFactory.name()));
-                        }
-                    } catch (InvocationTargetException e) {
-                        throw new CustomNightException("Error trying to create the Animatronic.", e);
-                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-                        throw new CustomNightException("Animatronic is missing the constructor for Custom Night.", e);
+    private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException {
+        List<CustomNightAnimFactory<? extends AnimatronicDrawing>> entries = CustomNightAnimRegistry.getEntries();
+        HashMap<String, AnimatronicDrawing> anims = new HashMap<>(entries.size());
+        
+        CameraMap nightMap = cameraMapFactory.generate();
+        
+        boolean atLeastOneAnim = false;
+        for (CustomNightAnimFactory<? extends AnimatronicDrawing> entry : entries) {
+            CustomNightAnimData data = customInputs.get(entry);
+            if (data.ai() > 0) {
+                atLeastOneAnim = true;
+                AnimatronicDrawing anim = entry.generate(data, rng);
+                
+                boolean okStart = false;
+                for (String start : entry.getStartPositions()) {
+                    if (nightMap.containsKey(start)) {
+                        nightMap.get(start).getAnimatronicsHere().add(anim);
+                        okStart = true;
+                        break;
                     }
                 }
+                if (!okStart) {
+                    throw new CustomNightException(
+                            "The Animatronic %s does not have a valid starting point on the map %s."
+                                    .formatted(entry.getNameId(), cameraMapFactory.name()));
+                }
             }
-            
-            if (!atLeastOneAnim) {
-                throw new NullPointerException(
-                        "This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
-            }
-            return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
-                    Resources.loadSound("night/general/completed.wav"));
-        } catch (Exception e){
-            throw new CustomNightException("Unexpected error ocurred when creating the Custom Night.", e);
         }
+        
+        if (!atLeastOneAnim) {
+            throw new NullPointerException(
+                    "This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
+        }
+        return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
+                Resources.loadSound("night/general/completed.wav"));
     }
 }

@@ -1,7 +1,5 @@
 package es.cristichi.fnac.obj.anim;
 
-import es.cristichi.fnac.cnight.CustomNightAnimatronic;
-import es.cristichi.fnac.cnight.CustomNightAnimatronicData;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.obj.Jumpscare;
@@ -18,21 +16,8 @@ import java.util.Random;
  * after the Cataclysm he "merged" with the suit he was wearing, that is also now alive. Cris has different
  * implementations with different behaviours during Nights.
  */
-@CustomNightAnimatronic(name = "Cris", portraitPath = "anims/cris/portrait.png", starts = {"dining area", "cam2"},
-        description = "Cris starts at the Dining Area and moves randomly, avoiding distractions. He cannot go to the " +
-                "Kitchen, the Storage, the Main Stage, the Staff Lounge, the Bathrooms or the Office.")
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
     private static Jumpscare jumpscareNormal, jumpscareItsMe;
-    
-    /**
-     * Creates a copy of Cris for Custom Night.
-     * @param data Data that {@link es.cristichi.fnac.cnight.CustomNightMenuJC} has to create the instance.
-     * @throws ResourceException If any resources cannot be loaded from disk.
-     */
-    public RoamingCris(CustomNightAnimatronicData data) throws ResourceException {
-        this(data.variant().isEmpty() ? data.name() : data.name() + " (" + data.variant() + ")", Map.of(0, data.ai()),
-                true, false,List.of("kitchen", "storage", "main stage", "staff lounge", "bathrooms"), data.rng());
-    }
     
     /**
      * Creates a new copy of Cris for use in normal Nights.
