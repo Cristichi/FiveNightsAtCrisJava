@@ -65,7 +65,9 @@ public class FnacMain implements Runnable {
      */
     @Override
     public void run() {
+        // Semaphore to make the JFrame wait until everything is loaded.
         Semaphore semaphore = new Semaphore(-11);
+        
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
         
