@@ -41,15 +41,17 @@ public class Night6 implements NightFactory{
                         List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
                 ), rng);
         
-        AnimatronicDrawing crisClon1 = new PathCris("Cris", Map.of(0,5, 2,7, 4,8, 5,9), true, false, List.of(
-                List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
-                List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
-        ), rng);
+        AnimatronicDrawing crisClon1 = new PathCris("Cris", Map.of(0,5, 2,7, 4,8, 5,9), true, false,
+                List.of(
+                        List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
+                        List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
+                ), rng);
         
-        AnimatronicDrawing crisClon2 = new PathCris("Cris?", Map.of(0,5, 1,6, 3,7, 5,9), true, false, List.of(
-                List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
-                List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor")
-        ), rng);
+        AnimatronicDrawing crisClon2 = new PathCris("Cris?", Map.of(0,5, 1,6, 3,7, 5,9), true, false,
+                List.of(
+                        List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
+                        List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor")
+                ), rng);
         
         CameraMap nightMap = new RestaurantCamMapFactory().generate();
         nightMap.addCamAnimatronics("kitchen", paco);
