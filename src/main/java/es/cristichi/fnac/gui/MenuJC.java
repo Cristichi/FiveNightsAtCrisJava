@@ -2,6 +2,8 @@ package es.cristichi.fnac.gui;
 
 import kuusisto.tinysound.Music;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +19,8 @@ import java.util.TimerTask;
  * for Settings and exitting the game.
  */
 public abstract class MenuJC extends JComponent {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MenuJC.class);
+	
 	/**
 	 * List of Items the menu has, which determines the buttons to show.
 	 */
@@ -43,19 +47,6 @@ public abstract class MenuJC extends JComponent {
 	protected final Font btnFont;
 	
 	/**
-	 * Amount of ticks left that the current on-screen error must be shown for. {@code 0} for no error.
-	 */
-	protected int errorTicks = 0;
-	/**
-	 * Usual number of ticks errors must be shown in total.
-	 */
-	protected static final int ERROR_TICKS = 60;
-	/**
-	 * Array with each line of the error to display on-screen. {@code null} for no error.
-	 */
-	protected String[] error = null;
-	
-	/**
 	 * Background Music.
 	 */
 	protected final Music backgroundMusic;
@@ -71,7 +62,7 @@ public abstract class MenuJC extends JComponent {
 	 * Array with each line that the Music's credits must be shown for. {@code null} for no credits.
 	 */
 	protected final String[] musicCreditsMsg;
-
+	
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
 	 * @param info Information of the menu items and background at the moment.
@@ -209,16 +200,6 @@ public abstract class MenuJC extends JComponent {
 					: backgroundImage),
 				0, 0, getWidth(), getHeight(), this);
 
-		if (errorTicks-- > 0) {
-			g.setFont(new Font("Arial", Font.BOLD, fontSize));
-			g.setColor(Color.RED);
-			int y = fontSize;
-			for (String line : error) {
-				g.drawString(line, 10, y);
-				y+=fontSize;
-			}
-		}
-
 		if (musicCreditsTicks-- > 0) {
 			g.setFont(new Font("Eraser Dust", Font.BOLD, fontSize));
 			g.setColor(Color.WHITE);
@@ -256,19 +237,16 @@ public abstract class MenuJC extends JComponent {
 			}
 			new Thread(() -> {
 				try {
-					error = null;
-					errorTicks = 0;
-
 					onMenuItemClick(menuItem);
 				} catch (Exception e1) {
-					e1.printStackTrace();
-					error = new String[] {"Error trying to load "+ menuItem, e1.getMessage(), "Check console for full stack trace."};
-					errorTicks = ERROR_TICKS;
+					new ExceptionDialog(e1, false, true, LOGGER);
+				} finally {
+					for (Component component : MenuJC.this.getComponents()) {
+						component.setVisible(true);
+					}
+					currentLoadingImg = null;
+					loading = false;
 				}
-				for (Component component : MenuJC.this.getComponents()) {
-					component.setVisible(true);
-				}
-				loading = false;
 			}, menuItem.id()).start();
 		}
 	}
