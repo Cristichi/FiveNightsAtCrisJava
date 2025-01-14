@@ -288,19 +288,21 @@ public class NightJC extends ExitableJComponent {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
 				nightName, fps, secsPerHour, passivePowerUsage*100);
+		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		this.rng = rng;
 		this.fps = fps;
 		this.nightName = nightName;
 		this.camerasMap = camMap;
+		this.paperImg = paperImg;
 		this.powerOutageJumpscare = powerOutageJumpscare;
 		this.hourTicksInterval = (int) (this.fps * secsPerHour);
 		if (hourTicksInterval == 0){
 			throw new NightException("Duration of Night is so low that there are 0 ticks per hour, leading to errors.");
 		}
-
+		
 		onNightEndListeners = new LinkedList<>();
 		onExitListeners = new LinkedList<>();
-
+		
 		powerLeft = 1;
 		// So this is calculated depending on the FPS, which determines the total number of ticks per night, which is
 		// important to calibrate that the Night cannot be survived by keeping both doors closed (extremely easy)
@@ -313,9 +315,7 @@ public class NightJC extends ExitableJComponent {
 		float maxPowerPerTickPerResource = 1.0f / (4 * totalTicks);
 		// Current power used per tick per resource as the given percentage in-between the minimum and maximum.
 		powerPerTickPerResource = (minPowerPerTickPerResource + maxPowerPerTickPerResource) * passivePowerUsage;
-
-		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
-		this.paperImg = paperImg;
+		
 		// Images that are used every Night and cannot be personalized are always loaded from the same resources.
 		backgroundImg = Resources.loadImage("office/background.jpg");
 		camsUpDownBtnImg = Resources.loadImage("office/camsButton.png");
@@ -328,7 +328,7 @@ public class NightJC extends ExitableJComponent {
 		rightDoorOpenImg = Resources.loadImage("office/rightDoorOpen.png");
 		rightDoorTransImg = Resources.loadImage("office/rightDoorTrans.png");
 		rightDoorClosedImg = Resources.loadImage("office/rightDoorClosed.png");
-
+		
 		this.soundOnCompleted = nightCompletedSound;
 		ambientSounds = new AmbientSoundSystem((int) (this.fps *3.115), 0.3f,
 				new AmbientSound(Resources.loadSound("office/ambient/heavySteps.wav"), 1, true),
@@ -346,7 +346,7 @@ public class NightJC extends ExitableJComponent {
 		addOnExitListener(backgroundCamsSound::stop);
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav");
-
+		
 		openDoorSound = Resources.loadSound("office/sounds/opening-metal-door-199581.wav");
 		closeDoorSound = Resources.loadSound("office/sounds/metal-door-slam-172172.wav");
 
