@@ -104,7 +104,7 @@ public abstract class SettingsJC extends JComponent {
         gbc.gridy = 0;
 
         // Fullscreen Toggle
-        JLabel label4 = new JLabel("<html>"+ "Fullscreen:" +"</html>");
+        JLabel label4 = new JLabel("<html>Fullscreen:</html>");
         label4.setForeground(foreground);
         fullscreenLabel = label4;
         gbc.anchor = GridBagConstraints.LINE_END;
