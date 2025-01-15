@@ -17,9 +17,6 @@
         <Logger name="es.cristichi.fnac" level="INFO" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.reflections" level="OFF" additivity="false">
-            <AppenderRef ref="console" />
-        </Logger>
 
     </Loggers>
 </Configuration>
