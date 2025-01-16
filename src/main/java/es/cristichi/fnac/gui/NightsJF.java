@@ -294,18 +294,6 @@ public class NightsJF extends JFrame {
      */
     public void startCustomNight(NightJC night) {
         night.addOnNightEnd((completed) -> {
-            if (completed){
-                saveFile.addCompletedNight(night.getNightName());
-                try {
-                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                    MenuJC.Info menuInfo = getUpdatedMenuData();
-                    mainMenu.updateBackground(menuInfo.background());
-                    mainMenu.updateMenuItems(menuInfo.menuItems());
-                } catch (IOException e) {
-                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e), true, false,
-                            LOGGER);
-                }
-            }
             cardLayout.show(cardPanel, "menu");
             nightPanel.remove(night);
             nightPanel.removeAll();
