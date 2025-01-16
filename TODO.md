@@ -12,6 +12,7 @@
 - [ ] For more immersion, allow Cameras to have more than one "layer" image, including one where the Animatronics are drawn.
 - [ ] Allow Cameras to specify the "region"(s) of the source image that could have AnimatronicDrawings.
 - [ ] Add Custom Night challenges with specific Animatronics.
+- [ ] Add voice lines + subtitles at start and end of the Nights.
 
 ## Maintenance
 - [ ] Keep improving things internally to make them as clear as possible, for any dev who may want to add more Animatronics in the future (or myself of course, it's always good to make it easy for future-Cristichi as well).
