@@ -264,7 +264,7 @@ public class Resources {
             if (!tempFile.exists()){
                 Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-
+            
             Sound sound = TinySound.loadSound(tempFile);
             if (sound == null){
                 throw new NullPointerException("Sound file %s could not be loaded from disk.".formatted(resourcePath));

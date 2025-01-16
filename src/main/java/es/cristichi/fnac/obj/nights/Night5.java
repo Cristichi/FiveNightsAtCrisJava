@@ -58,6 +58,6 @@ public class Night5 implements NightFactory{
         nightMap.get("main stage").setBroken(true);
         
         return new NightJC("Night 5", settings.getFps(), nightMap, null, powerOutage, rng,
-                90, 0.45f, Resources.loadSound("night/general/completed.wav"));
+                90, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
     }
 }

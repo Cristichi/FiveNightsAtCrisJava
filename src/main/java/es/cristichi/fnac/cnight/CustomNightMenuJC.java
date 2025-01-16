@@ -240,7 +240,6 @@ public class CustomNightMenuJC extends ExitableJComponent {
 
             customAnimJPs.clear();
             for (CustomNightAnimFactory<? extends AnimatronicDrawing> animFactory : CustomNightAnimRegistry.getEntries()) {
-                
                 CustomNightAnimData data;
                 if (customInputs.containsKey(animFactory)){
                     data = customInputs.get(animFactory);
@@ -322,7 +321,7 @@ public class CustomNightMenuJC extends ExitableJComponent {
             throw new NullPointerException(
                     "This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
         }
-        return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav"));
+        return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 5, 0.00f,
+                Resources.loadSound("night/general/completed.wav"), null, null);
     }
 }

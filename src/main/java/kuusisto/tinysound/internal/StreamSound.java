@@ -40,13 +40,13 @@ import java.util.LinkedList;
  * @author Finn Kuusisto
  */
 public class StreamSound implements Sound {
-	
 	private URL dataURL;
 	private final long numBytesPerChannel;
 	private Mixer mixer;
 	private final int ID;
 
 	private final LinkedList<Runnable> onFinished;
+	private final double secDuration;
 	
 	/**
 	 * Construct a new StreamSound with the given data and Mixer which will
@@ -56,18 +56,22 @@ public class StreamSound implements Sound {
 	 * the file
 	 * @param mixer Mixer that will handle this StreamSound
 	 * @param id unique ID of this StreamSound
+	 * @param secDuration Length in seconds, used by Cristichi's NightJC to play at the end of Nights.
 	 * @throws IOException if a stream cannot be opened from the URL
 	 */
 	public StreamSound(URL dataURL, long numBytesPerChannel, Mixer mixer,
-			int id) throws IOException {
+			int id, double secDuration) throws IOException {
 		this.dataURL = dataURL;
 		this.numBytesPerChannel = numBytesPerChannel;
 		this.mixer = mixer;
 		this.ID = id;
-		onFinished = new LinkedList<>();
+		
 		//open and close a stream to check for immediate issues
 		InputStream temp = this.dataURL.openStream();
 		temp.close();
+		
+		onFinished = new LinkedList<>();
+		this.secDuration = secDuration;
 	}
 
 	/**
@@ -131,7 +135,12 @@ public class StreamSound implements Sound {
 	public void addOnEndListener(Runnable runnable) {
 		onFinished.add(runnable);
 	}
-
+	
+	@Override
+	public double getSecDuration() {
+		return secDuration;
+	}
+	
 	/////////////
 	//Reference//
 	/////////////

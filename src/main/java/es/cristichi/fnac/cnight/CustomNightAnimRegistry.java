@@ -4,8 +4,8 @@ import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,8 +17,8 @@ public class CustomNightAnimRegistry {
     /**
      * Map holding the instances of all registered factories.
      */
-    private static final LinkedList<CustomNightAnimFactory<? extends AnimatronicDrawing>> customNightAnimRegistry
-            = new LinkedList<>();
+    private static final ArrayList<CustomNightAnimFactory<? extends AnimatronicDrawing>> customNightAnimRegistry
+            = new ArrayList<>(10);
     
     /**
      * Registers a map to be available for Custom Nights.

@@ -44,7 +44,7 @@ public class FnacMain implements Runnable {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean DEBUG_ALLNIGHTS = false;
+    public static boolean DEBUG_ALLNIGHTS = true;
     /**
      * Name of the game.
      */
@@ -291,7 +291,7 @@ public class FnacMain implements Runnable {
                     
                     return new NightJC("Tutorial", settings.getFps(), tutorialMap,
                             Resources.loadImage("night/tutorial/paper.png"), powerOutage, rng, 60, 0.45f,
-                            Resources.loadSound("night/tutorial/completed.wav"));
+                            Resources.loadSound("night/tutorial/completed.wav"), null, null);
                 }
             });
             // Example on how to do them by organizing them in classes

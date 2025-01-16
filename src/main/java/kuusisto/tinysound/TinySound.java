@@ -266,6 +266,11 @@ public class TinySound {
 		if (data == null) {
 			return null;
 		}
+		
+		// Get audio duration to save for use - Cristichi
+		AudioFormat format = audioStream.getFormat();
+        double secDuration = data[0].length / (format.getSampleRate()*data.length*((double) format.getSampleSizeInBits() /8));
+		
 		//handle differently if streaming from file
 		if (streamFromFile) {
 			StreamInfo info = TinySound.createFileStream(data);
@@ -277,7 +282,7 @@ public class TinySound {
 			StreamSound ss = null;
 			try {
 				ss = new StreamSound(info.URL, info.NUM_BYTES_PER_CHANNEL,
-						TinySound.mixer, TinySound.soundCount);
+						TinySound.mixer, TinySound.soundCount, secDuration);
 				TinySound.soundCount++;
 			} catch (IOException e) {
 				System.err.println("Failed to create StreamSound!");
@@ -287,7 +292,7 @@ public class TinySound {
 		//construct the Sound object
 		TinySound.soundCount++;
 		return new MemSound(data[0], data[1], TinySound.mixer,
-				TinySound.soundCount);
+				TinySound.soundCount, secDuration);
 	}
 	
 	/**

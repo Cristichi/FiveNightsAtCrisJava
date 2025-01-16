@@ -37,13 +37,13 @@ import java.util.LinkedList;
  * @author Finn Kuusisto
  */
 public class MemSound implements Sound {
-	
 	private byte[] left;
 	private byte[] right;
 	private Mixer mixer;
 	private final int ID; //unique ID to match references
 
 	private final LinkedList<Runnable> onFinished;
+	private final double secDuration;
 	
 	/**
 	 * Construct a new MemSound with the given data and Mixer which will handle
@@ -52,14 +52,16 @@ public class MemSound implements Sound {
 	 * @param right right channel of sound data
 	 * @param mixer Mixer that will handle this MemSound
 	 * @param id unique ID of this MemSound
+	 * @param secDuration Duration in seconds.
 	 */
-	public MemSound(byte[] left, byte[] right, Mixer mixer, int id) {
+	public MemSound(byte[] left, byte[] right, Mixer mixer, int id, double secDuration) {
 		this.left = left;
 		this.right = right;
 		this.mixer = mixer;
 		this.ID = id;
-
+		
 		onFinished = new LinkedList<>();
+		this.secDuration = secDuration;
 	}
 	
 	/**
@@ -123,7 +125,16 @@ public class MemSound implements Sound {
 	public void addOnEndListener(Runnable runnable) {
 		onFinished.add(runnable);
 	}
-
+	
+	/**
+	 * Added by Cristichi.
+	 * @return Duration in seconds.
+	 */
+	@Override
+	public double getSecDuration() {
+		return secDuration;
+	}
+	
 	/////////////
 	//Reference//
 	/////////////

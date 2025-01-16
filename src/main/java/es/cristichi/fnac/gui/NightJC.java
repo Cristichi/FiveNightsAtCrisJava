@@ -51,6 +51,10 @@ public class NightJC extends ExitableJComponent {
 	/** RNG for the Night. All randomness must use this object exclusively. */
 	private final Random rng;
 	/**
+	 * Number of seconds per hour, to calculate and schedule the Sounds at the end of the Night.
+	 */
+	private final double secsPerHour;
+	/**
 	 * How many ticks must happen for an in-game hour to pass. It must be calculated from FPS to translate to the
 	 * configured IRL seconds.
 	 */
@@ -259,7 +263,23 @@ public class NightJC extends ExitableJComponent {
 	private final Sound openDoorSound;
 	/** Sound to play when a door are closed. */
 	private final Sound closeDoorSound;
-
+	
+	/**
+	 * Sounds to be played, in order one after the other, at the start of the Night.
+	 */
+	private final Sound[] startSounds;
+	/**
+	 * Milliseconds of wait before the sounds are played at the start of the Night.
+	 */
+	private static final long START_SOUND_DELAY_MS = 3000;
+	/**
+	 * Sounds to be played, in order one after the other, at the end of the Night. Calculating the start frame.
+	 */
+	private final Sound[] endSounds;
+	/**
+	 * Milliseconds at the end of the Night that should be left after the last ending Sound is played.
+	 */
+	private static final long END_SOUND_MARGIN_MS = 3000;
 	/**
 	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
@@ -279,22 +299,28 @@ public class NightJC extends ExitableJComponent {
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 *                             It must be kept in mind that Cameras also use power.
 	 * @param nightCompletedSound Sound played when Night is completed successfully (the player did not die).
+	 * @param startSounds Sound played at the start of the Night, like a dialogue.
+	 * @param endSounds Sound played at the calculated moment so that it finishes when the Night is over.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
      * @throws NightException If the Night is not properly set.
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable BufferedImage paperImg,
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				   float passivePowerUsage, Sound nightCompletedSound) throws ResourceException, NightException {
+				   float passivePowerUsage, Sound nightCompletedSound, @Nullable Sound[] startSounds,
+				   @Nullable Sound[] endSounds) throws ResourceException, NightException {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
 				nightName, fps, secsPerHour, passivePowerUsage*100);
 		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		this.rng = rng;
 		this.fps = fps;
+		this.startSounds = startSounds;
+		this.endSounds = endSounds;
 		this.nightName = nightName;
 		this.camerasMap = camMap;
 		this.paperImg = paperImg;
 		this.powerOutageJumpscare = powerOutageJumpscare;
+		this.secsPerHour = secsPerHour;
 		this.hourTicksInterval = (int) (this.fps * secsPerHour);
 		if (hourTicksInterval == 0){
 			throw new NightException("Duration of Night is so low that there are 0 ticks per hour, leading to errors.");
@@ -479,6 +505,7 @@ public class NightJC extends ExitableJComponent {
 				if (currentTick % hourTicksInterval == 0) {
 					currentHour++;
 					if (currentHour == TOTAL_HOURS) {
+						LOGGER.info("Night ended on tick {}.", currentTick);
 						jumpscare = null;
 						victoryScreen = true;
 						nightTicks.cancel();
@@ -621,6 +648,44 @@ public class NightJC extends ExitableJComponent {
 				repaint();
 			}
 		}, 100, 1000 / fps);
+		
+		if (startSounds != null && startSounds.length>0){
+			// Preparing sounds. We loop until length-2 because we don't need to add anything to the last one.
+			for (int i = 0; i < startSounds.length-1; i++){
+				final int nextI = i+1;
+				startSounds[i].addOnEndListener(() -> startSounds[nextI].play());
+			}
+			// Start sounds
+			nightTicks.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					startSounds[0].play();
+				}
+			}, START_SOUND_DELAY_MS);
+		}
+		
+		// End sounds
+		if (endSounds != null && endSounds.length>0){
+			double totalDuration = 0;
+			// Preparing sounds. We loop until length-2 because we don't need to add anything to the last one.
+			for (int i = 0; i < endSounds.length-1; i++){
+				totalDuration+=endSounds[i].getSecDuration();
+				final int nextI = i+1;
+				endSounds[i].addOnEndListener(() -> endSounds[nextI].play());
+			}
+			long start = (long) (secsPerHour*TOTAL_HOURS*1000 - END_SOUND_MARGIN_MS-totalDuration);
+			if (start > 0 && totalDuration > 0){
+				nightTicks.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						LOGGER.info("PLAYED");
+						endSounds[0].play();
+					}
+				}, start);
+			} else {
+				LOGGER.warn("Skipping end sounds because they last longer than the Night.");
+			}
+		}
 	}
 	
 	/**

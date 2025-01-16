@@ -72,4 +72,10 @@ public interface Sound {
 	 * @param runnable Runnable to run when sound is finished.
 	 */
 	void addOnEndListener(Runnable runnable);
+	
+	/**
+	 * Added by Cristichi.
+	 * @return Length in seconds this Sound takes to play.
+	 */
+	double getSecDuration();
 }
