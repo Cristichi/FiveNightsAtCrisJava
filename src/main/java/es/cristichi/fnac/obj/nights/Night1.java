@@ -13,6 +13,7 @@ import es.cristichi.fnac.obj.anim.RoamingBob;
 import es.cristichi.fnac.obj.anim.RoamingMaria;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
+import es.cristichi.fnac.obj.sound.SubtitledSound;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +49,17 @@ public class Night1 implements NightFactory {
         nightMap.addCamAnimatronics("offices", maria);
         
         return new NightJC("Night 1", settings.getFps(), nightMap, Resources.loadImage("night/n1/paper.png"),
-                powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
+                powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"),
+                new SubtitledSound[]{
+                        new SubtitledSound(Resources.loadSound("office/sounds/sound-effect-old-phone-191761.wav"), null),
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-pick-up-46796.wav"), null),
+                        // TODO Dialogue
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-hang-up-46793.wav"), null),
+                },
+                new SubtitledSound[]{
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-pick-up-46796.wav"), null),
+                        // TODO Dialogue
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-hang-up-46793.wav"), null),
+                });
     }
 }

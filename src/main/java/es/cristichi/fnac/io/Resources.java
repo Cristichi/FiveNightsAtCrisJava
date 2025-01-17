@@ -1,9 +1,12 @@
 package es.cristichi.fnac.io;
 
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.obj.sound.Subtitles;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -13,9 +16,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +30,7 @@ import java.util.Iterator;
  * same path.
  */
 public class Resources {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Resources.class);
     /**
      * This is the folder inside the computer user's temp folder that is created for all the resources
      * that must be kept in temporary files (like Music and Sounds).
@@ -297,6 +299,76 @@ public class Resources {
                     "Font file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
                             .formatted(resourcePath), notFoundE);
         } catch (IOException | FontFormatException e) {
+            throw new ResourceException("Error when trying to load Font "+resourcePath, e);
+        }
+    }
+    
+    /**
+     * Loads a {@link Subtitles} from the resources.
+     * @param resourcePath Path inside the resources folder.
+     * @return The Font.
+     * @throws ResourceException If the Font does not exist.
+     */
+    public static Subtitles loadSubtitles(String resourcePath) throws ResourceException {
+        try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (in == null) {
+                throw new NullPointerException("Resource not found.");
+            }
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            
+            ArrayList<Subtitles.Subtitle> subs = new ArrayList<>(30);
+            
+            int i = 0;
+            long startTime = -1;
+            long endTime = -1;
+            StringBuilder text = new StringBuilder();
+            
+            for (Iterator<String> it = br.lines().iterator(); it.hasNext(); ) {
+                String line = it.next().trim();
+                if (line.isEmpty()) {
+                    if (text.isEmpty() || startTime < 0 || endTime < 0) {
+                        throw new IOException("Unexpected empty line on line " + i + ".");
+                    }
+                    subs.add(new Subtitles.Subtitle(startTime, endTime, text.toString().trim()));
+                    text = new StringBuilder();
+                    startTime = -1;
+                    endTime = -1;
+                } else if (line.contains(" --> ")) {
+                    String[] times = line.split(" --> ");
+                    if (times.length != 2) {
+                        throw new IOException(
+                                "Line \"" + line + "\" is not formatted correctly https://en.wikipedia.org/wiki/SubRip#Format.");
+                    }
+                    startTime = Subtitles.parseTime(times[0]);
+                    endTime = Subtitles.parseTime(times[1]);
+                } else {
+                    try {
+                        Integer.parseInt(line);
+                        // We ignore the indexes.
+                    } catch (NumberFormatException notInt){
+                        if (!text.isEmpty()) {
+                            text.append(" ").append(line);
+                        } else {
+                            text.append(line);
+                        }
+                    }
+                }
+                i++;
+            }
+            
+            // Last line is not an empty line.
+            if (!text.isEmpty() && startTime >= 0 && endTime >= 0) {
+                subs.add(new Subtitles.Subtitle(startTime, endTime, text.toString().trim()));
+                LOGGER.debug("Unexpected empty line at the end of the Subtitles file {}. We can ignore it.", resourcePath);
+            }
+            
+            return new Subtitles(subs);
+        } catch (NullPointerException notFoundE) {
+            throw new ResourceException(
+                    "Font file not found at \"%s\". Cristichi or otherwise the modder probably forgot to add it."
+                            .formatted(resourcePath), notFoundE);
+        } catch (Exception e) {
             throw new ResourceException("Error when trying to load Font "+resourcePath, e);
         }
     }

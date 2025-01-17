@@ -1,4 +1,4 @@
-package es.cristichi.fnac.obj;
+package es.cristichi.fnac.obj.sound;
 
 import es.cristichi.fnac.obj.cams.Camera;
 import kuusisto.tinysound.Sound;

@@ -13,6 +13,7 @@ import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.CameraMapFactory;
+import es.cristichi.fnac.obj.sound.SubtitledSound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -322,6 +323,18 @@ public class CustomNightMenuJC extends ExitableJComponent {
                     "This Custom Night has no Animatronics. Try increasing the AI of a few of them!");
         }
         return new NightJC("Custom Night", settings.getFps(), nightMap, null, powerOutage, rng, 90, 0.45f,
-                Resources.loadSound("night/general/completed.wav"), null, null);
+                Resources.loadSound("night/general/completed.wav"),
+                new SubtitledSound[]{
+                        new SubtitledSound(Resources.loadSound("office/sounds/sound-effect-old-phone-191761.wav"), null),
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-pick-up-46796.wav"), null),
+                        // TODO Real dialogue
+                        new SubtitledSound(Resources.loadSound("night/custom/test.wav"), Resources.loadSubtitles("night/custom/test.srt")),
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-hang-up-46793.wav"), null),
+                },
+                new SubtitledSound[]{
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-pick-up-46796.wav"), null),
+                        // TODO Dialogue
+                        new SubtitledSound(Resources.loadSound("office/sounds/phone-hang-up-46793.wav"), null),
+                });
     }
 }

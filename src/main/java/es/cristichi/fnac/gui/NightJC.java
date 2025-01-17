@@ -4,13 +4,15 @@ import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.obj.AmbientSound;
-import es.cristichi.fnac.obj.AmbientSoundSystem;
 import es.cristichi.fnac.obj.Jumpscare;
 import es.cristichi.fnac.obj.OfficeLocation;
 import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 import es.cristichi.fnac.obj.cams.Camera;
 import es.cristichi.fnac.obj.cams.CameraMap;
+import es.cristichi.fnac.obj.sound.AmbientSound;
+import es.cristichi.fnac.obj.sound.AmbientSoundSystem;
+import es.cristichi.fnac.obj.sound.SubtitledSound;
+import es.cristichi.fnac.obj.sound.Subtitles;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -267,7 +269,7 @@ public class NightJC extends ExitableJComponent {
 	/**
 	 * Sounds to be played, in order one after the other, at the start of the Night.
 	 */
-	private final Sound[] startSounds;
+	private final SubtitledSound[] startSounds;
 	/**
 	 * Milliseconds of wait before the sounds are played at the start of the Night.
 	 */
@@ -275,11 +277,20 @@ public class NightJC extends ExitableJComponent {
 	/**
 	 * Sounds to be played, in order one after the other, at the end of the Night. Calculating the start frame.
 	 */
-	private final Sound[] endSounds;
+	private final SubtitledSound[] endSounds;
 	/**
 	 * Milliseconds at the end of the Night that should be left after the last ending Sound is played.
 	 */
 	private static final long END_SOUND_MARGIN_MS = 3000;
+	/**
+	 * Current subtitles to be shown on the screen.
+	 */
+	private Subtitles currentSubtitle = null;
+	/**
+	 * Current subtitles to be shown on the screen.
+	 */
+	private long currentSubStarted = -1;
+	
 	/**
 	 * This method loads all the necessary Resources from disk.
 	 * @param nightName Name of the Night. Barely used.
@@ -306,8 +317,8 @@ public class NightJC extends ExitableJComponent {
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable BufferedImage paperImg,
 				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				   float passivePowerUsage, Sound nightCompletedSound, @Nullable Sound[] startSounds,
-				   @Nullable Sound[] endSounds) throws ResourceException, NightException {
+				   float passivePowerUsage, Sound nightCompletedSound, @Nullable SubtitledSound[] startSounds,
+				   @Nullable SubtitledSound[] endSounds) throws ResourceException, NightException {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
 				nightName, fps, secsPerHour, passivePowerUsage*100);
@@ -649,29 +660,37 @@ public class NightJC extends ExitableJComponent {
 			}
 		}, 100, 1000 / fps);
 		
-		if (startSounds != null && startSounds.length>0){
+		if (startSounds != null && startSounds.length > 0){
 			// Preparing sounds. We loop until length-2 because we don't need to add anything to the last one.
 			for (int i = 0; i < startSounds.length-1; i++){
 				final int nextI = i+1;
-				startSounds[i].addOnEndListener(() -> startSounds[nextI].play());
+				startSounds[i].sound().addOnEndListener(() -> {
+					startSounds[nextI].sound().play();
+					currentSubtitle = startSounds[nextI].subtitles();
+					currentSubStarted = System.currentTimeMillis();
+				});
 			}
 			// Start sounds
 			nightTicks.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					startSounds[0].play();
+					startSounds[0].sound().play();
 				}
 			}, START_SOUND_DELAY_MS);
 		}
 		
 		// End sounds
-		if (endSounds != null && endSounds.length>0){
+		if (endSounds != null && endSounds.length > 0){
 			double totalDuration = 0;
 			// Preparing sounds. We loop until length-2 because we don't need to add anything to the last one.
 			for (int i = 0; i < endSounds.length-1; i++){
-				totalDuration+=endSounds[i].getSecDuration();
+				totalDuration+=endSounds[i].sound().getSecDuration();
 				final int nextI = i+1;
-				endSounds[i].addOnEndListener(() -> endSounds[nextI].play());
+				endSounds[i].sound().addOnEndListener(() -> {
+					endSounds[nextI].sound().play();
+					currentSubtitle = endSounds[nextI].subtitles();
+					currentSubStarted = System.currentTimeMillis();
+				});
 			}
 			long start = (long) (secsPerHour*TOTAL_HOURS*1000 - END_SOUND_MARGIN_MS-totalDuration);
 			if (start > 0 && totalDuration > 0){
@@ -679,7 +698,7 @@ public class NightJC extends ExitableJComponent {
 					@Override
 					public void run() {
 						LOGGER.info("PLAYED");
-						endSounds[0].play();
+						endSounds[0].sound().play();
 					}
 				}, start);
 			} else {
@@ -1270,6 +1289,34 @@ public class NightJC extends ExitableJComponent {
 				if (jumpscare.isFramesFinished()) {
 					nightTicks.cancel();
 					victoryScreen = false;
+				}
+			}
+		} else {
+			// No jumpscare, perfect for subtitles
+			if (currentSubtitle != null){
+				Subtitles.Subtitle sub = currentSubtitle.getSubtitle(System.currentTimeMillis()-currentSubStarted);
+				if (sub != null){
+					int fontSize = getWidth()/30;
+					g.setFont(new Font("Eraser Dust", Font.BOLD, fontSize));
+					FontMetrics fm = g.getFontMetrics();
+					
+					int marginX = 30;
+					int marginY = 30;
+					int textWidth = fm.stringWidth(sub.text())+marginX;
+					while (textWidth + marginX >= getWidth()){
+						g.setFont(new Font("Eraser Dust", Font.BOLD, --fontSize));
+						fm = g.getFontMetrics();
+						textWidth = fm.stringWidth(sub.text())+marginX;
+					}
+					int textHeight = fm.getAscent();
+					int textX = (getWidth() - textWidth)/2;
+					int textY = getHeight() - textHeight - marginY;
+					
+					g.setColor(new Color(0f, 0f, 0f, .7f));
+					g2d.fillRect(textX-marginX, textY-textHeight, textWidth+marginX, textHeight+fm.getDescent());
+					
+					g.setColor(new Color(1f, 1f, 1f, .8f));
+					g2d.drawString(sub.text(), textX, textY);
 				}
 			}
 		}
