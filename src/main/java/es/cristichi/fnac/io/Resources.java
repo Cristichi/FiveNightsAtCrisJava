@@ -285,7 +285,7 @@ public class Resources {
      * @return The Font.
      * @throws ResourceException If the Font does not exist.
      */
-    public static Font loadCustomFont(String resourcePath) throws ResourceException {
+    public static Font loadFont(String resourcePath) throws ResourceException {
         try (InputStream in = Resources.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (in == null) {
                 throw new NullPointerException("Resource not found.");

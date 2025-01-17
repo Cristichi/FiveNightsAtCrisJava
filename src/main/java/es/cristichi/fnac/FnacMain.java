@@ -81,7 +81,7 @@ public class FnacMain implements Runnable {
         new Thread(() -> {
             try {
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(Resources.loadCustomFont("fonts/EraserDust.ttf"));
+                ge.registerFont(Resources.loadFont("fonts/EraserDust.ttf"));
                 boolean fontIsLoaded = false;
                 for (Font font : ge.getAllFonts()) {
                     if (font.getFamily().equals("Eraser")) {
