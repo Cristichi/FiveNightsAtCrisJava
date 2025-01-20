@@ -12,7 +12,7 @@ import java.util.Random;
  * @param <E> Class that extends {@link AnimatronicDrawing}, which is the class that represents an Animatronic
  *           available to add to Custom Nights.
  */
-public abstract class CustomNightAnimFactory<E extends AnimatronicDrawing> {
+public abstract class CustomNightAnimFactory<E extends AnimatronicDrawing>{
     /**
      * Name of the Animatronic. Must be unique.
      */

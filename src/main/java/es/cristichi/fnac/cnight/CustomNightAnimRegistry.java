@@ -20,6 +20,8 @@ public class CustomNightAnimRegistry {
     private static final ArrayList<CustomNightAnimFactory<? extends AnimatronicDrawing>> customNightAnimRegistry
             = new ArrayList<>(10);
     
+    private static final CustomNightAnimFactComparator comparator = new CustomNightAnimFactComparator();
+    
     /**
      * Registers a map to be available for Custom Nights.
      * @param factory Factory that generates the map.
@@ -30,6 +32,7 @@ public class CustomNightAnimRegistry {
         } else {
             LOGGER.debug("Animatronic factory %s registered for Custom Night.".formatted(factory.getClass().getName()));
             customNightAnimRegistry.add(factory);
+            customNightAnimRegistry.sort(comparator);
         }
     }
     
