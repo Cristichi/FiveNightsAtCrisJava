@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,14 +12,17 @@ import java.util.List;
  */
 public class CustomNightAnimRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightAnimRegistry.class);
-
+    /**
+     * Shared instance of {@link CustomNightAnimFactComparator} to use to reorder the factories.
+     */
+    public static final CustomNightAnimFactComparator NAME_COMPARATOR = new CustomNightAnimFactComparator();
+    
     /**
      * Map holding the instances of all registered factories.
      */
     private static final ArrayList<CustomNightAnimFactory<? extends AnimatronicDrawing>> customNightAnimRegistry
             = new ArrayList<>(10);
     
-    private static final CustomNightAnimFactComparator comparator = new CustomNightAnimFactComparator();
     
     /**
      * Registers a map to be available for Custom Nights.
@@ -32,7 +34,6 @@ public class CustomNightAnimRegistry {
         } else {
             LOGGER.debug("Animatronic factory %s registered for Custom Night.".formatted(factory.getClass().getName()));
             customNightAnimRegistry.add(factory);
-            customNightAnimRegistry.sort(comparator);
         }
     }
     
@@ -40,6 +41,6 @@ public class CustomNightAnimRegistry {
      * @return A copy of the currently registered maps.
      */
     public static List<CustomNightAnimFactory<? extends AnimatronicDrawing>> getEntries() {
-        return Collections.unmodifiableList(customNightAnimRegistry);
+        return new ArrayList<>(customNightAnimRegistry);
     }
 }

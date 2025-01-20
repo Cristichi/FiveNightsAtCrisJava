@@ -240,7 +240,9 @@ public class CustomNightMenuJC extends ExitableJComponent {
             viewportPanel.setOpaque(false);
 
             customAnimJPs.clear();
-            for (CustomNightAnimFactory<? extends AnimatronicDrawing> animFactory : CustomNightAnimRegistry.getEntries()) {
+            List<CustomNightAnimFactory<? extends AnimatronicDrawing>> anims = CustomNightAnimRegistry.getEntries();
+            anims.sort(CustomNightAnimRegistry.NAME_COMPARATOR);
+            for (CustomNightAnimFactory<? extends AnimatronicDrawing> animFactory : anims) {
                 CustomNightAnimData data;
                 if (customInputs.containsKey(animFactory)){
                     data = customInputs.get(animFactory);
@@ -292,11 +294,12 @@ public class CustomNightMenuJC extends ExitableJComponent {
      * @throws NullPointerException If the player attempted to play with no Animatronics with {@code AI > 0}.
      */
     private NightJC createCustomNight() throws ResourceException, CustomNightException, NightException {
-        List<CustomNightAnimFactory<? extends AnimatronicDrawing>> entries = CustomNightAnimRegistry.getEntries();
+        List<CustomNightAnimFactory<? extends AnimatronicDrawing>> anims = CustomNightAnimRegistry.getEntries();
+        anims.sort(CustomNightAnimRegistry.NAME_COMPARATOR);
         CameraMap nightMap = cameraMapFactory.generate();
         
         boolean atLeastOneAnim = false;
-        for (CustomNightAnimFactory<? extends AnimatronicDrawing> entry : entries) {
+        for (CustomNightAnimFactory<? extends AnimatronicDrawing> entry : anims) {
             CustomNightAnimData data = customInputs.get(entry);
             if (data != null && data.ai() > 0) {
                 atLeastOneAnim = true;
