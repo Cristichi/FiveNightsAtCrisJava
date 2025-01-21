@@ -335,27 +335,17 @@ public class Camera {
         public Builder setOnMapLocationVolumeAndPan(int x, int y, int width, int height, Point officeLoc, int mapWidth,
                                                     int mapHeight) {
             this.onMapLoc = new Rectangle(x, y, width, height);
-            
-            // Calculate the center of the rectangle
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
             
-            // Calculate pan based on horizontal position
-            double pan = (double) (centerX - officeLoc.x) / ((double) mapWidth / 2);
-            pan = Math.max(-1, Math.min(1, pan)); // Clamp to range [-1, 1]
-            this.soundPan = pan;
+            this.soundPan = Math.max(-1, Math.min(1, (double) (centerX - officeLoc.x) / ((double) mapWidth / 2)));
             
-            // Calculate distance from the office
             double distance = Math.sqrt(Math.pow(centerX - officeLoc.x, 2) + Math.pow(centerY - officeLoc.y, 2));
-            
-            // Calculate maximum distance on the map
             double maxDistance = Math.sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
             
-            // Calculate volume based on distance
-            double minVolume = 0.2; // Minimum volume level
-            double volume = minVolume + (1 - minVolume) * (1 - (distance / maxDistance));
-            volume = Math.max(minVolume, Math.min(1, volume));
-            this.soundVolume = volume;
+            double minVolume = 0.3;
+            this.soundVolume = Math.max(minVolume,
+                                        Math.min(1, minVolume + (1 - minVolume) * (1 - (distance / maxDistance))));
             
             return this;
         }
