@@ -1,18 +1,17 @@
 package es.cristichi.fnac.gui;
 
+import es.cristichi.fnac.anim.AnimatronicDrawing;
+import es.cristichi.fnac.anim.Jumpscare;
+import es.cristichi.fnac.cams.Camera;
+import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.GifFrame;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.OfficeLocation;
-import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.cams.Camera;
-import es.cristichi.fnac.obj.cams.CameraMap;
-import es.cristichi.fnac.obj.sound.AmbientSound;
-import es.cristichi.fnac.obj.sound.AmbientSoundSystem;
-import es.cristichi.fnac.obj.sound.SubtitledSound;
-import es.cristichi.fnac.obj.sound.Subtitles;
+import es.cristichi.fnac.sound.AmbientSound;
+import es.cristichi.fnac.sound.AmbientSoundSystem;
+import es.cristichi.fnac.sound.SubtitledSound;
+import es.cristichi.fnac.sound.Subtitles;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

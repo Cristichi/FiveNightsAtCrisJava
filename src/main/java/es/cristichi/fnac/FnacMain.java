@@ -1,5 +1,9 @@
 package es.cristichi.fnac;
 
+import es.cristichi.fnac.anim.*;
+import es.cristichi.fnac.cams.CameraMap;
+import es.cristichi.fnac.cams.RestaurantCamMapFactory;
+import es.cristichi.fnac.cams.TutorialCamMapFactory;
 import es.cristichi.fnac.cnight.CustomNightAnimData;
 import es.cristichi.fnac.cnight.CustomNightAnimFactory;
 import es.cristichi.fnac.cnight.CustomNightAnimRegistry;
@@ -13,12 +17,7 @@ import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
-import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.anim.*;
-import es.cristichi.fnac.obj.cams.CameraMap;
-import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
-import es.cristichi.fnac.obj.cams.TutorialCamMapFactory;
-import es.cristichi.fnac.obj.nights.*;
+import es.cristichi.fnac.nights.*;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import org.slf4j.Logger;
@@ -55,6 +54,7 @@ public class FnacMain implements Runnable {
     
     /**
      * Entry point.
+     *
      * @param args Arguments, but they are ignored.
      */
     public static void main(String[] args) {
@@ -96,7 +96,7 @@ public class FnacMain implements Runnable {
             }
             loadingSem.release();
         }).start();
-
+        
         // Window
         AtomicReference<NightsJF> window = new AtomicReference<>();
         // JFrame in AWT Thread
@@ -154,8 +154,9 @@ public class FnacMain implements Runnable {
                     }
                 }
                 if (!fontIsLoaded) {
-                    throw new ResourceException("EraserDust Font, which this game uses everywhere, is not installed " +
-                            "and could not be registered.");
+                    throw new ResourceException(
+                            "EraserDust Font, which this game uses everywhere, is not installed " + "and could not be" +
+                                    " registered.");
                 }
             } catch (ResourceException e) {
                 new ExceptionDialog(e, true, true, LOGGER);
@@ -171,7 +172,8 @@ public class FnacMain implements Runnable {
                 saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
             } catch (Exception e) {
                 e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()), e);
+                RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()),
+                        e);
                 SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
                 throw error;
             }
@@ -330,8 +332,7 @@ public class FnacMain implements Runnable {
                                            Random rng) throws IOException, NightException {
                     CameraMap tutorialMap = tutorialCamMapFactory.generate();
                     tutorialMap.addCamAnimatronics("cam1",
-                            new RoamingBob("Bob", Map.of(1, 2, 2, 3, 3, 0), false, false, List.of("cam4"),
-                                    rng));
+                            new RoamingBob("Bob", Map.of(1, 2, 2, 3, 3, 0), false, false, List.of("cam4"), rng));
                     tutorialMap.addCamAnimatronics("cam2",
                             new RoamingMaria("Maria", Map.of(0, 0, 2, 2, 3, 3, 4, 4), false, false, List.of("cam3"),
                                     rng));
@@ -360,7 +361,7 @@ public class FnacMain implements Runnable {
         } catch (ResourceException e) {
             new ExceptionDialog(e, true, false, LOGGER);
         } catch (InterruptedException e) {
-            new ExceptionDialog(new IllegalStateException("Interruption.",e), true, false, LOGGER);
+            new ExceptionDialog(new IllegalStateException("Interruption.", e), true, false, LOGGER);
         }
     }
 }

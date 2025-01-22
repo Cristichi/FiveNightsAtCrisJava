@@ -1,15 +1,15 @@
 package es.cristichi.fnac.gui;
 
 import es.cristichi.fnac.FnacMain;
+import es.cristichi.fnac.anim.Jumpscare;
 import es.cristichi.fnac.cnight.CustomNightMenuJC;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
-import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.nights.NightFactory;
-import es.cristichi.fnac.obj.nights.NightRegistry;
+import es.cristichi.fnac.nights.NightFactory;
+import es.cristichi.fnac.nights.NightRegistry;
 import kuusisto.tinysound.TinySound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

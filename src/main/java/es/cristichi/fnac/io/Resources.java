@@ -1,7 +1,7 @@
 package es.cristichi.fnac.io;
 
 import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.obj.sound.Subtitles;
+import es.cristichi.fnac.sound.Subtitles;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;

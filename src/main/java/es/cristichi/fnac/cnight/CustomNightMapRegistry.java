@@ -1,7 +1,7 @@
 package es.cristichi.fnac.cnight;
 
-import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.cams.CameraMapFactory;
+import es.cristichi.fnac.anim.AnimatronicDrawing;
+import es.cristichi.fnac.cams.CameraMapFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package es.cristichi.fnac.cnight;
 
+import es.cristichi.fnac.anim.AnimatronicDrawing;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
-import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 
 import javax.swing.*;
 import javax.swing.border.Border;

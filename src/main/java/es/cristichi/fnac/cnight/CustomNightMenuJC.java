@@ -1,5 +1,9 @@
 package es.cristichi.fnac.cnight;
 
+import es.cristichi.fnac.anim.AnimatronicDrawing;
+import es.cristichi.fnac.anim.Jumpscare;
+import es.cristichi.fnac.cams.CameraMap;
+import es.cristichi.fnac.cams.CameraMapFactory;
 import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
@@ -9,11 +13,7 @@ import es.cristichi.fnac.gui.NightJC;
 import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
-import es.cristichi.fnac.obj.Jumpscare;
-import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
-import es.cristichi.fnac.obj.cams.CameraMap;
-import es.cristichi.fnac.obj.cams.CameraMapFactory;
-import es.cristichi.fnac.obj.sound.SubtitledSound;
+import es.cristichi.fnac.sound.SubtitledSound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

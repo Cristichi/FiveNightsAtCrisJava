@@ -1,7 +1,7 @@
 package es.cristichi.fnac.cnight;
 
+import es.cristichi.fnac.anim.AnimatronicDrawing;
 import es.cristichi.fnac.exception.ResourceException;
-import es.cristichi.fnac.obj.anim.AnimatronicDrawing;
 
 import java.awt.image.BufferedImage;
 import java.util.Objects;
