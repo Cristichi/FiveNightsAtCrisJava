@@ -19,6 +19,7 @@ import es.cristichi.fnac.obj.cams.CameraMap;
 import es.cristichi.fnac.obj.cams.RestaurantCamMapFactory;
 import es.cristichi.fnac.obj.cams.TutorialCamMapFactory;
 import es.cristichi.fnac.obj.nights.*;
+import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Entry point for the main unmodified game. This can be created more than once, which will result in several instances
@@ -66,7 +68,7 @@ public class FnacMain implements Runnable {
     @Override
     public void run() {
         // Semaphore to make the JFrame wait until everything is loaded.
-        Semaphore semaphore = new Semaphore(-11);
+        Semaphore loadingSem = new Semaphore(-12);
         
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
@@ -74,8 +76,70 @@ public class FnacMain implements Runnable {
         // Sound system init
         new Thread(() -> {
             TinySound.init();
-            semaphore.release();
+            loadingSem.release();
         }).start();
+        
+        
+        // Settings
+        final AtomicReference<Settings> settings = new AtomicReference<>();
+        new Thread(() -> {
+            Settings.init();
+            try {
+                settings.set(Settings.fromFile(Settings.SETTINGS_FILE));
+                settings.get().saveToFile(Settings.SETTINGS_FILE);
+                TinySound.setGlobalVolume(settings.get().getVolume());
+            } catch (Exception e) {
+                e.printStackTrace();
+                RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
+                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
+                return;
+            }
+            loadingSem.release();
+        }).start();
+
+        // Window
+        AtomicReference<NightsJF> window = new AtomicReference<>();
+        // JFrame in AWT Thread
+        SwingUtilities.invokeLater(() -> {
+            try {
+                window.set(new NightsJF());
+                window.get().startStartingSequence(loadingSem, settings.get());
+                
+                new Thread(() -> {
+                    try {
+                        Sound cristichi = Resources.loadSound("startup/cristichi.wav");
+                        cristichi.addOnEndListener(loadingSem::release);
+                        cristichi.play(settings.get().getVolume());
+                    } catch (ResourceException e) {
+                        LOGGER.error("Error loading cristichi Sound.", e);
+                        loadingSem.release();
+                    }
+                }).start();
+                
+                AbstractAction action = new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            settings.get().setFullscreen(!settings.get().isFullscreen());
+                            window.get().setFullScreen(settings.get().isFullscreen());
+                            settings.get().saveToFile(Settings.SETTINGS_FILE);
+                        } catch (Exception error) {
+                            new ExceptionDialog(error, true, false, LOGGER);
+                            window.get().dispose();
+                        }
+                    }
+                };
+                window.get().getRootPane().getActionMap().put("switchFull", action);
+                
+                window.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke("F11"), "switchFull");
+                window.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
+            } catch (Exception e) {
+                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
+                        LOGGER);
+            }
+        });
         
         // Making sure our EraserDust font is installed or registered for later use.
         new Thread(() -> {
@@ -96,39 +160,22 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 new ExceptionDialog(e, true, true, LOGGER);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         // Save file
-        final NightProgress.SaveFile[] saveFile = new NightProgress.SaveFile[1];
+        final AtomicReference<NightProgress.SaveFile> saveFile = new AtomicReference<>();
         new Thread(() -> {
             NightProgress.init();
             try {
-                saveFile[0] = NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME);
+                saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
             } catch (Exception e) {
                 e.printStackTrace();
                 RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()), e);
                 SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
                 throw error;
             }
-            semaphore.release();
-        }).start();
-        
-        // Settings
-        final Settings[] settings = new Settings[1];
-        new Thread(() -> {
-            Settings.init();
-            try {
-                settings[0] = Settings.fromFile(Settings.SETTINGS_FILE);
-                settings[0].saveToFile(Settings.SETTINGS_FILE);
-                TinySound.setGlobalVolume(settings[0].getVolume());
-            } catch (Exception e) {
-                e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
-                return;
-            }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         // Maps for Custom Night
@@ -136,7 +183,7 @@ public class FnacMain implements Runnable {
         new Thread(() -> {
             CustomNightMapRegistry.registerMap(new RestaurantCamMapFactory());
             CustomNightMapRegistry.registerMap(tutorialCamMapFactory);
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         // Animatronics for Custom Night
@@ -157,7 +204,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering ChatGPT for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -181,7 +228,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Paco for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -198,7 +245,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Maria for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -215,7 +262,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Bob for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -232,7 +279,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Cris (final form) for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -263,7 +310,7 @@ public class FnacMain implements Runnable {
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Cris for Custom Night.", e);
             }
-            semaphore.release();
+            loadingSem.release();
         }).start();
         
         // Nights
@@ -283,7 +330,7 @@ public class FnacMain implements Runnable {
                                            Random rng) throws IOException, NightException {
                     CameraMap tutorialMap = tutorialCamMapFactory.generate();
                     tutorialMap.addCamAnimatronics("cam1",
-                            new RoamingBob("Bob", Map.of(1, 2, 2, 3, 3, 0), false, false, java.util.List.of("cam4"),
+                            new RoamingBob("Bob", Map.of(1, 2, 2, 3, 3, 0), false, false, List.of("cam4"),
                                     rng));
                     tutorialMap.addCamAnimatronics("cam2",
                             new RoamingMaria("Maria", Map.of(0, 0, 2, 2, 3, 3, 4, 4), false, false, List.of("cam3"),
@@ -302,43 +349,19 @@ public class FnacMain implements Runnable {
             NightRegistry.registerNight(5, new Night5());
             NightRegistry.registerNight(6, new Night6());
             
-            semaphore.release();
+            loadingSem.release();
         }).start();
+        
+        // Start main menu.
+        try {
+            loadingSem.acquire();
             
-        // JFrame in AWT Thread
-        SwingUtilities.invokeLater(() -> {
-            try {
-                semaphore.acquire();
-            
-                NightsJF window = new NightsJF(saveFile[0], settings[0]);
-                window.setFullScreen(settings[0].isFullscreen());
-                window.setVisible(true);
-                AbstractAction action = new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            settings[0].setFullscreen(!settings[0].isFullscreen());
-                            window.setFullScreen(settings[0].isFullscreen());
-                            settings[0].saveToFile(Settings.SETTINGS_FILE);
-                        } catch (Exception error) {
-                            new ExceptionDialog(error, true, false, LOGGER);
-                            window.dispose();
-                        }
-                    }
-                };
-                window.getRootPane().getActionMap().put("switchFull", action);
-                
-                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                        .put(KeyStroke.getKeyStroke("F11"), "switchFull");
-                window.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
-            } catch (InterruptedException e) {
-                new ExceptionDialog(e, true, false, LOGGER);
-            } catch (Exception e) {
-                new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
-                        LOGGER);
-            }
-        });
+            window.get().startMenuAndGame(saveFile.get());
+        } catch (ResourceException e) {
+            new ExceptionDialog(e, true, false, LOGGER);
+        } catch (InterruptedException e) {
+            new ExceptionDialog(new IllegalStateException("Interruption.",e), true, false, LOGGER);
+        }
     }
 }
 
