@@ -515,7 +515,6 @@ public class NightJC extends ExitableJComponent {
 				if (currentTick % hourTicksInterval == 0) {
 					currentHour++;
 					if (currentHour == TOTAL_HOURS) {
-						LOGGER.info("Night ended on tick {}.", currentTick);
 						jumpscare = null;
 						victoryScreen = true;
 						nightTicks.cancel();
@@ -696,7 +695,6 @@ public class NightJC extends ExitableJComponent {
 				nightTicks.schedule(new TimerTask() {
 					@Override
 					public void run() {
-						LOGGER.info("PLAYED");
 						endSounds[0].sound().play();
 					}
 				}, start);
