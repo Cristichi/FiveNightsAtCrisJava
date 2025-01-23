@@ -45,7 +45,7 @@ public class FnacMain implements Runnable {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean DEBUG_ALLNIGHTS = false;
+    public static boolean DEBUG_ALLNIGHTS = true;
     /**
      * Name of the game.
      */
@@ -68,7 +68,7 @@ public class FnacMain implements Runnable {
     @Override
     public void run() {
         // Semaphore to make the JFrame wait until everything is loaded.
-        Semaphore loadingSem = new Semaphore(-12);
+        Semaphore loadingSem = new Semaphore(-13);
         
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
@@ -315,6 +315,27 @@ public class FnacMain implements Runnable {
             loadingSem.release();
         }).start();
         
+        new Thread(() -> {
+            try {
+                CustomNightAnimRegistry.registerAnimatronic(
+                        new CustomNightAnimFactory<StatesCris>("Cris (states test)", """
+                                Cris (states test) starts at the Main Stage and progresses through several \
+                                different states before moving very fast to the right door.""",
+                                20, Resources.loadImage("anims/statesCris/portrait.png"),
+                                new String[]{"main stage", "cam1"}) {
+                            @Override
+                            public StatesCris generate(CustomNightAnimData data, Random rng) throws ResourceException {
+                                return new StatesCris(nameId, Map.of(0, data.ai()),
+                                        List.of(StatesCris.RESTAURANT_PATH, List.of("cam2, cam4, rightDoor")),
+                                        rng);
+                            }
+                        });
+            } catch (ResourceException e) {
+                LOGGER.error("Error registering Cris (states test) for Custom Night.", e);
+            }
+            loadingSem.release();
+        }).start();
+        
         // Nights
         
         /* This is an example of creating a NightFactory inline here without having to create a new class for it.
@@ -358,10 +379,10 @@ public class FnacMain implements Runnable {
             loadingSem.acquire();
             
             window.get().startMenuAndGame(saveFile.get());
-        } catch (ResourceException e) {
-            new ExceptionDialog(e, true, false, LOGGER);
         } catch (InterruptedException e) {
             new ExceptionDialog(new IllegalStateException("Interruption.", e), true, false, LOGGER);
+        } catch (Exception e) {
+            new ExceptionDialog(e, true, false, LOGGER);
         }
     }
 }
