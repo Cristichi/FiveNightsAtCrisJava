@@ -7,10 +7,11 @@ import es.cristichi.fnac.io.Settings;
  * after the loading startup screen is shown to the player, and make sure that it is completed before starting the
  * main menu.
  */
-public interface RunnableWithSettings {
+public interface LoadRunnableWithSettings {
     /**
      * Method to run after the player's Settings have been loaded.
      * @param settings Already loaded player's Settings.
+     * @throws Exception Any exception that requires the game to cancel loading and show it to the player.
      */
-    void run(Settings settings);
+    void run(Settings settings) throws Exception;
 }

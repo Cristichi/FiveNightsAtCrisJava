@@ -17,8 +17,9 @@ import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
-import es.cristichi.fnac.loading.RunnableWithSaveFile;
-import es.cristichi.fnac.loading.RunnableWithSettings;
+import es.cristichi.fnac.loading.LoadRunnable;
+import es.cristichi.fnac.loading.LoadRunnableWithSaveFile;
+import es.cristichi.fnac.loading.LoadRunnableWithSettings;
 import es.cristichi.fnac.nights.*;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
@@ -71,8 +72,8 @@ public class FnacMain {
      * @param loadingWithSettings List of individual Runnables that depend on the Settings being loaded.
      * @param loadingWithSaveFile List of individual Runnables that depend on the Save File being loaded.
      */
-    public void run(@Nullable Runnable[] loadingSequences, @Nullable RunnableWithSettings[] loadingWithSettings,
-                    @Nullable RunnableWithSaveFile[] loadingWithSaveFile) {
+    public void run(@Nullable LoadRunnable[] loadingSequences, @Nullable LoadRunnableWithSettings[] loadingWithSettings,
+                    @Nullable LoadRunnableWithSaveFile[] loadingWithSaveFile) {
         // Semaphore to make the JFrame wait until everything is loaded.
         Semaphore loadingSem = new Semaphore(-12
                 -(loadingSequences==null?0:loadingSequences.length)
@@ -83,7 +84,7 @@ public class FnacMain {
         System.setProperty("sun.java2d.opengl", "true");
         
         if (loadingSequences != null) {
-            for (Runnable loadSequence : loadingSequences) {
+            for (LoadRunnable loadSequence : loadingSequences) {
                 new Thread(() -> {
                     try {
                         loadSequence.run();
@@ -151,7 +152,7 @@ public class FnacMain {
                 
                 
                 if (loadingWithSettings != null){
-                    for (RunnableWithSettings loadSequence : loadingWithSettings){
+                    for (LoadRunnableWithSettings loadSequence : loadingWithSettings){
                         new Thread(() -> {
                         try {
                             loadSequence.run(settings.get());
@@ -176,7 +177,7 @@ public class FnacMain {
                 saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
                 
                 if (loadingWithSaveFile != null) {
-                    for (RunnableWithSaveFile loadSequence : loadingWithSaveFile) {
+                    for (LoadRunnableWithSaveFile loadSequence : loadingWithSaveFile) {
                         new Thread(() -> {
                             try {
                                 loadSequence.run(saveFile.get());
