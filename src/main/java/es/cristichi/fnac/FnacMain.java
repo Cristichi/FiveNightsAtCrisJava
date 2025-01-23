@@ -17,9 +17,12 @@ import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
+import es.cristichi.fnac.loading.RunnableWithSaveFile;
+import es.cristichi.fnac.loading.RunnableWithSettings;
 import es.cristichi.fnac.nights.*;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Entry point for the main unmodified game. This can be created more than once, which will result in several instances
  * of the game, but please avoid doing so since some windows "exit" the runtime VM which will destroy all windows.
  */
-public class FnacMain implements Runnable {
+public class FnacMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(FnacMain.class);
     /**
      * When enabled, all Nights are available in the menu.
@@ -58,20 +61,39 @@ public class FnacMain implements Runnable {
      * @param args Arguments, but they are ignored.
      */
     public static void main(String[] args) {
-        new FnacMain().run();
+        new FnacMain().run(null, null, null);
     }
     
     /**
      * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
      * method you may also want to register anything you need on the registries.
+     * @param loadingSequences List of individual Runnables that must be run during the initial loading
+     * @param loadingWithSettings List of individual Runnables that depend on the Settings being loaded.
+     * @param loadingWithSaveFile List of individual Runnables that depend on the Save File being loaded.
      */
-    @Override
-    public void run() {
+    public void run(@Nullable Runnable[] loadingSequences, @Nullable RunnableWithSettings[] loadingWithSettings,
+                    @Nullable RunnableWithSaveFile[] loadingWithSaveFile) {
         // Semaphore to make the JFrame wait until everything is loaded.
-        Semaphore loadingSem = new Semaphore(-12);
+        Semaphore loadingSem = new Semaphore(-12
+                -(loadingSequences==null?0:loadingSequences.length)
+                -(loadingWithSettings==null?0:loadingWithSettings.length)
+                -(loadingWithSaveFile==null?0:loadingWithSaveFile.length));
         
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
+        
+        if (loadingSequences != null) {
+            for (Runnable loadSequence : loadingSequences) {
+                new Thread(() -> {
+                    try {
+                        loadSequence.run();
+                        loadingSem.release();
+                    } catch (Exception e) {
+                        new ExceptionDialog(e, true, false, LOGGER);
+                    }
+                }).start();
+            }
+        }
         
         // Sound system init
         new Thread(() -> {
@@ -80,7 +102,7 @@ public class FnacMain implements Runnable {
         }).start();
         
         
-        // Settings and Window. Together because the Window opens to fullscreen depending on the Settings.
+        // Settings and dependands. Together because the Window and other things depend on the Settings.
         final AtomicReference<Settings> settings = new AtomicReference<>();
         AtomicReference<NightsJF> window = new AtomicReference<>();
         SwingUtilities.invokeLater(() -> {
@@ -129,11 +151,54 @@ public class FnacMain implements Runnable {
                         .put(KeyStroke.getKeyStroke("F11"), "switchFull");
                 window.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK), "switchFull");
+                
+                
+                if (loadingWithSettings != null){
+                    for (RunnableWithSettings loadSequence : loadingWithSettings){
+                        new Thread(() -> {
+                        try {
+                            loadSequence.run(settings.get());
+                            loadingSem.release();
+                        } catch (Exception e){
+                            new ExceptionDialog(e, true, false, LOGGER);
+                        }
+                        }).start();
+                    }
+                }
             } catch (Exception e) {
                 new ExceptionDialog(new Exception("Error when trying to prepare the GUI and Nights.", e), true, false,
                         LOGGER);
             }
         });
+        
+        // Save file
+        final AtomicReference<NightProgress.SaveFile> saveFile = new AtomicReference<>();
+        new Thread(() -> {
+            NightProgress.init();
+            try {
+                saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
+                
+                if (loadingWithSaveFile != null) {
+                    for (RunnableWithSaveFile loadSequence : loadingWithSaveFile) {
+                        new Thread(() -> {
+                            try {
+                                loadSequence.run(saveFile.get());
+                                loadingSem.release();
+                            } catch (Exception e) {
+                                new ExceptionDialog(e, true, false, LOGGER);
+                            }
+                        }).start();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()),
+                        e);
+                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
+            } finally {
+                loadingSem.release();
+            }
+        }).start();
         
         // Making sure our EraserDust font is installed or registered for later use.
         new Thread(() -> {
@@ -154,23 +219,6 @@ public class FnacMain implements Runnable {
                 }
             } catch (ResourceException e) {
                 new ExceptionDialog(e, true, true, LOGGER);
-            } finally {
-                loadingSem.release();
-            }
-        }).start();
-        
-        // Save file
-        final AtomicReference<NightProgress.SaveFile> saveFile = new AtomicReference<>();
-        new Thread(() -> {
-            NightProgress.init();
-            try {
-                saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
-            } catch (Exception e) {
-                e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()),
-                        e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
-                throw error;
             } finally {
                 loadingSem.release();
             }
