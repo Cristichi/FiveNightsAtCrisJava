@@ -22,7 +22,7 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
     /**
      * A path that is usually followed by this Animatronic while at the Restaurant.
      */
-    public static final List<String> RESTAURANT_PATH = List.of("Main Stage", "corridor 2", "corridor 4", "rightDoor");
+    public static final List<String> RESTAURANT_PATH = List.of("main stage", "dining area", "corridor 2", "corridor 4", "rightDoor");
     
     protected BufferedImage camImgFloor;
     protected BufferedImage camImgWaking;
@@ -93,7 +93,7 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
                 }
             }
         }
-        throw new AnimatronicException("Animatronic " + nameId + " is not at a Camera within any of its paths.");
+        throw new AnimatronicException("Animatronic StatesCris is not at a Camera within any of its paths (%s).".formatted(currentLoc.getNameId()));
     }
     
     @Override
