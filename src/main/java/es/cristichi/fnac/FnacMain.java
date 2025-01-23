@@ -113,10 +113,7 @@ public class FnacMain {
                     settings.get().saveToFile(Settings.SETTINGS_FILE);
                     TinySound.setGlobalVolume(settings.get().getVolume());
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
-                    SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
-                    return;
+                    new ExceptionDialog(new RuntimeException("Failed to load settings file", e), true, true, LOGGER);
                 }
                 window.set(new NightsJF());
                 window.get().startStartingSequence(loadingSem, settings.get());
