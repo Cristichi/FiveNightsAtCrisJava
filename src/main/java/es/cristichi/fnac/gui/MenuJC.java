@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,7 +17,7 @@ import java.util.TimerTask;
  * JComponent that represents the main menu of the game. It displays the available next Night, as well as buttons
  * for Settings and exitting the game.
  */
-public abstract class MenuJC extends JComponent {
+public class MenuJC extends JComponent {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MenuJC.class);
 	
 	/**
@@ -66,15 +65,15 @@ public abstract class MenuJC extends JComponent {
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
 	 * @param info Information of the menu items and background at the moment.
-	 * @param defaultLoadingImg Default loading image in the resources. It is used for {@link Item}s
+	 * @param defaultLoadingImg Default loading image in the resources. It is used for {@link ItemInfo}s
 	 *                         that don't specify one.
 	 * @param backgroundMusic Background music.
 	 */
     public MenuJC(Info info, BufferedImage defaultLoadingImg, Music backgroundMusic) {
 		super();
-		this.menuItems = info.menuItems();
+		this.menuItems = info.menuItems;
 		this.backgroundMusic = backgroundMusic;
-		backgroundImage = info.background();
+		backgroundImage = info.background;
 		this.defaultLoadingImg = defaultLoadingImg;
 		loading = false;
 		btnFont = new Font("Eraser Dust", Font.PLAIN, 100);
@@ -134,8 +133,12 @@ public abstract class MenuJC extends JComponent {
 			backgroundMusic.stop();
 		}
 	}
-
-	private void initializeMenuItems() {
+	
+	/**
+	 * Removes all components, then adds all the necessary buttons to the menu, one for each {@link MenuJC.Item} on
+	 * {@link MenuJC#menuItems}.
+	 */
+	protected void initializeMenuItems() {
 		removeAll();
 		GroupLayout layout = new GroupLayout(this);
 		setLayout(layout);
@@ -146,8 +149,8 @@ public abstract class MenuJC extends JComponent {
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup()
 				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
 
-		for (Item item : menuItems) {
-			JButton button = createMenuButton(item);
+		for (Item itemInfo : menuItems) {
+			JButton button = createMenuButton(itemInfo);
 			horizontalGroup.addComponent(button, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
 			verticalGroup.addComponent(button);
 		}
@@ -157,9 +160,9 @@ public abstract class MenuJC extends JComponent {
 		layout.setHorizontalGroup(horizontalGroup);
 		layout.setVerticalGroup(verticalGroup);
 	}
-
-	private JButton createMenuButton(Item item) {
-		JButton button = new JButton("<html>" + item.display() + "</html>");
+	
+	protected JButton createMenuButton(Item item) {
+		JButton button = new JButton("<html>" + item.info.display + "</html>");
 		float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
 		button.setFont(btnFont.deriveFont(fontScale));
 		button.setForeground(Color.WHITE);
@@ -171,12 +174,12 @@ public abstract class MenuJC extends JComponent {
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				button.setText("<html><u>" + item.hoverDisplay() + "</u></html>");
+				button.setText("<html><u>" + item.info.hoverDisplay + "</u></html>");
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				button.setText("<html>" + item.display() + "</html>");
+				button.setText("<html>" + item.info.display + "</html>");
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
@@ -212,32 +215,37 @@ public abstract class MenuJC extends JComponent {
 			}
 		}
 	}
-
+	
 	/**
-	 * This is performed after an item is clicked. It also loads a loading screen in case you need time to load resources.
-	 * @param item String identifying the item clicked, or null if no Night should start.
-	 * @throws IOException To catch errors, so the menu shows them on screen instead of just crashing.
+	 * Action listener for the buttons that take an instance of {@link Item} as parameter for the action.
 	 */
-	protected abstract void onMenuItemClick(Item item) throws Exception;
-
-	private class MenuActionListener implements ActionListener {
-		private final Item menuItem;
-
-		public MenuActionListener(Item menuItem) {
+	protected class MenuActionListener implements ActionListener {
+		/** Menu item that waits for this Action to happen. */
+		protected final Item menuItem;
+		
+		/**
+		 * Creates a new Menu Action Listener with the given menu item.
+		 * @param menuItem Menu item.
+		 */
+		protected MenuActionListener(Item menuItem) {
 			this.menuItem = menuItem;
 		}
-
+		
+		/**
+		 * Prepares a loading screen on this component, then runs the {@link Item#runnable()} method of this menu item.
+		 * @param e the event to be processed
+		 */
 		public void actionPerformed(ActionEvent e) {
 			loading = true;
-			if (menuItem.loadingScreen() != null) {
-				currentLoadingImg = menuItem.loadingScreen();
+			if (menuItem.info.loadingScreen != null) {
+				currentLoadingImg = menuItem.info.loadingScreen;
 			}
             for (Component component : MenuJC.this.getComponents()) {
 				component.setVisible(false);
 			}
 			new Thread(() -> {
 				try {
-					onMenuItemClick(menuItem);
+					menuItem.runnable.run();
 				} catch (Exception e1) {
 					new ExceptionDialog(e1, false, true, LOGGER);
 				} finally {
@@ -247,26 +255,36 @@ public abstract class MenuJC extends JComponent {
 					currentLoadingImg = null;
 					loading = false;
 				}
-			}, menuItem.id()).start();
+			}, menuItem.info.id).start();
 		}
 	}
 	
 	/**
 	 * Information this menu needs in order to create or update the buttons and background.
-	 * @param menuItems List of {@link Item}s. It must not be null or empty.
+	 * @param menuItems List of {@link ItemInfo}s. It must not be null or empty.
 	 * @param background Path to background image in the resources.
 	 */
 	public record Info(List<Item> menuItems, BufferedImage background) {
 	}
 	
 	/**
-	 *
+	 * Information for the menu item, without the {@link Runnable} instance so that instances of
+	 * {@link es.cristichi.fnac.nights.NightFactory} can express how to display their menu item at the same time
+	 * that they let the {@link NightsJF} decide how Nights are started.
 	 * @param id Id of the element. Elements with the same ID will perform the same action, whose code is written in
 	 *           {@link NightsJF}.
 	 * @param display Text shown for the button when not hovered by the player's mouse.
 	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
 	 * @param loadingScreen BufferedImage of the loading screen, or {@code null} to use the default one.
 	 */
-	public record Item(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
+	public record ItemInfo(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
+	}
+	
+	/**
+	 * Information for the menu item, including the {@link Runnable}.
+	 * @param info Information about the clickable menu item, like display text.
+	 * @param runnable Method to run when clicked.
+	 */
+	public record Item(ItemInfo info, Runnable runnable){
 	}
 }

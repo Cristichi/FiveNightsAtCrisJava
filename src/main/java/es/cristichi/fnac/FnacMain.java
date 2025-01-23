@@ -49,7 +49,7 @@ public class FnacMain {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean DEBUG_ALLNIGHTS = false;
+    public static boolean DEBUG_ALLNIGHTS = true;
     /**
      * Name of the game.
      */
@@ -393,8 +393,8 @@ public class FnacMain {
         new Thread(() -> {
             NightRegistry.registerNight(0, new NightFactory() {
                 @Override
-                public MenuJC.Item getItem() {
-                    return new MenuJC.Item("tutorial", "New Game", "Tutorial Night", null);
+                public MenuJC.ItemInfo getItem() {
+                    return new MenuJC.ItemInfo("tutorial", "New Game", "Tutorial Night", null);
                 }
                 
                 @Override

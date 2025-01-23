@@ -60,6 +60,8 @@ public class NightsJF extends JFrame {
      * Player's settings.
      */
     private Settings settings;
+    
+    private MenuJC.Item customNightItem;
 
     /**
      * Creates a new window for the game, with a Main Menu and a Custom Night Menu.
@@ -178,38 +180,7 @@ public class NightsJF extends JFrame {
         this.saveFile = saveFile;
         MenuJC.Info menuInfo = getUpdatedMenuData();
         
-        mainMenu = new MenuJC(menuInfo, Resources.loadImage("menu/loading.jpg"), Resources.loadMusic("menu/main.wav")) {
-            @Override
-            protected void onMenuItemClick(Item item) throws IOException {
-                switch (item.id()) {
-                    case "custom" -> {
-                        CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings,
-                                Jumpscare.getPowerOutageJumpscare(), NightsJF.this);
-                        customNightMenu.addOnExitListener(() -> cardLayout.show(cardPanel, "menu"));
-                        cardPanel.add(customNightMenu, "customNightMenu");
-                        cardLayout.show(cardPanel, "customNightMenu");
-                    }
-                    case "settings" -> cardLayout.show(cardPanel, "settings");
-                    /* We are doing the closin this way since disposing this window and shutting TinySound down does
-                        not stop the Java VM. Also this way I make sure that it finishes even if I add stuff,
-                        the same way this JFrame uses JFrame.EXIT_ON_CLOSE.
-                     */
-                    case "exit" ->  System.exit(1);
-                    default -> {
-                        try {
-                            NightFactory nightFactory = NightRegistry.getNight(saveFile.completedNights().size());
-                            if (nightFactory != null){
-                                startNightFromFactory(nightFactory);
-                            } else {
-                                LOGGER.error("Item {} is null but was not a Custom Night.", saveFile.completedNights());
-                            }
-                        } catch (NullPointerException e){
-                            LOGGER.error("Error trying to load Night: It does not exist.", e);
-                        }
-                    }
-                }
-            }
-        };
+        mainMenu = new MenuJC(menuInfo, Resources.loadImage("menu/loading.jpg"), Resources.loadMusic("menu/main.wav"));
         cardPanel.add(mainMenu, "menu");
         cardLayout.show(cardPanel, "menu");
     }
@@ -284,6 +255,20 @@ public class NightsJF extends JFrame {
      */
     private @NotNull MenuJC.Info getUpdatedMenuData() throws ResourceException {
         ArrayList<MenuJC.Item> mmItems = new ArrayList<>(2);
+        if (customNightItem == null){
+            customNightItem = new MenuJC.Item(new MenuJC.ItemInfo("custom", "Play with Us!", "Custom Night",
+                    Resources.loadImage("night/custom/loading.jpg")), () -> {
+                try {
+                    CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings,
+                            Jumpscare.getPowerOutageJumpscare(), NightsJF.this);
+                    customNightMenu.addOnExitListener(() -> cardLayout.show(cardPanel, "menu"));
+                    cardPanel.add(customNightMenu, "customNightMenu");
+                    cardLayout.show(cardPanel, "customNightMenu");
+                } catch (ResourceException e) {
+                    new ExceptionDialog(e, false, true, LOGGER);
+                }
+            });
+        }
         String backgrResPath;
         List<String> completed = saveFile.completedNights();
         int numCompleted = completed.size();
@@ -299,22 +284,34 @@ public class NightsJF extends JFrame {
             default -> "menu/backgroundCustom.jpg";
         };
         if (FnacMain.DEBUG_ALLNIGHTS) {
-            mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night",
-                    Resources.loadImage("night/custom/loading.jpg")));
+            mmItems.add(customNightItem);
             for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
-                mmItems.add(nightFactory.getItem());
+                mmItems.add(new MenuJC.Item(nightFactory.getItem(), () -> {
+                    try {
+                        startNightFromFactory(nightFactory);
+                    } catch (Exception e){
+                        new ExceptionDialog(e, false, true, LOGGER);
+                    }
+                }));
             }
         } else {
             NightFactory nightFactory = NightRegistry.getNight(numCompleted);
             if (nightFactory == null) {
-                mmItems.add(new MenuJC.Item("custom", "Play with Us!", "Custom Night",
-                        Resources.loadImage("night/custom/loading.jpg")));
+                mmItems.add(customNightItem);
             } else {
-                mmItems.add(nightFactory.getItem());
+                mmItems.add(new MenuJC.Item(nightFactory.getItem(), () -> {
+                    try {
+                        startNightFromFactory(nightFactory);
+                    } catch (Exception e){
+                        new ExceptionDialog(e, false, true, LOGGER);
+                    }
+                }));
             }
         }
-        mmItems.add(new MenuJC.Item("settings", "Settings", "Settings", null));
-        mmItems.add(new MenuJC.Item("exit", "Run Away", "I'm Sorry", null));
+        mmItems.add(new MenuJC.Item(new MenuJC.ItemInfo("settings", "Settings", "Settings", null),
+                () -> cardLayout.show(cardPanel, "settings")));
+        mmItems.add(new MenuJC.Item(new MenuJC.ItemInfo("exit", "Run Away", "I'm Sorry", null),
+                () -> System.exit(1)));
         return new MenuJC.Info(mmItems, Resources.loadImage(backgrResPath));
     }
     

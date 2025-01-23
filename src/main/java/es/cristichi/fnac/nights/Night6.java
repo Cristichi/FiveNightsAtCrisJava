@@ -21,8 +21,8 @@ import java.util.Random;
 public class Night6 implements es.cristichi.fnac.nights.NightFactory {
     
     @Override
-    public MenuJC.Item getItem() throws ResourceException {
-        return new MenuJC.Item("n6", "Continue", "Night 6", Resources.loadImage("night/n6/loading.jpg"));
+    public MenuJC.ItemInfo getItem() throws ResourceException {
+        return new MenuJC.ItemInfo("n6", "Continue", "Night 6", Resources.loadImage("night/n6/loading.jpg"));
     }
     
     @Override

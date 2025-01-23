@@ -21,8 +21,8 @@ import java.util.Random;
 public class Night2 implements NightFactory{
     
     @Override
-    public MenuJC.Item getItem() throws ResourceException {
-        return new MenuJC.Item("n2", "Continue", "Night 2", Resources.loadImage("night/n2/loading.jpg"));
+    public MenuJC.ItemInfo getItem() throws ResourceException {
+        return new MenuJC.ItemInfo("n2", "Continue", "Night 2", Resources.loadImage("night/n2/loading.jpg"));
     }
     
     @Override
