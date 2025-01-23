@@ -68,7 +68,7 @@ public class FnacMain implements Runnable {
     @Override
     public void run() {
         // Semaphore to make the JFrame wait until everything is loaded.
-        Semaphore loadingSem = new Semaphore(-13);
+        Semaphore loadingSem = new Semaphore(-12);
         
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
@@ -80,28 +80,22 @@ public class FnacMain implements Runnable {
         }).start();
         
         
-        // Settings
+        // Settings and Window. Together because the Window opens to fullscreen depending on the Settings.
         final AtomicReference<Settings> settings = new AtomicReference<>();
-        new Thread(() -> {
-            Settings.init();
-            try {
-                settings.set(Settings.fromFile(Settings.SETTINGS_FILE));
-                settings.get().saveToFile(Settings.SETTINGS_FILE);
-                TinySound.setGlobalVolume(settings.get().getVolume());
-            } catch (Exception e) {
-                e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
-                return;
-            }
-            loadingSem.release();
-        }).start();
-        
-        // Window
         AtomicReference<NightsJF> window = new AtomicReference<>();
-        // JFrame in AWT Thread
         SwingUtilities.invokeLater(() -> {
             try {
+                Settings.init();
+                try {
+                    settings.set(Settings.fromFile(Settings.SETTINGS_FILE));
+                    settings.get().saveToFile(Settings.SETTINGS_FILE);
+                    TinySound.setGlobalVolume(settings.get().getVolume());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    RuntimeException error = new RuntimeException("Failed to load settings file: " + e.getMessage(), e);
+                    SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
+                    return;
+                }
                 window.set(new NightsJF());
                 window.get().startStartingSequence(loadingSem, settings.get());
                 
@@ -160,8 +154,9 @@ public class FnacMain implements Runnable {
                 }
             } catch (ResourceException e) {
                 new ExceptionDialog(e, true, true, LOGGER);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         // Save file
@@ -176,8 +171,9 @@ public class FnacMain implements Runnable {
                         e);
                 SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
                 throw error;
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         // Maps for Custom Night
@@ -205,8 +201,9 @@ public class FnacMain implements Runnable {
                 });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering ChatGPT for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -229,8 +226,9 @@ public class FnacMain implements Runnable {
                 });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Paco for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -246,8 +244,9 @@ public class FnacMain implements Runnable {
                 });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Maria for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -263,8 +262,9 @@ public class FnacMain implements Runnable {
                 });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Bob for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -280,8 +280,9 @@ public class FnacMain implements Runnable {
                 });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Cris (final form) for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -311,8 +312,9 @@ public class FnacMain implements Runnable {
                         });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Cris for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         new Thread(() -> {
@@ -332,8 +334,9 @@ public class FnacMain implements Runnable {
                         });
             } catch (ResourceException e) {
                 LOGGER.error("Error registering Cris (states test) for Custom Night.", e);
+            } finally {
+                loadingSem.release();
             }
-            loadingSem.release();
         }).start();
         
         // Nights
