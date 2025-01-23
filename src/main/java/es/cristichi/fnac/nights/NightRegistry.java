@@ -27,6 +27,7 @@ public class NightRegistry {
      * @param requiredCompletedNights Exact number of completed Nights the player must have in their save file to
      *                                have this Night be the next one to play.
      * @param nightFactory            The NightFactory that can create the correct next Night for the player to play.
+     *                                A {@code null} value indicates Custom Night.
      */
     public static void registerNight(int requiredCompletedNights, NightFactory nightFactory){
         if (requiredCompletedNights < 0){
