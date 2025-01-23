@@ -154,12 +154,12 @@ public class FnacMain {
                 if (loadingWithSettings != null){
                     for (LoadRunnableWithSettings loadSequence : loadingWithSettings){
                         new Thread(() -> {
-                        try {
-                            loadSequence.run(settings.get());
-                            loadingSem.release();
-                        } catch (Exception e){
-                            new ExceptionDialog(e, true, false, LOGGER);
-                        }
+                            try {
+                                loadSequence.run(settings.get());
+                                loadingSem.release();
+                            } catch (Exception e){
+                                new ExceptionDialog(e, true, false, LOGGER);
+                            }
                         }).start();
                     }
                 }
