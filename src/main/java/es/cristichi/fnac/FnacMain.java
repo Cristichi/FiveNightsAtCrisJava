@@ -49,7 +49,7 @@ public class FnacMain {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean DEBUG_ALLNIGHTS = true;
+    public static boolean DEBUG_ALLNIGHTS = false;
     /**
      * Name of the game.
      */
