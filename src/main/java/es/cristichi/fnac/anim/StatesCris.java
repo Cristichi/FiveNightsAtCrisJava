@@ -24,9 +24,13 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
      */
     public static final List<String> RESTAURANT_PATH = List.of("main stage", "dining area", "corridor 2", "corridor 4", "rightDoor");
     
+    /** Image of StatesCris crawling on the floor. */
     protected BufferedImage camImgFloor;
+    /** Image of StatesCris waking up from the floor. */
     protected BufferedImage camImgWaking;
+    /** Image of StatesCris starring at the playuer. */
     protected BufferedImage camImgStare;
+    /** Current state. */
     protected State state;
     
     /**
@@ -112,7 +116,17 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
         return super.showOnCam(tick, fps, openDoor, cam, rng);
     }
     
+    /**
+     * StatesCris' states. They indicate his current position.
+     */
     protected enum State {
-        FLOOR, WAKING_UP, STARE, MOVING
+        /** Apparently unconscious on the floor. */
+        FLOOR,
+        /** Starting to wake up. */
+        WAKING_UP,
+        /** Starring at the player. */
+        STARE,
+        /** Normal states, meaning Cris can move. */
+        MOVING
     }
 }
