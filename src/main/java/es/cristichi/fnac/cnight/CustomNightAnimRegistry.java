@@ -28,11 +28,11 @@ public class CustomNightAnimRegistry {
      * Registers a map to be available for Custom Nights.
      * @param factory Factory that generates the map.
      */
-    public static void registerAnimatronic(CustomNightAnimFactory<? extends AnimatronicDrawing> factory) {
+    public static synchronized void registerAnimatronic(CustomNightAnimFactory<? extends AnimatronicDrawing> factory) {
         if (customNightAnimRegistry.contains(factory)){
-            LOGGER.warn("Animatronic factory %s is already registered.".formatted(factory.getClass().getName()));
+            LOGGER.warn("Animatronic factory %s is already registered.".formatted(factory.getNameId()));
         } else {
-            LOGGER.debug("Animatronic factory %s registered for Custom Night.".formatted(factory.getClass().getName()));
+            LOGGER.debug("Animatronic factory %s registered for Custom Night.".formatted(factory.getNameId()));
             customNightAnimRegistry.add(factory);
         }
     }
@@ -40,7 +40,7 @@ public class CustomNightAnimRegistry {
     /**
      * @return A copy of the currently registered maps.
      */
-    public static List<CustomNightAnimFactory<? extends AnimatronicDrawing>> getEntries() {
+    public static synchronized List<CustomNightAnimFactory<? extends AnimatronicDrawing>> getEntries() {
         return new ArrayList<>(customNightAnimRegistry);
     }
 }

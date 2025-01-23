@@ -105,4 +105,9 @@ public abstract class CustomNightAnimFactory<E extends AnimatronicDrawing>{
     public int hashCode() {
         return Objects.hashCode(nameId);
     }
+    
+    @Override
+    public String toString() {
+        return "CustomNightAnimFactory{" + "nameId='" + nameId + '\'' + '}';
+    }
 }
