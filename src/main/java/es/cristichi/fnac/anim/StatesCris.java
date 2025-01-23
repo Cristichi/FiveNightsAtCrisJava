@@ -57,6 +57,9 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
     @Override
     public MoveOppInfo onMoveOppAttempt(Camera currentCam, boolean beingLookedAt, boolean camsUp, boolean isOpenDoor,
                                         Random rng) {
+        if (cameraStalled && beingLookedAt) {
+            return new MoveOppInfo(false, null);
+        }
         switch (state){
             case FLOOR -> {
                 state = State.WAKING_UP;
