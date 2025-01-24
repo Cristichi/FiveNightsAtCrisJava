@@ -531,7 +531,7 @@ public class NightJC extends ExitableJComponent {
 			public void run() {
 				// Time never stops. Well sometimes it does, when dying for instance.
 				currentTick++;
-				if (jumpscare == null){
+				if (jumpscare == null && victoryScreen == null){
                     if (currentTick % hourTicksInterval == 0) {
                         currentHour++;
                         if (currentHour == TOTAL_HOURS) {
