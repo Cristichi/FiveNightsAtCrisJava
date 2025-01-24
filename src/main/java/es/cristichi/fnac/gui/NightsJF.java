@@ -61,6 +61,9 @@ public class NightsJF extends JFrame {
      */
     private Settings settings;
     
+    /**
+     * {@link MenuJC.Item} for the Custom Night, since it is not registered as a normal Night (since it's a menu).
+     */
     private MenuJC.Item customNightItem;
 
     /**

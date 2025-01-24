@@ -161,6 +161,12 @@ public class MenuJC extends JComponent {
 		layout.setVerticalGroup(verticalGroup);
 	}
 	
+	/**
+	 * Creates a {@link JButton} with the desired style and a hover effect that changes the text as indicated by the
+	 * given {@link Item}. Also, an action listener is added that will execute the {@link Item#runnable()} method.
+	 * @param item Menu item that will be represented by this button.
+	 * @return The newly created JButton.
+	 */
 	protected JButton createMenuButton(Item item) {
 		JButton button = new JButton("<html>" + item.info.display + "</html>");
 		float fontScale = (float) (btnFont.getSize() * Math.min(getWidth(), getHeight())) / 1000;
