@@ -46,12 +46,12 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
             throws ResourceException {
         super(name, 1, 6, aiDuringNight, true, false,
                 Resources.loadImage("anims/statesCris/camImg.png"),
-                        new Jumpscare(Resources.loadGif("anims/statesCris/jumpscare.gif"), 0,
-                                Resources.loadSound("anims/statesCris/sounds/jumpscare.wav"), 1,
+                        new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 0,
+                                Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                                 JumpscareVisualSetting.FILL_SCREEN),
                 camPaths, Color.PINK, rng);
 
-        this.sounds.put("move", Resources.loadSound("anims/statesCris/sounds/move.wav"));
+        this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav"));
         this.state = State.FLOOR;
         this.camImgFloor = Resources.loadImage("anims/statesCris/camImgFloor.png");
         this.camImgWaking = Resources.loadImage("anims/statesCris/camImgWaking.png");
