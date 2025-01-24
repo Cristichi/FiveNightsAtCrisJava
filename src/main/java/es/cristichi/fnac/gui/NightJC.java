@@ -305,6 +305,10 @@ public class NightJC extends ExitableJComponent {
 	 * This boolean tells the paint method to paint only static.
 	 */
 	private boolean killedStatic;
+	/**
+	 * Indicates the start, in milliseconds as given by {@code System.currentTimeMillis()}, when "killedStatic"
+	 * was turned true, in order to control the time it stays on the screen.
+	 */
 	private long killedStaticStart;
 	
 	/**
