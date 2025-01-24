@@ -30,6 +30,7 @@ import java.util.*;
 /**
  * JComponent that runs a Night. This is the most important part of the gameplay.
  */
+@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
 public class NightJC extends ExitableJComponent {
 	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
 	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
@@ -1269,66 +1270,60 @@ public class NightJC extends ExitableJComponent {
 				if (jumpscare.isFrameToPlaySound()) {
 					jumpscare.getSound(true).play(JUMPSCARE_SOUND_MODIFIER);
 				}
-
+				
 				// Full dimensions of the final full-sized frame
 				Dimension logicalScreen = jumpscare.getLogicalScreen();
+				double logScreenScaleX = getWidth() / logicalScreen.getWidth();
+				double logScreenScaleY = getHeight() / logicalScreen.getHeight();
+				double logScreenScale = Math.min(logScreenScaleX, logScreenScaleY);
 
-				// Calculate scaling factor for the full frame
-				double logScreenWidthScale = (double) getWidth() / logicalScreen.width;
-				double logScreenHeightScale = (double) getHeight() / logicalScreen.height;
-				double logScreenScale = Math.min(logScreenWidthScale, logScreenHeightScale);
+				// Calculate new logical screen size based on the scale
+				int newLogScreenWidth = (int) (logicalScreen.getWidth() * logScreenScale);
+				int newLogScreenHeight = (int) (logicalScreen.getHeight() * logScreenScale);
+				int logScreenDrawX = 0;
+				int logScreenDrawY = 0;
 
-				// Calculate the size of the scaled full frame
-				int logScreenScaledWidth = (int) (logicalScreen.width * logScreenScale);
-				int logScreenScaledHeight = (int) (logicalScreen.height * logScreenScale);
-
-				// Calculate the top-left corner for the full frame
-				int logScreenDrawX = (getWidth() - logScreenScaledWidth) / 2;
-				int logScreenDrawY = (getHeight() - logScreenScaledHeight) / 2;
+				// Alignment logic
+				boolean stretch = false;
+				switch (jumpscare.getVisualSetting()) {
+					case CENTERED -> {
+						logScreenDrawX = (getWidth() - newLogScreenWidth) / 2;
+						logScreenDrawY = (getHeight() - newLogScreenHeight) / 2;
+					}
+					case CENTER_TOP -> {
+						logScreenDrawX = (getWidth() - newLogScreenWidth) / 2;
+						//logScreenDrawY = 0;
+					}
+					case CENTER_LEFT -> {
+						//logScreenDrawX = 0;
+						logScreenDrawY = (getHeight() - newLogScreenHeight) / 2;
+					}
+					case CENTER_RIGHT -> {
+						logScreenDrawX = getWidth() - newLogScreenWidth;
+						logScreenDrawY = (getHeight() - newLogScreenHeight) / 2;
+					}
+					case CENTER_BOTTOM -> {
+						logScreenDrawX = (getWidth() - newLogScreenWidth) / 2;
+						logScreenDrawY = getHeight() - newLogScreenHeight;
+					}
+					case FILL_SCREEN -> {
+						stretch = true;
+					}
+				}
 
 				// Draw all frames of the jumpscare
 				for (GifFrame frame : frames) {
-					// Frame's original size
-					int frameWidth = frame.image().getWidth();
-					int frameHeight = frame.image().getHeight();
-
-					// Frame's offset relative to the full image
-                    int frameScaledWidth = (int) (frameWidth * logScreenScale);
-					int frameScaledHeight = (int) (frameHeight * logScreenScale);
-					int scaledOffsetX = (int) (frame.offsetX() * logScreenScale);
-					int scaledOffsetY = (int) (frame.offsetY() * logScreenScale);
-
-					switch (jumpscare.getVisualSetting()){
-						case CENTERED ->
-							g.drawImage(frame.image(),
-								logScreenDrawX + scaledOffsetX, logScreenDrawY + scaledOffsetY,
-								logScreenDrawX + scaledOffsetX + frameScaledWidth, logScreenDrawY + scaledOffsetY + frameScaledHeight,
-								0, 0, frameWidth, frameHeight, this);
-						case MIDDLE_UP -> {
-							int adjustedLogScreenDrawY = (getHeight() > getWidth()) ? 0 : logScreenDrawY;
-							g.drawImage(frame.image(),
-									logScreenDrawX + scaledOffsetX,
-									adjustedLogScreenDrawY + scaledOffsetY,
-									logScreenDrawX + scaledOffsetX + frameScaledWidth,
-									adjustedLogScreenDrawY + scaledOffsetY + frameScaledHeight,
-									0, 0, frameWidth, frameHeight, this);
-						}
-						case MIDDLE_DOWN -> {
-							int adjustedLogScreenDrawY = (getHeight() > getWidth()) ? (getHeight() - logScreenScaledHeight) : logScreenDrawY;
-							g.drawImage(frame.image(),
-									logScreenDrawX + scaledOffsetX,
-									adjustedLogScreenDrawY + scaledOffsetY,
-									logScreenDrawX + scaledOffsetX + frameScaledWidth,
-									adjustedLogScreenDrawY + scaledOffsetY + frameScaledHeight,
-									0, 0, frameWidth, frameHeight, this);
-						}
-						case FILL_SCREEN ->
-							g.drawImage(frame.image(),
-								(int) (frame.offsetX() * scaleX), (int) (frame.offsetY() * scaleY),
-								(int) (frame.offsetX() * scaleX) + (int) (frameWidth * scaleX),
-								(int) (frame.offsetY() * scaleY) + (int) (frameHeight * scaleY),
-								0, 0, frameWidth, frameHeight, this);
-					}
+					// Scale the frame dimensions and offsets
+					int frameWidth = (int) (frame.width() * (stretch ? logScreenScaleX : logScreenScale));
+					int frameHeight = (int) (frame.height() * (stretch ? logScreenScaleY : logScreenScale));
+					int scaledOffsetX = (int) (frame.offsetX() * (stretch ? logScreenScaleX : logScreenScale));
+					int scaledOffsetY = (int) (frame.offsetY() * (stretch ? logScreenScaleY : logScreenScale));
+					
+					// Draw the frame within the logical screen boundaries
+					g.drawImage(frame.image(),
+							logScreenDrawX + scaledOffsetX, logScreenDrawY + scaledOffsetY,
+							logScreenDrawX + scaledOffsetX + frameWidth, logScreenDrawY + scaledOffsetY + frameHeight,
+							0, 0, frame.image().getWidth(), frame.image().getHeight(), this);
 				}
 
 				if (jumpscare.isFramesFinished()) {

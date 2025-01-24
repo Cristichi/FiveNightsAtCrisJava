@@ -14,8 +14,6 @@ import java.util.Random;
  * implementations with different behaviours during Nights.
  */
 public class PathCris extends PathedMoveAnimatronicDrawing {
-    private static Jumpscare jumpscareNormal, jumpscareItsMe;
-    
     /**
      * Creates a new copy of Cris for use in normal Nights.
      * @param name Unique name. If several copies of Cris will appear, make sure they have different names.
@@ -34,15 +32,15 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
         super(name, 5, 4, aiDuringNight, cameraStalled, globalCameraStalled,
                 Resources.loadImage("anims/cris/camImg.png"), null, camPaths, Color.PINK, rng);
 
-        if (jumpscareNormal == null || jumpscareItsMe == null) {
-            jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
+        if (rng.nextFloat() < .009){
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.FILL_SCREEN);
-            jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
+        } else {
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
-                    JumpscareVisualSetting.MIDDLE_UP);
+                    JumpscareVisualSetting.CENTER_TOP);
         }
-        jumpscare = rng.nextFloat() < .9 ? jumpscareNormal : jumpscareItsMe;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav"));
     }
