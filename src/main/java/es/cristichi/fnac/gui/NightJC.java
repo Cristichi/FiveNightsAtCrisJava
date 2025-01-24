@@ -248,11 +248,11 @@ public class NightJC extends ExitableJComponent {
 	private static final float JUMPSCARE_SOUND_MODIFIER = 1.5f;
 	
 	/** Volume for both the Sound when opening/closing cams and the static Sound while watching cams. */
-	private final double camSoundsVolume = 0.3;
+	private double camSoundsVolume = 0.3;
 	/** Sound to play when cams are opened. */
 	private final Sound openedCamsSound;
 	/** Static Sound that repeats while watching cams. */
-	private final Sound backgroundCamsSound;
+	private final Sound staticCamsSound;
 	/** Sound to play when cams are closed. */
 	private final Sound closeCamsSound;
 	/** Sound to play when another camera is closed while watching cams. */
@@ -393,11 +393,11 @@ public class NightJC extends ExitableJComponent {
 		);
 		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav");
 		honkSound = Resources.loadSound("office/sounds/honk.wav");
-		backgroundCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
-		openedCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
+		staticCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
+		openedCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
 		addOnExitListener(openedCamsSound::stop);
-		backgroundCamsSound.addOnEndListener(() -> backgroundCamsSound.play(camSoundsVolume));
-		addOnExitListener(backgroundCamsSound::stop);
+		staticCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
+		addOnExitListener(staticCamsSound::stop);
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav");
 		
@@ -613,6 +613,8 @@ public class NightJC extends ExitableJComponent {
                             if (animTickInfo.jumpscare() != null) {
                                 jumpscare = animTickInfo.jumpscare();
                                 jumpscare.addOnFinishedListener(() -> {
+									camSoundsVolume = 1.3;
+									staticCamsSound.play(camSoundsVolume);
                                     killedStatic = true;
                                     killedStaticStart = System.currentTimeMillis();
                                 });
@@ -1431,7 +1433,7 @@ public class NightJC extends ExitableJComponent {
 					camsUpDownTransTicks = CAMS_UPDOWN_TRANSITION_TICKS;
 					camsUpDownBtnDelayTicks = CAMS_UPDOWN_BTN_DELAY_TICKS;
 					camsUp = false;
-					backgroundCamsSound.stop();
+					staticCamsSound.stop();
 					openedCamsSound.stop();
 					closeCamsSound.play(camSoundsVolume);
 				} else if (jumpscare == null){
