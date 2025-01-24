@@ -14,7 +14,7 @@ public class NightProgress {
     public static final String SAVE_FILE_NAME = "save.fnac"; // Save file's name
     /**
      * Magic number of the file format, version 1. See
-     * <a href="https://en.wikipedia.org/wiki/List_of_file_signatures">List of file signatures (Wikipedia)</a>.
+     * <a href="https://en.wikipedia.org/wiki/File_format#Magic_number">File format > Magic Number (Wikipedia)</a>.
      */
     private static final String MAGIC_NUMBER = "FNACSV1";
     /**
