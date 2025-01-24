@@ -133,7 +133,7 @@ public class Jumpscare {
      * @return {@code true} if this Jumpscare's last frame has already passed (with its delay included).
      */
     public boolean isFramesFinished() {
-        return currentFrame == gifAnimation.size();
+        return currentFrame >= gifAnimation.size();
     }
     
     /**

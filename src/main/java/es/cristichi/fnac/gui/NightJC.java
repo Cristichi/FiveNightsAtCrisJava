@@ -289,6 +289,23 @@ public class NightJC extends ExitableJComponent {
 	 * Current subtitles to be shown on the screen.
 	 */
 	private long currentSubStarted = -1;
+	/**
+	 * Usual number of seconds that static should be painted on the screen after dying to a Jumpscare.
+	 */
+	private static final long KILLED_STATIC_MILLISECS = 5000;
+	/**
+	 * This controls the size, in pixels, of each artificial "pixel" in the generated noise.
+	 */
+	private static final int KILLED_STATIC_PIXEL_SIZE = 7;
+	/**
+	 * This controls the number of different colors to generate on the screen in the generated noise. All gray scales.
+	 */
+	private static final int KILLED_STATIC_COLOR_VARIETY = 10;
+	/**
+	 * This boolean tells the paint method to paint only static.
+	 */
+	private boolean killedStatic;
+	private long killedStaticStart;
 	
 	/**
 	 * This method loads all the necessary Resources from disk.
@@ -335,6 +352,7 @@ public class NightJC extends ExitableJComponent {
 		if (hourTicksInterval == 0){
 			throw new NightException("Duration of Night is so low that there are 0 ticks per hour, leading to errors.");
 		}
+		this.killedStatic = false;
 		
 		onNightEndListeners = new LinkedList<>();
 		onExitListeners = new LinkedList<>();
@@ -486,6 +504,7 @@ public class NightJC extends ExitableJComponent {
 		});
 
 		nightTicks = new Timer("Night [" + nightName + "]");
+		onExitListeners.add(nightTicks::cancel);
 		
 		LOGGER.debug("Finished loading {}.", nightName);
 	}
@@ -505,156 +524,157 @@ public class NightJC extends ExitableJComponent {
 			LOGGER.error("Nights should never be started twice.");
 			return;
 		}
-		LOGGER.debug("Started {}.", nightName);
 		nightStarted = true;
+		LOGGER.debug("Started {}.", nightName);
 		nightTicks.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 				// Time never stops. Well sometimes it does, when dying for instance.
 				currentTick++;
-				if (currentTick % hourTicksInterval == 0) {
-					currentHour++;
-					if (currentHour == TOTAL_HOURS) {
-						jumpscare = null;
-						victoryScreen = true;
-						nightTicks.cancel();
-						soundOnCompleted.addOnEndListener(() -> {
-								for(NightEndedListener onCompleted : onNightEndListeners){
-									onCompleted.run(true);
-								}
-								for(Runnable onExit : onExitListeners){
-									onExit.run();
-								}
-							});
-						soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
-						soundOnCompleted.play();
-					}
-				}
-
-				// Power drain
-				if (powerLeft > 0) {
-					powerLeft-=powerPerTickPerResource;
-				}
-				if (powerLeft > 0 && camsUp) {
-					powerLeft-=powerPerTickPerResource;
-				}
-				if (powerLeft > 0 && leftDoorClosed) {
-					powerLeft-=powerPerTickPerResource;
-				}
-				if (powerLeft > 0 && rightDoorClosed) {
-					powerLeft-=powerPerTickPerResource;
-				}
-
-				if (powerLeft <= 0){
-					jumpscare = powerOutageJumpscare;
-					jumpscare.addOnFinishedListener(() -> {
-                        for(NightEndedListener onCompleted : onNightEndListeners){
-                            onCompleted.run(false);
-                        }
-                        for(Runnable onExit : onExitListeners){
-                            onExit.run();
-                        }
-					});
-				}
-
-				// Animatronic movements and their jumpscare opportunities
 				if (jumpscare == null){
-					HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo>> moves = new HashMap<>(5);
-					for(Camera cam : camerasMap.values()){
-						for (AnimatronicDrawing anim : cam.getAnimatronicsHere()){
-							anim.updateIADuringNight(currentHour);
-							boolean openDoor = cam.isLeftDoor() && !leftDoorClosed
-												|| cam.isRightDoor() && !rightDoorClosed;
-
-							AnimatronicDrawing.AnimTickInfo animTickInfo =
-									anim.onTick(currentTick, fps, camsUp, openDoor, cam, rng);
-							if (animTickInfo.moveOpp()){
-								AnimatronicDrawing.MoveOppInfo moveOppInfo = anim.onMoveOppAttempt(cam,
-										(camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
-								if (moveOppInfo.move()){
-									try {
-										AnimatronicDrawing.MoveSuccessInfo moveOpp = anim.onMoveOppSuccess(
-												camerasMap, cam, rng);
-										if (moveOpp.moveToCam() != null && !moveOpp.moveToCam().equals(cam.getNameId())) {
-											moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
-										}
-									} catch (Exception e){
-										// Avoiding errors when Animatronics are faulty, instead movement is cancelled.
-										LOGGER.error("Error thrown by Animatronic {} when trying to move.",
-												anim.getNameId(), e);
-									}
-								}
-								if (moveOppInfo.sound() != null){
-									cam.playSoundHere(moveOppInfo.sound());
-								}
-							}
-							if (animTickInfo.jumpscare() != null){
-								jumpscare = animTickInfo.jumpscare();
-								jumpscare.addOnFinishedListener(() -> {
-									for(NightEndedListener onCompleted : onNightEndListeners){
-										onCompleted.run(false);
-									}
-                                    for(Runnable onExit : onExitListeners){
-                                        onExit.run();
+                    if (currentTick % hourTicksInterval == 0) {
+                        currentHour++;
+                        if (currentHour == TOTAL_HOURS) {
+                            ambientSounds.clear();
+                            victoryScreen = true;
+                            soundOnCompleted.addOnEndListener(() -> {
+                                for (NightEndedListener onCompleted : onNightEndListeners) {
+                                    onCompleted.run(true);
+                                }
+                                for (Runnable onExit : onExitListeners) {
+                                    onExit.run();
+                                }
+                            });
+                            soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
+                            soundOnCompleted.play();
+                        }
+                    }
+                    
+                    // Power drain
+                    if (powerLeft > 0) {
+                        powerLeft -= powerPerTickPerResource;
+                    }
+                    if (powerLeft > 0 && camsUp) {
+                        powerLeft -= powerPerTickPerResource;
+                    }
+                    if (powerLeft > 0 && leftDoorClosed) {
+                        powerLeft -= powerPerTickPerResource;
+                    }
+                    if (powerLeft > 0 && rightDoorClosed) {
+                        powerLeft -= powerPerTickPerResource;
+                    }
+                    
+                    if (powerLeft <= 0) {
+                        ambientSounds.clear();
+                        jumpscare = powerOutageJumpscare;
+                        jumpscare.addOnFinishedListener(() -> {
+                            for (NightEndedListener onCompleted : onNightEndListeners) {
+                                onCompleted.run(false);
+                            }
+                            for (Runnable onExit : onExitListeners) {
+                                onExit.run();
+                            }
+                        });
+                    }
+                    
+                    // Animatronic movements and their jumpscare opportunities
+                    HashMap<AnimatronicDrawing, Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo>> moves =
+                            new HashMap<>(
+                            5);
+                    for (Camera cam : camerasMap.values()) {
+                        for (AnimatronicDrawing anim : cam.getAnimatronicsHere()) {
+                            anim.updateIADuringNight(currentHour);
+                            boolean openDoor =
+                                    cam.isLeftDoor() && !leftDoorClosed || cam.isRightDoor() && !rightDoorClosed;
+                            
+                            AnimatronicDrawing.AnimTickInfo animTickInfo = anim.onTick(currentTick, fps, camsUp,
+                                    openDoor, cam, rng);
+                            if (animTickInfo.moveOpp()) {
+                                AnimatronicDrawing.MoveOppInfo moveOppInfo = anim.onMoveOppAttempt(cam,
+                                        (camsUp && cam.equals(camerasMap.getSelectedCam())), camsUp, openDoor, rng);
+                                if (moveOppInfo.move()) {
+                                    try {
+                                        AnimatronicDrawing.MoveSuccessInfo moveOpp = anim.onMoveOppSuccess(camerasMap,
+                                                cam, rng);
+                                        if (moveOpp.moveToCam() != null && !moveOpp.moveToCam()
+                                                .equals(cam.getNameId())) {
+                                            moves.put(anim, new AbstractMap.SimpleEntry<>(cam, moveOpp));
+                                        }
+                                    } catch (Exception e) {
+                                        // Avoiding errors when Animatronics are faulty, instead movement is cancelled.
+                                        LOGGER.error("Error thrown by Animatronic {} when trying to move.",
+                                                anim.getNameId(), e);
                                     }
-								});
-							}
-							if (animTickInfo.sound() != null){
-								cam.playSoundHere(animTickInfo.sound());
-							}
-						}
-					}
-					for (AnimatronicDrawing anim : moves.keySet()){
-						Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo> move = moves.get(anim);
-
-						Camera fromCam = move.getKey();
-						Camera toCam = camerasMap.get(move.getValue().moveToCam());
-
-						if (!fromCam.equals(toCam)){
-							try {
-								fromCam.move(anim, toCam);
-								if (move.getValue().moveSound() != null){
-									toCam.playSoundHere(move.getValue().moveSound());
-								}
-								animPosInCam.remove(anim.getNameId());
-								camsHidingMovementTicks.put(fromCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
-								camsHidingMovementTicks.put(toCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
-							} catch (Exception e){
-								System.err.printf("Prevented crash by cancelling move of Animatronic %s from %s to %s." +
-										" Perhaps there is a design flaw in the Animatronic.%n",
-										anim.getNameId(), fromCam, toCam);
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-
-				// Ambient sounds
-				ambientSounds.attemptRandomSound(rng, currentTick, camerasMap);
-
-				// Door sounds
-				switch (officeLoc){
-					case LEFTDOOR -> {
-						if (leftDoorTransTicks == 1 && leftDoorClosed){
-							closeDoorSound.play(doorsSoundsVolume, -0.7);
-						} else if (playDoorTransSound && !leftDoorClosed){
-							openDoorSound.play(doorsSoundsVolume, -0.7);
-						}
-						playDoorTransSound = false;
-					}
-					case RIGHTDOOR -> {
-						if (rightDoorTransTicks == 1 && rightDoorClosed){
-							closeDoorSound.play(doorsSoundsVolume, 0.7);
-						} else if (playDoorTransSound && !rightDoorClosed){
-							openDoorSound.play(doorsSoundsVolume, 0.7);
-						}
-						playDoorTransSound = false;
-					}
-					case MONITOR -> {}
-				}
-
-				// We repaint da thing
-				repaint();
+                                }
+                                if (moveOppInfo.sound() != null) {
+                                    cam.playSoundHere(moveOppInfo.sound());
+                                }
+                            }
+                            if (animTickInfo.jumpscare() != null) {
+                                jumpscare = animTickInfo.jumpscare();
+                                jumpscare.addOnFinishedListener(() -> {
+                                    killedStatic = true;
+                                    killedStaticStart = System.currentTimeMillis();
+                                });
+                            }
+                            if (animTickInfo.sound() != null) {
+                                cam.playSoundHere(animTickInfo.sound());
+                            }
+                        }
+                    }
+                    for (AnimatronicDrawing anim : moves.keySet()) {
+                        Map.Entry<Camera, AnimatronicDrawing.MoveSuccessInfo> move = moves.get(anim);
+                        
+                        Camera fromCam = move.getKey();
+                        Camera toCam = camerasMap.get(move.getValue().moveToCam());
+                        
+                        if (!fromCam.equals(toCam)) {
+                            try {
+                                fromCam.move(anim, toCam);
+                                if (move.getValue().moveSound() != null) {
+                                    toCam.playSoundHere(move.getValue().moveSound());
+                                }
+                                animPosInCam.remove(anim.getNameId());
+                                camsHidingMovementTicks.put(fromCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
+                                camsHidingMovementTicks.put(toCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
+                            } catch (Exception e) {
+                                System.err.printf(
+                                        "Prevented crash by cancelling move of Animatronic %s from %s to %s." + " " +
+                                                "Perhaps there is a design flaw in the Animatronic.%n",
+                                        anim.getNameId(), fromCam, toCam);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    
+                    // Ambient sounds
+                    ambientSounds.attemptRandomSound(rng, currentTick, camerasMap);
+                    
+                    // Door sounds
+                    switch (officeLoc) {
+                        case LEFTDOOR -> {
+                            if (leftDoorTransTicks == 1 && leftDoorClosed) {
+                                closeDoorSound.play(doorsSoundsVolume, -0.7);
+                            } else if (playDoorTransSound && !leftDoorClosed) {
+                                openDoorSound.play(doorsSoundsVolume, -0.7);
+                            }
+                            playDoorTransSound = false;
+                        }
+                        case RIGHTDOOR -> {
+                            if (rightDoorTransTicks == 1 && rightDoorClosed) {
+                                closeDoorSound.play(doorsSoundsVolume, 0.7);
+                            } else if (playDoorTransSound && !rightDoorClosed) {
+                                openDoorSound.play(doorsSoundsVolume, 0.7);
+                            }
+                            playDoorTransSound = false;
+                        }
+                        case MONITOR -> {
+                        }
+                    }
+                }
+                
+                // We repaint da thing
+                repaint();
 			}
 		}, 100, 1000 / fps);
 		
@@ -721,6 +741,29 @@ public class NightJC extends ExitableJComponent {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		// TV static noise for the extra impact on dying
+		if (killedStatic){
+			for (int y = 0; y < getHeight(); y += KILLED_STATIC_PIXEL_SIZE) {
+				for (int x = 0; x < getWidth(); x += KILLED_STATIC_PIXEL_SIZE) {
+					// Generate a grayscale color
+					int grayValue = 255 / (KILLED_STATIC_COLOR_VARIETY - 1) * rng.nextInt(KILLED_STATIC_COLOR_VARIETY);
+					g2d.setColor(new Color(grayValue, grayValue, grayValue));
+					
+					// Draw a rectangle representing the pixel block
+					g2d.fillRect(x, y, KILLED_STATIC_PIXEL_SIZE, KILLED_STATIC_PIXEL_SIZE);
+				}
+			}
+			if (killedStaticStart+KILLED_STATIC_MILLISECS<System.currentTimeMillis()){
+				for(NightEndedListener onCompleted : onNightEndListeners){
+					onCompleted.run(false);
+				}
+				for(Runnable onExit : onExitListeners){
+					onExit.run();
+				}
+			}
+			return;
+		}
 
 		// Most important thing, to fix things being weird depending on the size of this component.
 		double scaleX = getWidth() / (double) OFFICEWIDTH_OF_SOURCE;
@@ -1195,18 +1238,17 @@ public class NightJC extends ExitableJComponent {
             String strPower1 = String.format(Locale.US, "%.0f%%", (powerLeft*100));
             g2d.drawString(strPower1,
                     txtMarginX, getHeight() - fontMetrics.getLeading() - fontMetrics.getDescent() - txtMarginY);
-        } else {
+        } else if (victoryScreen){
             g.setFont(new Font("Arial", Font.BOLD, Math.min(getWidth(), getHeight())/5));
 			FontMetrics fm = g.getFontMetrics();
-			String text = victoryScreen ? "06:00 AM" : "YOU DIED";
-			Color color = victoryScreen ? Color.GREEN : Color.RED;
-
-			int textWidth = fm.stringWidth(text);
+			String text = "06:00 AM";
+            
+            int textWidth = fm.stringWidth(text);
 			int textHeight = fm.getAscent();
 			int centerX = (getWidth() - textWidth) / 2;
 			int centerY = (getHeight() + textHeight) / 2;
 
-			g.setColor(color);
+			g.setColor(Color.GREEN);
 			g2d.drawString(text, centerX, centerY);
         }
 
@@ -1284,7 +1326,6 @@ public class NightJC extends ExitableJComponent {
 				}
 
 				if (jumpscare.isFramesFinished()) {
-					nightTicks.cancel();
 					victoryScreen = false;
 				}
 			}
