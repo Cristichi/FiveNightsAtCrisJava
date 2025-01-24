@@ -14,7 +14,8 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Edit for {@link PropertyUtils} that makes sure that properties are ordered so that the save file is always the same.
+ * Edit for {@link PropertyUtils} that makes sure that properties are ordered so that the {@link Settings} file
+ * is always ordered the same way, for better human reading.
  */
 public class OrderedPropertyUtils extends PropertyUtils {
     private final Map<Class<?>, Map<String, Property>> propertiesCache = new HashMap<>();
