@@ -25,9 +25,10 @@ public class NightProgress {
     /**
      * It gets the Documents folder of the computer's user that runs the game, and creates a new folder inside it
      * for save files to use.
+     * @param folderName Name of the folder inside the Documents folder.
      */
-    public static void init(){
-        pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
+    public static void init(String folderName){
+        pathToFnacFolder = "%s/Documents/%s/".formatted(System.getProperty("user.home"), folderName);
         new File(pathToFnacFolder).mkdirs();
     }
 

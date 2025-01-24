@@ -23,9 +23,10 @@ public class Settings {
      * This method must be called in order to find the Documents folder of the computer's user.
      * Also, it sets some options to make the generated YAML files pretty and ordered for humans to
      * look and modify manually if needed.
+     * @param folderName Name of the folder inside the Documents folder.
      */
-    public static void init(){
-        pathToFnacFolder = "%s/Documents/Five Nights at Cris/".formatted(System.getProperty("user.home"));
+    public static void init(String folderName){
+        pathToFnacFolder = "%s/Documents/%s/".formatted(System.getProperty("user.home"), folderName);
         new File(pathToFnacFolder).mkdirs();
 
         DumperOptions options = new DumperOptions();
@@ -131,7 +132,7 @@ public class Settings {
     }
 
     /**
-     * You need to call {@link Settings#init()} one anywhere else before this method can work.
+     * You need to call {@link Settings#init(String)} one anywhere else before this method can work.
      * Saves the current values of this {@link Settings} object into the file in YAML format.
      * @param filePath Path to file, from the user's Documents folder, and name.
      */

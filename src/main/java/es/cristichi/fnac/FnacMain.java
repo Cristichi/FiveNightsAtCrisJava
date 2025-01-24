@@ -62,17 +62,23 @@ public class FnacMain {
      * @param args Arguments, but they are ignored.
      */
     public static void main(String[] args) {
-        new FnacMain().run(null, null, null);
+        new FnacMain().run("Five Nights at Cris", null, null, null);
     }
     
     /**
      * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
      * method you may also want to register anything you need on the registries.
-     * @param loadingSequences List of individual Runnables that must be run during the initial loading
-     * @param loadingWithSettings List of individual Runnables that depend on the Settings being loaded.
-     * @param loadingWithSaveFile List of individual Runnables that depend on the Save File being loaded.
+     * @param docFolderName Name of the folder inside the computer user's Documents folder for the Settings and
+     *                      Save file.
+     * @param loadingSequences List of individual Runnables that must be run during the initial loading, or
+     *                         {@code null} for noneª.
+     * @param loadingWithSettings List of individual Runnables that depend on the Settings being loaded, or
+     *                            {@code null} for none.
+     * @param loadingWithSaveFile List of individual Runnables that depend on the Save File being loaded, or
+     *                            {@code null} for none.
      */
-    public void run(@Nullable LoadRunnable[] loadingSequences, @Nullable LoadRunnableWithSettings[] loadingWithSettings,
+    public void run(String docFolderName, @Nullable LoadRunnable[] loadingSequences,
+                    @Nullable LoadRunnableWithSettings[] loadingWithSettings,
                     @Nullable LoadRunnableWithSaveFile[] loadingWithSaveFile) {
         // Semaphore to make the JFrame wait until everything is loaded.
         Semaphore loadingSem = new Semaphore(-12
@@ -108,7 +114,7 @@ public class FnacMain {
         AtomicReference<NightsJF> window = new AtomicReference<>();
         SwingUtilities.invokeLater(() -> {
             try {
-                Settings.init();
+                Settings.init(docFolderName);
                 try {
                     settings.set(Settings.fromFile(Settings.SETTINGS_FILE));
                     settings.get().saveToFile(Settings.SETTINGS_FILE);
@@ -172,7 +178,7 @@ public class FnacMain {
         // Save file
         final AtomicReference<NightProgress.SaveFile> saveFile = new AtomicReference<>();
         new Thread(() -> {
-            NightProgress.init();
+            NightProgress.init(docFolderName);
             try {
                 saveFile.set(NightProgress.loadFromFile(NightProgress.SAVE_FILE_NAME));
                 
