@@ -43,7 +43,7 @@ public class Settings {
     public static final String SETTINGS_FILE = "settings.yaml";
 
     /**
-     * You need to call {@link Settings#init()} one anywhere else before this method can work.
+     * You need to call {@link Settings#init(String)} one anywhere else before this method can work.
      * Retrieves the Settings saved on the specifiled file the filePath is pointing to. If it does not
      * exist, it will create a new one with the default values.
      * @param filePath Path to file, from the user's Documents folder, and name.
