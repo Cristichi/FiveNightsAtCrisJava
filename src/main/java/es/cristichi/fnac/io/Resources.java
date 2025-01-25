@@ -113,7 +113,7 @@ public class Resources {
                 
                 for (int i = 0; i < numFrames; i++) {
                     Integer delay = null;
-                    GifFrameDisposalMethod disposalMethod = null;
+                    GifFrame.DisposalMethod disposalMethod = null;
                     int offsetX = 0;
                     int offsetY = 0;
                     int width = 0;
@@ -144,10 +144,10 @@ public class Resources {
                                 String method = disposalNode.getNodeValue();
                                 disposalMethod = switch (method) {
                                     case "restoreToBackgroundColor" ->
-                                            GifFrameDisposalMethod.RESTORE_TO_BACKGROUND_COLOR;
-                                    case "restoreToPrevious" -> GifFrameDisposalMethod.RESTORE_TO_PREVIOUS;
-                                    case "doNotDispose" -> GifFrameDisposalMethod.DO_NOT_DISPOSE;
-                                    default -> GifFrameDisposalMethod.UNSPECIFIED;
+                                            GifFrame.DisposalMethod.RESTORE_TO_BACKGROUND_COLOR;
+                                    case "restoreToPrevious" -> GifFrame.DisposalMethod.RESTORE_TO_PREVIOUS;
+                                    case "doNotDispose" -> GifFrame.DisposalMethod.DO_NOT_DISPOSE;
+                                    default -> GifFrame.DisposalMethod.UNSPECIFIED;
                                 };
                             }
                         } else if (metadataKid.getNodeName().equals("ImageDescriptor")) {
