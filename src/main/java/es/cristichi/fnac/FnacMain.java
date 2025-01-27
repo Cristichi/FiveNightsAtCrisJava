@@ -102,8 +102,6 @@ public class FnacMain {
             }
         }
         
-        
-        
         // Settings and dependands. Together because the Window and other things depend on the Settings.
         final AtomicReference<Settings> settings = new AtomicReference<>();
         AtomicReference<NightsJF> window = new AtomicReference<>();
