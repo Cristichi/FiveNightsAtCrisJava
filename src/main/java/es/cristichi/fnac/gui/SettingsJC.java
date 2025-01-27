@@ -190,6 +190,7 @@ public abstract class SettingsJC extends JComponent {
         Sound volumeTest = Resources.loadSound("settings/sounds/volumetest.wav");
         volumeSlider.addChangeListener(e -> {
             TinySound.setGlobalVolume((double) volumeSlider.getValue() /100);
+            this.editingSettings.setVolume(volumeSlider.getValue() / 100.0);
             volumeTest.stop();
             volumeTest.play();
         });
@@ -206,7 +207,6 @@ public abstract class SettingsJC extends JComponent {
         volumeLabels.put(100, label100);
         volumeSlider.setLabelTable(volumeLabels);
 
-        volumeSlider.addChangeListener(e -> this.editingSettings.setVolume(volumeSlider.getValue() / 100.0));
         add(volumeSlider, gbc);
 
         // Save Button
