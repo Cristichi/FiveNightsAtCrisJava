@@ -102,11 +102,6 @@ public class FnacMain {
             }
         }
         
-        // Sound system init
-        new Thread(() -> {
-            TinySound.init();
-            loadingSem.release();
-        }).start();
         
         
         // Settings and dependands. Together because the Window and other things depend on the Settings.
@@ -118,7 +113,13 @@ public class FnacMain {
                 try {
                     settings.set(Settings.fromFile(Settings.SETTINGS_FILE));
                     settings.get().saveToFile(Settings.SETTINGS_FILE);
-                    TinySound.setGlobalVolume(settings.get().getVolume());
+                    
+                    // Sound system init
+                    new Thread(() -> {
+                        TinySound.init();
+                        TinySound.setGlobalVolume(settings.get().getVolume());
+                        loadingSem.release();
+                    }).start();
                 } catch (Exception e) {
                     new ExceptionDialog(new RuntimeException("Failed to load settings file", e), true, true, LOGGER);
                 }
