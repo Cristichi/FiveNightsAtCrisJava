@@ -179,10 +179,11 @@ public abstract class SettingsJC extends JComponent {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        volumeSlider = new JSlider(10, 100, (int) (editingSettings.getVolume() * 100));
-        volumeSlider.setMajorTickSpacing(25);
-        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider = new JSlider(0, 100, (int) (editingSettings.getVolume() * 100));
         volumeSlider.setOpaque(false);
+        volumeSlider.setMajorTickSpacing(10);
+        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider.setSnapToTicks(true);
         volumeSlider.setPaintTrack(false);
         volumeSlider.setPaintTicks(true);
         volumeSlider.setPaintLabels(true);
@@ -194,15 +195,15 @@ public abstract class SettingsJC extends JComponent {
         });
 
         Hashtable<Integer, JLabel> volumeLabels = new Hashtable<>();
-        JLabel label1 = new JLabel("<html>0%</html>");
-        label1.setForeground(foreground);
-        volumeLabels.put(0, label1);
-        JLabel label10 = new JLabel("<html>10%</html>");
-        label10.setForeground(foreground);
-        volumeLabels.put(10, label10);
-        JLabel label2 = new JLabel("<html>100%</html>");
-        label2.setForeground(foreground);
-        volumeLabels.put(100, label2);
+        JLabel label0 = new JLabel("<html>0%</html>");
+        label0.setForeground(foreground);
+        volumeLabels.put(0, label0);
+        JLabel label50 = new JLabel("<html>50%</html>");
+        label50.setForeground(foreground);
+        volumeLabels.put(50, label50);
+        JLabel label100 = new JLabel("<html>100%</html>");
+        label100.setForeground(foreground);
+        volumeLabels.put(100, label100);
         volumeSlider.setLabelTable(volumeLabels);
 
         volumeSlider.addChangeListener(e -> this.editingSettings.setVolume(volumeSlider.getValue() / 100.0));
@@ -261,7 +262,7 @@ public abstract class SettingsJC extends JComponent {
      * @return The JButton instance properly styled.
      */
     private JButton createCustomButton(String text) {
-        JButton btn = new JButton("<html><u>" + text + "</u></html>");
+        JButton btn = new JButton("<html><u>%s</u></html>".formatted(text));
         btn.setFont(getFont());
         btn.setForeground(foreground);
         btn.setOpaque(false);
