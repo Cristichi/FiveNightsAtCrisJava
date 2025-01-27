@@ -93,7 +93,6 @@ public class OrderedPropertyUtils extends PropertyUtils {
         if (properties.isEmpty() && inaccessableFieldsExist) {
             throw new YAMLException("No JavaBean properties found in " + type.getName());
         }
-        System.out.println(properties);
         propertiesCache.put(type, properties);
         return properties;
     }
