@@ -645,11 +645,9 @@ public class NightJC extends ExitableJComponent {
                                 camsHidingMovementTicks.put(fromCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
                                 camsHidingMovementTicks.put(toCam.getNameId(), CAMS_STATIC_MOVE_TICKS);
                             } catch (Exception e) {
-                                System.err.printf(
-                                        "Prevented crash by cancelling move of Animatronic %s from %s to %s." + " " +
-                                                "Perhaps there is a design flaw in the Animatronic.%n",
-                                        anim.getNameId(), fromCam, toCam);
-                                e.printStackTrace();
+                                LOGGER.error("Prevented crash by cancelling move of AnimatronicDrawing {} from " +
+												"Camera {} to {}. Perhaps there is a design flaw in the Animatronic.\n",
+										anim.getNameId(), fromCam, toCam, e);
                             }
                         }
                     }
