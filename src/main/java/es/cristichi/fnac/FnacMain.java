@@ -120,6 +120,7 @@ public class FnacMain {
                     }).start();
                 } catch (Exception e) {
                     new ExceptionDialog(new RuntimeException("Failed to load settings file", e), true, true, LOGGER);
+                    return;
                 }
                 window.set(new NightsJF());
                 window.get().startStartingSequence(loadingSem, settings.get());
@@ -144,7 +145,6 @@ public class FnacMain {
                             settings.get().saveToFile(Settings.SETTINGS_FILE);
                         } catch (Exception error) {
                             new ExceptionDialog(error, true, false, LOGGER);
-                            window.get().dispose();
                         }
                     }
                 };
