@@ -72,7 +72,11 @@ public abstract class AnimatronicDrawing {
     /** Used on the default implementation of {@link #onTick(int, int, boolean, boolean, Camera, Random)} to
      *  check how long has the AnimatronicDrawing being able to kill without doing so. */
     protected Integer startKillTick = null;
-
+    
+    /** This keeps track of whether on the previous tick the AnimatronicDrawing was at a closed door, to detect if
+     * the door was opened while they were there. */
+    protected boolean lastTickAtClosedDoor = false;
+    
     /**
      * Creating an Animatronic.
      *
@@ -160,6 +164,9 @@ public abstract class AnimatronicDrawing {
     @SuppressWarnings("unused") // In case custom Animatronics want to know more information.
     public AnimTickInfo onTick(int tick, int fps, boolean camsUp, boolean openDoor, Camera cam, Random rng) {
         if (openDoor) {
+            if (lastTickAtClosedDoor){
+                return new AnimTickInfo(false, jumpscare, null);
+            }
             // Door is open, start counting (doing nothing means we are counting up)
             if (startKillTick == null) {
                 startKillTick = tick;
@@ -170,6 +177,7 @@ public abstract class AnimatronicDrawing {
             }
             return new AnimTickInfo(false, null, null);
         } else {
+            lastTickAtClosedDoor = cam.isLeftDoor() || cam.isRightDoor();
             boolean moveOpp = tick % (int) Math.round((secInterval + randomSecDelay) * fps) == 0;
             startKillTick = null;
             // If door is closed but the Animatronic is still at the door, retain the count
