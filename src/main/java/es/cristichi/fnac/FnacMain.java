@@ -81,7 +81,7 @@ public class FnacMain {
                     @Nullable LoadRunnableWithSettings[] loadingWithSettings,
                     @Nullable LoadRunnableWithSaveFile[] loadingWithSaveFile) {
         // Semaphore to make the JFrame wait until everything is loaded.
-        Semaphore loadingSem = new Semaphore(-12
+        Semaphore loadingSem = new Semaphore(-19
                 -(loadingSequences==null?0:loadingSequences.length)
                 -(loadingWithSettings==null?0:loadingWithSettings.length)
                 -(loadingWithSaveFile==null?0:loadingWithSaveFile.length));
@@ -417,39 +417,60 @@ public class FnacMain {
                             Resources.loadSound("night/tutorial/completed.wav"), null, null);
                 }
             });
+            loadingSem.release();
+        }).start();
             
-            // Example on how to do them by organizing them in classes
+        // Examples on how to do them by organizing them in classes
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night1());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
+            loadingSem.release();
+        }).start();
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night2());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
+            loadingSem.release();
+        }).start();
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night3());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
+            loadingSem.release();
+        }).start();
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night4());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
+            loadingSem.release();
+        }).start();
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night5());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
+            loadingSem.release();
+        }).start();
+        new Thread(() -> {
             try {
                 NightRegistry.registerNight(new Night6());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
-            
+            loadingSem.release();
+        }).start();
+        
+        new Thread(() -> {
             NightRegistry.registerNight(
                     new NightFactory(new MenuJC.ItemInfo("n7", "<u>Full</u> Night Shift", "Full Night Shift", null)) {
                 @Override

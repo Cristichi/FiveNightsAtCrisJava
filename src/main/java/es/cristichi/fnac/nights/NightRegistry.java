@@ -19,13 +19,15 @@ public class NightRegistry {
     private static final ArrayList<NightFactory> registry = new ArrayList<>(7);
     
     /**
-     * It registers athe {@link NightFactory} for the Night that is available with the given exact
-     * number of completed Nights. If a Night with the same requirement of completed Nights exists, this does nothing.
+     * It registers the {@link NightFactory} for the Night that is available as indicated by itself. Its menu item
+     * must have a unique ID, otherwise an error is thrown to allow "replacing" the default Nights by mods.
      *
      * @param nightFactory            The NightFactory that can create the correct next Night for the player to play.
      *                                A {@code null} value indicates Custom Night.
+     *
+     * @throws IllegalArgumentException If a NightFactory with the same menu item ID already exists.
      */
-    public static void registerNight(NightFactory nightFactory){
+    public static synchronized void registerNight(NightFactory nightFactory){
         for (NightFactory factory : registry){
             if (factory.equals(nightFactory)){
                 throw new IllegalArgumentException("There cannot be more than one Night with the menu id \"%s\"."
