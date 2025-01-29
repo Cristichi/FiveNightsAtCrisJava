@@ -22,6 +22,8 @@ public abstract class NightFactory implements Comparable<NightFactory> {
     
     /**
      * Creates a NightFactory with the given menu Item.
+     *
+     * @param item Instance of {@link MenuJC.ItemInfo} that will be used for this Night in the menu.
      */
     protected NightFactory(MenuJC.ItemInfo item) {
         this.item = item;
