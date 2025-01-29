@@ -6,7 +6,7 @@
 
     <groupId>es.cristichi</groupId>
     <artifactId>five-nights-at-cris</artifactId>
-    <version>0.8.15</version>
+    <version>0.8.16</version>
     <description>
         Five Nights at Cris' Maven package is proposed as a way for Java developers to add AnimatronicDrawings and
         modify Nights in order to make their own version of the game while keeping the main mechanics. In order to
