@@ -396,7 +396,7 @@ public class FnacMain {
              * This is the Tutorial Night, so it's the first one (it requires having 0 completed Nights).
              */
             NightRegistry.registerNight(
-                    new NightFactory(new MenuJC.ItemInfo("tutorial", "New Game", "Tutorial Night", null)) {
+                    new NightFactory(new MenuJC.ItemInfo("n0_tutorial", "New Game", "Tutorial Night", null)) {
                 @Override
                 public Availability getAvailability(NightProgress.SaveFile saveFile) {
                     return new Availability(saveFile.completedNights().isEmpty(), false);
@@ -472,7 +472,7 @@ public class FnacMain {
         
         new Thread(() -> {
             NightRegistry.registerNight(
-                    new NightFactory(new MenuJC.ItemInfo("n7", "<u>Full</u> Night Shift", "Full Night Shift", null)) {
+                    new NightFactory(new MenuJC.ItemInfo("n7", "<u>Full Night</u> Shift", "<b>Full Night</b> Shift", null)) {
                 @Override
                 public Availability getAvailability(NightProgress.SaveFile saveFile) {
                     return new Availability(saveFile.completedNights().size()>6, true);

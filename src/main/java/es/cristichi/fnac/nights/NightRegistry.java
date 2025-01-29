@@ -3,9 +3,7 @@ package es.cristichi.fnac.nights;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This registry registers each Night in the order they must appear. The index of each Night represents the number of
@@ -16,7 +14,7 @@ import java.util.List;
 public class NightRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(NightRegistry.class);
     
-    private static final ArrayList<NightFactory> registry = new ArrayList<>(7);
+    private static final TreeSet<NightFactory> registry = new TreeSet<>(Comparator.comparing(o -> o.getItem().id()));
     
     /**
      * It registers the {@link NightFactory} for the Night that is available as indicated by itself. Its menu item
@@ -41,7 +39,7 @@ public class NightRegistry {
     /**
      * @return An ordered, unmodifiable {@link List<NightFactory>} of all Nights registered.
      */
-    public static List<NightFactory> getAllNights(){
-        return Collections.unmodifiableList(registry);
+    public static Set<NightFactory> getAllNights(){
+        return Collections.unmodifiableSet(registry);
     }
 }
