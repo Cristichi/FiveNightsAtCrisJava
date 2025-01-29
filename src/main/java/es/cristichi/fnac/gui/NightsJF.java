@@ -20,9 +20,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
-import java.util.*;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -259,7 +260,7 @@ public class NightsJF extends JFrame {
     private @NotNull MenuJC.Info getUpdatedMenuData() throws ResourceException {
         ArrayList<MenuJC.Item> mmItems = new ArrayList<>(2);
         if (customNightItem == null){
-            customNightItem = new MenuJC.Item(new MenuJC.ItemInfo("custom", "Play with Us!", "Custom Night",
+            customNightItem = new MenuJC.Item(new MenuJC.ItemInfo("custom", "Custom Night", "Custom Night!",
                     Resources.loadImage("night/custom/loading.jpg")), () -> {
                 try {
                     CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings,
@@ -273,8 +274,7 @@ public class NightsJF extends JFrame {
             });
         }
         String backgrResPath;
-        List<String> completed = saveFile.completedNights();
-        int numCompleted = completed.size();
+        int numCompleted = saveFile.completedNights().size();
         
         backgrResPath = switch (numCompleted) {
             case 0 -> "menu/background0.jpg";
@@ -286,30 +286,24 @@ public class NightsJF extends JFrame {
             case 6 -> "menu/background6.jpg";
             default -> "menu/backgroundCustom.jpg";
         };
-        if (FnacMain.DEBUG_ALLNIGHTS) {
+        boolean addCustomNight = true;
+        for (NightFactory nightFactory : NightRegistry.getAllNights()) {
+            NightFactory.Availability availability = nightFactory.getAvailability(saveFile);
+            if (FnacMain.DEBUG_ALLNIGHTS || availability.playableNow()) {
+                if (!availability.allowWithCustomNight()){
+                    addCustomNight = false;
+                }
+                mmItems.add(new MenuJC.Item(nightFactory.getItem(), () -> {
+                    try {
+                        startNightFromFactory(nightFactory);
+                    } catch (Exception e) {
+                        new ExceptionDialog(e, false, true, LOGGER);
+                    }
+                }));
+            }
+        }
+        if (FnacMain.DEBUG_ALLNIGHTS || addCustomNight) {
             mmItems.add(customNightItem);
-            for (NightFactory nightFactory : NightRegistry.getAllNights().values()){
-                mmItems.add(new MenuJC.Item(nightFactory.getItem(), () -> {
-                    try {
-                        startNightFromFactory(nightFactory);
-                    } catch (Exception e){
-                        new ExceptionDialog(e, false, true, LOGGER);
-                    }
-                }));
-            }
-        } else {
-            NightFactory nightFactory = NightRegistry.getNight(numCompleted);
-            if (nightFactory == null) {
-                mmItems.add(customNightItem);
-            } else {
-                mmItems.add(new MenuJC.Item(nightFactory.getItem(), () -> {
-                    try {
-                        startNightFromFactory(nightFactory);
-                    } catch (Exception e){
-                        new ExceptionDialog(e, false, true, LOGGER);
-                    }
-                }));
-            }
         }
         mmItems.add(new MenuJC.Item(new MenuJC.ItemInfo("settings", "Settings", "Settings", null),
                 () -> cardLayout.show(cardPanel, "settings")));
@@ -323,41 +317,35 @@ public class NightsJF extends JFrame {
      * when the Night finishes.
      * @param nightFactory Factory that can create the desired NightJC to play.
      */
-    private void startNightFromFactory(NightFactory nightFactory){
+    private void startNightFromFactory(NightFactory nightFactory) throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
-        try {
-            NightJC night = nightFactory.createNight(settings, Jumpscare.getPowerOutageJumpscare(), rng);
-            night.addOnNightEnd((completed) -> {
-                if (completed) {
-                    saveFile.addCompletedNight(night.getNightName());
-                    try {
-                        saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
-                        MenuJC.Info menuInfo = getUpdatedMenuData();
-                        mainMenu.updateBackground(menuInfo.background());
-                        mainMenu.updateMenuItems(menuInfo.menuItems());
-                    } catch (IOException e) {
-                        new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e),
-                                true, false, LOGGER);
-                    }
+        NightJC night = nightFactory.createNight(settings, Jumpscare.getPowerOutageJumpscare(), rng);
+        night.addOnNightEnd((completed) -> {
+            if (completed) {
+                saveFile.addCompletedNight(night.getNightName());
+                try {
+                    saveFile.saveToFile(NightProgress.SAVE_FILE_NAME);
+                    MenuJC.Info menuInfo = getUpdatedMenuData();
+                    mainMenu.updateBackground(menuInfo.background());
+                    mainMenu.updateMenuItems(menuInfo.menuItems());
+                } catch (IOException e) {
+                    new ExceptionDialog(new IOException("Progress could not be saved due to an error.", e),
+                            true, false, LOGGER);
                 }
-                cardLayout.show(cardPanel, "menu");
-                nightPanel.remove(night);
-                nightPanel.removeAll();
-                nightPanel.revalidate();
-                mainMenu.startMusic();
-            });
-            nightPanel.add(night);
-            setTitle(getTitleForWindow(night.getNightName()));
-            cardLayout.show(cardPanel, "night");
-            LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
-            mainMenu.stopMusic();
-            night.startNight();
-        } catch (IOException e) {
-            new ExceptionDialog(new NightException("Error creating Night.", e), false, false, LOGGER);
-        } catch (NightException e) {
-            new ExceptionDialog(e, false, false, LOGGER);
-        }
+            }
+            cardLayout.show(cardPanel, "menu");
+            nightPanel.remove(night);
+            nightPanel.removeAll();
+            nightPanel.revalidate();
+            mainMenu.startMusic();
+        });
+        nightPanel.add(night);
+        setTitle(getTitleForWindow(night.getNightName()));
+        cardLayout.show(cardPanel, "night");
+        LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
+        mainMenu.stopMusic();
+        night.startNight();
     }
     
     /**

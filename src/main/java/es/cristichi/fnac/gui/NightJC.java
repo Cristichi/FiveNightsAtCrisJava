@@ -43,7 +43,7 @@ public class NightJC extends ExitableJComponent {
 	/** Frames per second, used to convert from in-game ticks to seconds and vice-versa. */
 	private final int fps;
 	/** Objective hour. Reaching this hour results in a win. */
-	private static final int TOTAL_HOURS = 6;
+	private final int totalHours;
 
 	/** Night identifier, used to save the Night after completion and also for the window title. */
 	private final String nightName;
@@ -314,31 +314,34 @@ public class NightJC extends ExitableJComponent {
 	
 	/**
 	 * This method loads all the necessary Resources from disk.
-	 * @param nightName Name of the Night. Barely used.
-	 * @param fps FPS for the Night. This is used as a target FPS and also to convert seconds to FPS.
-	 * @param camMap Map of the place. Animatronics present in the Night must start inside
-	 *                              their starting Cameras, they are only stored there.
-	 * @param paperImg 	   Image of the paper to put at the office. The paper should be 2480x4193px, or keep that same
-	 *                     aspect ratio to be printed correctly. Use {@code null} for no paper.
-	 * @param secsPerHour Number of seconds per in-game hour. It significantly affects difficulty, as
-	 *                    longer Nights will allow the Animatronics more movements per Night, as well as
-	 *                    the human aspect of the difficulty like keeping concentration.
-	 *                    The recommended baseline value is 90 seconds per hour.
-	 * @param rng Random for the night. Use {@code new Random()} unless you want a specific seed.
+	 *
+	 * @param nightName            Name of the Night. Barely used.
+	 * @param fps                  FPS for the Night. This is used as a target FPS and also to convert seconds to FPS.
+	 * @param camMap               Map of the place. Animatronics present in the Night must start inside
+	 *                             their starting Cameras, they are only stored there.
+	 * @param paperImg             Image of the paper to put at the office. The paper should be 2480x4193px, or keep that same
+	 *                             aspect ratio to be printed correctly. Use {@code null} for no paper.
 	 * @param powerOutageJumpscare Jumpscare that will happen when the player runs out of power.
-	 * @param passivePowerUsage A float from 0 to 1, where 0 makes the night impossible to lose by
+	 * @param rng                  Random for the night. Use {@code new Random()} unless you want a specific seed.
+	 * @param secsPerHour          Number of seconds per in-game hour. It significantly affects difficulty, as
+	 *                             longer Nights will allow the Animatronics more movements per Night, as well as
+	 *                             the human aspect of the difficulty like keeping concentration.
+	 *                             The recommended baseline value is 90 seconds per hour.
+	 * @param totalHours		   Total number of hours, starting at 0. Doing more than 24 will introduce days with
+	 *                             impossible hours in the HUD. It should be "6" unless an explicitely unorthodox number
+	 *                             of hours is kindly asked for this Night.
+	 * @param passivePowerUsage    A float from 0 to 1, where 0 makes the night impossible to lose by
 	 *                             a power outage (even if you have both doors closed at all time),
 	 *                             and 1 makes it impossible to win even without Animatronics.
 	 *                             It must be kept in mind that Cameras also use power.
-	 * @param nightCompletedSound Sound played when Night is completed successfully (the player did not die).
-	 * @param startSounds Sound played at the start of the Night, like a dialogue.
-	 * @param endSounds Sound played at the calculated moment so that it finishes when the Night is over.
+	 * @param nightCompletedSound  Sound played when Night is completed successfully (the player did not die).
+	 * @param startSounds          Sound played at the start of the Night, like a dialogue.
+	 * @param endSounds            Sound played at the calculated moment so that it finishes when the Night is over.
 	 * @throws ResourceException If any of the resources required for Nights cannot be loaded from the disk.
-     * @throws NightException If the Night is not properly set.
+	 * @throws NightException    If the Night is not properly set.
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable BufferedImage paperImg,
-				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour,
-				   float passivePowerUsage, Sound nightCompletedSound, @Nullable SubtitledSound[] startSounds,
+				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour, int totalHours, float passivePowerUsage, Sound nightCompletedSound, @Nullable SubtitledSound[] startSounds,
 				   @Nullable SubtitledSound[] endSounds) throws ResourceException, NightException {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
@@ -346,6 +349,7 @@ public class NightJC extends ExitableJComponent {
 		currentHour = 0; // Start at 12 AM = 00:00h. Luckily 0h = 0, pog
 		this.rng = rng;
 		this.fps = fps;
+		this.totalHours = totalHours;
 		this.startSounds = startSounds;
 		this.endSounds = endSounds;
 		this.nightName = nightName;
@@ -366,7 +370,7 @@ public class NightJC extends ExitableJComponent {
 		// So this is calculated depending on the FPS, which determines the total number of ticks per night, which is
 		// important to calibrate that the Night cannot be survived by keeping both doors closed (extremely easy)
 		// but also that using nothing does not kill you (extremely hard). The objective is to find a balance.
-		int totalTicks = hourTicksInterval * TOTAL_HOURS;
+		int totalTicks = hourTicksInterval * this.totalHours;
 		// Minimum power consumption per tick. Lower values make the game impossible even with no Animatronics.
 		float minPowerPerTickPerResource = 1.0f / totalTicks;
 		// Maximum power consumption. Higher values makes the game 100% consistent by closing both doors and not moving.
@@ -539,7 +543,7 @@ public class NightJC extends ExitableJComponent {
 				if (jumpscare == null && victoryScreen == null){
                     if (currentTick % hourTicksInterval == 0) {
                         currentHour++;
-                        if (currentHour == TOTAL_HOURS) {
+                        if (currentHour == totalHours) {
                             ambientSounds.clear();
                             victoryScreen = true;
                             soundOnCompleted.addOnEndListener(() -> {
@@ -715,7 +719,7 @@ public class NightJC extends ExitableJComponent {
 					currentSubStarted = System.currentTimeMillis();
 				});
 			}
-			long start = (long) (secsPerHour*TOTAL_HOURS*1000 - END_SOUND_MARGIN_MS-totalDuration);
+			long start = (long) (secsPerHour* totalHours *1000 - END_SOUND_MARGIN_MS-totalDuration);
 			if (start > 0 && totalDuration > 0){
 				nightTicks.schedule(new TimerTask() {
 					@Override

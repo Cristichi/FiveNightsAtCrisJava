@@ -1,13 +1,11 @@
 package es.cristichi.fnac.nights;
 
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This registry registers each Night in the order they must appear. The index of each Night represents the number of
@@ -18,44 +16,30 @@ import java.util.TreeMap;
 public class NightRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(NightRegistry.class);
     
-    private static final TreeMap<Integer, NightFactory> registry = new TreeMap<>();
+    private static final ArrayList<NightFactory> registry = new ArrayList<>(7);
     
     /**
      * It registers athe {@link NightFactory} for the Night that is available with the given exact
      * number of completed Nights. If a Night with the same requirement of completed Nights exists, this does nothing.
      *
-     * @param requiredCompletedNights Exact number of completed Nights the player must have in their save file to
-     *                                have this Night be the next one to play.
      * @param nightFactory            The NightFactory that can create the correct next Night for the player to play.
      *                                A {@code null} value indicates Custom Night.
      */
-    public static void registerNight(int requiredCompletedNights, NightFactory nightFactory){
-        if (requiredCompletedNights < 0){
-            throw new IllegalArgumentException("There cannot be less than 0 completed Nights.");
+    public static void registerNight(NightFactory nightFactory){
+        for (NightFactory factory : registry){
+            if (factory.equals(nightFactory)){
+                throw new IllegalArgumentException("There cannot be more than one Night with the menu id \"%s\"."
+                        .formatted(nightFactory.getItem().id()));
+            }
         }
-        if (registry.containsKey(requiredCompletedNights)){
-            LOGGER.debug("Night for {} completed Nights was already set.", requiredCompletedNights);
-        } else {
-            LOGGER.debug("Night for {} completed Nights has been registered.", requiredCompletedNights);
-            registry.put(requiredCompletedNights, nightFactory);
-        }
-    }
-    
-    /**
-     * @param completedNights Number of completed Nights.
-     * @return The factory for this number of completed Nights, or {@code null} if the player completed all Nights.
-     */
-    public static @Nullable NightFactory getNight(int completedNights){
-        if (completedNights < 0 || completedNights>= registry.size()){
-            return null;
-        }
-        return registry.get(completedNights);
+        registry.add(nightFactory);
+        LOGGER.debug("Night with menu item id \"{}\" has been registered.", nightFactory.getItem().id());
     }
     
     /**
      * @return An ordered, unmodifiable {@link List<NightFactory>} of all Nights registered.
      */
-    public static Map<Integer, NightFactory> getAllNights(){
-        return Collections.unmodifiableMap(registry);
+    public static List<NightFactory> getAllNights(){
+        return Collections.unmodifiableList(registry);
     }
 }

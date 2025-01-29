@@ -390,16 +390,16 @@ public class FnacMain {
             }
         }).start();
         
-        // Nights
-        
-        /* This is an example of creating a NightFactory inline here without having to create a new class for it.
-         * This is the Tutorial Night, so it's the first one (it requires having 0 completed Nights).
-         */
+        // Night registering
         new Thread(() -> {
-            NightRegistry.registerNight(0, new NightFactory() {
+            /* This is an example of creating a NightFactory inline here without having to create a new class for it.
+             * This is the Tutorial Night, so it's the first one (it requires having 0 completed Nights).
+             */
+            NightRegistry.registerNight(
+                    new NightFactory(new MenuJC.ItemInfo("tutorial", "New Game", "Tutorial Night", null)) {
                 @Override
-                public MenuJC.ItemInfo getItem() {
-                    return new MenuJC.ItemInfo("tutorial", "New Game", "Tutorial Night", null);
+                public Availability getAvailability(NightProgress.SaveFile saveFile) {
+                    return new Availability(saveFile.completedNights().isEmpty(), false);
                 }
                 
                 @Override
@@ -413,18 +413,87 @@ public class FnacMain {
                                     rng));
                     
                     return new NightJC("Tutorial", settings.getFps(), tutorialMap,
-                            Resources.loadImage("night/tutorial/paper.png"), powerOutage, rng, 60, 0.45f,
+                            Resources.loadImage("night/tutorial/paper.png"), powerOutage, rng, 60, 6, 0.45f,
                             Resources.loadSound("night/tutorial/completed.wav"), null, null);
                 }
             });
-            // Example on how to do them by organizing them in classes
-            NightRegistry.registerNight(1, new Night1());
-            NightRegistry.registerNight(2, new Night2());
-            NightRegistry.registerNight(3, new Night3());
-            NightRegistry.registerNight(4, new Night4());
-            NightRegistry.registerNight(5, new Night5());
-            NightRegistry.registerNight(6, new Night6());
             
+            // Example on how to do them by organizing them in classes
+            try {
+                NightRegistry.registerNight(new Night1());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                NightRegistry.registerNight(new Night2());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                NightRegistry.registerNight(new Night3());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                NightRegistry.registerNight(new Night4());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                NightRegistry.registerNight(new Night5());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                NightRegistry.registerNight(new Night6());
+            } catch (ResourceException e) {
+                throw new RuntimeException(e);
+            }
+            
+            NightRegistry.registerNight(
+                    new NightFactory(new MenuJC.ItemInfo("n7", "<u>Full</u> Night Shift", "Full Night Shift", null)) {
+                @Override
+                public Availability getAvailability(NightProgress.SaveFile saveFile) {
+                    return new Availability(saveFile.completedNights().size()>6, true);
+                }
+                
+                @Override
+                public NightJC createNight(Settings settings, Jumpscare powerOutage,
+                                           Random rng) throws IOException, NightException {
+                    AnimatronicDrawing bob = new RoamingBob("Bob", Map.of(0,10), false, false,
+                            List.of("corridor 2", "corridor 4", "bathrooms", "offices", "storage", "kitchen"), rng);
+                    
+                    AnimatronicDrawing maria = new RoamingMaria("Maria", Map.of(0,7, 2,9), false, false,
+                            List.of("corridor 1", "corridor 3", "staff lounge", "storage", "kitchen"), rng);
+                    
+                    AnimatronicDrawing paco = new Paco("Paco", Map.of(0,9, 3,10), false, true,
+                            List.of(
+                                    List.of("kitchen", "dining area", "corridor 1", "corridor 3", "leftDoor"),
+                                    List.of("kitchen", "dining area", "corridor 2", "corridor 4", "rightDoor")
+                            ), rng);
+                    
+                    AnimatronicDrawing crisClon1 = new PathCris("Cris", Map.of(0,5, 2,7), true, false,
+                            List.of(
+                                    List.of("storage", "dining area", "offices", "bathrooms", "corridor 4", "rightDoor"),
+                                    List.of("storage", "dining area", "offices", "bathrooms", "corridor 3", "leftDoor")
+                            ), rng);
+                    
+                    AnimatronicDrawing crisClon2 = new PathCris("Cris?", Map.of(0,7), true, false,
+                            List.of(
+                                    List.of("storage", "dining area", "staff lounge", "corridor 3", "leftDoor"),
+                                    List.of("storage", "dining area", "staff lounge", "corridor 4", "rightDoor")
+                            ), rng);
+                    
+                    CameraMap nightMap = new RestaurantCamMapFactory().generate();
+                    nightMap.addCamAnimatronics("kitchen", paco);
+                    nightMap.addCamAnimatronics("storage", bob);
+                    nightMap.addCamAnimatronics("offices", maria);
+                    nightMap.addCamAnimatronics("dining area", crisClon1, crisClon2);
+                    
+                    return new NightJC("Full Shift", settings.getFps(), nightMap, null, powerOutage, rng,
+                            90, 8, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
+                }
+            });
             loadingSem.release();
         }).start();
         

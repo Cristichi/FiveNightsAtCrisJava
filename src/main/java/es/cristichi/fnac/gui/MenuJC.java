@@ -1,6 +1,7 @@
 package es.cristichi.fnac.gui;
 
 import kuusisto.tinysound.Music;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -283,7 +285,24 @@ public class MenuJC extends JComponent {
 	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
 	 * @param loadingScreen BufferedImage of the loading screen, or {@code null} to use the default one.
 	 */
-	public record ItemInfo(String id, String display, String hoverDisplay, @Nullable BufferedImage loadingScreen){
+	public record ItemInfo(String id, String display, String hoverDisplay,
+						   @Nullable BufferedImage loadingScreen) implements Comparable<ItemInfo>{
+		@Override
+		public int compareTo(@NotNull ItemInfo o) {
+			return id.compareTo(o.id);
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof ItemInfo itemInfo)) return false;
+            return Objects.equals(id, itemInfo.id);
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(id);
+		}
 	}
 	
 	/**

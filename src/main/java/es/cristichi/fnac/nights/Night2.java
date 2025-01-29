@@ -7,6 +7,7 @@ import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.MenuJC;
 import es.cristichi.fnac.gui.NightJC;
+import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 
@@ -18,11 +19,20 @@ import java.util.Random;
 /**
  * {@link NightFactory} for Night 2.
  */
-public class Night2 implements NightFactory{
+public class Night2 extends NightFactory{
+    
+    /**
+     * Creates a Night 2 Factory and loads the loading screen. Loadingception.
+     *
+     * @throws ResourceException If menu loading screen could not be loaded.
+     */
+    public Night2() throws ResourceException {
+        super(new MenuJC.ItemInfo("n2", "Continue", "Night 2", Resources.loadImage("night/n2/loading.jpg")));
+    }
     
     @Override
-    public MenuJC.ItemInfo getItem() throws ResourceException {
-        return new MenuJC.ItemInfo("n2", "Continue", "Night 2", Resources.loadImage("night/n2/loading.jpg"));
+    public Availability getAvailability(NightProgress.SaveFile saveFile) {
+        return new Availability(saveFile.completedNights().size()==2, false);
     }
     
     @Override
@@ -50,6 +60,6 @@ public class Night2 implements NightFactory{
         nightMap.addCamAnimatronics("staff lounge", crisIsClose);
         
         return new NightJC("Night 2", settings.getFps(), nightMap, Resources.loadImage("night/n2/paper.png"),
-                powerOutage, rng, 90, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
+                powerOutage, rng, 90, 6, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
     }
 }

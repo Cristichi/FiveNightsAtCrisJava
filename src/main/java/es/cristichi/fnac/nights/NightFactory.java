@@ -2,10 +2,11 @@ package es.cristichi.fnac.nights;
 
 import es.cristichi.fnac.anim.Jumpscare;
 import es.cristichi.fnac.exception.NightException;
-import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.MenuJC;
 import es.cristichi.fnac.gui.NightJC;
+import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Settings;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Random;
@@ -16,13 +17,34 @@ import java.util.Random;
  * {@link es.cristichi.fnac.cams.CameraMap} for their initial positions. For an example implementation, check
  * the source code of {@link es.cristichi.fnac.nights.Night1#createNight(Settings, Jumpscare, Random)}.
  */
-public interface NightFactory {
+public abstract class NightFactory implements Comparable<NightFactory> {
+    private final MenuJC.ItemInfo item;
+    
+    /**
+     * Creates a NightFactory with the given menu Item.
+     */
+    protected NightFactory(MenuJC.ItemInfo item) {
+        this.item = item;
+    }
+    
+    /**
+     * Determines whether the Night should be available. For instance, exactly when 0 Nights are completed is when
+     * the Tutorial Night is available. Bear in mind that the Tutorial Night is also a completeable Night, so
+     * Night 1 is available with 1 Night completed, Night 2 for 2, etc.
+     *
+     * @param saveFile Save file to check completed Nights or any other progress' information.
+     * @return {@code true} if this Night should be available in the menu, {@code false} otherwise.
+     */
+    public abstract Availability getAvailability(NightProgress.SaveFile saveFile);
+    
     /**
      * @return All the information the instance of {@link MenuJC} must use for the button. Its only requirement is
      * that the ID is not one of the default ones written in the source code of the constructor for
      * {@link es.cristichi.fnac.gui.NightsJF}.
-     * @throws ResourceException Must be thrown if the background image could not be loaded. */
-    MenuJC.ItemInfo getItem() throws ResourceException;
+     */
+    public MenuJC.ItemInfo getItem() {
+        return item;
+    }
     
     /**
      *
@@ -37,5 +59,26 @@ public interface NightFactory {
      * @throws NightException If an error happens that makes this NightJC impossible to create, such as having
      *                        0 seconds per hour.
      */
-    NightJC createNight(Settings settings, Jumpscare powerOutage, Random rng) throws IOException, NightException;
+    public abstract NightJC createNight(Settings settings, Jumpscare powerOutage, Random rng) throws IOException, NightException;
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof NightFactory other){
+            return getItem().equals(other.getItem());
+        }
+        return false;
+    }
+    
+    @Override
+    public int compareTo(@NotNull NightFactory o) {
+        return getItem().id().compareTo(o.getItem().id());
+    }
+    
+    /**
+     * @param playableNow Whether this Night should be playable now.
+     * @param allowWithCustomNight Whether this Night should be playable alongside Custom Night. All currently available
+     *                             Nights must have this as true (or no Nights be available) in order to show the
+     *                             Custom Night access in the menu.
+     */
+    public record Availability(boolean playableNow, boolean allowWithCustomNight){}
 }
