@@ -536,7 +536,7 @@ public class NightJC extends ExitableJComponent {
 	 */
 	public void startNight(){
 		if (nightStarted){
-			LOGGER.error("Nights should never be started twice.");
+			LOGGER.error("Nights should never be started twice. Try creating a new Night from a NightFactory instead.");
 			return;
 		}
 		nightStarted = true;
