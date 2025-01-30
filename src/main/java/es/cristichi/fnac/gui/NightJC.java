@@ -77,6 +77,8 @@ public class NightJC extends ExitableJComponent {
 	 * An {@link AmbientSoundSystem} object that checks for the ambient Sounds to play during the Night at times.
 	 */
 	private final AmbientSoundSystem ambientSounds;
+	/** Sound to play each time the hour changes. */
+	private final Sound hourChangeSound;
 
     /**
      * List of Runnables that must be executed when the Night is finished, either win or lose. It carries the
@@ -400,6 +402,7 @@ public class NightJC extends ExitableJComponent {
 				new AmbientSound(Resources.loadSound("office/ambient/fakeSteps1.wav"), 1, true),
 				new AmbientSound(Resources.loadSound("office/ambient/deep-breath-247459.wav"), 4, true)
 		);
+		hourChangeSound = Resources.loadSound("office/sounds/hourChange.wav");
 		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav");
 		honkSound = Resources.loadSound("office/sounds/honk.wav");
 		staticCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
@@ -556,7 +559,9 @@ public class NightJC extends ExitableJComponent {
                             });
                             soundOnCompleted.addOnEndListener(soundOnCompleted::unload);
                             soundOnCompleted.play();
-                        }
+                        } else {
+							hourChangeSound.play();
+						}
                     }
                     
                     // Power drain
