@@ -423,7 +423,7 @@ public class FnacMain {
         // Examples on how to do them by organizing them in classes
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night1());
+                NightRegistry.registerNight(new Night1Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
@@ -431,7 +431,7 @@ public class FnacMain {
         }).start();
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night2());
+                NightRegistry.registerNight(new Night2Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
@@ -439,7 +439,7 @@ public class FnacMain {
         }).start();
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night3());
+                NightRegistry.registerNight(new Night3Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
@@ -447,7 +447,7 @@ public class FnacMain {
         }).start();
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night4());
+                NightRegistry.registerNight(new Night4Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
@@ -455,7 +455,7 @@ public class FnacMain {
         }).start();
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night5());
+                NightRegistry.registerNight(new Night5Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }
@@ -463,7 +463,7 @@ public class FnacMain {
         }).start();
         new Thread(() -> {
             try {
-                NightRegistry.registerNight(new Night6());
+                NightRegistry.registerNight(new Night6Factory());
             } catch (ResourceException e) {
                 throw new RuntimeException(e);
             }

@@ -19,14 +19,14 @@ import java.util.Random;
 /**
  * {@link NightFactory} for Night 1.
  */
-public class Night1 extends NightFactory {
+public class Night1Factory extends NightFactory {
     
     /**
      * Creates a Night 1 Factory and loads the loading screen. Loadingception.
      *
      * @throws ResourceException If menu loading screen could not be loaded.
      */
-    public Night1() throws ResourceException {
+    public Night1Factory() throws ResourceException {
         super(new MenuJC.ItemInfo("n1", "Continue", "Night 1", Resources.loadImage("night/n1/loading.jpg")));
     }
     
