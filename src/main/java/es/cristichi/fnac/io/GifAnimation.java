@@ -1,5 +1,7 @@
 package es.cristichi.fnac.io;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -93,9 +95,9 @@ public class GifAnimation extends ArrayList<GifFrame> implements NightDrawableIm
      * the current frame so that the next call to this method prints the next one.
      * @param tick This Night's current in-game tick.
      * @param fps This Night's current FPS, used to convert seconds to in-game ticks.
-     * @return Ordered {@link List<GifFrame>} of images that must be printed on the screen, one on
-     *      * top of the previous on the List that must be printed on this tick of the Night.
+     * @return A {@link BufferedImage} of the image to show, or {@code null} if no image should be shown.
      */
+    @Nullable
     public BufferedImage getImageForTick(int tick, int fps) {
         GifFrame frame = get(currentFrame);
         if (currentFrameStartTick == 0) {

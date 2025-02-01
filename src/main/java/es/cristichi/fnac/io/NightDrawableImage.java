@@ -1,5 +1,7 @@
 package es.cristichi.fnac.io;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.image.BufferedImage;
 
 /**
@@ -11,7 +13,8 @@ public interface NightDrawableImage {
      * Returns the image that must be drawn on this tick with these FPS.
      * @param tick Current tick.
      * @param fps Frames per second. It is constant throughout the entire Night.
-     * @return The image to draw on this frame.
+     * @return The image to draw on this frame, or {@code null} for no image.
      */
+    @Nullable
     BufferedImage getImageForTick(int tick, int fps);
 }
