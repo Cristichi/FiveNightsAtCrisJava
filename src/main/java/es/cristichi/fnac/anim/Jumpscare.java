@@ -52,7 +52,6 @@ public class Jumpscare {
     private final JumpscareVisualSetting jumpscareVisual;
     
     private final LinkedList<Runnable> onFinish;
-    private Boolean soundFinished;
     
     /**
      * Creates a new {@link Jumpscare} with the given data. This loads the resources specified.
@@ -77,21 +76,10 @@ public class Jumpscare {
         this.onFinish = new LinkedList<>();
         
         if (sound == null) {
-            soundFinished = null;
             soundDone = true;
         } else {
             soundDone = false;
-            soundFinished = false;
-            sound.addOnEndListener(() -> {
-                soundDone = true;
-                soundFinished = true;
-                if (gifAnimation.isFinished()) {
-                    for (Runnable onFinished : this.onFinish) {
-                        onFinished.run();
-                    }
-                    this.onFinish.clear();
-                }
-            });
+            sound.addOnEndListener(() -> soundDone = true);
         }
         
         // Preloading the stuff so they are in the cache
@@ -138,7 +126,7 @@ public class Jumpscare {
      * {@code false} otherwise.
      */
     public boolean isFinished(){
-        return gifAnimation.isFinished() && soundFinished;
+        return gifAnimation.isFinished();
     }
     
     /**
@@ -169,7 +157,7 @@ public class Jumpscare {
      */
     public BufferedImage updateAndGetFrame(int tick, int fps) {
         BufferedImage frames = gifAnimation.getImageForTick(tick, fps);
-        if (gifAnimation.isFinished() && (soundFinished == null || soundFinished)) {
+        if (gifAnimation.isFinished()) {
             for (Runnable onFinished : onFinish) {
                 onFinished.run();
             }
