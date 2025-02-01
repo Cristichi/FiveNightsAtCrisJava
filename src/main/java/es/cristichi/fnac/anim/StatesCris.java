@@ -5,6 +5,7 @@ import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.StaticNightDrawableImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -46,7 +47,7 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
     public StatesCris(String name, Map<Integer, Integer> aiDuringNight, List<List<String>> camPaths, Random rng)
             throws ResourceException {
         super(name, 1, 6, aiDuringNight, true, false,
-                Resources.loadImage("anims/statesCris/camImg.png"),
+                new StaticNightDrawableImage("anims/statesCris/camImg.png"),
                         new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif", false), 0,
                                 Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                                 JumpscareVisualSetting.CENTER_TOP),

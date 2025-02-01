@@ -2,6 +2,7 @@ package es.cristichi.fnac.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.StaticNightDrawableImage;
 
 import java.awt.*;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Paco extends PathedMoveAnimatronicDrawing {
     public Paco(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
                 List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, cameraStalled, globalCameraStalled,
-                Resources.loadImage("anims/paco/camImg.png"),
+                new StaticNightDrawableImage("anims/paco/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/paco/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/paco/sounds/jumpscare.wav"), 4,
                         JumpscareVisualSetting.CENTER_BOTTOM),

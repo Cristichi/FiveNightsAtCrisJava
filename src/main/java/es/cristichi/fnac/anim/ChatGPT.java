@@ -5,6 +5,7 @@ import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.StaticNightDrawableImage;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -57,7 +58,7 @@ public class ChatGPT extends AnimatronicDrawing {
     public ChatGPT(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled, boolean globalCameraStalled,
                    List<String> forbiddenCameras, List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, cameraStalled, globalCameraStalled,
-                Resources.loadImage("anims/chatgpt/camImg.png"),
+                new StaticNightDrawableImage("anims/chatgpt/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/chatgpt/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav"), 2,
                         JumpscareVisualSetting.FILL_SCREEN), Color.BLUE, rng);

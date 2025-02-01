@@ -3,9 +3,9 @@ package es.cristichi.fnac.anim;
 import es.cristichi.fnac.cams.Camera;
 import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.AnimatronicException;
+import es.cristichi.fnac.io.NightDrawableImage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 
@@ -52,7 +52,7 @@ public abstract class AvoidCamsAnimatronicDrawing extends AnimatronicDrawing {
      */
     public AvoidCamsAnimatronicDrawing(String nameId, double secInterval, double secsToKill,
                                        Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
-                                       boolean globalCameraStalled, BufferedImage camImg, Jumpscare jumpscare,
+                                       boolean globalCameraStalled, NightDrawableImage camImg, Jumpscare jumpscare,
                                        List<String> forbiddenCameras, Color debugColor,
                                        Random rng) {
         super(nameId, secInterval, secsToKill, aiDuringNight, cameraStalled, globalCameraStalled, camImg,

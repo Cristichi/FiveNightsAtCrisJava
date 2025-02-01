@@ -2,6 +2,7 @@ package es.cristichi.fnac.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.StaticNightDrawableImage;
 
 import java.awt.*;
 import java.util.List;
@@ -30,7 +31,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                     boolean cameraStalled, boolean globalCameraStalled, List<List<String>> camPaths, Random rng)
             throws ResourceException {
         super(name, 5, 4, aiDuringNight, cameraStalled, globalCameraStalled,
-                Resources.loadImage("anims/cris/camImg.png"), null, camPaths, Color.PINK, rng);
+                new StaticNightDrawableImage("anims/cris/camImg.png"), null, camPaths, Color.PINK, rng);
 
         if (rng.nextFloat() < .009){
             jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif", false), 0,

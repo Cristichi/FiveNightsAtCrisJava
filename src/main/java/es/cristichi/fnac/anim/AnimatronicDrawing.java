@@ -3,6 +3,7 @@ package es.cristichi.fnac.anim;
 import es.cristichi.fnac.cams.Camera;
 import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.AnimatronicException;
+import es.cristichi.fnac.io.NightDrawableImage;
 import kuusisto.tinysound.Sound;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,7 @@ public abstract class AnimatronicDrawing {
     /** Jumpscare used when this AnimatronicDrawing kills the player. */
     protected Jumpscare jumpscare;
     /** Image normally shown when the Camera where this AnimatronicDrawing is is being watched.*/
-    protected final BufferedImage camImg;
+    protected final NightDrawableImage camImg;
     /** Map used to store and access all Sounds. The default implementation only uses a "move" Sound. */
     protected final Map<String, Sound> sounds;
     /** Map used to store and access any specific positions on specific Cameras. The default implementation
@@ -108,7 +109,7 @@ public abstract class AnimatronicDrawing {
      *                            ranndomize at the time of creating an instance of {@link AnimatronicDrawing}.
      */
     AnimatronicDrawing(String nameId, double secInterval, double secsToKill, Map<Integer, Integer> aiDuringNight,
-                       boolean cameraStalled, boolean globalCameraStalled, BufferedImage camImg,
+                       boolean cameraStalled, boolean globalCameraStalled, NightDrawableImage camImg,
                        Jumpscare jumpscare, Color debugColor, Random rng) {
         this.nameId = nameId;
         this.secInterval = secInterval;
@@ -242,7 +243,7 @@ public abstract class AnimatronicDrawing {
      * {@code null} if it should not even appear on the Camera.
      */
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        return new ShowOnCamInfo(camImg, camPos.getOrDefault(cam.getNameId(), null));
+        return new ShowOnCamInfo(camImg.getImageForTick(tick, fps), camPos.getOrDefault(cam.getNameId(), null));
     }
     
     /** @return Debug color for this {@link AnimatronicDrawing}. */

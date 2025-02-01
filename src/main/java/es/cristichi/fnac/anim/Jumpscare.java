@@ -170,7 +170,7 @@ public class Jumpscare {
      *      * top of the previous on the List that must be printed on this tick of the Night.
      */
     public BufferedImage updateAndGetFrame(int tick, int fps) {
-        BufferedImage frames = gifAnimation.updateAndGetFrame(tick, fps);
+        BufferedImage frames = gifAnimation.getImageForTick(tick, fps);
         if (gifAnimation.isFinished() && (soundFinished == null || soundFinished)) {
             for (Runnable onFinished : onFinish) {
                 onFinished.run();

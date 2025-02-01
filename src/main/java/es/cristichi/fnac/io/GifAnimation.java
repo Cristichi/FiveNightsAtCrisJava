@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Represents the data of a GIF file that the game needs.
  */
-public class GifAnimation extends ArrayList<GifFrame> {
+public class GifAnimation extends ArrayList<GifFrame> implements NightDrawableImage {
     /**
      * Information of the path to the file, for debugging purposes.
      */
@@ -96,7 +96,7 @@ public class GifAnimation extends ArrayList<GifFrame> {
      * @return Ordered {@link List<GifFrame>} of images that must be printed on the screen, one on
      *      * top of the previous on the List that must be printed on this tick of the Night.
      */
-    public BufferedImage updateAndGetFrame(int tick, int fps) {
+    public BufferedImage getImageForTick(int tick, int fps) {
         GifFrame frame = get(currentFrame);
         if (currentFrameStartTick == 0) {
             currentFrameStartTick = tick;

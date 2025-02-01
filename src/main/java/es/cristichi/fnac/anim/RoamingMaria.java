@@ -2,6 +2,7 @@ package es.cristichi.fnac.anim;
 
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.io.Resources;
+import es.cristichi.fnac.io.StaticNightDrawableImage;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -30,7 +31,7 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
     public RoamingMaria(String name, Map<Integer, Integer> aiDuringNight,boolean cameraStalled,
                         boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, cameraStalled,
-                globalCameraStalled, Resources.loadImage("anims/maria/camImg.png"),
+                globalCameraStalled, new StaticNightDrawableImage("anims/maria/camImg.png"),
                 new Jumpscare(Resources.loadGif("anims/maria/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav"),
                         0, JumpscareVisualSetting.CENTER_BOTTOM),
