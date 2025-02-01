@@ -138,8 +138,6 @@ public class Jumpscare {
      * {@code false} otherwise.
      */
     public boolean isFinished(){
-        System.out.printf("%s && %s = %s.%n", gifAnimation.isFinished()?"YEP":"NOP", soundFinished?"YEP":"NOP",
-                (gifAnimation.isFinished() && soundFinished)?"YEP":"NOP");
         return gifAnimation.isFinished() && soundFinished;
     }
     
