@@ -15,8 +15,6 @@ import java.util.Random;
  * implementations with different behaviours during Nights.
  */
 public class RoamingCris extends AvoidCamsAnimatronicDrawing {
-    private static Jumpscare jumpscareNormal, jumpscareItsMe;
-    
     /**
      * Creates a new copy of Cris for use in normal Nights.
      * @param name Unique name. If several copies of Cris will appear, make sure they have different names.
@@ -33,16 +31,16 @@ public class RoamingCris extends AvoidCamsAnimatronicDrawing {
                        boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 7, aiDuringNight, cameraStalled, globalCameraStalled,
                 Resources.loadGif("anims/cris/cam.gif", true), null, forbiddenCams, Color.PINK, rng);
-
-        if (jumpscareNormal == null || jumpscareItsMe == null) {
-            jumpscareNormal = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif", false), 0,
+        
+        if (rng.nextFloat() < .9){
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif", false), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.FILL_SCREEN);
-            jumpscareItsMe = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif", false), 7,
+        } else {
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif", false), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
                     JumpscareVisualSetting.CENTER_TOP);
         }
-        jumpscare = rng.nextFloat() < 0.9 ? jumpscareNormal : jumpscareItsMe;
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav"));
         this.camPos.put("main stage", new Point2D.Float(0.7f, 0.05f));
