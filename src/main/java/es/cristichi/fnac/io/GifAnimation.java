@@ -143,7 +143,6 @@ public class GifAnimation extends ArrayList<GifFrame> implements NightDrawableIm
         for (int i = 0; i < frameIndex; i++) {
             GifFrame frame1 = get(i);
             
-            // Disposal methods
             switch (frame1.disposalMethod()) {
                 case RESTORE_TO_BACKGROUND_COLOR -> visibleFrames.clear();
                 case UNSPECIFIED, DO_NOT_DISPOSE -> visibleFrames.add(frame1);
@@ -158,7 +157,6 @@ public class GifAnimation extends ArrayList<GifFrame> implements NightDrawableIm
         
         Graphics2D g2d = combinedImage.createGraphics();
         
-        // Transparent background op frfr
         g2d.setComposite(AlphaComposite.Clear);
         g2d.fillRect(0, 0, logicalScreen.width, logicalScreen.height);
         g2d.setComposite(AlphaComposite.SrcOver);
@@ -167,7 +165,6 @@ public class GifAnimation extends ArrayList<GifFrame> implements NightDrawableIm
             g2d.drawImage(frame.image(), frame.offsetX(), frame.offsetY(), null);
         }
         
-        // Dispose of the graphics context.
         g2d.dispose();
         
         cacheFrameImages.put(frameIndex, combinedImage);
