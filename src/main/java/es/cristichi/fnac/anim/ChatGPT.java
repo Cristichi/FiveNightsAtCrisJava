@@ -4,12 +4,12 @@ import es.cristichi.fnac.cams.Camera;
 import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.AnimatronicException;
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.io.NightDrawableImage;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.StaticNightDrawableImage;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 
@@ -35,7 +35,7 @@ public class ChatGPT extends AnimatronicDrawing {
     /**
      * Image to show on Cameras when ChatGPT has not built themselves yet.
      */
-    protected BufferedImage buildingCamImg;
+    protected NightDrawableImage buildingCamImg;
     /**
      * {@code true} if ChatGPT has not built themselves yet. When ChatGPT succeeds a Movement Oppotunity, this
      * becomes {@code false} and the movement is canceled. Then ChatGPT is built and can move.
@@ -68,7 +68,7 @@ public class ChatGPT extends AnimatronicDrawing {
         this.sounds.put("move", Resources.loadSound("anims/chatgpt/sounds/move.wav"));
         this.sounds.put("moveRoam", Resources.loadSound("anims/chatgpt/sounds/moveRoam.wav"));
         this.sounds.put("building", Resources.loadSound("anims/chatgpt/sounds/building.wav"));
-        this.buildingCamImg = Resources.loadImage("anims/chatgpt/camImgOnlyBody.png");
+        this.buildingCamImg = Resources.loadGif("anims/chatgpt/building.gif", true);
 
         this.usingPathedMove = false;
         this.building = true;
@@ -77,11 +77,10 @@ public class ChatGPT extends AnimatronicDrawing {
     @Nullable
     @Override
     public ShowOnCamInfo showOnCam(int tick, int fps, boolean openDoor, Camera cam, Random rng) {
-        ShowOnCamInfo info = super.showOnCam(tick, fps, openDoor, cam, rng);
         if (building) {
-            return new ShowOnCamInfo(buildingCamImg, null);
+            return new ShowOnCamInfo(buildingCamImg.getImageForTick(tick, fps), null);
         }
-        return info;
+        return super.showOnCam(tick, fps, openDoor, cam, rng);
     }
 
     @Override
