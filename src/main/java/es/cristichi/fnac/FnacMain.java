@@ -66,8 +66,7 @@ public class FnacMain {
     }
     
     /**
-     * Runs the game with the given {@link NightRegistry}'s Nights and the Animatronics inside. Before running this
-     * method you may also want to register anything you need on the registries.
+     * Runs the game with the given information and loading steps.
      * @param docFolderName Name of the folder inside the computer user's Documents folder for the Settings and
      *                      Save file.
      * @param loadingSequences List of individual Runnables that must be run during the initial loading, or
