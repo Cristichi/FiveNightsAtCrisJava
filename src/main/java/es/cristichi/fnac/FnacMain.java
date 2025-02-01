@@ -193,10 +193,7 @@ public class FnacMain {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                RuntimeException error = new RuntimeException("Failed to load save file: %s".formatted(e.getMessage()),
-                        e);
-                SwingUtilities.invokeLater(() -> new ExceptionDialog(error, true, true, LOGGER));
+                new ExceptionDialog(e, true, true, LOGGER);
             } finally {
                 loadingSem.release();
             }
