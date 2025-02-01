@@ -32,7 +32,7 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
         super(name, 5, 4, aiDuringNight, cameraStalled, globalCameraStalled,
                 Resources.loadGif("anims/cris/cam.gif", true), null, camPaths, Color.PINK, rng);
 
-        if (rng.nextFloat() < .009){
+        if (rng.nextFloat() < .9){
             jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif", false), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.FILL_SCREEN);
