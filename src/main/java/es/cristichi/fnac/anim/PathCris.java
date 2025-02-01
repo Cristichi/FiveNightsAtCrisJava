@@ -33,11 +33,11 @@ public class PathCris extends PathedMoveAnimatronicDrawing {
                 Resources.loadImage("anims/cris/camImg.png"), null, camPaths, Color.PINK, rng);
 
         if (rng.nextFloat() < .009){
-            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif"), 0,
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareNormal.gif", false), 0,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
                     JumpscareVisualSetting.FILL_SCREEN);
         } else {
-            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 7,
+            jumpscare = new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif", false), 7,
                     Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 12,
                     JumpscareVisualSetting.CENTER_TOP);
         }

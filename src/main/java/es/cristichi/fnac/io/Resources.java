@@ -84,11 +84,13 @@ public class Resources {
     
     /**
      * Loads a {@link GifAnimation} from the resources.
+     *
      * @param resourcePath Path inside the resources folder.
+     * @param loop Whether this GifAnimation should loop to the start after finishing.
      * @return The GIF.
      * @throws ResourceException If the GIF does not exist.
      */
-    public static GifAnimation loadGif(String resourcePath) throws ResourceException {
+    public static GifAnimation loadGif(String resourcePath, boolean loop) throws ResourceException {
         try {
             InputStream in = Resources.class.getClassLoader().getResourceAsStream(resourcePath);
             if (in == null) {
@@ -201,7 +203,7 @@ public class Resources {
                     throw new ResourceException("GIF %s has an invalid width (%d) or height (%d).%n"
                             .formatted(resourcePath, width, height));
                 }
-                return new GifAnimation(resourcePath, frames, width, height);
+                return new GifAnimation(resourcePath, frames, width, height, loop);
             }
         } catch (IOException | NullPointerException | IllegalArgumentException e) {
             throw new ResourceException("Error when reading \"" + resourcePath + "\". Perhaps its missing.", e);

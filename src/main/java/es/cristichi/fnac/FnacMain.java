@@ -49,7 +49,7 @@ public class FnacMain {
      * When enabled, all Nights are available in the menu.
      */
     @SuppressWarnings("CanBeFinal") //This is to be modified by modders using this as dependency.
-    public static boolean DEBUG_ALLNIGHTS = false;
+    public static boolean DEBUG_ALLNIGHTS = true;
     /**
      * Name of the game.
      */
@@ -379,7 +379,8 @@ public class FnacMain {
                             @Override
                             public StatesCris generate(CustomNightAnimData data, Random rng) throws ResourceException {
                                 return new StatesCris(nameId, Map.of(0, data.ai()),
-                                        List.of(StatesCris.RESTAURANT_PATH, List.of("cam2, cam4, rightDoor")),
+                                            List.of(StatesCris.RESTAURANT_PATH,
+                                            List.of("cam3", "cam1", "cam2", "cam4", "rightDoor")),
                                         rng);
                             }
                         });

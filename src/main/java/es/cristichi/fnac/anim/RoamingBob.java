@@ -30,7 +30,7 @@ public class RoamingBob extends AvoidCamsAnimatronicDrawing {
     public RoamingBob(String name, Map<Integer, Integer> aiDuringNight, boolean cameraStalled,
                       boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, cameraStalled, globalCameraStalled, Resources.loadImage("anims/bob/camImg.png"),
-                new Jumpscare(Resources.loadGif("anims/bob/jumpscare.gif"), 0,
+                new Jumpscare(Resources.loadGif("anims/bob/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/bob/sounds/jumpscare.wav"), 0, JumpscareVisualSetting.CENTER_BOTTOM),
                 forbiddenCams, Color.RED, rng);
 

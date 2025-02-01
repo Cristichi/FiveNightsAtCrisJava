@@ -58,7 +58,7 @@ public class ChatGPT extends AnimatronicDrawing {
                    List<String> forbiddenCameras, List<List<String>> camPaths, Random rng) throws ResourceException {
         super(name, 6, 4, aiDuringNight, cameraStalled, globalCameraStalled,
                 Resources.loadImage("anims/chatgpt/camImg.png"),
-                new Jumpscare(Resources.loadGif("anims/chatgpt/jumpscare.gif"), 0,
+                new Jumpscare(Resources.loadGif("anims/chatgpt/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/chatgpt/sounds/jumpscare.wav"), 2,
                         JumpscareVisualSetting.FILL_SCREEN), Color.BLUE, rng);
 

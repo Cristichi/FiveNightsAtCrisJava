@@ -31,7 +31,7 @@ public class RoamingMaria extends AvoidCamsAnimatronicDrawing {
                         boolean globalCameraStalled, List<String> forbiddenCams, Random rng) throws ResourceException {
         super(name, 5, 6, aiDuringNight, cameraStalled,
                 globalCameraStalled, Resources.loadImage("anims/maria/camImg.png"),
-                new Jumpscare(Resources.loadGif("anims/maria/jumpscare.gif"), 0,
+                new Jumpscare(Resources.loadGif("anims/maria/jumpscare.gif", false), 0,
                         Resources.loadSound("anims/maria/sounds/jumpscare.wav"),
                         0, JumpscareVisualSetting.CENTER_BOTTOM),
                 forbiddenCams, Color.YELLOW, rng);

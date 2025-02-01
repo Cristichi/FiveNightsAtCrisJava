@@ -22,7 +22,8 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
     /**
      * A path that is usually followed by this Animatronic while at the Restaurant.
      */
-    public static final List<String> RESTAURANT_PATH = List.of("main stage", "dining area", "corridor 2", "corridor 4", "rightDoor");
+    public static final List<String> RESTAURANT_PATH =
+            List.of("main stage", "dining area", "corridor 2", "corridor 4", "rightDoor");
     
     /** Image of StatesCris crawling on the floor. */
     protected BufferedImage camImgFloor;
@@ -46,9 +47,9 @@ public class StatesCris extends PathedMoveAnimatronicDrawing {
             throws ResourceException {
         super(name, 1, 6, aiDuringNight, true, false,
                 Resources.loadImage("anims/statesCris/camImg.png"),
-                        new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif"), 0,
+                        new Jumpscare(Resources.loadGif("anims/cris/jumpscareItsMe.gif", false), 0,
                                 Resources.loadSound("anims/cris/sounds/jumpscare.wav"), 1,
-                                JumpscareVisualSetting.FILL_SCREEN),
+                                JumpscareVisualSetting.CENTER_TOP),
                 camPaths, Color.PINK, rng);
 
         this.sounds.put("move", Resources.loadSound("anims/cris/sounds/move.wav"));
