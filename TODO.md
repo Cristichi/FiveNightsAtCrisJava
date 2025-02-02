@@ -1,7 +1,7 @@
 # Work to do
 
 ## Art
-- [ ] Remake all Animatronic Drawings' art and Jumpscares.
+- [X] Remake all Animatronic Drawings' art and Jumpscares.
 - [ ] Remake all Cameras' backgrounds so they are actually interesting.
 - [ ] Remake the doors' art.
 - [ ] Add more details and items to the background, or remake it entirely.
