@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
  * Provides a way to use static {@link BufferedImage}s instead of a GIF for Animatronics.
  */
 public class StaticNightDrawableImage implements NightDrawableImage {
+    /**
+     * Static image to show on every tick when asked to do so by the Night.
+     */
     protected final BufferedImage img;
     
     /**
