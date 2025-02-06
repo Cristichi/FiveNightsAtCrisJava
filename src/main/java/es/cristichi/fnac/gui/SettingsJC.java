@@ -182,7 +182,7 @@ public abstract class SettingsJC extends JComponent {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        volumeSlider = new JSlider(0, 150, Math.max(0, Math.min(150, (int) (editingSettings.getVolume() * 100))));
+        volumeSlider = new JSlider(0, 200, Math.max(0, Math.min(200, (int) (editingSettings.getVolume() * 100))));
         volumeSlider.setOpaque(false);
         volumeSlider.setMajorTickSpacing(50);
         volumeSlider.setMinorTickSpacing(10);
@@ -208,9 +208,12 @@ public abstract class SettingsJC extends JComponent {
         JLabel label100 = new JLabel("<html>100%</html>");
         label100.setForeground(foreground);
         volumeLabels.put(100, label100);
-        JLabel label150 = new JLabel("<html>150% (!)</html>");
+        JLabel label150 = new JLabel("<html>150%</html>");
         label150.setForeground(foreground);
         volumeLabels.put(150, label150);
+        JLabel label200 = new JLabel("<html><b>200%</b></html>");
+        label200.setForeground(foreground);
+        volumeLabels.put(200, label200);
         volumeSlider.setLabelTable(volumeLabels);
 
         add(volumeSlider, gbc);
