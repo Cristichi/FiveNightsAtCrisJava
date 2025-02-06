@@ -101,9 +101,9 @@ public abstract class SettingsJC extends JComponent {
         gbc.gridy = 0;
 
         // Fullscreen Toggle
-        JLabel label4 = new JLabel("<html>Fullscreen:</html>");
-        label4.setForeground(foreground);
-        fullscreenLabel = label4;
+        fullscreenLabel = new JLabel("<html>Fullscreen:</html>");
+        fullscreenLabel.setForeground(foreground);
+        fullscreenLabel.setToolTipText("You can change this any time with F11 or Alt+Enter.");
         gbc.anchor = GridBagConstraints.LINE_END;
         add(fullscreenLabel, gbc);
 
@@ -128,6 +128,7 @@ public abstract class SettingsJC extends JComponent {
         fpsLabel = new JLabel("<html>FPS:</html>");
         fpsLabel.setForeground(foreground);
         fpsLabel.setHorizontalTextPosition(JLabel.TRAILING);
+        fpsLabel.setToolTipText("On lower-end computers, a high value can lead to lag.");
         add(fpsLabel, gbc);
 
         gbc.gridx = 1;
@@ -176,14 +177,15 @@ public abstract class SettingsJC extends JComponent {
         volumeLabel = new JLabel("<html>Volume:</html>");
         volumeLabel.setForeground(foreground);
         volumeLabel.setHorizontalTextPosition(JLabel.TRAILING);
+        volumeLabel.setToolTipText("WARNING!! Jumpscares are slightly louder than the main menu music.");
         add(volumeLabel, gbc);
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        volumeSlider = new JSlider(0, 100, (int) (editingSettings.getVolume() * 100));
+        volumeSlider = new JSlider(0, 150, Math.max(0, Math.min(150, (int) (editingSettings.getVolume() * 100))));
         volumeSlider.setOpaque(false);
-        volumeSlider.setMajorTickSpacing(10);
-        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider.setMajorTickSpacing(50);
+        volumeSlider.setMinorTickSpacing(10);
         volumeSlider.setSnapToTicks(true);
         volumeSlider.setPaintTrack(false);
         volumeSlider.setPaintTicks(true);
@@ -206,6 +208,9 @@ public abstract class SettingsJC extends JComponent {
         JLabel label100 = new JLabel("<html>100%</html>");
         label100.setForeground(foreground);
         volumeLabels.put(100, label100);
+        JLabel label150 = new JLabel("<html>150% (!)</html>");
+        label150.setForeground(foreground);
+        volumeLabels.put(150, label150);
         volumeSlider.setLabelTable(volumeLabels);
 
         add(volumeSlider, gbc);
