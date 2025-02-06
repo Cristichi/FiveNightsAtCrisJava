@@ -128,7 +128,7 @@ public class FnacMain {
                     try {
                         Sound cristichi = Resources.loadSound("startup/cristichi.wav");
                         cristichi.addOnEndListener(loadingSem::release);
-                        cristichi.play(settings.get().getVolume());
+                        cristichi.play();
                     } catch (ResourceException e) {
                         LOGGER.error("Error loading cristichi Sound.", e);
                         loadingSem.release();
