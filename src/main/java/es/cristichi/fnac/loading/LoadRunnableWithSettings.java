@@ -13,5 +13,6 @@ public interface LoadRunnableWithSettings {
      * @param settings Already loaded player's Settings.
      * @throws Exception Any exception that requires the game to cancel loading and show it to the player.
      */
+    @SuppressWarnings("RedundantThrows")
     void run(Settings settings) throws Exception;
 }

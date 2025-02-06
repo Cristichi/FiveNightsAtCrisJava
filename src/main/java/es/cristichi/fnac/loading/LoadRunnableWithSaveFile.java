@@ -13,5 +13,6 @@ public interface LoadRunnableWithSaveFile {
      * @param saveFile Already loaded player's Save File.
      * @throws Exception Any exception that requires the game to cancel loading and show it to the player.
      */
+    @SuppressWarnings("RedundantThrows")
     void run(NightProgress.SaveFile saveFile) throws Exception;
 }

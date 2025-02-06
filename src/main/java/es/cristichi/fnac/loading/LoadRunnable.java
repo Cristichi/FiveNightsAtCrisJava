@@ -10,5 +10,6 @@ public interface LoadRunnable {
      * Method to run after the player's Save File have been loaded.
      * @throws Exception Any exception that requires the game to cancel loading and show it to the player.
      */
+    @SuppressWarnings("RedundantThrows")
     void run() throws Exception;
 }
