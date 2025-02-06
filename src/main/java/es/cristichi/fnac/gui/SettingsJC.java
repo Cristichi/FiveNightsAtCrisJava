@@ -7,8 +7,8 @@ import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicSpinnerUI;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -59,9 +59,9 @@ public abstract class SettingsJC extends JComponent {
      */
     private final JLabel fpsLabel;
     /**
-     * FPS Spinner.
+     * FPS Dropdown
      */
-    private final JSpinner fpsSpinner;
+    private final JComboBox<Integer> fpsComboBox;
     /**
      * Label for the Volume text.
      */
@@ -92,9 +92,6 @@ public abstract class SettingsJC extends JComponent {
         this.editingSettings = new Settings(settings);
         this.ogSettings = new Settings(settings);
         setFont(new Font("Eraser Dust", Font.PLAIN, 100));
-
-        BufferedImage btnUp = Resources.loadImage("settings/spinnerUp.jpg");
-        BufferedImage btnDown = Resources.loadImage("settings/spinnerDown.jpg");
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -135,38 +132,42 @@ public abstract class SettingsJC extends JComponent {
 
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        fpsSpinner = new JSpinner(new SpinnerNumberModel(editingSettings.getFps(), 30, 240, 1));
-        fpsSpinner.setUI(new BasicSpinnerUI() {
+        fpsComboBox = new JComboBox<>(new Integer[]{30, 60, 120});
+        fpsComboBox.setFont(getFont());
+        fpsComboBox.setOpaque(false);
+        fpsComboBox.setBackground(new Color(0,0,0,0));
+        fpsComboBox.setForeground(foreground);
+        fpsComboBox.setSelectedItem(60);
+        fpsComboBox.setSelectedItem(settings.getFps());
+        
+        fpsComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
-            protected Component createNextButton() {
-                JButton upButton = createCustomSpinnerButton(btnUp);
-                installNextButtonListeners(upButton);
-                return upButton;
-            }
-
-            @Override
-            protected Component createPreviousButton() {
-                JButton downButton = createCustomSpinnerButton(btnDown);
-                installPreviousButtonListeners(downButton);
-                return downButton;
-            }
-
-            @Override
-            protected void installDefaults() {
-                super.installDefaults();
-                spinner.setBorder(new EmptyBorder(0, 0, 0, 0)); // Remove default border
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus) {
+                Component result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                result.setBackground(Color.LIGHT_GRAY);
+                result.setForeground(foreground);
+                return result;
             }
         });
-        fpsSpinner.setFont(getFont());
-        fpsSpinner.setOpaque(false);
-        JSpinner.NumberEditor editor = ((JSpinner.NumberEditor)(fpsSpinner.getEditor()));
-        editor.setOpaque(false);
-        editor.getTextField().setHorizontalAlignment(SwingConstants.CENTER);
-        editor.getTextField().setOpaque(false);
-        editor.getTextField().setEditable(false);
-        editor.getTextField().setForeground(foreground);
-        fpsSpinner.addChangeListener(e -> editingSettings.setFps((Integer) fpsSpinner.getValue()));
-        add(fpsSpinner, gbc);
+        fpsComboBox.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton button = new BasicArrowButton(BasicArrowButton.SOUTH, null,
+                        foreground.darker().darker(), foreground, foreground);
+                button.setOpaque(false);
+                button.setContentAreaFilled(false);
+                button.setBorderPainted(false);
+                return button;
+            }
+            
+            @Override
+            public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+                // Prevents painting the default background
+            }
+        });
+        fpsComboBox.addItemListener(e -> editingSettings.setFps((Integer) e.getItem()));
+        add(fpsComboBox, gbc);
 
         // Volume Slider
         gbc.gridx = 0;
@@ -230,7 +231,7 @@ public abstract class SettingsJC extends JComponent {
             this.editingSettings = new Settings(ogSettings);
             TinySound.setGlobalVolume(ogSettings.getVolume());
             fullscreenCheckbox.setSelected(ogSettings.isFullscreen());
-            fpsSpinner.setValue(ogSettings.getFps());
+            fpsComboBox.setSelectedItem(ogSettings.getFps());
             volumeSlider.setValue((int) (ogSettings.getVolume() * 100));
             onReturnToMenu();
         });
@@ -244,7 +245,7 @@ public abstract class SettingsJC extends JComponent {
                 fullscreenLabel.setFont(font);
                 fullscreenCheckbox.setFont(font);
                 fpsLabel.setFont(font);
-                fpsSpinner.setFont(font);
+                fpsComboBox.setFont(font);
                 volumeLabel.setFont(font);
                 volumeSlider.setFont(font);
                 saveButton.setFont(font);
@@ -269,20 +270,6 @@ public abstract class SettingsJC extends JComponent {
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         return btn;
-    }
-    
-    /**
-     * Creates a Spinner Button with the given image as an icon.
-     * @param img Icon.
-     * @return The JButton to be used on the spinner.
-     */
-    private JButton createCustomSpinnerButton(BufferedImage img) {
-        JButton button = new JButton(new ImageIcon(img));
-        button.setOpaque(false);
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        return button;
     }
 
     @Override
