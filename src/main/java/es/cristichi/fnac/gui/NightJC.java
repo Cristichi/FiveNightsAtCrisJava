@@ -199,7 +199,7 @@ public class NightJC extends ExitableJComponent {
 	/** Usual number of ticks it takes for doors to fully open or close. */
 	private final int DOOR_TRANSITION_TICKS;
 	/** Marks the next tick to play the door transition sound (either open or close depending on whether the door
-	 * of the current side is open or closed. */
+	 * of the current side is open or closed). */
 	private boolean playDoorTransSound;
 	/** Whether the left door is effectively closed. */
 	private boolean leftDoorClosed;
