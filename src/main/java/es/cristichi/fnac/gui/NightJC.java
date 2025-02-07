@@ -29,7 +29,7 @@ import java.util.*;
  * JComponent that runs a Night. This is the most important part of the gameplay.
  */
 @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
-public class NightJC extends ExitableJComponent {
+public class NightJC extends JComponent {
 	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
 	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
 	 * runs if you are bad at the game like me. */

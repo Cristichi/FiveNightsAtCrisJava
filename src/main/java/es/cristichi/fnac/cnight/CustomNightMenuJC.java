@@ -8,7 +8,6 @@ import es.cristichi.fnac.exception.CustomNightException;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
-import es.cristichi.fnac.gui.ExitableJComponent;
 import es.cristichi.fnac.gui.NightJC;
 import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.Resources;
@@ -29,7 +28,7 @@ import java.util.*;
 /**
  * JComponent of the Menu that allows players to customize their own Night.
  */
-public class CustomNightMenuJC extends ExitableJComponent {
+public class CustomNightMenuJC extends JComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomNightMenuJC.class);
     
     /**
