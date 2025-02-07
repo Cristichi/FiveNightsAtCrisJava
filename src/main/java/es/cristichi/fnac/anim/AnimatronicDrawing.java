@@ -26,10 +26,11 @@ public abstract class AnimatronicDrawing {
     /** Maximum AI value for most Animatronics. Unless there is a reason to use another value, use this one. */
     public static final int GENERIC_MAX_AI = 20;
 
-    /** Arbitrary maximun delay, in seconds, that AnimatronicDrawings have by default. This is
-     *  used to make it harder to keep track of exactly when AnimatronicDrawings will move with
-     *  external programs. This is not to fully disencourage the use of external tools to keep
-     *  track of information, just to make it harder. Also so that sounds do not overlap too much.
+    /** Arbitrary maximun delay, in seconds, that AnimatronicDrawings have by default. This delay determines how
+     *  much time at the start the AnimatronicDrawing will wait without doing anything. This is used to make it
+     *  harder to keep track of exactly when AnimatronicDrawings will move with external programs. This is not to
+     *  fully disencourage the use of external tools to keep track of information, just to make it harder. Also
+     *  so that sounds do not overlap too much with AnimatronicDrawings with the same movement interval.
      */
     protected static final double MAX_DELAY_SECS = 11.5;
 
