@@ -428,7 +428,7 @@ public class NightJC extends JComponent {
 		victoryScreen = null;
 		jumpscare = null;
 
-		officeLoc = OfficeLocation.MONITOR;
+		officeLoc = OfficeLocation.CENTER;
 
 		DOOR_TRANSITION_TICKS = fps/6;
 		playDoorTransSound = false;
@@ -683,7 +683,7 @@ public class NightJC extends JComponent {
                             }
                             playDoorTransSound = false;
                         }
-                        case MONITOR -> {
+                        case CENTER -> {
                         }
                     }
                 }
@@ -822,7 +822,7 @@ public class NightJC extends JComponent {
 						leftDoorWidthScaled*LEFT_DOOR_BTN_X, getHeight()*LEFT_DOOR_BTN_Y,
 						leftDoorWidthScaled*LEFT_DOOR_BTN_W, getHeight()*LEFT_DOOR_BTN_H);
 
-			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
+			} else if (offTransFrom.equals(OfficeLocation.CENTER)) {
 				int xPosition = MONITOR_X_IN_SOURCE -
 						((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 								/ OFFICE_TRANSITION_TICKS;
@@ -870,7 +870,7 @@ public class NightJC extends JComponent {
 						getWidth()-rightDoorWidthScaled+rightDoorWidthScaled*RIGHT_DOOR_BTN_X, getHeight()*RIGHT_DOOR_BTN_Y,
 						rightDoorWidthScaled*RIGHT_DOOR_BTN_W, getHeight()*RIGHT_DOOR_BTN_H);
 
-			} else if (offTransFrom.equals(OfficeLocation.MONITOR)) {
+			} else if (offTransFrom.equals(OfficeLocation.CENTER)) {
 				int xPosition = MONITOR_X_IN_SOURCE +
 						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
 						/ OFFICE_TRANSITION_TICKS;
@@ -1393,9 +1393,9 @@ public class NightJC extends JComponent {
 					if (!officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 							offTransFrom = OfficeLocation.RIGHTDOOR;
-							officeLoc = OfficeLocation.MONITOR;
+							officeLoc = OfficeLocation.CENTER;
                         } else {
-							offTransFrom = OfficeLocation.MONITOR;
+							offTransFrom = OfficeLocation.CENTER;
 							officeLoc = OfficeLocation.LEFTDOOR;
                         }
                         offTransTicks = OFFICE_TRANSITION_TICKS;
@@ -1418,9 +1418,9 @@ public class NightJC extends JComponent {
 					if (!officeLoc.equals(OfficeLocation.RIGHTDOOR)) {
 						if (officeLoc.equals(OfficeLocation.LEFTDOOR)) {
 							offTransFrom = OfficeLocation.LEFTDOOR;
-							officeLoc = OfficeLocation.MONITOR;
+							officeLoc = OfficeLocation.CENTER;
                         } else {
-							offTransFrom = OfficeLocation.MONITOR;
+							offTransFrom = OfficeLocation.CENTER;
 							officeLoc = OfficeLocation.RIGHTDOOR;
                         }
                         offTransTicks = OFFICE_TRANSITION_TICKS;
@@ -1480,7 +1480,7 @@ public class NightJC extends JComponent {
         /** Left side of the office. */
         LEFTDOOR,
         /** Center of the office. */
-        MONITOR,
+        CENTER,
         /** Right side of the office. */
         RIGHTDOOR
     }
