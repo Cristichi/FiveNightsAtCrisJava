@@ -19,7 +19,7 @@ public record GifFrame(BufferedImage image, double delaySecs, DisposalMethod dis
      */
     public enum DisposalMethod {
         /**
-         * Treat as DO_NOT_DISPOSE.
+         * Treat as {@link DisposalMethod#DO_NOT_DISPOSE}.
          */
         UNSPECIFIED,
         /**
@@ -27,7 +27,8 @@ public record GifFrame(BufferedImage image, double delaySecs, DisposalMethod dis
          */
         DO_NOT_DISPOSE,
         /**
-         * After this frame, the background color should fill and previous frames discarded.
+         * After this frame, discard previous frames and fill with background color to draw the next one on top of it.
+         * Usually the background color should be transparent, in the case of this game.
          */
         RESTORE_TO_BACKGROUND_COLOR,
         /**
