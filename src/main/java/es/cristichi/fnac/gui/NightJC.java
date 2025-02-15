@@ -802,167 +802,161 @@ public class NightJC extends JComponent {
 		int leftDoorWidthScaled = (int) ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE)*scaleX);
 		int rightDoorWidthScaled = (int)((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE)*scaleX);
 
-		switch (officeLoc) {
-		case LEFTDOOR:
-			if (offTransFrom == null) {
-				g.drawImage(
-						backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
-						0, 0, getWidth(), getHeight(), this);
-				honkBtnOnScreen = new Ellipse2D.Double((HONK_IN_BACKGROUND_SOURCE.getX()-LEFTDOOR_X_IN_SOURCE)*scaleX,
-														HONK_IN_BACKGROUND_SOURCE.getY()*scaleY,
-														HONK_IN_BACKGROUND_SOURCE.getWidth()*scaleX,
-														HONK_IN_BACKGROUND_SOURCE.getHeight()*scaleY);
-
-				// Left door when watching left door and no transition
-				g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(),
-						0,0, leftDoor.getWidth(), leftDoor.getHeight(), this);
-				doorBtnOnScreen = new Ellipse2D.Double(leftDoor.getWidth()*0.5, leftDoor.getHeight()*0.5,
-						50, 50);
-				doorBtnOnScreen = new Ellipse2D.Double(
-						leftDoorWidthScaled*LEFT_DOOR_BTN_X, getHeight()*LEFT_DOOR_BTN_Y,
-						leftDoorWidthScaled*LEFT_DOOR_BTN_W, getHeight()*LEFT_DOOR_BTN_H);
-
-			} else if (offTransFrom.equals(OfficeLocation.CENTER)) {
-				int xPosition = MONITOR_X_IN_SOURCE -
-						((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
-								/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
-
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight() * ((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
-							this);
-				}
-
-				// Left door while transition from MONITOR to LEFTDOOR (center to left)
-				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
-				int visibleDoorWidthScaled = (int) (leftDoorWidthScaled * transitionProgress);
-				int offsetX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
-				g.drawImage(leftDoor, 0, 0, visibleDoorWidthScaled, getHeight(),
-						offsetX, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
-				
-				doorBtnOnScreen = null;
-				honkBtnOnScreen = null;
-			}
-			break;
-
-		case RIGHTDOOR:
-			honkBtnOnScreen = null;
-			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
-
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_BACKGROUND_SOURCE -RIGHTDOOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
-							this);
-				}
-
-				// Right door when no transition at RIGHTDOOR
-				g.drawImage(rightDoor, getWidth()-rightDoorWidthScaled, 0, getWidth(), getHeight(),
-						0, 0, rightDoor.getWidth(), rightDoor.getHeight(), this);
-				doorBtnOnScreen = new Ellipse2D.Double(
-						getWidth()-rightDoorWidthScaled+rightDoorWidthScaled*RIGHT_DOOR_BTN_X, getHeight()*RIGHT_DOOR_BTN_Y,
-						rightDoorWidthScaled*RIGHT_DOOR_BTN_W, getHeight()*RIGHT_DOOR_BTN_H);
-
-			} else if (offTransFrom.equals(OfficeLocation.CENTER)) {
-				int xPosition = MONITOR_X_IN_SOURCE +
-						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
-						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
-
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg, (int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY), this);
-				}
-
-				// Right door while moving from MONITOR to RIGHTDOOR
-				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
-				int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
-				g.drawImage(rightDoor,
-						getWidth() - offsetX, 0,
-						getWidth() - offsetX + rightDoorWidthScaled, getHeight(),
-						0, 0,
-						rightDoor.getWidth(), rightDoor.getHeight(),
-						this);
-				
-				doorBtnOnScreen = null;
-			}
-			break;
-		default:
-			doorBtnOnScreen = null;
-			if (offTransFrom == null) {
-				g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
-						0, 0, getWidth(), getHeight(), this);
-				
-				honkBtnOnScreen = new Ellipse2D.Double((HONK_IN_BACKGROUND_SOURCE.getX()-MONITOR_X_IN_SOURCE)*scaleX,
-														HONK_IN_BACKGROUND_SOURCE.getY()*scaleY,
-														HONK_IN_BACKGROUND_SOURCE.getWidth()*scaleX,
-														HONK_IN_BACKGROUND_SOURCE.getHeight()*scaleY);
-				
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_BACKGROUND_SOURCE -MONITOR_X_IN_SOURCE)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
-							this);
-				}
-			} else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
-				int xPosition = LEFTDOOR_X_IN_SOURCE + ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
-						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
-
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
-							this);
-				}
-
-				// Left door
-				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
-				int offsetX = (int) (leftDoorWidthScaled * transitionProgress);
-				g.drawImage(leftDoor, -offsetX, 0, leftDoorWidthScaled - offsetX, getHeight(),
-						0, 0, leftDoor.getWidth(), leftDoor.getHeight(), this);
-				doorBtnOnScreen = new Ellipse2D.Double(offsetX+leftDoor.getWidth()*0.5, leftDoor.getHeight()*0.5,
-						50, 50);
-				
-				honkBtnOnScreen = null;
-			} else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
-				int xPosition = RIGHTDOOR_X_IN_SOURCE -
-						((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks))
-						/ OFFICE_TRANSITION_TICKS;
-				g.drawImage(backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()), 0, 0,
-						getWidth(), getHeight(), this);
-
-				// Paper
-				if (paperImg != null){
-					g.drawImage(paperImg,
-							(int)((PAPER_X_IN_BACKGROUND_SOURCE -xPosition)*scaleX), (int)(PAPER_Y_IN_BACKGROUND_SOURCE *scaleY),
-							(int)(PAPER_WIDTH*scaleX), (int)(paperImg.getHeight()*((double) PAPER_WIDTH /paperImg.getWidth()) * scaleY),
-							this);
-				}
-
-				// Right door.
-				double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
-				int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
-				g.drawImage(rightDoor, getWidth() - rightDoorWidthScaled + offsetX, 0,
-						getWidth() + offsetX, getHeight(), 0, 0,
-						rightDoor.getWidth(), rightDoor.getHeight(), this);
-				
-				honkBtnOnScreen = null;
-			}
-			break;
-		}
+		// Choosing what to draw from the backgrounds and where depending on the current view
+        switch (officeLoc) {
+            case LEFTDOOR -> {
+                if (offTransFrom == null) {
+                    g.drawImage(backgroundImg.getSubimage(LEFTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE,
+                            backgroundImg.getHeight()), 0, 0, getWidth(), getHeight(), this);
+                    honkBtnOnScreen = new Ellipse2D.Double(
+                            (HONK_IN_BACKGROUND_SOURCE.getX() - LEFTDOOR_X_IN_SOURCE) * scaleX,
+                            HONK_IN_BACKGROUND_SOURCE.getY() * scaleY, HONK_IN_BACKGROUND_SOURCE.getWidth() * scaleX,
+                            HONK_IN_BACKGROUND_SOURCE.getHeight() * scaleY);
+                    
+                    // Left door when watching left door and no transition
+                    g.drawImage(leftDoor, 0, 0, leftDoorWidthScaled, getHeight(), 0, 0, leftDoor.getWidth(),
+                            leftDoor.getHeight(), this);
+                    doorBtnOnScreen = new Ellipse2D.Double(leftDoor.getWidth() * 0.5, leftDoor.getHeight() * 0.5, 50,
+                            50);
+                    doorBtnOnScreen = new Ellipse2D.Double(leftDoorWidthScaled * LEFT_DOOR_BTN_X,
+                            getHeight() * LEFT_DOOR_BTN_Y, leftDoorWidthScaled * LEFT_DOOR_BTN_W,
+                            getHeight() * LEFT_DOOR_BTN_H);
+                    
+                } else if (offTransFrom.equals(OfficeLocation.CENTER)) {
+                    int xPosition = MONITOR_X_IN_SOURCE - ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks)) / OFFICE_TRANSITION_TICKS;
+                    g.drawImage(
+                            backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+                            0, 0, getWidth(), getHeight(), this);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - xPosition) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                    
+                    // Left door while transition from MONITOR to LEFTDOOR (center to left)
+                    double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+                    int visibleDoorWidthScaled = (int) (leftDoorWidthScaled * transitionProgress);
+                    int offsetX = leftDoor.getWidth() - (int) (leftDoor.getWidth() * transitionProgress);
+                    g.drawImage(leftDoor, 0, 0, visibleDoorWidthScaled, getHeight(), offsetX, 0, leftDoor.getWidth(),
+                            leftDoor.getHeight(), this);
+                    
+                    doorBtnOnScreen = null;
+                    honkBtnOnScreen = null;
+                }
+            }
+            case RIGHTDOOR -> {
+                honkBtnOnScreen = null;
+                if (offTransFrom == null) {
+                    g.drawImage(backgroundImg.getSubimage(RIGHTDOOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE,
+                            backgroundImg.getHeight()), 0, 0, getWidth(), getHeight(), this);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - RIGHTDOOR_X_IN_SOURCE) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                    
+                    // Right door when no transition at RIGHTDOOR
+                    g.drawImage(rightDoor, getWidth() - rightDoorWidthScaled, 0, getWidth(), getHeight(), 0, 0,
+                            rightDoor.getWidth(), rightDoor.getHeight(), this);
+                    doorBtnOnScreen = new Ellipse2D.Double(
+                            getWidth() - rightDoorWidthScaled + rightDoorWidthScaled * RIGHT_DOOR_BTN_X,
+                            getHeight() * RIGHT_DOOR_BTN_Y, rightDoorWidthScaled * RIGHT_DOOR_BTN_W,
+                            getHeight() * RIGHT_DOOR_BTN_H);
+                    
+                } else if (offTransFrom.equals(OfficeLocation.CENTER)) {
+                    int xPosition = MONITOR_X_IN_SOURCE + ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks)) / OFFICE_TRANSITION_TICKS;
+                    g.drawImage(
+                            backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+                            0, 0, getWidth(), getHeight(), this);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - xPosition) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                    
+                    // Right door while moving from MONITOR to RIGHTDOOR
+                    double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+                    int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
+                    g.drawImage(rightDoor, getWidth() - offsetX, 0, getWidth() - offsetX + rightDoorWidthScaled,
+                            getHeight(), 0, 0, rightDoor.getWidth(), rightDoor.getHeight(), this);
+                    
+                    doorBtnOnScreen = null;
+                }
+            }
+            case CENTER -> {
+                doorBtnOnScreen = null;
+                if (offTransFrom == null) {
+                    g.drawImage(backgroundImg.getSubimage(MONITOR_X_IN_SOURCE, 0, OFFICEWIDTH_OF_SOURCE,
+                            backgroundImg.getHeight()), 0, 0, getWidth(), getHeight(), this);
+                    
+                    honkBtnOnScreen = new Ellipse2D.Double(
+                            (HONK_IN_BACKGROUND_SOURCE.getX() - MONITOR_X_IN_SOURCE) * scaleX,
+                            HONK_IN_BACKGROUND_SOURCE.getY() * scaleY, HONK_IN_BACKGROUND_SOURCE.getWidth() * scaleX,
+                            HONK_IN_BACKGROUND_SOURCE.getHeight() * scaleY);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - MONITOR_X_IN_SOURCE) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                } else if (offTransFrom.equals(OfficeLocation.LEFTDOOR)) {
+                    int xPosition = LEFTDOOR_X_IN_SOURCE + ((MONITOR_X_IN_SOURCE - LEFTDOOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks)) / OFFICE_TRANSITION_TICKS;
+                    g.drawImage(
+                            backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+                            0, 0, getWidth(), getHeight(), this);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - xPosition) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                    
+                    // Left door
+                    double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+                    int offsetX = (int) (leftDoorWidthScaled * transitionProgress);
+                    g.drawImage(leftDoor, -offsetX, 0, leftDoorWidthScaled - offsetX, getHeight(), 0, 0,
+                            leftDoor.getWidth(), leftDoor.getHeight(), this);
+                    doorBtnOnScreen = new Ellipse2D.Double(offsetX + leftDoor.getWidth() * 0.5,
+                            leftDoor.getHeight() * 0.5, 50, 50);
+                    
+                    honkBtnOnScreen = null;
+                } else if (offTransFrom.equals(OfficeLocation.RIGHTDOOR)) {
+                    int xPosition = RIGHTDOOR_X_IN_SOURCE - ((RIGHTDOOR_X_IN_SOURCE - MONITOR_X_IN_SOURCE) * (OFFICE_TRANSITION_TICKS - offTransTicks)) / OFFICE_TRANSITION_TICKS;
+                    g.drawImage(
+                            backgroundImg.getSubimage(xPosition, 0, OFFICEWIDTH_OF_SOURCE, backgroundImg.getHeight()),
+                            0, 0, getWidth(), getHeight(), this);
+                    
+                    // Paper
+                    if (paperImg != null) {
+                        g.drawImage(paperImg, (int) ((PAPER_X_IN_BACKGROUND_SOURCE - xPosition) * scaleX),
+                                (int) (PAPER_Y_IN_BACKGROUND_SOURCE * scaleY), (int) (PAPER_WIDTH * scaleX),
+                                (int) (paperImg.getHeight() * ((double) PAPER_WIDTH / paperImg.getWidth()) * scaleY),
+                                this);
+                    }
+                    
+                    // Right door.
+                    double transitionProgress = (double) (OFFICE_TRANSITION_TICKS - offTransTicks) / OFFICE_TRANSITION_TICKS;
+                    int offsetX = (int) (rightDoorWidthScaled * transitionProgress);
+                    g.drawImage(rightDoor, getWidth() - rightDoorWidthScaled + offsetX, 0, getWidth() + offsetX,
+                            getHeight(), 0, 0, rightDoor.getWidth(), rightDoor.getHeight(), this);
+                    
+                    honkBtnOnScreen = null;
+                }
+            }
+        }
 
 		if (offTransTicks-- <= 0) {
 			offTransTicks = 0;
