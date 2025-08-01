@@ -329,6 +329,7 @@ public class StreamSound implements Sound {
 			}
 			this.buf = null;
 			this.skipBuf = null;
+			this.onFinished.clear();
 		}
 
 		@Override

@@ -10,10 +10,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * JComponent that represents the main menu of the game. It displays the available next Night, as well as buttons
@@ -46,35 +45,34 @@ public class MenuJC extends JComponent {
 	 * Font used for the buttons.
 	 */
 	protected final Font btnFont;
-	
+
 	/**
-	 * Background Music.
+	 * Background Music, with credits to the artists.
 	 */
-	protected final Music backgroundMusic;
+	protected final List<WeightedCreditedMusic> musicList;
+	/**
+	 * Index of current music playing.
+	 */
+	protected int currentMusicIndex = 0;
 	/**
 	 * Amount of ticks left that the music credits must be shown for. {@code 0} for no credits.
 	 */
-	protected int musicCreditsTicks;
+	protected int musicCreditsTicks = 160;
 	/**
 	 * Usual number of ticks the Music's credits must be shown in total.
 	 */
 	protected static final int MUSIC_CREDITS_TICKS = 160;
-	/**
-	 * Array with each line that the Music's credits must be shown for. {@code null} for no credits.
-	 */
-	protected final String[] musicCreditsMsg;
 	
 	/**
 	 * Creates a new {@link MenuJC} with the given data.
 	 * @param info Information of the menu items and background at the moment.
 	 * @param defaultLoadingImg Default loading image in the resources. It is used for {@link ItemInfo}s
 	 *                         that don't specify one.
-	 * @param backgroundMusic Background music.
+	 * @param backgroundMusic Background music list.
 	 */
-    public MenuJC(Info info, BufferedImage defaultLoadingImg, Music backgroundMusic) {
+    public MenuJC(Info info, BufferedImage defaultLoadingImg, List<WeightedCreditedMusic> backgroundMusic) {
 		super();
 		this.menuItems = info.menuItems;
-		this.backgroundMusic = backgroundMusic;
 		backgroundImage = info.background;
 		this.defaultLoadingImg = defaultLoadingImg;
 		loading = false;
@@ -91,9 +89,8 @@ public class MenuJC extends JComponent {
 			}
 		}, 100, 1000 / fps);
 
-		backgroundMusic.play(true);
-		musicCreditsTicks = 160;
-		musicCreditsMsg = new String[]{"FNAC Main Theme", "original by Cristichi"};
+		this.musicList = backgroundMusic;
+		playRandomMusic();
     }
 
 	/**
@@ -117,12 +114,44 @@ public class MenuJC extends JComponent {
 	}
 
 	/**
+	 * Plays the current background music.
+	 */
+	private void playRandomMusic() {
+		musicCreditsTicks = MUSIC_CREDITS_TICKS;
+
+		int totalWeight = 0;
+		for (WeightedCreditedMusic wcm : musicList){
+			totalWeight+=wcm.weight;
+		}
+		int r = new Random().nextInt(totalWeight);
+
+		WeightedCreditedMusic current = null;
+        for (int i = 0; i < musicList.size(); i++) {
+            WeightedCreditedMusic item = musicList.get(i);
+            r -= item.weight();
+            if (r < 0) {
+				currentMusicIndex = i;
+				current = musicList.get(currentMusicIndex);
+				break;
+            }
+        }
+
+		if (current == null){
+			throw new NullPointerException("Menu could not select a random music track. (No tracks available?)");
+		}
+
+        // Advance to next track in order
+        current.music.addOnEndListener(this::playRandomMusic);
+		current.music.rewind();
+		current.music.play(false);
+	}
+
+	/**
 	 * Starts the music. If it is already playing, it does nothing.
 	 */
-	public void startMusic(){
-		if (!backgroundMusic.playing()){
-			musicCreditsTicks = MUSIC_CREDITS_TICKS;
-			backgroundMusic.play(true);
+	public void startMusic() {
+		if (!musicList.get(currentMusicIndex).music.playing()) {
+			playRandomMusic();
 		}
 	}
 
@@ -130,10 +159,8 @@ public class MenuJC extends JComponent {
 	 * Stops the music. If it is already stopped, it does nothing.
 	 */
 	public void stopMusic() {
-		if (backgroundMusic.playing()){
-			musicCreditsTicks = 0;
-			backgroundMusic.stop();
-		}
+		musicList.get(currentMusicIndex).music.stop();
+		musicCreditsTicks = 0;
 	}
 	
 	/**
@@ -214,12 +241,13 @@ public class MenuJC extends JComponent {
 		if (musicCreditsTicks-- > 0) {
 			g.setFont(new Font("Eraser Dust", Font.BOLD, fontSize));
 			g.setColor(Color.WHITE);
-			int y = fontSize* musicCreditsMsg.length;
+			String[] credits = musicList.get(currentMusicIndex).credits;
+			int y = fontSize * credits.length;
 			int x = (int)(getWidth()*0.99);
-			for (String line : musicCreditsMsg) {
+			for (String line : credits) {
 				FontMetrics fm = g.getFontMetrics();
 				g.drawString(line, x-fm.stringWidth(line), getHeight()-y);
-				y-=fontSize;
+				y -= fontSize;
 			}
 		}
 	}
@@ -312,4 +340,14 @@ public class MenuJC extends JComponent {
 	 */
 	public record Item(ItemInfo info, Runnable runnable){
 	}
+
+	/**
+	 * Represents both music and the credits to the artist.
+	 * @param music
+	 * @param credits List of Strings representing the credits. Each String is drawn in a different line of text.
+	 * @param weight When choosing one at random, the weight is taken into account.
+	 */
+	public record WeightedCreditedMusic(Music music, String[] credits, int weight){
+	}
+
 }

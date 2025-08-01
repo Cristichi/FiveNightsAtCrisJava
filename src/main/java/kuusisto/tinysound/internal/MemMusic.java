@@ -28,6 +28,8 @@ package kuusisto.tinysound.internal;
 
 import kuusisto.tinysound.Music;
 
+import java.util.LinkedList;
+
 /**
  * The MemMusic class is an implementation of the Music interface that stores
  * all audio data in memory for low latency.
@@ -40,6 +42,8 @@ public class MemMusic implements Music {
 	private final byte[] right;
 	private final Mixer mixer;
 	private final MusicReference reference;
+
+	private final LinkedList<Runnable> onFinished;
 	
 	/**
 	 * Construct a new MemMusic with the given music data and the Mixer with
@@ -52,9 +56,11 @@ public class MemMusic implements Music {
 		this.left = left;
 		this.right = right;
 		this.mixer = mixer;
+		onFinished = new LinkedList<>();
 		this.reference = new MemMusicReference(this.left, this.right, false,
-				false, 0, 0, 1.0, 0.0);
+				false, 0, 0, 1.0, 0.0, onFinished);
 		this.mixer.registerMusicReference(this.reference);
+
 	}
 	
 	/**
@@ -79,7 +85,8 @@ public class MemMusic implements Music {
 	/**
 	 * Set this MemMusic's position to the beginning.
 	 */
-	private void rewind() {
+	@Override
+	public void rewind() {
 		this.reference.setPosition(0);
 	}
 	
@@ -91,7 +98,17 @@ public class MemMusic implements Music {
 	public boolean playing() {
 		return this.reference.getPlaying();
 	}
-	
+
+	@Override
+	public void addOnEndListener(Runnable runnable) {
+		onFinished.add(runnable);
+	}
+
+	@Override
+	public void clearEndListeners() {
+		onFinished.clear();
+	}
+
 	/////////////
 	//Reference//
 	/////////////
@@ -103,7 +120,6 @@ public class MemMusic implements Music {
 	 * @author Finn Kuusisto
 	 */
 	private static class MemMusicReference implements MusicReference {
-
 		private final byte[] left;
 		private final byte[] right;
 		private boolean playing;
@@ -112,6 +128,8 @@ public class MemMusic implements Music {
 		private int position;
 		private final double volume;
 		private final double pan;
+
+		private final LinkedList<Runnable> onFinished;
 		
 		/**
 		 * Construct a new MemMusicReference with the given audio data and
@@ -124,10 +142,11 @@ public class MemMusic implements Music {
 		 * @param position byte index position in music data
 		 * @param volume volume to play the music
 		 * @param pan pan to play the music
+		 * @param onFinished list of listeners to execute when the music finishes
 		 */
 		public MemMusicReference(byte[] left, byte[] right, boolean playing,
 				boolean loop, int loopPosition, int position, double volume,
-				double pan) {
+				double pan, LinkedList<Runnable> onFinished) {
 			this.left = left;
 			this.right = right;
 			this.playing = playing;
@@ -136,6 +155,8 @@ public class MemMusic implements Music {
 			this.position = position;
 			this.volume = volume;
 			this.pan = pan;
+
+			this.onFinished = onFinished;
 		}
 		
 		/**
@@ -260,7 +281,18 @@ public class MemMusic implements Music {
 				}
 			}
 		}
-		
+
+		@Override
+		public LinkedList<Runnable> getOnEndListeners() {
+			return onFinished;
+		}
+
+		@Override
+		public void clearEndListeners() {
+			onFinished.clear();
+		}
+
+
 	}
 
 }

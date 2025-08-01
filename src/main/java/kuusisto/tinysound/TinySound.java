@@ -26,8 +26,8 @@
  */
 package kuusisto.tinysound;
 
-import kuusisto.tinysound.internal.Mixer;
 import kuusisto.tinysound.internal.*;
+import kuusisto.tinysound.internal.Mixer;
 
 import javax.sound.sampled.*;
 import java.io.*;
@@ -139,6 +139,7 @@ public class TinySound {
 		}
 		//check for failure
 		if (file == null) {
+			System.err.println("File is null!");
 			return null;
 		}
 		URL url;

@@ -234,7 +234,7 @@ public class Resources {
 
             Music music = TinySound.loadMusic(tempFile, false);
             if (music == null){
-                throw new NullPointerException("Music file %s could not be loaded from disk.".formatted(resourcePath));
+                throw new NullPointerException("Music file %s could not be loaded from disk. (Unsupported format?)".formatted(resourcePath));
             }
             return music;
         } catch (IOException | NullPointerException notFoundE) {

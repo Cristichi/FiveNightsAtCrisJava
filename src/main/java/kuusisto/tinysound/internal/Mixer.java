@@ -113,32 +113,41 @@ public class Mixer {
 			double rightValue = 0.0;
 			//go through all the music first
             for (MusicReference music : this.musics) {
-                //is the music playing and are there bytes available
-                if (music.getPlaying() && music.bytesAvailable() > 0) {
-                    //add this music to the mix by volume (and global volume)
-                    music.nextTwoBytes(this.dataBuf, false);
-                    double volume = music.getVolume() * this.globalVolume;
-                    double leftCurr = (this.dataBuf[0] * volume);
-                    double rightCurr = (this.dataBuf[1] * volume);
-                    //do panning
-                    double pan = music.getPan();
-                    if (pan != 0.0) {
-                        double ll = (pan <= 0.0) ? 1.0 : (1.0 - pan);
-                        double lr = (pan <= 0.0) ? Math.abs(pan) : 0.0;
-                        double rl = (pan >= 0.0) ? pan : 0.0;
-                        double rr = (pan >= 0.0) ? 1.0 : (1.0 - Math.abs(pan));
-                        double tmpL = (ll * leftCurr) + (lr * rightCurr);
-                        double tmpR = (rl * leftCurr) + (rr * rightCurr);
-                        leftCurr = tmpL;
-                        rightCurr = tmpR;
+				//is the music playing and are there bytes available
+				if (music.getPlaying()) {
+					if (music.bytesAvailable() > 0) {
+						//add this music to the mix by volume (and global volume)
+						music.nextTwoBytes(this.dataBuf, false);
+						double volume = music.getVolume() * this.globalVolume;
+						double leftCurr = (this.dataBuf[0] * volume);
+						double rightCurr = (this.dataBuf[1] * volume);
+						//do panning
+						double pan = music.getPan();
+						if (pan != 0.0) {
+							double ll = (pan <= 0.0) ? 1.0 : (1.0 - pan);
+							double lr = (pan <= 0.0) ? Math.abs(pan) : 0.0;
+							double rl = (pan >= 0.0) ? pan : 0.0;
+							double rr = (pan >= 0.0) ? 1.0 : (1.0 - Math.abs(pan));
+							double tmpL = (ll * leftCurr) + (lr * rightCurr);
+							double tmpR = (rl * leftCurr) + (rr * rightCurr);
+							leftCurr = tmpL;
+							rightCurr = tmpR;
+						}
+						//update the final left and right channels
+						leftValue += leftCurr;
+						rightValue += rightCurr;
+						//we know we aren't done yet now
+						bytesRead = true;
+					}
+
+                    if (!music.getOnEndListeners().isEmpty() && music.bytesAvailable() == 0) {
+                        for (Runnable onFinished : music.getOnEndListeners()) {
+                            onFinished.run();
+                        }
+                        music.clearEndListeners();
                     }
-                    //update the final left and right channels
-                    leftValue += leftCurr;
-                    rightValue += rightCurr;
-                    //we know we aren't done yet now
-                    bytesRead = true;
-                }
-            }
+				}
+			}
 			//then go through all the sounds (backwards to remove completed)
 			for (int s = this.sounds.size() - 1; s >= 0; s--) {
 				SoundReference sound = this.sounds.get(s);
@@ -169,10 +178,10 @@ public class Mixer {
 					bytesRead = true;
 					//remove the reference if done
 					if (sound.bytesAvailable() <= 0) {
-						this.sounds.remove(s).dispose();
 						for (Runnable onFinished : sound.getOnEndListeners()){
 							onFinished.run();
 						}
+						this.sounds.remove(s).dispose();
 					}
 				}
 				else { //otherwise remove this reference

@@ -51,5 +51,23 @@ public interface Music {
 	 * @return true if this Music is playing
 	 */
 	boolean playing();
-	
+
+	/**
+	 * Rewinds the music to the start.
+	 * <br>Added by Cristichi. I can't believe this wasn't here before.
+	 */
+	void rewind();
+
+	/**
+	 * Adds this Runnable to be executed once, only the next time the music finishes.
+	 * <br>Added by Cristichi.
+	 * @param runnable Runnable to run when sound is finished.
+	 */
+	void addOnEndListener(Runnable runnable);
+
+	/**
+	 * Removes all end listeners from the music. Also called after executing them once.
+	 * <br>Added by Cristichi.
+	 */
+	void clearEndListeners();
 }

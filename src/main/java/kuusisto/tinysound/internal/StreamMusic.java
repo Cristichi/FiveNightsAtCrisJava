@@ -31,6 +31,7 @@ import kuusisto.tinysound.Music;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedList;
 
 /**
  * The StreamMusic class is an implementation of the Music interface that
@@ -43,6 +44,8 @@ public class StreamMusic implements Music {
 	private final URL dataURL;
 	private final Mixer mixer;
 	private final MusicReference reference;
+
+	private final LinkedList<Runnable> onFinished;
 	
 	/**
 	 * Construct a new StreamMusic with the given data and the Mixer with which
@@ -57,8 +60,9 @@ public class StreamMusic implements Music {
 			throws IOException {
 		this.dataURL = dataURL;
 		this.mixer = mixer;
+		onFinished = new LinkedList<>();
 		this.reference = new StreamMusicReference(this.dataURL, false, false, 0,
-				0, numBytesPerChannel, 1.0, 0.0);
+				0, numBytesPerChannel, 1.0, 0.0, onFinished);
 		this.mixer.registerMusicReference(this.reference);
 	}
 
@@ -84,7 +88,8 @@ public class StreamMusic implements Music {
     /**
 	 * Set this StreamMusic's position to the beginning.
 	 */
-	private void rewind() {
+	@Override
+	public void rewind() {
 		this.reference.setPosition(0);
 	}
     
@@ -96,7 +101,17 @@ public class StreamMusic implements Music {
 	public boolean playing() {
 		return this.reference.getPlaying();
 	}
-	
+
+	@Override
+	public void addOnEndListener(Runnable runnable) {
+		onFinished.add(runnable);
+	}
+
+	@Override
+	public void clearEndListeners() {
+		onFinished.clear();
+	}
+
 	/////////////
 	//Reference//
 	/////////////
@@ -118,6 +133,8 @@ public class StreamMusic implements Music {
 		private long position;
 		private final double volume;
 		private final double pan;
+
+		private final LinkedList<Runnable> onFinished;
 		
 		/**
 		 * Constructs a new StreamMusicReference with the given audio data and
@@ -135,7 +152,7 @@ public class StreamMusic implements Music {
 		 */
 		public StreamMusicReference(URL dataURL, boolean playing, boolean loop,
 				long loopPosition, long position, long numBytesPerChannel,
-				double volume, double pan) throws IOException {
+				double volume, double pan, LinkedList<Runnable> onFinished) throws IOException {
 			this.url = dataURL;
 			this.playing = playing;
 			this.loop = loop;
@@ -148,6 +165,8 @@ public class StreamMusic implements Music {
 			this.skipBuf = new byte[50];
 			//now get the data stream
 			this.data = this.url.openStream();
+
+			this.onFinished = onFinished;
 		}
 
 		/**
@@ -353,6 +372,15 @@ public class StreamMusic implements Music {
 				}
 			}
 		}
-		
+
+		@Override
+		public LinkedList<Runnable> getOnEndListeners() {
+			return onFinished;
+		}
+
+		@Override
+		public void clearEndListeners() {
+			onFinished.clear();
+		}
 	}
 }

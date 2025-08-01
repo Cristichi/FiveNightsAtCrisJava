@@ -26,6 +26,8 @@
  */
 package kuusisto.tinysound.internal;
 
+import java.util.LinkedList;
+
 /**
  * The MusicReference interface is the Mixer's interface to the audio data of a 
  * Music object.  MusicReference is an internal interface of the TinySound
@@ -90,5 +92,16 @@ public interface MusicReference {
 	 * @param bigEndian true if the bytes should be read big-endian
 	 */
 	void nextTwoBytes(int[] data, boolean bigEndian);
-	
+
+	/**
+	 * Added by Cristichi.
+	 * @return The list of Runnables to run when the music is finished.
+	 */
+	LinkedList<Runnable> getOnEndListeners();
+
+	/**
+	 * Removes all end listeners from the music. Also called after executing them once.
+	 * <br>Added by Cristichi.
+	 */
+	void clearEndListeners();
 }

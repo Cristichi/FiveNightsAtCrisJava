@@ -156,6 +156,7 @@ public class MemSound implements Sound {
 		private final double pan;
 
 		private final LinkedList<Runnable> onFinished;
+
 		/**
 		 * Construct a new MemSoundReference with the given reference data.
 		 * @param left left channel of sound data
@@ -163,6 +164,7 @@ public class MemSound implements Sound {
 		 * @param volume volume at which to play the sound
 		 * @param pan pan at which to play the sound
 		 * @param soundID ID of the MemSound for which this is a reference
+		 * @param onFinished list of listeners to execute when the sound finishes
 		 */
 		public MemSoundReference(byte[] left, byte[] right, double volume,
 				double pan, int soundID, LinkedList<Runnable> onFinished) {
@@ -258,6 +260,7 @@ public class MemSound implements Sound {
 			this.position = this.left.length + 1;
 			this.left = null;
 			this.right = null;
+			this.onFinished.clear();
 		}
 
 		@Override

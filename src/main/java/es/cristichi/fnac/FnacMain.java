@@ -87,7 +87,8 @@ public class FnacMain {
         
         // Hardware acceleration op
         System.setProperty("sun.java2d.opengl", "true");
-        
+
+        // Loading sequences, used by modders to load their resources beforehand.
         if (loadingSequences != null) {
             for (LoadRunnable loadSequence : loadingSequences) {
                 new Thread(() -> {
@@ -101,7 +102,7 @@ public class FnacMain {
             }
         }
         
-        // Settings and dependands. Together because the Window and other things depend on the Settings.
+        // Settings and their dependands. Together because the Window and other things depend on the Settings.
         final AtomicReference<Settings> settings = new AtomicReference<>();
         AtomicReference<NightsJF> window = new AtomicReference<>();
         SwingUtilities.invokeLater(() -> {
