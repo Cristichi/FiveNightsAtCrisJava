@@ -22,13 +22,12 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Timer;
 import java.util.*;
+import java.util.Timer;
 
 /**
  * JComponent that runs a Night. This is the most important part of the gameplay.
  */
-@SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
 public class NightJC extends JComponent {
 	/** DEBUG_MODE enables seeing where all AnimatronicDrawings are in the Camera's minimap.
 	 * Quite useful for debugging a new AnimatronicDrawing's movement. Or to have everything under control in test
@@ -958,7 +957,7 @@ public class NightJC extends JComponent {
             }
         }
 
-		if (offTransTicks-- <= 0) {
+		if (--offTransTicks <= 0) {
 			offTransTicks = 0;
 			offTransFrom = null;
 		}
@@ -1298,12 +1297,8 @@ public class NightJC extends JComponent {
 						drawX = (getWidth() - drawWidth) / 2;
 						drawY = (getHeight() - drawHeight) / 2;
 					}
-					case CENTER_TOP -> {
-						drawX = (getWidth() - drawWidth) / 2;
-					}
-					case CENTER_LEFT -> {
-						drawY = (getHeight() - drawHeight) / 2;
-					}
+					case CENTER_TOP -> drawX = (getWidth() - drawWidth) / 2;
+					case CENTER_LEFT -> drawY = (getHeight() - drawHeight) / 2;
 					case CENTER_RIGHT -> {
 						drawX = getWidth() - drawWidth;
 						drawY = (getHeight() - drawHeight) / 2;
