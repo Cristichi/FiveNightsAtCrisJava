@@ -185,10 +185,14 @@ public class NightsJF extends JFrame {
 
         {
             List<MenuJC.WeightedCreditedMusic> musicList = Arrays.asList(
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("menu/main.wav"), new String[]{"FNAC Main Theme", "original by Cristichi"}, 20),
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("menu/main-jairo.wav"), new String[]{"FNAC Guest Theme", "original by Jairo"}, 5),
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"), new String[]{"I'm here", "????"}, 1),
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"), new String[]{"????", "I'm here"}, 1)
+                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("menu/main.wav"),
+                            new String[]{"FNAC Main Theme", "original by Cristichi"}, 20),
+                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("menu/main-jairo.wav"),
+                            new String[]{"FNAC Guest Theme", "original by Jairo"}, 5),
+                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"),
+                            new String[]{"I'm here", "????"}, 1),
+                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"),
+                            new String[]{"????", "I'm here"}, 1)
             );
             mainMenu = new MenuJC(menuInfo, Resources.loadImage("menu/loading.jpg"), musicList);
         }
