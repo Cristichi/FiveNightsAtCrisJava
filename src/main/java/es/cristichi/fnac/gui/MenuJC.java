@@ -306,9 +306,9 @@ public class MenuJC extends JComponent {
 	/**
 	 * Information for the menu item, without the {@link Runnable} instance so that instances of
 	 * {@link es.cristichi.fnac.nights.NightFactory} can express how to display their menu item at the same time
-	 * that they let the {@link NightsJF} decide how Nights are started.
+	 * that they let the {@link MainJFrame} decide how Nights are started.
 	 * @param id Id of the element. Elements with the same ID will perform the same action, whose code is written in
-	 *           {@link NightsJF}.
+	 *           {@link MainJFrame}.
 	 * @param display Text shown for the button when not hovered by the player's mouse.
 	 * @param hoverDisplay Text shown for the button when hovered by the player's mouse.
 	 * @param loadingScreen BufferedImage of the loading screen, or {@code null} to use the default one.

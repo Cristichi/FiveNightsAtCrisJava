@@ -28,8 +28,8 @@ import java.util.concurrent.Semaphore;
 /**
  * Main window, it controls all the thingies.
  */
-public class NightsJF extends JFrame {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NightsJF.class);
+public class MainJFrame extends JFrame implements NightStarter{
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainJFrame.class);
     
     /**
      * Card Panel that holds what can be on screen at any time (main menu, submenu, or NightJC).
@@ -70,7 +70,7 @@ public class NightsJF extends JFrame {
      * Creates a new window for the game, with a Main Menu and a Custom Night Menu.
      * @throws ResourceException If an error occurs when loading any resource.
      */
-    public NightsJF() throws ResourceException {
+    public MainJFrame() throws ResourceException {
         super();
         setTitle(getTitleForWindow(null));
         setSize(800, 600);
@@ -102,11 +102,11 @@ public class NightsJF extends JFrame {
             settingsPanel = new SettingsJC(settings) {
                 @Override
                 public void onSettingsSaved(Settings saved) {
-                    if (NightsJF.this.settings.isFullscreen() != saved.isFullscreen()){
-                        NightsJF.this.setFullScreen(saved.isFullscreen());
+                    if (MainJFrame.this.settings.isFullscreen() != saved.isFullscreen()){
+                        MainJFrame.this.setFullScreen(saved.isFullscreen());
                     }
                     TinySound.setGlobalVolume(saved.getVolume());
-                    NightsJF.this.settings = new Settings(saved);
+                    MainJFrame.this.settings = new Settings(saved);
                 }
                 
                 @Override
@@ -275,7 +275,7 @@ public class NightsJF extends JFrame {
                     Resources.loadImage("night/custom/loading.jpg")), () -> {
                 try {
                     CustomNightMenuJC customNightMenu = new CustomNightMenuJC(settings,
-                            Jumpscare.getPowerOutageJumpscare(), NightsJF.this);
+                            Jumpscare.getPowerOutageJumpscare(), MainJFrame.this);
                     customNightMenu.addOnExitListener(() -> cardLayout.show(cardPanel, "menu"));
                     cardPanel.add(customNightMenu, "customNightMenu");
                     cardLayout.show(cardPanel, "customNightMenu");
@@ -328,7 +328,8 @@ public class NightsJF extends JFrame {
      * when the Night finishes.
      * @param nightFactory Factory that can create the desired NightJC to play.
      */
-    private void startNightFromFactory(NightFactory nightFactory) throws IOException, NightException {
+    @Override
+    public void startNightFromFactory(NightFactory nightFactory) throws IOException, NightException {
         long seed = new Random().nextLong();
         Random rng = new Random(seed);
         NightJC night = nightFactory.createNight(settings, Jumpscare.getPowerOutageJumpscare(), rng);
@@ -364,6 +365,7 @@ public class NightsJF extends JFrame {
      * after dying. I mean after surely completing the Night successfully without incidents.
      * @param night Custom Night to start.
      */
+    @Override
     public void startCustomNight(NightJC night) {
         night.addOnNightEnd((completed) -> {
             cardLayout.show(cardPanel, "menu");

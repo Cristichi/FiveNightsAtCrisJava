@@ -11,9 +11,9 @@ import es.cristichi.fnac.cnight.CustomNightMapRegistry;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
+import es.cristichi.fnac.gui.MainJFrame;
 import es.cristichi.fnac.gui.MenuJC;
 import es.cristichi.fnac.gui.NightJC;
-import es.cristichi.fnac.gui.NightsJF;
 import es.cristichi.fnac.io.NightProgress;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
@@ -104,7 +104,7 @@ public class FnacMain {
         
         // Settings and their dependands. Together because the Window and other things depend on the Settings.
         final AtomicReference<Settings> settings = new AtomicReference<>();
-        AtomicReference<NightsJF> window = new AtomicReference<>();
+        AtomicReference<MainJFrame> window = new AtomicReference<>();
         SwingUtilities.invokeLater(() -> {
             try {
                 Settings.init(docFolderName);
@@ -122,7 +122,7 @@ public class FnacMain {
                     new ExceptionDialog(new RuntimeException("Failed to load settings file", e), true, true, LOGGER);
                     return;
                 }
-                window.set(new NightsJF());
+                window.set(new MainJFrame());
                 window.get().startStartingSequence(loadingSem, settings.get());
                 
                 new Thread(() -> {

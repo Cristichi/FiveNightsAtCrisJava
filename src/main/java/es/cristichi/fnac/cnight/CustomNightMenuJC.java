@@ -9,7 +9,7 @@ import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
 import es.cristichi.fnac.gui.ExceptionDialog;
 import es.cristichi.fnac.gui.NightJC;
-import es.cristichi.fnac.gui.NightsJF;
+import es.cristichi.fnac.gui.NightStarter;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.io.Settings;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 /**
  * JComponent of the Menu that allows players to customize their own Night.
@@ -96,10 +96,10 @@ public class CustomNightMenuJC extends JComponent {
      * Creates a new CustomNightMenuJC.
      * @param settings User Settings, used to create the Custom Night.
      * @param powerOutage Jumpscare that the generated Custom {@link NightJC} will use for the power outage.
-     * @param nightsJF Main frame, used to start the custom Night and handling the menu music.
+     * @param nightStarter Object that can start a Night, which implements {@link NightStarter}.
      * @throws ResourceException If any images or sounds could not load from disk.
      */
-    public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightsJF nightsJF) throws ResourceException {
+    public CustomNightMenuJC(Settings settings, Jumpscare powerOutage, NightStarter nightStarter) throws ResourceException {
         super();
         if (backgroundImg == null){
             backgroundImg = Resources.loadImage("cnight/menuBackground.jpg");
@@ -168,7 +168,7 @@ public class CustomNightMenuJC extends JComponent {
             new Thread(() -> {
                 try {
                     NightJC night = createCustomNight();
-                    nightsJF.startCustomNight(night);
+                    nightStarter.startCustomNight(night);
                     LOGGER.info("Today's {} is using the seed \"{}\". Have fun!", night.getNightName(), seed);
                 } catch (CustomNightException | NightException | ResourceException e) {
                     new ExceptionDialog(e, false, false, LOGGER);

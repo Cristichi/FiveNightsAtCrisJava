@@ -340,7 +340,8 @@ public class NightJC extends JComponent {
 	 * @throws NightException    If the Night is not properly set.
 	 */
 	public NightJC(String nightName, int fps, CameraMap camMap, @Nullable BufferedImage paperImg,
-				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour, int totalHours, float passivePowerUsage, Sound nightCompletedSound, @Nullable SubtitledSound[] startSounds,
+				   Jumpscare powerOutageJumpscare, Random rng, double secsPerHour, int totalHours,
+				   float passivePowerUsage, Sound nightCompletedSound, @Nullable SubtitledSound[] startSounds,
 				   @Nullable SubtitledSound[] endSounds) throws ResourceException, NightException {
 		super();
 		LOGGER.debug("Loading {} with FPS {}, {} seconds per hour, and passivePowerUsage equal to {}%.",
