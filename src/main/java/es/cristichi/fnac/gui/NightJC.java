@@ -385,7 +385,7 @@ public class NightJC extends JComponent {
 		backgroundImg = Resources.loadImage("office/background.jpg");
 		camsUpDownBtnImg = Resources.loadImage("office/camsButton.png");
 		camMonitorImg = Resources.loadImage("office/monitor.png");
-		camMonitorStaticGif = Resources.loadGif("office/monitorWithStatic.gif", true);
+		camMonitorStaticGif = Resources.loadGif("office/monitorStatic.gif", true);
 		camStaticGif = Resources.loadGif("office/camTrans.gif", true);
 		leftDoorOpenImg = Resources.loadImage("office/leftDoorOpen.png");
 		leftDoorTransImg = Resources.loadImage("office/leftDoorTrans.png");
