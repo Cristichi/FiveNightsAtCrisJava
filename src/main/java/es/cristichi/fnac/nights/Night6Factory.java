@@ -27,7 +27,7 @@ public class Night6Factory extends NightFactory {
      * @throws ResourceException If menu loading screen could not be loaded.
      */
     public Night6Factory() throws ResourceException {
-        super(new MenuJC.ItemInfo("n6", "Continue", "Night 6", Resources.loadImage("night/n6/loading.jpg")));
+        super(new MenuJC.ItemInfo("n6", "Continue", "Final Night", Resources.loadImage("night/n6/loading.jpg")));
     }
     
     @Override
