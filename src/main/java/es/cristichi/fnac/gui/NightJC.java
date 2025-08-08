@@ -403,13 +403,16 @@ public class NightJC extends JComponent {
 				new AmbientSound(Resources.loadSound("office/ambient/deep-breath-247459.wav"), 4, true)
 		);
 		hourChangeSound = Resources.loadSound("office/sounds/hourChange.wav");
-		openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav");
 		honkSound = Resources.loadSound("office/sounds/honk.wav");
-		staticCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
-		openedCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
-		addOnExitListener(openedCamsSound::stop);
-		staticCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
-		addOnExitListener(staticCamsSound::stop);
+
+        staticCamsSound = Resources.loadSound("office/sounds/radio-static-6382-cut.wav");
+        staticCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
+        addOnExitListener(staticCamsSound::stop);
+
+        openedCamsSound = Resources.loadSound("office/sounds/radio-static-6382.wav");
+        openedCamsSound.addOnEndListener(() -> staticCamsSound.play(camSoundsVolume));
+        addOnExitListener(openedCamsSound::stop);
+
 		closeCamsSound = Resources.loadSound("office/sounds/tv-off-91795.wav");
 		clickCamSound = Resources.loadSound("office/sounds/spacebar-click-keyboard-199448.wav");
 		
