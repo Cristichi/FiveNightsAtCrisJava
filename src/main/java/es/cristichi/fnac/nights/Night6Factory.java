@@ -70,7 +70,7 @@ public class Night6Factory extends NightFactory {
         nightMap.get("bathrooms").setBroken(true);
         nightMap.get("main stage").setBroken(true);
         
-        return new NightJC("Night 6", settings.getFps(), nightMap, null, powerOutage, rng,
+        return new NightJC("Final Night", settings.getFps(), nightMap, null, powerOutage, rng,
                 90, 6, 0.45f, Resources.loadSound("night/general/completed.wav"), null, null);
     }
 }
