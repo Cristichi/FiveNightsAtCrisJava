@@ -6,6 +6,7 @@ import es.cristichi.fnac.cams.Camera;
 import es.cristichi.fnac.cams.CameraMap;
 import es.cristichi.fnac.exception.NightException;
 import es.cristichi.fnac.exception.ResourceException;
+import es.cristichi.fnac.io.NightDrawableImage;
 import es.cristichi.fnac.io.Resources;
 import es.cristichi.fnac.sound.AmbientSound;
 import es.cristichi.fnac.sound.AmbientSoundSystem;
@@ -145,8 +146,9 @@ public class NightJC extends JComponent {
 
 	/** Image of the frame of the Camera monitor. */
 	private final BufferedImage camMonitorImg;
-	/** Image showing static, for the Camera to use when not displaying during transitions or Animatronic's movement. */
-	private final BufferedImage camStaticImg;
+    /** Image showing static, for the Camera to use when not displaying during transitions or Animatronic's movement.
+     * Updated to be an animated image.*/
+    private final NightDrawableImage camStaticGif;
 	/** Image showing both the monitor and static, for convenience. */
 	private final BufferedImage camMonitorStaticImg;
 
@@ -384,7 +386,7 @@ public class NightJC extends JComponent {
 		camsUpDownBtnImg = Resources.loadImage("office/camsButton.png");
 		camMonitorImg = Resources.loadImage("office/monitor.png");
 		camMonitorStaticImg = Resources.loadImage("office/monitorStatic.png");
-		camStaticImg = Resources.loadImage("office/camTrans.jpg");
+		camStaticGif = Resources.loadGif("office/camTrans.gif", true);
 		leftDoorOpenImg = Resources.loadImage("office/leftDoorOpen.png");
 		leftDoorTransImg = Resources.loadImage("office/leftDoorTrans.png");
 		leftDoorClosedImg = Resources.loadImage("office/leftDoorClosed.png");
@@ -1026,7 +1028,8 @@ public class NightJC extends JComponent {
 				} else {
 					// Draw static in transition of camera change
 					if (changeCamsTransTicks>0){
-						g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+						g.drawImage(camStaticGif.getImageForTick(currentTick, fps),
+                                camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 								0, 0, camImgWidth, camImgHeight, this);
 						changeCamsTransTicks--;
 					} else {
@@ -1035,7 +1038,8 @@ public class NightJC extends JComponent {
 						// Also if Camera is broken
 						int currentCamHidingTicks = camsHidingMovementTicks.getOrDefault(current.getNameId(), 0);
 						if (currentCamHidingTicks>0 || current.isBroken()){
-							g.drawImage(camStaticImg, camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
+							g.drawImage(camStaticGif.getImageForTick(currentTick, fps),
+                                    camDrawX, camDrawY, camDrawX + camDrawWidth, camDrawY + camDrawHeight,
 									0, 0, camImgWidth, camImgHeight, this);
 							if (currentCamHidingTicks>0) {
 								camsHidingMovementTicks.put(current.getNameId(), currentCamHidingTicks - 1);
