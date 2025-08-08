@@ -150,7 +150,7 @@ public class NightJC extends JComponent {
      * Updated to be an animated image.*/
     private final NightDrawableImage camStaticGif;
 	/** Image showing both the monitor and static, for convenience. */
-	private final BufferedImage camMonitorStaticImg;
+	private final NightDrawableImage camMonitorStaticGif;
 
 	/** It controls whether Cameras are up or not. */
 	private boolean camsUp;
@@ -385,7 +385,7 @@ public class NightJC extends JComponent {
 		backgroundImg = Resources.loadImage("office/background.jpg");
 		camsUpDownBtnImg = Resources.loadImage("office/camsButton.png");
 		camMonitorImg = Resources.loadImage("office/monitor.png");
-		camMonitorStaticImg = Resources.loadImage("office/monitorStatic.png");
+		camMonitorStaticGif = Resources.loadGif("office/monitorWithStatic.gif", true);
 		camStaticGif = Resources.loadGif("office/camTrans.gif", true);
 		leftDoorOpenImg = Resources.loadImage("office/leftDoorOpen.png");
 		leftDoorTransImg = Resources.loadImage("office/leftDoorTrans.png");
@@ -1019,7 +1019,8 @@ public class NightJC extends JComponent {
 					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
 					int transitionYOffset = (windowHeight - scaledMonitorHeight) / 2;
 
-					g.drawImage(camMonitorStaticImg, transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
+					g.drawImage(camMonitorStaticGif.getImageForTick(currentTick, fps),
+                            transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
 							transitionYOffset + scaledMonitorHeight, 0, 0, monitorWidth, monitorHeight, this);
 
 					camsUpDownTransTicks--;
@@ -1198,7 +1199,8 @@ public class NightJC extends JComponent {
 					int transitionXOffset = (windowWidth - scaledMonitorWidth) / 2;
 					int transitionYOffset = (windowHeight - scaledMonitorHeight) / 2;
 
-					g.drawImage(camMonitorStaticImg, transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
+					g.drawImage(camMonitorStaticGif.getImageForTick(currentTick, fps),
+                            transitionXOffset, transitionYOffset, transitionXOffset + scaledMonitorWidth,
 							transitionYOffset + scaledMonitorHeight, 0, 0, monitorWidth, monitorHeight, this);
 
 					camsUpDownTransTicks--;
