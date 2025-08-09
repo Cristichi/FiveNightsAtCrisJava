@@ -21,6 +21,6 @@ A Cataclysm made existence look like a drawing. `Cris' Restaurant for You` close
 ## Credits
 - Main developer: Cristichi
 - Art: Cristichi
-- Music: Cristichi
+- Music: Cristichi, my friend Jairo who doesn't like being credited
 - Sounds: Cristichi and pixabay.com
 - PlayTesting: Cristichi
