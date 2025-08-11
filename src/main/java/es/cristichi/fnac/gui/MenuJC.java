@@ -90,6 +90,7 @@ public class MenuJC extends JComponent {
 		}, 100, 1000 / fps);
 
 		this.musicList = backgroundMusic;
+
 		playRandomMusic();
     }
 
@@ -115,9 +116,13 @@ public class MenuJC extends JComponent {
 
 	/**
 	 * Plays the current background music.
+     * @throws IllegalStateException If there is no music available
 	 */
 	private void playRandomMusic() {
 		musicCreditsTicks = MUSIC_CREDITS_TICKS;
+        if (musicList.isEmpty()){
+            throw new IllegalStateException("There is no music.");
+        }
 
 		int totalWeight = 0;
 		for (WeightedCreditedMusic wcm : musicList){
@@ -125,25 +130,22 @@ public class MenuJC extends JComponent {
 		}
 		int r = new Random().nextInt(totalWeight);
 
-		WeightedCreditedMusic current = null;
         for (int i = 0; i < musicList.size(); i++) {
             WeightedCreditedMusic item = musicList.get(i);
             r -= item.weight();
             if (r < 0) {
 				currentMusicIndex = i;
-				current = musicList.get(currentMusicIndex);
 				break;
             }
         }
 
-		if (current == null){
-			throw new NullPointerException("Menu could not select a random music track. (No tracks available?)");
-		}
-
         // Advance to next track in order
-        current.music.addOnEndListener(this::playRandomMusic);
-		current.music.rewind();
-		current.music.play(false);
+        new Thread(() -> {
+            WeightedCreditedMusic current = musicList.get(currentMusicIndex);
+            current.music.rewind();
+            current.music.play(false);
+            current.music.addOnEndListener(this::playRandomMusic);
+        }).start();
 	}
 
 	/**
