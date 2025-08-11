@@ -189,10 +189,8 @@ public class MainJFrame extends JFrame implements NightStarter{
                             new String[]{"FNAC Main Theme", "original by Cristichi"}, 20),
                     new MenuJC.WeightedCreditedMusic(Resources.loadMusic("menu/main-jairo.wav"),
                             new String[]{"FNAC Guest Theme", "original by Jairo"}, 5),
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"),
-                            new String[]{"I'm here", "????"}, 1),
-                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/move.wav"),
-                            new String[]{"????", "I'm here"}, 1)
+                    new MenuJC.WeightedCreditedMusic(Resources.loadMusic("anims/cris/sounds/jumpscare.wav"),
+                            new String[]{"I'm here", "original by HelpMe"}, 1)
             );
             mainMenu = new MenuJC(menuInfo, Resources.loadImage("menu/loading.jpg"), musicList);
         }
