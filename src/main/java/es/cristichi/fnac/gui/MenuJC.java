@@ -140,7 +140,6 @@ public class MenuJC extends JComponent {
 			totalWeight+=wcm.weight;
 		}
 		int r = new Random().nextInt(totalWeight);
-        System.out.println("Random track: "+r);
 
         for (int i = 0; i < musicList.size(); i++) {
             r -= musicList.get(i).weight();
