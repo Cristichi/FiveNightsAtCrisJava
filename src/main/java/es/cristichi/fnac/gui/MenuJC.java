@@ -97,7 +97,6 @@ public class MenuJC extends JComponent {
 
         currentMusicIndex = 0;
 
-        // Advance to next track in order
         new Thread(() -> {
             WeightedCreditedMusic current = musicList.get(currentMusicIndex);
             current.music.rewind();
@@ -141,17 +140,16 @@ public class MenuJC extends JComponent {
 			totalWeight+=wcm.weight;
 		}
 		int r = new Random().nextInt(totalWeight);
+        System.out.println("Random track: "+r);
 
         for (int i = 0; i < musicList.size(); i++) {
-            WeightedCreditedMusic item = musicList.get(i);
-            r -= item.weight();
+            r -= musicList.get(i).weight();
             if (r < 0) {
 				currentMusicIndex = i;
 				break;
             }
         }
 
-        // Advance to next track in order
         new Thread(() -> {
             WeightedCreditedMusic current = musicList.get(currentMusicIndex);
             current.music.rewind();
