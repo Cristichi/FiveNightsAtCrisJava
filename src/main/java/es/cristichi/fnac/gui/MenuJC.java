@@ -91,7 +91,19 @@ public class MenuJC extends JComponent {
 
 		this.musicList = backgroundMusic;
 
-		playRandomMusic();
+        //playRandomMusic();
+        // We force the first one to always be the main theme, to leave the guest theme like an easter egg
+        musicCreditsTicks = MUSIC_CREDITS_TICKS;
+
+        currentMusicIndex = 0;
+
+        // Advance to next track in order
+        new Thread(() -> {
+            WeightedCreditedMusic current = musicList.get(currentMusicIndex);
+            current.music.rewind();
+            current.music.play(false);
+            current.music.addOnEndListener(this::playRandomMusic);
+        }).start();
     }
 
 	/**
